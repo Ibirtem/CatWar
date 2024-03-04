@@ -22,12 +22,13 @@ const weatherSettings = "true";
 // div'ы Настроек
 const uwusettings = `
 <div id="uwusettings">
-  <h2>Настройки CatWar UwU</h2>
+  <h1>Настройки CatWar UwU</h1>
   <hr>
+    <h2>Природные явления</h2>
     <div class="weather-toggle">
-    <p>Включает/Выключает динамичную погоду в игровой. В будущем может быть будет настройка интенсивности эффектов.</p>
-    <input type="checkbox" id="weather-enabled">
-    <label for="weather-enabled">Показывать погоду</label>
+      <p>Включает/Выключает динамичную погоду в игровой, такие как дождь или снегопад. В будущем может быть будет настройка интенсивности эффектов.</p>
+      <input type="checkbox" id="weather-enabled">
+      <label for="weather-enabled">Показывать погоду</label>
     </div>
   <hr>
   </div>
@@ -47,15 +48,22 @@ const rain = `
 let css = `
 #uwusettings {
   font-family: Century Gothic;
-  font-size: 22px;
   margin: 0 auto;
   backdrop-filter: blur(8px) brightness(70%);
-  border: 3px solid white;
   border-radius: 20px;
   padding: 15px;
 }
 
+#uwusettings h1 {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  text-align: center;
+  color: white;
+}
+
 #uwusettings h2 {
+  margin-top: 15px;
+  margin-bottom: 15px;
   text-align: center;
   color: white;
 }
@@ -167,7 +175,7 @@ if (window.location.href === targetCW3) {
       } else {
         weather = "clear";
       }
-    } 
+    }
     console.log(weather);
   }
   setInterval(getSkyType, 2000);
@@ -176,7 +184,8 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   const weatherContainer = document.getElementById("global-container");
 
-  function generateWeather() { // бляяя я уже сам не знаю чё делаю но TODO объединить генерацию частиц в один canvas а то я объебался и теперь не ебу как это сделать я слишком тупой и ленивый спасите как я вообще это ещё делаю 
+  function generateWeather() {
+    // бляяя я уже сам не знаю чё делаю но TODO объединить генерацию частиц в один canvas и удалять его когда небо чисто а то я объебался и теперь не ебу как это сделать я слишком тупой и ленивый спасите как я вообще это ещё делаю
     const weatherCanvas = document.createElement("canvas");
     weatherCanvas.classList.add("weatherCanvas");
 
@@ -217,16 +226,16 @@ if (window.location.href === targetCW3) {
     }
 
     // Анимация капель
-    function animate() {
-      rainParticle.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
-
-      for (const raindrop of raindrops) {
-        raindrop.y += raindrop.ySpeed;
-        raindrop.x += raindrop.xSpeed;
-        drawRaindrop(raindrop);
+    function animateRain() {
+      if (raindrops.length > 0) {
+        rainParticle.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+        for (const raindrop of raindrops) {
+          raindrop.y += raindrop.ySpeed;
+          raindrop.x += raindrop.xSpeed;
+          drawRaindrop(raindrop);
+        }
       }
-
-      requestAnimationFrame(animate);
+      requestAnimationFrame(animateRain);
     }
 
     // Рисуем каплю
@@ -249,7 +258,7 @@ if (window.location.href === targetCW3) {
     weatherContainer.appendChild(rainCanvas);
 
     // Запуск анимации. блять где я
-    animate();
+    animateRain();
 
     return {
       rainCanvas,
@@ -292,21 +301,22 @@ if (window.location.href === targetCW3) {
     }
 
     // Анимация снежинки. Типа падают вниз.
-    function animate() {
-      snowParticle.clearRect(0, 0, snowCanvas.width, snowCanvas.height);
-
-      for (const snowflake of snowflakes) {
-        snowflake.y += snowflake.ySpeed;
-        snowflake.x += snowflake.xSpeed;
-        drawSnowflake(snowParticle, snowflake.x, snowflake.y, snowflake.size);
+    function animateSnow() {
+      if (snowflakes.length > 0) {
+        snowParticle.clearRect(0, 0, snowCanvas.width, snowCanvas.height);
+        for (const snowflake of snowflakes) {
+          snowflake.y += snowflake.ySpeed;
+          snowflake.x += snowflake.xSpeed;
+          drawSnowflake(snowParticle, snowflake.x, snowflake.y, snowflake.size);
+        }
       }
-      requestAnimationFrame(animate);
+      requestAnimationFrame(animateSnow);
     }
 
     // Функция для рисования снежинок.
     function drawSnowflake(snowParticle, x, y, size) {
       snowParticle.beginPath();
-      snowParticle.arc(x, y, size, 0, 2 * Math.PI);
+      snowParticle.ellipse(x, y, size, size, 0, 0, 2 * Math.PI);
       const color = "white";
       snowParticle.fillStyle = color;
       snowParticle.fill();
@@ -316,7 +326,7 @@ if (window.location.href === targetCW3) {
     weatherContainer.appendChild(snowCanvas);
 
     // Запуск анимации. блять где я
-    animate();
+    animateSnow();
 
     // Возвращение объекта. нахуя правда.
     return {
