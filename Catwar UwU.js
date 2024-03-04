@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Catwar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.5.2-02.24
+// @version      v1.5.3-02.24
 // @description  Визуальное обновление CatWar'а.
 // @author       Ibirtem / Тенёчек ( https://catwar.su/cat1477928 )
 // @match        http*://*.catwar.su/*
@@ -175,13 +175,23 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
 
   // ====================================================================================================================
-  const rainContainer = document.getElementById("global-container");
+  const weatherContainer = document.getElementById("global-container");
+
+  function generateRain() {
+    const weatherCanvas = document.createElement("canvas");
+    weatherCanvas.classList.add("rainCanvas");
+
+    weatherContainer.appendChild(weatherCanvas);
+
+    return { weatherCanvas };
+  }
+
   // Генератор слёз и боли
   function generateRain() {
     const raindrops = [];
     const rainCanvas = document.createElement("canvas");
     rainCanvas.classList.add("rainCanvas");
-    const rainCtx = rainCanvas.getContext("2d");
+    const rainParticle = rainCanvas.getContext("2d");
 
     setInterval(() => {
       for (let i = 0; i < 12; i++) {
@@ -208,7 +218,7 @@ if (window.location.href === targetCW3) {
 
     // Анимация капель
     function animate() {
-      rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+      rainParticle.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
 
       for (const raindrop of raindrops) {
         raindrop.y += raindrop.speed;
@@ -220,8 +230,8 @@ if (window.location.href === targetCW3) {
 
     // Рисуем каплю
     function drawRaindrop(raindrop) {
-      rainCtx.beginPath();
-      rainCtx.ellipse(
+      rainParticle.beginPath();
+      rainParticle.ellipse(
         raindrop.x,
         raindrop.y,
         raindrop.width,
@@ -230,32 +240,31 @@ if (window.location.href === targetCW3) {
         Math.PI,
         2 * Math.PI
       );
-      rainCtx.fillStyle = "rgba(150, 150, 150, 0.4)";
-      rainCtx.fill();
+      rainParticle.fillStyle = "rgba(150, 150, 150, 0.4)";
+      rainParticle.fill();
     }
 
     // Добавление canvas-элемента в контейнер. пипец
-    rainContainer.appendChild(rainCanvas);
+    weatherContainer.appendChild(rainCanvas);
 
     // Запуск анимации. блять где я
     animate();
 
     return {
       rainCanvas,
-      rainCtx,
+      rainParticle,
       raindrops,
     };
   }
   // ====================================================================================================================
 
   // ====================================================================================================================
-  const snowContainer = document.getElementById("global-container");
   // Генератор котопада
   function generateSnowflakes() {
     const snowflakes = [];
     const snowCanvas = document.createElement("canvas");
     snowCanvas.classList.add("snowCanvas");
-    const ctx = snowCanvas.getContext("2d");
+    const snowParticle = snowCanvas.getContext("2d");
 
     // Интервал генерации новых снежинок.
     setInterval(() => {
@@ -282,26 +291,26 @@ if (window.location.href === targetCW3) {
 
     // Анимация снежинки. Типа падают вниз.
     function animate() {
-      ctx.clearRect(0, 0, snowCanvas.width, snowCanvas.height);
+      snowParticle.clearRect(0, 0, snowCanvas.width, snowCanvas.height);
 
       for (const snowflake of snowflakes) {
         snowflake.y += snowflake.speed;
-        drawSnowflake(ctx, snowflake.x, snowflake.y, snowflake.size);
+        drawSnowflake(snowParticle, snowflake.x, snowflake.y, snowflake.size);
       }
       requestAnimationFrame(animate);
     }
 
     // Функция для рисования снежинок.
-    function drawSnowflake(ctx, x, y, size) {
-      ctx.beginPath();
-      ctx.arc(x, y, size, 0, 2 * Math.PI);
+    function drawSnowflake(snowParticle, x, y, size) {
+      snowParticle.beginPath();
+      snowParticle.arc(x, y, size, 0, 2 * Math.PI);
       const color = "white";
-      ctx.fillStyle = color;
-      ctx.fill();
+      snowParticle.fillStyle = color;
+      snowParticle.fill();
     }
 
     // Добавление canvas-элемента в контейнер. пипец
-    snowContainer.appendChild(snowCanvas);
+    weatherContainer.appendChild(snowCanvas);
 
     // Запуск анимации. блять где я
     animate();
@@ -309,7 +318,7 @@ if (window.location.href === targetCW3) {
     // Возвращение объекта. нахуя правда.
     return {
       snowCanvas,
-      ctx,
+      snowParticle,
       snowflakes,
     };
   }
@@ -319,10 +328,10 @@ if (window.location.href === targetCW3) {
     canvas.height = canvas.parentNode.offsetHeight;
   }
 
-  const { rainCanvas, rainCtx, raindrops } = generateRain();
+  const { rainCanvas, rainParticle, raindrops } = generateRain();
   resizeCanvasElement(rainCanvas);
 
-  const { snowCanvas, ctx, snowflakes } = generateSnowflakes();
+  const { snowCanvas, snowParticle, snowflakes } = generateSnowflakes();
   resizeCanvasElement(snowCanvas);
 
   window.addEventListener("resize", () => {
@@ -342,8 +351,8 @@ if (window.location.href === targetCW3) {
   }
 
   setInterval(() => {
-    checkElements(snowflakes, snowContainer);
-    checkElements(raindrops, rainContainer);
+    checkElements(snowflakes, weatherContainer);
+    checkElements(raindrops, weatherContainer);
   }, 100);
   // ====================================================================================================================
 }
