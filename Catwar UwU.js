@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Catwar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.5.3-02.24
+// @version      v1.5.3-03.24
 // @description  Визуальное обновление CatWar'а.
 // @author       Ibirtem / Тенёчек ( https://catwar.su/cat1477928 )
 // @match        http*://*.catwar.su/*
