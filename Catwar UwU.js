@@ -5,8 +5,8 @@
 // @description  Визуальное обновление CatWar'а.
 // @author       Ibirtem / Тенёчек ( https://catwar.su/cat1477928 )
 // @match        http*://*.catwar.su/*
-// @updateURL    https://openuserjs.org/meta/Ibirtem/Catwar_UwU.meta.js
-// @downloadURL  https://openuserjs.org/install/Ibirtem/Catwar_UwU.user.js
+// @updateURL    https://github.com/Ibirtem/CatWar/raw/main/Catwar%20UwU.js
+// @downloadURL  https://github.com/Ibirtem/CatWar/raw/main/Catwar%20UwU.js
 // @grant        GM_addStyle
 // @license      MIT
 // ==/UserScript==
