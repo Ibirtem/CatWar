@@ -164,11 +164,10 @@ if (window.location.href === targetCW3) {
         skyStyle.includes("//e.catwar.su/cw3/sky/8.png")
       ) {
         weather = "snow";
+      } else {
+        weather = "clear";
       }
-    } else {
-      weather = "clear";
-    }
-
+    } 
     console.log(weather);
   }
   setInterval(getSkyType, 2000);
@@ -177,9 +176,9 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   const weatherContainer = document.getElementById("global-container");
 
-  function generateRain() {
+  function generateWeather() { // бляяя я уже сам не знаю чё делаю но TODO объединить генерацию частиц в один canvas а то я объебался и теперь не ебу как это сделать я слишком тупой и ленивый спасите как я вообще это ещё делаю 
     const weatherCanvas = document.createElement("canvas");
-    weatherCanvas.classList.add("rainCanvas");
+    weatherCanvas.classList.add("weatherCanvas");
 
     weatherContainer.appendChild(weatherCanvas);
 
@@ -211,9 +210,10 @@ if (window.location.href === targetCW3) {
       const y = Math.random() * -100;
       const length = Math.random() * 10 + 50;
       const width = Math.random() * 1 + 1;
-      const speed = length * 0.2;
+      const ySpeed = length * 0.2;
+      const xSpeed = Math.random() * 1;
 
-      return { x, y, length, width, speed };
+      return { x, y, length, width, ySpeed, xSpeed };
     }
 
     // Анимация капель
@@ -221,7 +221,8 @@ if (window.location.href === targetCW3) {
       rainParticle.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
 
       for (const raindrop of raindrops) {
-        raindrop.y += raindrop.speed;
+        raindrop.y += raindrop.ySpeed;
+        raindrop.x += raindrop.xSpeed;
         drawRaindrop(raindrop);
       }
 
@@ -281,12 +282,13 @@ if (window.location.href === targetCW3) {
       if (document.hidden) {
         return;
       }
-      const x = Math.random() * snowCanvas.width;
       const y = Math.random() * -100;
+      const x = Math.random() * snowCanvas.width;
       const size = Math.random() * 5 + 2;
-      const speed = size * 0.14;
+      const ySpeed = size * 0.14;
+      const xSpeed = size * (Math.random() - Math.random()) * 0.02;
 
-      return { x, y, size, speed };
+      return { x, y, size, ySpeed, xSpeed };
     }
 
     // Анимация снежинки. Типа падают вниз.
@@ -294,7 +296,8 @@ if (window.location.href === targetCW3) {
       snowParticle.clearRect(0, 0, snowCanvas.width, snowCanvas.height);
 
       for (const snowflake of snowflakes) {
-        snowflake.y += snowflake.speed;
+        snowflake.y += snowflake.ySpeed;
+        snowflake.x += snowflake.xSpeed;
         drawSnowflake(snowParticle, snowflake.x, snowflake.y, snowflake.size);
       }
       requestAnimationFrame(animate);
