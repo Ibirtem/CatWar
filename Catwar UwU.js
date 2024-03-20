@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Catwar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.5.4-03.24
+// @version      v1.5.5-03.24
 // @description  Визуальное обновление CatWar'а.
-// @author       Ibirtem / Тенёчек ( https://catwar.su/cat1477928 )
+// @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @match        http*://*.catwar.su/*
 // @updateURL    https://github.com/Ibirtem/CatWar/raw/main/Catwar%20UwU.js
 // @downloadURL  https://github.com/Ibirtem/CatWar/raw/main/Catwar%20UwU.js
@@ -44,6 +44,10 @@ let css = `
   --nlB-1: #9DF5ED;
   --nlB-2: #82BBF5;
   --nlB-3: #725DFA;
+
+  --nlG-1: #90EE90;
+  --nlG-2: #00FA9A;
+  --nlG-3: #00FF7F;
 }
 
 #uwusettings {
@@ -100,7 +104,11 @@ let css = `
   inherits: false;
 }
 
-.aurora {
+.aurora-Blue {
+  transform: translate(0, 60%);
+  display: none;
+  z-index: -1;
+  
   position: absolute;
   bottom: 0;
   left: 0;
@@ -115,10 +123,27 @@ let css = `
     var(--nlB-2),
     var(--nlB-1));
   animation: aurora-spin 15s linear infinite;
+}
 
+.aurora-Green {
   transform: translate(0, 60%);
   display: none;
   z-index: -1;
+
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30%;
+  filter: blur(4rem);
+  background: conic-gradient(
+    from var(--gradient-angle),
+    var(--nlG-1),
+    var(--nlG-2),
+    var(--nlG-3),
+    var(--nlG-2),
+    var(--nlG-1));
+  animation: aurora-spin 15s linear infinite;
 }
 
 @keyframes aurora-spin {
@@ -136,7 +161,9 @@ GM_addStyle(css);
 // ====================================================================================================================
 function createSettingsBlock(blockId, settings) {
   const settingsContainer = document.querySelector("#branch");
-  const backgroundImageURL = window.getComputedStyle(document.body).backgroundImage;
+  const backgroundImageURL = window.getComputedStyle(
+    document.body
+  ).backgroundImage;
 
   const settingsElement = document.createElement("div");
   settingsElement.classList.add("rounded-image");
@@ -177,6 +204,8 @@ if (window.location.href === targetCW3) {
   containerElement.appendChild(globalContainerElement);
   // ====================================================================================================================
   var weather = "null";
+  var hour = "null";
+  var month = "null";
 
   function getSkyType() {
     const skyElement = document.querySelector("#sky");
@@ -198,9 +227,51 @@ if (window.location.href === targetCW3) {
         weather = "clear";
       }
     }
-    console.log(weather);
+    // console.log(weather);
   }
-  setInterval(getSkyType, 2000);
+
+  function getTime() {
+    const timeElement = document.querySelector("#hour");
+    const hourTime = timeElement.querySelector("img").getAttribute("src");
+    const weatherSettings = localStorage.getItem("weatherSettings");
+
+    if (weatherSettings === "true") {
+      if (
+        hourTime.includes("symbole/hours/6.png") ||
+        hourTime.includes("symbole/hours/7.png") ||
+        hourTime.includes("symbole/hours/8.png") ||
+        hourTime.includes("symbole/hours/9.png") ||
+        hourTime.includes("symbole/hours/10.png") ||
+        hourTime.includes("symbole/hours/11.png") ||
+        hourTime.includes("symbole/hours/12.png")
+      ) {
+        hour = "morning";
+      } else if (
+        hourTime.includes("symbole/hours/13.png") ||
+        hourTime.includes("symbole/hours/14.png") ||
+        hourTime.includes("symbole/hours/15.png") ||
+        hourTime.includes("symbole/hours/16.png") ||
+        hourTime.includes("symbole/hours/17.png") ||
+        hourTime.includes("symbole/hours/18.png")
+      ) {
+        hour = "day";
+      } else if (
+        hourTime.includes("symbole/hours/19.png") ||
+        hourTime.includes("symbole/hours/20.png") ||
+        hourTime.includes("symbole/hours/21.png")
+      ) {
+        hour = "evening";
+      } else {
+        hour = "night";
+      }
+    }
+    // console.log(hour);
+  }
+
+  setInterval(() => {
+    getSkyType();
+    getTime();
+  }, 2000);
   // ====================================================================================================================
 
   // ====================================================================================================================
@@ -209,19 +280,19 @@ if (window.location.href === targetCW3) {
   weatherCanvas.classList.add("weatherCanvas");
   weatherContainer.appendChild(weatherCanvas);
   const weatherCtx = weatherCanvas.getContext("2d");
-  
+
   function resizeCanvasElement() {
     weatherCanvas.width = weatherCanvas.parentNode.offsetWidth;
     weatherCanvas.height = weatherCanvas.parentNode.offsetHeight;
   }
-  
+
   window.addEventListener("resize", resizeCanvasElement);
   resizeCanvasElement();
-  
+
   // ====================================================================================================================
   function generateRain() {
     const raindrops = [];
-  
+
     setInterval(() => {
       for (let i = 0; i < 12; i++) {
         const raindrop = weather === "rain" ? generateRaindrop() : null;
@@ -230,7 +301,7 @@ if (window.location.href === targetCW3) {
         }
       }
     }, 60);
-  
+
     function generateRaindrop() {
       if (document.hidden) {
         return;
@@ -241,10 +312,10 @@ if (window.location.href === targetCW3) {
       const width = Math.random() * 1 + 1;
       const ySpeed = length * 0.2;
       const xSpeed = Math.random() * 1;
-  
+
       return { x, y, length, width, ySpeed, xSpeed };
     }
-  
+
     function animateRain() {
       if (raindrops.length > 0) {
         weatherCtx.clearRect(0, 0, weatherCanvas.width, weatherCanvas.height);
@@ -256,7 +327,7 @@ if (window.location.href === targetCW3) {
       }
       requestAnimationFrame(animateRain);
     }
-  
+
     function drawRaindrop(raindrop) {
       weatherCtx.beginPath();
       weatherCtx.ellipse(
@@ -271,15 +342,15 @@ if (window.location.href === targetCW3) {
       weatherCtx.fillStyle = "rgba(150, 150, 150, 0.4)";
       weatherCtx.fill();
     }
-  
+
     animateRain();
-  
+
     return { raindrops };
   }
   // ====================================================================================================================
   function generateSnowflakes() {
     const snowflakes = [];
-  
+
     setInterval(() => {
       for (let i = 0; i < 1; i++) {
         const snowflake = weather === "snow" ? generateSnowflake() : null;
@@ -288,7 +359,7 @@ if (window.location.href === targetCW3) {
         }
       }
     }, 100);
-  
+
     function generateSnowflake() {
       if (document.hidden) {
         return;
@@ -298,10 +369,10 @@ if (window.location.href === targetCW3) {
       const size = Math.random() * 5 + 2;
       const ySpeed = size * 0.14;
       const xSpeed = size * (Math.random() - Math.random()) * 0.02;
-  
+
       return { x, y, size, ySpeed, xSpeed };
     }
-  
+
     function animateSnow() {
       if (snowflakes.length > 0) {
         weatherCtx.clearRect(0, 0, weatherCanvas.width, weatherCanvas.height);
@@ -320,49 +391,61 @@ if (window.location.href === targetCW3) {
       weatherCtx.fillStyle = "white";
       weatherCtx.fill();
     }
-    
+
     animateSnow();
 
     return { snowflakes };
   }
   // ====================================================================================================================
-// Создаем элемент северного сияния
-const aurora = document.createElement("div");
-aurora.classList.add("aurora");
+  let aurora;
 
-// Добавляем элемент в контейнер погоды
-weatherContainer.appendChild(aurora);
+  const randomNumber = Math.random();
 
-// Функция для отображения или скрытия элемента северного сияния
-function toggleAurora() {
-  if (weather === "snow") {
-    aurora.style.display = "block";
+  if (randomNumber > 0.5) {
+    aurora = document.createElement("div");
+    aurora.classList.add("aurora-Blue");
+    weatherContainer.appendChild(aurora);
   } else {
-    aurora.style.display = "none";
+    aurora = document.createElement("div");
+    aurora.classList.add("aurora-Green");
+    weatherContainer.appendChild(aurora);
   }
-}
 
-// Проверяем переменную weather через определенный промежуток времени
-setInterval(() => {
-  toggleAurora();
-}, 1000); // Проверяем каждые 1000 миллисекунд (1 секунда)
+  weatherContainer.appendChild(aurora);
+
+  function toggleAurora() {
+    if (weather === "snow" && hour === "night") {
+      aurora.style.display = "block";
+    } else {
+      aurora.style.display = "none";
+    }
+  }
+
+  setInterval(() => {
+    toggleAurora();
+  }, 2000);
   // ====================================================================================================================
   function checkElements(elements, container) {
     for (let i = elements.length - 1; i >= 0; i--) {
       const element = elements[i];
-  
-      if (element && (element.y >= container.offsetHeight || element.x >= container.offsetWidth || element.x <= 0)) {
+
+      if (
+        element &&
+        (element.y >= container.offsetHeight ||
+          element.x >= container.offsetWidth ||
+          element.x <= 0)
+      ) {
         elements.splice(i, 1);
       }
     }
     // console.log(`Количество элементов: ${elements.length}`)
   }
-  
+
   setInterval(() => {
     checkElements(raindrops, weatherContainer);
     checkElements(snowflakes, weatherContainer);
   }, 100);
-  
+
   const { raindrops } = generateRain();
   const { snowflakes } = generateSnowflakes();
   // ====================================================================================================================
