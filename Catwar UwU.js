@@ -12,7 +12,7 @@
 // @downloadURL  https://github.com/Ibirtem/CatWar/raw/main/Catwar%20UwU.js
 // @grant        GM_addStyle
 // @license      MIT
-// @iconURL      https://i.imgur.com/mIxnjHa.png
+// @iconURL      https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png
 // ==/UserScript==
 
 "use strict"; // Делаю вид что крутой.
