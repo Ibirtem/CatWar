@@ -1151,6 +1151,7 @@ if (window.location.href === targetCW3) {
       checkElements(raindrops, weatherContainer);
       checkElements(snowflakes, weatherContainer);
       checkElements(pixelSnowflakes, weatherContainer);
+      checkElements(pixelRaindrops, weatherContainer);
     }, 120);
   }
   // ====================================================================================================================
