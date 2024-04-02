@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Catwar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.7.0-03.24
+// @version      v1.7.1-04.24
 // @description  Визуальное обновление CatWar'а.
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -48,31 +48,28 @@ const uwusettings = `
     <hr>
   <div id="news">
 
-    <button id="news-button">С юбилеем в 1000+ строк кода меня! (Половина из них это даже не код...) Вы не представляете, что добавилось в v1.7.0! А-а, вы уже заметили...</button>
-    <ul id="news-list" style="display: none;">
-      <h4>Главное</h4>
-      <li>Minecraft частицы!</li>
-      <li>Прям реальна Minecraft! Даже не ретекстура, а собственные новые частицы со своей физикой. Вероятней всего отправная точка для чего-то большего ;)</li>
+    <button id="news-button">v1.7.1 - Время бесполезных фиксов, правок, редизайнов и новых переписей кода.</button>
+    <div id="news-list" style="display: none;">
+      <h3>Главное</h3>
+      <p>— Ну и что это такое...? Отвратительно прелестно, прелестно отвратительно, не так ли?</p>
       <hr>
-      <h4>Внешний вид</h4>
-      <li>Стиль, делающий здесь плюсики зелёным, теперь не применяется ко всему CatWar'у.</li>
-      <li>Побольше информации в строчках "UserScript".</li>
-      <li>Изменил аж одну букву в одном месте. Вы никогда не узнаете какую.</li>
-      <li>Для большей красоты и наглядности решил делить новости классной новой стильной линией.</li>
-      <li>Вы уже видели эти новые стильные переключатели сверху??????</li>
-      <li>Новый шрифт "Montserrat" для моего скрипта/мода. Долго выбирал, сложно было, даже думал остаться на стандарт CatWar'овском...</li>
+      <h3>Внешний вид</h3>
+      <p>— Дофиксил иконку скрипта/мода в UserScript.</p>
+      <p>— Теперь Северное Сияние включается ещё и в Самую-Яркую-Ночь в Северном Клане.</p>
+      <p>— Решил убрать затемнение настроек, чтобы привести к более единой "стеклянной" теме моего скрипта/мода.</p>
+      <p>— Отдал определение цвета текста настроек CatWar'у и его дизайнам.</p>
+      <p>— Аж поменял иконочку Расширенных настроек. Зачем не знаю. Выглядит классней. Подстать иконке скрипта.</p>
+      <p>— УЛЬТРА МЕГА РЕДИЗАЙН НОВОСТЕЙ (Того, что вы читаете). Вряд ли все дизайнерские измнения приживутся надолго, так как скорее всего блог новостей и настроек в целом я попробую переделать в будущем. Да, очередной редизайн!</p>
       <hr>
-      <h4>Изменения кода</h4>
-      <li>Чу-чу-чуть уменьшено количество всех частиц.</li>
-      <li>Теперь модификатор погоды делит целиком размер капли (Точнее, теперь модификатор так же влияет и на ширину)</li>
-      <li>Мучительная перепись определения температуры игровой. Надеюсь в будущем облегчит добавления новых значений. Кетвар, лопни со своими сто пяцот градиентов.</li>
-      <li>Поэтому неизвестная температура теперь известна. Временно.</li>
-      <li>Ещё более мучительная перепись генератора частиц, чтобы понять, что старый был не так уж и плох, вернуться к нему, и поплакать что я зря потерял 10 часов своей жизни и последнюю клетку мозга...</li>
-      <li>...и ещё одна попытка переписи из-за надобности хоть какой-то оптимизации.</li>
-      <li>В связи с этим смена погоды более отзывчивая.</li>
+      <h3>Изменения кода</h3>
+      <p>— Я забыл добавить критично важную подчистку пиксельных капель, но вы скорее всего этого и не заметили, так как выпустил вручную Хотфикс в версию 1.7.0.</p>
+      <p>— Все изображения теперь берутся с GitHub'а. Так они с меньшим шансом в будущем потеряются или сломаются, а так же легче ищутся и понимаются в самом коде.</p>
+      <p>— Почистил и упростил логику создания Северного Сияния.</p>
+      <p>— Чуть-чу-чуть почистил физику частиц от лишних вычислений и изменил их логику для более интересного внешнего вида.</p>
+      <p>— Больше строчек кода выключается при выключенной настройки генерации погоды, а значит и меньше влияния на игровую. Оптимизация!</p>
       <hr>
-      <p>Дата выпуска: 31.03.24</p>
-    </ul>
+      <p>Дата выпуска: 03.04.24</p>
+    </div>
 
   </div>
 </div>
@@ -82,7 +79,7 @@ const uwusettings = `
 const extendedSettingsButton = `
 <div>
   <button type="button" id="extended-settings-button">
-    <img src="https://i.imgur.com/082BGVV.png" alt="Иконка" width="36" height="36">
+    <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png" alt="Иконка" width="36" height="36">
   </button>
 
   <div id="extended-settings-container">
@@ -91,9 +88,9 @@ const extendedSettingsButton = `
       <h3>Переключить погоду</h3>
       <input type="range" min="1" max="3" value="1" class="slider" id="manualWeather" list="WeatherStep">
         <datalist id="WeatherStep">
-          <img src="https://i.imgur.com/0UnI7ib.png" width="36" height="36" option value="1"></option>
-          <img src="https://i.imgur.com/AyN7mzf.png" width="36" height="36" option value="2"></option>
-          <img src="https://i.imgur.com/vN0cXAr.png" width="36" height="36" option value="3"></option>
+          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/sunny.png" width="36" height="36" option value="1"></option>
+          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/rain_cloud.png" width="36" height="36" option value="2"></option>
+          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/snow_cloud.png" width="36" height="36" option value="3"></option>
         </datalist>
         <div id="temperature-container">
           <p id="temperature" title="На это умножается скорость частиц и делится их размер. В будущем будет возможность сохранять и изменять это значение под свой вкус.">[?] Текущий модификатор: ...уточнение...</p>
@@ -102,13 +99,13 @@ const extendedSettingsButton = `
         <h3>Выбрать Северное Сияние</h3>
       <div class="button-container">
         <button type="button" id="manualAurora_Off">
-          <img src="https://i.imgur.com/1eaHZjE.png" alt="Иконка" width="48" height="48">
+          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96.png" alt="Иконка" width="48" height="48">
         </button>
         <button type="button" id="manualAurora_B">
-          <img src="https://i.imgur.com/5a6SH2i.png" alt="Иконка" width="48" height="48">
+          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96_blue.png" alt="Иконка" width="48" height="48">
         </button>
         <button type="button" id="manualAurora_G">
-          <img src="https://i.imgur.com/hx0d8mP.png" alt="Иконка" width="48" height="48">
+          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96_green.png" alt="Иконка" width="48" height="48">
         </button>
       </div>
     </div>
@@ -124,7 +121,8 @@ const extendedSettingsButton = `
 // ====================================================================================================================
 
 // ====================================================================================================================
-// Стили. Наверно. Не проверяйте пожалуйста, я тут потерялся.
+// Стили. Наверно. Не проверяйте пожалуйста, я тут потерялся. 
+// Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд
 // TODO - Унифицировать шрифты, цвета текстов, прозрачность, закруглённость штучек ну кароче всё надо.
 // TODO - Северное Сияние доработать, чтобы лепить снизу сверху или в середине.
 let css = `
@@ -141,7 +139,8 @@ let css = `
 #uwusettings {
   font-family: "Montserrat", sans-serif;
   margin: 0 auto;
-  backdrop-filter: blur(8px) brightness(70%);
+  backdrop-filter: blur(12px);
+  background-color: rgba(255,255,255,0.03);
   border-radius: 20px;
   padding: 15px;
   border: 1px solid rgba(255,255,255,0.1);
@@ -153,7 +152,6 @@ let css = `
   margin-top: 15px;
   margin-bottom: 15px;
   text-align: center;
-  color: white;
 }
 
 #uwusettings h4 {
@@ -164,18 +162,15 @@ let css = `
 
 #uwusettings p {
   margin-bottom: 5px;
-  color: white;
   font-size: 15px;
 }
 
 #uwusettings label {
-  color: white;
   font-size: 16px;
 }
 
 #uwusettings ul {
   font-family: "Montserrat", sans-serif;
-  color: white;
   list-style-type: "+ ";
 }
 
@@ -222,10 +217,6 @@ let css = `
   left: calc(100% - 4px);
 }
 
-#news-list li::marker {
-  color: green;
-}
-
 .rounded-image {
   background-repeat: repeat;
   background-attachment: fixed;
@@ -253,7 +244,7 @@ let css = `
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -276,12 +267,12 @@ let css = `
   right: 30px;
   width: 400px;
   height: 400px;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
   border-radius: 10px;
   display: none;
   pointer-events: auto;
 
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
   
   display: grid;
@@ -314,16 +305,25 @@ let css = `
 #news-button,
 #news-list {
   font-family: "Montserrat", sans-serif;
-  color: white;
   font-size: 15px;
   cursor: pointer;
+}
+
+#news-list h3 {
+  margin-left: 40px;
+}
+
+#news-list p {
+  margin-top: 3px;
+  margin-bottom: 3px;
+  margin-left: 20px;
 }
 
 #aurora-settings-panel {
   width: 100%;
   border-radius: 10px;
   
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
   
   padding: 15px;
@@ -349,8 +349,8 @@ let css = `
   height: 20px;
   background: rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.1);
   cursor: pointer;
   transform: translateY(-35%);
@@ -369,8 +369,8 @@ let css = `
   background: rgba(255, 255, 255, 0.3);
   border-radius: 4px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
 }
@@ -420,7 +420,6 @@ let css = `
 .aurora-Blue,
 .aurora-Green {
   transform: translate(0, 60%);
-  display: none;
   z-index: -1;
 
   position: fixed;
@@ -507,6 +506,7 @@ function handleSettingsState(settingsId, localStorageKey, defaultValue) {
   });
 }
 
+// Кнопка Новостей
 window.addEventListener("load", () => {
   const newsButton = document.getElementById("news-button");
   const newsList = document.getElementById("news-list");
@@ -560,30 +560,20 @@ if (window.location.href === targetCW3) {
           panel.style.display === "block" ? "none" : "block";
       });
 
-    var manualAurora = false;
-
     const manualAuroraOffButton = document.getElementById("manualAurora_Off");
     const manualAuroraBButton = document.getElementById("manualAurora_B");
     const manualAuroraGButton = document.getElementById("manualAurora_G");
 
     manualAuroraOffButton.addEventListener("click", () => {
-      manualAurora = false;
       removeAurora();
-      toggleAurora();
     });
 
     manualAuroraBButton.addEventListener("click", () => {
-      manualAurora = true;
-      randomNumber = 0.6;
-      removeAurora();
-      toggleAurora();
+      createAurora("blue");
     });
 
     manualAuroraGButton.addEventListener("click", () => {
-      manualAurora = true;
-      randomNumber = 0.1;
-      removeAurora();
-      toggleAurora();
+      createAurora("green");
     });
   }
   // ====================================================================================================================
@@ -644,6 +634,9 @@ if (window.location.href === targetCW3) {
             } else {
               currentWeather = "snow";
             }
+            break;
+          case 22:
+            currentWeather = "northernLights";
             break;
           default:
             currentWeather = "clear";
@@ -708,19 +701,19 @@ if (window.location.href === targetCW3) {
       const temperatureRanges = [
         { start: 203, end: 206, temperature: -1, description: "Холодно" },
         { start: 206, end: 210, temperature: 0, description: "Прохладно" },
-        { start: 30, end: 31, temperature: 1, description: "Тепло" },
+        { start: 23, end: 31, temperature: 1, description: "Тепло" },
       ];
-      
+
       const backgroundColor = hexToHSL(foundBackground);
       let foundTemperature = null;
-      
+
       for (const range of temperatureRanges) {
         if (isHueInRange(backgroundColor.h, range.start, range.end)) {
           foundTemperature = range;
           break;
         }
       }
-      
+
       if (foundTemperature) {
         currentTemperature = foundTemperature.temperature;
         temperatureDescription = foundTemperature.description;
@@ -819,45 +812,53 @@ if (window.location.href === targetCW3) {
 
   const images = {
     pixelSnow: [
-      { url: "https://i.imgur.com/KaUL6iH.png" },
-      { url: "https://i.imgur.com/VEuBw9m.png" }
+      {
+        url: "https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/snowflake1.png",
+      },
+      {
+        url: "https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/snowflake2.png",
+      },
     ],
     pixelRain: [
-      { url: "https://i.imgur.com/cwr1iG6.png" },
-      { url: "https://i.imgur.com/Y0XIP0f.png" }
+      {
+        url: "https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/rain1.png",
+      },
+      {
+        url: "https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/rain2.png",
+      },
     ],
   };
-  
+
   async function loadImages(type) {
     const imagesForType = images[type];
     if (!imagesForType) {
       console.error(`Чё ета...?: ${type}`);
       return;
     }
-  
+
     const promises = [];
-  
+
     for (const image of imagesForType) {
-      promises.push(new Promise((resolve, reject) => {
-        const img = new Image();
-        img.src = image.url;
-        img.onload = function() {
-          image.image = this;
-          resolve();
-        };
-        img.onerror = function() {
-          console.error(`Чёта не скачалось: ${image.url}`);
-          reject();
-        };
-      }));
+      promises.push(
+        new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = image.url;
+          img.onload = function () {
+            image.image = this;
+            resolve();
+          };
+          img.onerror = function () {
+            console.error(`Чёта не скачалось: ${image.url}`);
+            reject();
+          };
+        })
+      );
     }
-  
+
     await Promise.all(promises);
   }
   loadImages("pixelSnow");
   loadImages("pixelRain");
-
-  const weatherParticles = []; // Ну всё, начинается массивное насилование кода.
 
   const { raindrops } = generateRain();
   const { snowflakes } = generateSnowflakes();
@@ -884,9 +885,9 @@ if (window.location.href === targetCW3) {
       }
       const x = Math.random() * weatherCanvas.width;
       const y = Math.random() * -100;
-      const length = (Math.random() * 10 + 50) / weatherModifier;
+      const length = (Math.random() * 20 + 40) / weatherModifier;
       const width = (Math.random() * 1 + 1) / weatherModifier;
-      const ySpeed = (length * 0.2) * weatherModifier;
+      const ySpeed = length * 0.2 * weatherModifier;
       const xSpeed = Math.random() * 1;
 
       return { x, y, length, width, ySpeed, xSpeed };
@@ -931,9 +932,9 @@ if (window.location.href === targetCW3) {
       const y = Math.random() * -100;
       const x = Math.random() * weatherCanvas.width;
       const size = (Math.random() * 5 + 2) / weatherModifier;
-      const ySpeed = size * 0.14 * weatherModifier;
-      const xSpeed = size * (Math.random() - Math.random()) * 0.02;
-    
+      const ySpeed = size * 0.1 * weatherModifier;
+      const xSpeed = (Math.random() - Math.random()) * 0.2;
+
       return { x, y, size, ySpeed, xSpeed };
     }
 
@@ -949,7 +950,7 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   function generatePixelRain() {
     const pixelRaindrops = [];
-  
+
     setInterval(() => {
       if (currentWeather === "pixelRain") {
         for (let i = 0; i < 8; i++) {
@@ -960,7 +961,7 @@ if (window.location.href === targetCW3) {
         }
       }
     }, 80);
-  
+
     function generatePixelRaindrop() {
       if (document.hidden) {
         return;
@@ -968,22 +969,23 @@ if (window.location.href === targetCW3) {
       const x = Math.random() * weatherCanvas.width;
       const y = Math.random() * -100;
       const size = (Math.random() * 26 + 26) / Math.pow(weatherModifier, 0.5);
-      const ySpeed = (size * 0.2 * Math.pow(weatherModifier, 0.5));
+      const ySpeed = size * 0.2 * Math.pow(weatherModifier, 0.5);
       const xSpeed = Math.random() * 0.2 - 0.1;
-      const imageData = images.pixelRain[Math.floor(Math.random() * images.pixelRain.length)];
+      const imageData =
+        images.pixelRain[Math.floor(Math.random() * images.pixelRain.length)];
       const image = imageData.image;
-    
+
       return { x, y, size, ySpeed, xSpeed, image };
     }
-  
+
     return { pixelRaindrops };
   }
-  
+
   function drawPixelRaindrop(pixelRaindrop) {
     const imageWidth = pixelRaindrop.image.width;
     const imageHeight = pixelRaindrop.image.height;
     const scaleFactor = pixelRaindrop.size / Math.max(imageWidth, imageHeight);
-  
+
     weatherCtx.drawImage(
       pixelRaindrop.image,
       pixelRaindrop.x,
@@ -1007,7 +1009,6 @@ if (window.location.href === targetCW3) {
       }
     }, 120);
 
-  
     function generatePixelSnowflake() {
       if (document.hidden) {
         return;
@@ -1015,30 +1016,25 @@ if (window.location.href === targetCW3) {
       const y = Math.random() * -100;
       const x = Math.random() * weatherCanvas.width;
       const size = (Math.random() * 8 + 8) / Math.pow(weatherModifier, 0.8); // TODO - Протестить, сильно ли влияет Math.pow на производительность или нет
-      const ySpeed = (size * 0.12 * Math.pow(weatherModifier, 0.8)) - 0.6;
-      const xSpeed = size * (Math.random() - Math.random()) * 0.02;
-      const imageData = images.pixelSnow[Math.floor(Math.random() * images.pixelSnow.length)];
+      const ySpeed = size * 0.1 * Math.pow(weatherModifier, 0.8) - 0.6;
+      const xSpeed = (Math.random() - Math.random()) * 0.2;
+      const imageData =
+        images.pixelSnow[Math.floor(Math.random() * images.pixelSnow.length)];
       const image = imageData.image;
-  
+
       return { x, y, size, ySpeed, xSpeed, image };
     }
-  
+
     return { pixelSnowflakes };
   }
 
   function drawPixelSnowflake(x, y, size, image) {
-    weatherCtx.drawImage(
-      image,
-      x - size / 2,
-      y - size / 2,
-      size,
-      size
-    );
+    weatherCtx.drawImage(image, x - size / 2, y - size / 2, size, size);
   }
   // ====================================================================================================================
   function animateWeather() {
     weatherCtx.clearRect(0, 0, weatherCanvas.width, weatherCanvas.height);
-  
+
     if (raindrops.length > 0) {
       for (const raindrop of raindrops) {
         raindrop.y += raindrop.ySpeed;
@@ -1046,7 +1042,7 @@ if (window.location.href === targetCW3) {
         drawRaindrop(raindrop);
       }
     }
-  
+
     if (snowflakes.length > 0) {
       for (const snowflake of snowflakes) {
         snowflake.y += snowflake.ySpeed;
@@ -1054,12 +1050,17 @@ if (window.location.href === targetCW3) {
         drawSnowflake(snowflake.x, snowflake.y, snowflake.size);
       }
     }
-  
+
     if (pixelSnowflakes.length > 0) {
       for (const pixelSnowflake of pixelSnowflakes) {
         pixelSnowflake.y += pixelSnowflake.ySpeed;
         pixelSnowflake.x += pixelSnowflake.xSpeed;
-        drawPixelSnowflake(pixelSnowflake.x, pixelSnowflake.y, pixelSnowflake.size, pixelSnowflake.image);
+        drawPixelSnowflake(
+          pixelSnowflake.x,
+          pixelSnowflake.y,
+          pixelSnowflake.size,
+          pixelSnowflake.image
+        );
       }
     }
 
@@ -1070,61 +1071,56 @@ if (window.location.href === targetCW3) {
         drawPixelRaindrop(pixelRaindrop);
       }
     }
-  
+
     requestAnimationFrame(animateWeather);
   }
-  
-  animateWeather();
-  
+
+  if (weatherSettings === "true" || extendedSettings === "true") {
+    animateWeather();
+  }
+
   // ====================================================================================================================
   let aurora;
+  const auroraColors = {
+    green: "aurora-Green",
+    blue: "aurora-Blue",
+  };
 
-  var randomNumber = Math.random();
+  function removeAurora() {
+    if (aurora) {
+      weatherContainer.removeChild(aurora);
+      aurora = null;
+    }
+  }
 
   function createAurora(color) {
-    if (
-      !aurora ||
-      aurora.classList.contains(
-        color === "green" ? "aurora-Blue" : "aurora-Green"
-      )
-    ) {
+    if (!aurora || !aurora.classList.contains(auroraColors[color])) {
+      removeAurora();
       aurora = document.createElement("div");
-      aurora.classList.add(color === "green" ? "aurora-Green" : "aurora-Blue");
+      aurora.classList.add(auroraColors[color]);
       weatherContainer.appendChild(aurora);
     }
   }
 
-  function removeAurora() {
-    if (aurora) {
-      aurora.style.display = "none";
-    }
-  }
-
   function toggleAurora() {
-    if (extendedSettings === "true" && !manualAurora) {
-      removeAurora();
-    } else if (extendedSettings === "false" && !manualAurora) {
+    if (extendedSettings !== "true") {
       if (
-        currentWeather === "clear" &&
-        currentHour === "night" &&
-        (currentSeason === "autumn" || currentSeason === "winter")
+        (currentWeather === "clear" &&
+          currentHour === "night" &&
+          (currentSeason === "autumn" || currentSeason === "winter")) ||
+        currentWeather === "northernLights"
       ) {
-        if (randomNumber > 0.5) {
-          createAurora("green");
-        } else {
-          createAurora("blue");
+        if (!aurora) {
+          const randomNumber = Math.random();
+          if (randomNumber > 0.5) {
+            createAurora("green");
+          } else {
+            createAurora("blue");
+          }
         }
-        aurora.style.display = "block";
       } else {
         removeAurora();
       }
-    } else {
-      if (randomNumber > 0.5) {
-        createAurora("blue");
-      } else {
-        createAurora("green");
-      }
-      aurora.style.display = "block";
     }
   }
 
