@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Catwar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.7.1-04.24
+// @version      v1.8.0-04.24
 // @description  Визуальное обновление CatWar'а.
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -30,9 +30,9 @@ const targetCW3 = "https://catwar.su/cw3/";
 const uwusettings = `
 <div id="uwusettings">
   <h1>Настройки CatWar UwU</h1>
-  <hr>
+    <hr>
     <h2>Природные явления</h2>
-    <div class="weather-toggle">
+    <div>
       <p>Отображение динамичной погоды в Игровой, такие как дождь или снегопад.</p>
       <input type="checkbox" id="weather-enabled">
       <label for="weather-enabled">Показывать погоду</label>
@@ -43,32 +43,61 @@ const uwusettings = `
 
       <p>Замена стандартных частиц на знакомые всеми пиксельные частицы.</p>
       <input type="checkbox" id="minecraft-style">
-      <label for="weather-enabled">Minecraft частицы</label>
+      <label for="minecraft-style-enabled">Minecraft частицы</label>
     </div>
     <hr>
+    <h2>Оформление</h2>
+    <div>
+      <p>Ставит фон на страницу, повторяющий фон Игровой локации, а так же размывает и затемняет его.</p>
+      <input type="checkbox" id="background-repeat">
+      <label for="weather-enabled">Фон страницы</label>
+
+      <p>Перезаписывает повторение фона игровой на собственное изображение. Размытие и затемнение всё ещё работают.</p>
+      <input type="checkbox" id="background-user">
+      <label for="background-user-enabled">Использовать своё изображение</label>
+      <input type="text" id="SettingImageURLField" placeholder="Вставьте URL изображения">
+      <button id="SettingSaveButton1">Сохранить</button>
+
+      <p>Здесь вы можете выставить собственную тему для игровой. Принимаются "HEX" значения, а значит поддерживается ещё и прозрачность. Будьте аккуратны и не забывайте выключать другие темы в других скриптах/модах. Очистите поле чтобы вернуться к стандартным цветам.</p>
+      <input type="checkbox" id="user-theme">
+      <label for="user-theme-enabled">Использовать свои цвета</label>
+      <div id="color-picker">
+        <input type="text" id="SettingBackgroundColorField" placeholder="Вставьте HEX код"> <label>Цвет фона</label>
+        <p></p>
+        <input type="text" id="SettingColor1Field" placeholder="Вставьте HEX код"> <label>Основной цвет блоков</label>
+        <p></p>
+        <input type="text" id="SettingColor2Field" placeholder="Вставьте HEX код"> <label>Основной цвет чата</label>
+        <p></p>
+        <input type="text" id="SettingColor3Field" placeholder="Вставьте HEX код"> <label>Цвет текста</label>
+        <p></p>
+        <input type="text" id="SettingColor4Field" placeholder="Вставьте HEX код"> <label>Цвет ссылок</label>
+        <p></p>
+        <input type="text" id="SettingColor5Field" placeholder="Вставьте HEX код"> <label>Акценты</label>
+        <p></p>
+        <button id="SettingSaveButton2">Сохранить</button>
+        <p>Отличный сайт для выбора цветов с поддержкой прозрачности: https://rgbacolorpicker.com/color-wheel-picker</p>
+      </div>
+    </div>
+
   <div id="news">
 
-    <button id="news-button">v1.7.1 - Время бесполезных фиксов, правок, редизайнов и новых переписей кода.</button>
+    <button id="news-button">v1.8.0 - Ой а что ето тут тако-о-ое?</button>
     <div id="news-list" style="display: none;">
       <h3>Главное</h3>
-      <p>— Ну и что это такое...? Отвратительно прелестно, прелестно отвратительно, не так ли?</p>
+      <p>— Медленно перевожу свой Stylus стиль в сам мод, что позволит мне иметь куда больше возможностей и предоставление удобных настроек пользователю.</p>
       <hr>
       <h3>Внешний вид</h3>
-      <p>— Дофиксил иконку скрипта/мода в UserScript.</p>
-      <p>— Теперь Северное Сияние включается ещё и в Самую-Яркую-Ночь в Северном Клане.</p>
-      <p>— Решил убрать затемнение настроек, чтобы привести к более единой "стеклянной" теме моего скрипта/мода.</p>
-      <p>— Отдал определение цвета текста настроек CatWar'у и его дизайнам.</p>
-      <p>— Аж поменял иконочку Расширенных настроек. Зачем не знаю. Выглядит классней. Подстать иконке скрипта.</p>
-      <p>— УЛЬТРА МЕГА РЕДИЗАЙН НОВОСТЕЙ (Того, что вы читаете). Вряд ли все дизайнерские измнения приживутся надолго, так как скорее всего блог новостей и настроек в целом я попробую переделать в будущем. Да, очередной редизайн!</p>
+      <p>— Добавлена возможность... эм... "Ставит фон на страницу, повторяющий фон Игровой локации, а так же размывает и затемняет его."</p>
+      <p>— Или ставить собственное изображение.</p>
+      <p>— А так же возможность выставлять собственные цвета. Наверное в будущем добавлю потом расширенные настройки цветов, чтобы побольше элементов настраивать. Но я пока доволен и таким результатом.</p>
       <hr>
       <h3>Изменения кода</h3>
-      <p>— Я забыл добавить критично важную подчистку пиксельных капель, но вы скорее всего этого и не заметили, так как выпустил вручную Хотфикс в версию 1.7.0.</p>
-      <p>— Все изображения теперь берутся с GitHub'а. Так они с меньшим шансом в будущем потеряются или сломаются, а так же легче ищутся и понимаются в самом коде.</p>
-      <p>— Почистил и упростил логику создания Северного Сияния.</p>
-      <p>— Чуть-чу-чуть почистил физику частиц от лишних вычислений и изменил их логику для более интересного внешнего вида.</p>
-      <p>— Больше строчек кода выключается при выключенной настройки генерации погоды, а значит и меньше влияния на игровую. Оптимизация!</p>
+      <p>— Погода фиксируется к окну, а не странице.</p>
+      <p>— Теперь модификатор погоды не будет только 1 или 2, а ещё и значениями между ними.</p>
+      <p>— Красивенько научился вставлять значения в текста. Вам это ничего не говорит, а за себя я чуть даже порадовался.</p>
+      <p>— Неизвестная температура теперь известна.</p>
       <hr>
-      <p>Дата выпуска: 03.04.24</p>
+      <p>Дата выпуска: 05.04.24</p>
     </div>
 
   </div>
@@ -121,7 +150,7 @@ const extendedSettingsButton = `
 // ====================================================================================================================
 
 // ====================================================================================================================
-// Стили. Наверно. Не проверяйте пожалуйста, я тут потерялся. 
+// Стили. Наверно. Не проверяйте пожалуйста, я тут потерялся.
 // Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд
 // TODO - Унифицировать шрифты, цвета текстов, прозрачность, закруглённость штучек ну кароче всё надо.
 // TODO - Северное Сияние доработать, чтобы лепить снизу сверху или в середине.
@@ -223,6 +252,30 @@ let css = `
   border-radius: 20px;
 }
 
+#SettingSaveButton1, #SettingSaveButton2 {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#SettingSaveButton1:hover,
+#SettingSaveButton2:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+#SettingImageURLField, #SettingBackgroundColorField,
+#SettingColor1Field, #SettingColor2Field, #SettingColor3Field, #SettingColor4Field, #SettingColor5Field {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 10px;
+  outline: none;
+  margin-right: 10px;
+}
+
 #global-container {
   width: 100%;
   height: 100%;
@@ -235,6 +288,7 @@ let css = `
 
 .weatherCanvas {
   pointer-events: none;
+  position: fixed;
 }
 
 #extended-settings-button {
@@ -292,7 +346,7 @@ let css = `
   width: 100%;
   border-radius: 10px;
   
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
   
   padding: 15px;
@@ -300,6 +354,15 @@ let css = `
   flex-direction: column;
   justify-content: space-around;
   box-sizing: border-box;
+}
+
+#color-picker {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  margin-top: 10px;
+  padding: 15px;
+  border-radius: 10px;
 }
 
 #news-button,
@@ -525,9 +588,58 @@ window.addEventListener("load", () => {
 // Стандарт значения настроек и их вставка
 if (targetSettings.test(window.location.href)) {
   createSettingsBlock("uwu-settings", uwusettings);
-  handleSettingsState("weather-enabled", "weatherSettings", "true");
+  handleSettingsState("weather-enabled", "weatherSettings", "false");
   handleSettingsState("extended-settings", "extendedSettings", "false");
   handleSettingsState("minecraft-style", "minecraftStyle", "false");
+  handleSettingsState("background-repeat", "backgroundRepeat", "false");
+  handleSettingsState("background-user", "backgroundUser", "false");
+  handleSettingsState("user-theme", "userTheme", "false");
+}
+
+if (targetSettings.test(window.location.href)) {
+  const SettingImageURLField = document.getElementById("SettingImageURLField");
+  const SettingSaveButton1 = document.getElementById("SettingSaveButton1");
+  const savedURL = localStorage.getItem("backgroundUserImageURL");
+
+  if (savedURL) {
+    SettingImageURLField.value = savedURL;
+  }
+
+  SettingSaveButton1.addEventListener("click", () => {
+    localStorage.setItem("backgroundUserImageURL", SettingImageURLField.value);
+  });
+
+  const SettingBackgroundColorField = document.getElementById(
+    "SettingBackgroundColorField"
+  );
+  const SettingColor1Field = document.getElementById("SettingColor1Field");
+  const SettingColor2Field = document.getElementById("SettingColor2Field");
+  const SettingColor3Field = document.getElementById("SettingColor3Field");
+  const SettingColor4Field = document.getElementById("SettingColor4Field");
+  const SettingColor5Field = document.getElementById("SettingColor5Field");
+  const SettingSaveButton2 = document.getElementById("SettingSaveButton2");
+
+  window.onload = function () {
+    SettingBackgroundColorField.value =
+      localStorage.getItem("SettingBackgroundColor") || "";
+    SettingColor1Field.value = localStorage.getItem("SettingColor1") || "";
+    SettingColor2Field.value = localStorage.getItem("SettingColor2") || "";
+    SettingColor3Field.value = localStorage.getItem("SettingColor3") || "";
+    SettingColor4Field.value = localStorage.getItem("SettingColor4") || "";
+    SettingColor5Field.value = localStorage.getItem("SettingColor5") || "";
+  };
+
+  SettingSaveButton2.addEventListener("click", function () {
+    localStorage.setItem(
+      "SettingBackgroundColor",
+      SettingBackgroundColorField.value
+    );
+    localStorage.setItem("SettingColor1", SettingColor1Field.value);
+    localStorage.setItem("SettingColor2", SettingColor2Field.value);
+    localStorage.setItem("SettingColor3", SettingColor3Field.value);
+    localStorage.setItem("SettingColor4", SettingColor4Field.value);
+    localStorage.setItem("SettingColor5", SettingColor5Field.value);
+  });
 }
 // ====================================================================================================================
 
@@ -542,6 +654,16 @@ if (window.location.href === targetCW3) {
   const weatherSettings = localStorage.getItem("weatherSettings");
   const extendedSettings = localStorage.getItem("extendedSettings");
   const minecraftStyle = localStorage.getItem("minecraftStyle");
+  const backgroundRepeat = localStorage.getItem("backgroundRepeat");
+  const backgroundUser = localStorage.getItem("backgroundUser");
+  const backgroundUserImageURL = localStorage.getItem("backgroundUserImageURL");
+  const userTheme = localStorage.getItem("userTheme");
+  const SettingBackgroundColor = localStorage.getItem("SettingBackgroundColor");
+  const SettingColor1 = localStorage.getItem("SettingColor1");
+  const SettingColor2 = localStorage.getItem("SettingColor2");
+  const SettingColor3 = localStorage.getItem("SettingColor3");
+  const SettingColor4 = localStorage.getItem("SettingColor4");
+  const SettingColor5 = localStorage.getItem("SettingColor5");
   // ====================================================================================================================
   if (extendedSettings === "true") {
     const extendedSettingsButtonElement = document.createElement("div");
@@ -575,6 +697,107 @@ if (window.location.href === targetCW3) {
     manualAuroraGButton.addEventListener("click", () => {
       createAurora("green");
     });
+  }
+  // ====================================================================================================================
+  if (backgroundRepeat === "true") {
+    const cagesDiv = document.querySelector("#cages_div");
+
+    const backgroundDiv = document.createElement("div");
+    backgroundDiv.style.position = "fixed";
+    backgroundDiv.style.top = "-1%";
+    backgroundDiv.style.left = "-1%";
+    backgroundDiv.style.width = "102%";
+    backgroundDiv.style.height = "102%";
+    backgroundDiv.style.zIndex = "-1";
+    backgroundDiv.style.filter = "blur(12px)";
+    backgroundDiv.style.overflow = "hidden";
+    backgroundDiv.style.backgroundBlendMode = "overlay";
+    backgroundDiv.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+
+    function getBackgroundImageUrl() {
+      if (backgroundUser === "true") {
+        return backgroundUserImageURL;
+      } else {
+        const backgroundImageStyle =
+          window.getComputedStyle(cagesDiv).backgroundImage;
+        const url = backgroundImageStyle.match(/url\("?(.+?)"?\)/);
+        return url ? url[1] : null;
+      }
+    }
+
+    function updateBackgroundImage() {
+      const backgroundImageUrl = getBackgroundImageUrl();
+
+      if (backgroundImageUrl) {
+        backgroundDiv.style.backgroundImage = `url(${backgroundImageUrl})`;
+        backgroundDiv.style.backgroundSize = "cover";
+        backgroundDiv.style.backgroundPosition = "center";
+        backgroundDiv.style.backgroundRepeat = "no-repeat";
+      } else {
+        backgroundDiv.style.backgroundImage = "none";
+      }
+    }
+
+    updateBackgroundImage();
+    globalContainerElement.appendChild(backgroundDiv);
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (
+          mutation.type === "attributes" &&
+          mutation.attributeName === "style"
+        ) {
+          updateBackgroundImage();
+        }
+      });
+    });
+
+    observer.observe(cagesDiv, {
+      attributes: true,
+      attributeFilter: ["style"],
+    });
+  }
+  // ====================================================================================================================
+  if (userTheme === "true") {
+    const newStyle = document.createElement("style");
+    newStyle.innerHTML = `
+      body {
+        background: ${SettingBackgroundColor};
+      }
+
+      #tr_actions, #tr_actions > td, #tr_mouth, #tr_mouth > td, #info_main, #info_main > tbody > tr > td, #location, .small {
+        background-color: ${SettingColor1};
+      }
+    
+      #tr_chat {
+        background-color: ${SettingColor2};
+      }
+    
+      body, input, select, .ui-slider-handle {
+        color: ${SettingColor3};
+      }
+    
+      input, select, hr, .ui-slider-horizontal {
+        background-color: ${SettingColor5};
+        background: ${SettingColor5};
+        border: solid 1px ${SettingColor5};
+      }
+
+      .myname {
+        color: ${SettingColor5};
+      }
+
+      .move_name {
+        color: ${SettingColor3};
+        background-color: ${SettingColor2} !important;
+      }
+    
+      a, a:hover {
+        color: ${SettingColor4};
+      }
+    `;
+
+    document.head.appendChild(newStyle);
   }
   // ====================================================================================================================
   var currentWeather = "null";
@@ -699,9 +922,10 @@ if (window.location.href === targetCW3) {
       const foundBackground = backgroundValue[1];
 
       const temperatureRanges = [
-        { start: 203, end: 206, temperature: -1, description: "Холодно" },
-        { start: 206, end: 210, temperature: 0, description: "Прохладно" },
-        { start: 23, end: 31, temperature: 1, description: "Тепло" },
+        { start: 203, end: 206, temperature: -2, description: "Холодно" },
+        { start: 206, end: 210, temperature: -1, description: "Прохладно" },
+        { start: 21, end: 31, temperature: 1, description: "Тепло" },
+        { start: 10, end: 18, temperature: 2, description: "Жарковато" },
       ];
 
       const backgroundColor = hexToHSL(foundBackground);
@@ -718,28 +942,25 @@ if (window.location.href === targetCW3) {
         currentTemperature = foundTemperature.temperature;
         temperatureDescription = foundTemperature.description;
       } else {
-        currentTemperature = 0;
+        currentTemperature = 1;
         temperatureDescription =
           "Неизвестная температура. Разработчик скорее всего уже в курсе и в скором времени выпустит правку.";
       }
 
-      if (currentTemperature <= -3 || currentTemperature >= 3) {
-        weatherModifier = 1;
-      } else {
+      if (currentTemperature === 1 || currentTemperature === -1) {
         weatherModifier = 2;
+      } else if (currentTemperature === 2 || currentTemperature === -2) {
+        weatherModifier = 1.6;
+      } else {
+        weatherModifier = 1;
       }
 
       const temperatureDisplayElement = document.getElementById("temperature");
       if (temperatureDisplayElement) {
-        temperatureDisplayElement.innerHTML =
-          "[?] Текущий модификатор: " +
-          weatherModifier +
-          " (" +
-          temperatureDescription +
-          ")";
+        temperatureDisplayElement.innerHTML = `[?] Текущий модификатор: ${weatherModifier} (${temperatureDescription})`
       }
     } else {
-      console.log("...я снова потерялся...");
+      console.log("...я потерял бекграунд...");
     }
   }
 
