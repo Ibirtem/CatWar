@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Catwar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.8.0-04.24
+// @version      v1.8.1-04.24
 // @description  Визуальное обновление CatWar'а.
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -26,80 +26,143 @@ const targetCW3 = "https://catwar.su/cw3/";
 // ====================================================================================================================
 
 // ====================================================================================================================
-// div'ы Настроек
+// div'ы Настроек milky_way
 const uwusettings = `
 <div id="uwusettings">
   <h1>Настройки CatWar UwU</h1>
-    <hr>
-    <h2>Природные явления</h2>
-    <div>
-      <p>Отображение динамичной погоды в Игровой, такие как дождь или снегопад.</p>
-      <input type="checkbox" id="weather-enabled">
-      <label for="weather-enabled">Показывать погоду</label>
+  <hr>
+  <div id="button-container">
+    <button id="effects-button" class="active">
+      <h2>
+        Природные эффекты
+        <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png" alt="Иконка"
+          width="24" height="24" />
+      </h2>
+    </button>
+    <button id="theme-button">
+      <h2>
+        Оформление
+        <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/sparkles.png" alt="Иконка" width="24"
+          height="24" />
+      </h2>
+    </button>
+  </div>
+  <hr>
 
-      <p>Отображение кнопки Расширенных настроек погоды в Игровой. Временно выключает натуральную генерацию погоды.</p>
-      <input type="checkbox" id="extended-settings">
-      <label for="extended-settings">Расширенные настройки</label>
+  <div id="effects-panel">
+    <p>
+      Отображение динамичной погоды в Игровой, такие как дождь или снегопад.
+    </p>
+    <input type="checkbox" id="weather-enabled" />
+    <label for="weather-enabled">Показывать погоду</label>
 
-      <p>Замена стандартных частиц на знакомые всеми пиксельные частицы.</p>
-      <input type="checkbox" id="minecraft-style">
-      <label for="minecraft-style-enabled">Minecraft частицы</label>
-    </div>
-    <hr>
-    <h2>Оформление</h2>
-    <div>
-      <p>Ставит фон на страницу, повторяющий фон Игровой локации, а так же размывает и затемняет его.</p>
-      <input type="checkbox" id="background-repeat">
-      <label for="weather-enabled">Фон страницы</label>
+    <p>
+      Отображение кнопки Расширенных настроек погоды в Игровой. Временно
+      выключает натуральную генерацию погоды.
+    </p>
+    <input type="checkbox" id="extended-settings" />
+    <label for="extended-settings">Расширенные настройки</label>
 
-      <p>Перезаписывает повторение фона игровой на собственное изображение. Размытие и затемнение всё ещё работают.</p>
-      <input type="checkbox" id="background-user">
-      <label for="background-user-enabled">Использовать своё изображение</label>
-      <input type="text" id="SettingImageURLField" placeholder="Вставьте URL изображения">
-      <button id="SettingSaveButton1">Сохранить</button>
+    <p>Замена стандартных частиц на знакомые всеми пиксельные частицы.</p>
+    <input type="checkbox" id="minecraft-style" />
+    <label for="minecraft-style-enabled">Minecraft частицы</label>
+  </div>
 
-      <p>Здесь вы можете выставить собственную тему для игровой. Принимаются "HEX" значения, а значит поддерживается ещё и прозрачность. Будьте аккуратны и не забывайте выключать другие темы в других скриптах/модах. Очистите поле чтобы вернуться к стандартным цветам.</p>
-      <input type="checkbox" id="user-theme">
-      <label for="user-theme-enabled">Использовать свои цвета</label>
-      <div id="color-picker">
-        <input type="text" id="SettingBackgroundColorField" placeholder="Вставьте HEX код"> <label>Цвет фона</label>
-        <p></p>
-        <input type="text" id="SettingColor1Field" placeholder="Вставьте HEX код"> <label>Основной цвет блоков</label>
-        <p></p>
-        <input type="text" id="SettingColor2Field" placeholder="Вставьте HEX код"> <label>Основной цвет чата</label>
-        <p></p>
-        <input type="text" id="SettingColor3Field" placeholder="Вставьте HEX код"> <label>Цвет текста</label>
-        <p></p>
-        <input type="text" id="SettingColor4Field" placeholder="Вставьте HEX код"> <label>Цвет ссылок</label>
-        <p></p>
-        <input type="text" id="SettingColor5Field" placeholder="Вставьте HEX код"> <label>Акценты</label>
-        <p></p>
+  <div id="theme-panel">
+    <p>
+      Ставит фон на страницу, повторяющий фон Игровой локации, а так же
+      размывает и затемняет его.
+    </p>
+    <input type="checkbox" id="background-repeat" />
+    <label for="weather-enabled">Фон страницы</label>
+
+    <p>
+      Перезаписывает повторение фона игровой на собственное изображение.
+      Размытие и затемнение всё ещё работают.
+    </p>
+    <input type="checkbox" id="background-user" />
+    <label for="background-user-enabled">Использовать своё изображение</label>
+    <input type="text" id="SettingImageURLField" placeholder="Вставьте URL изображения" />
+    <button id="SettingSaveButton1">Сохранить</button>
+
+    <p>
+      Здесь вы можете выставить собственную тему для игровой. Принимаются "HEX"
+      значения, а значит поддерживается ещё и прозрачность. Будьте аккуратны и
+      не забывайте выключать другие темы в других скриптах/модах. Очистите поле
+      чтобы вернуться к стандартным цветам.
+    </p>
+    <input type="checkbox" id="user-theme" />
+    <label for="user-theme-enabled">Использовать свои цвета</label>
+    <div id="color-picker">
+      <div style="flex: 0 0 50%">
+        <input type="text" id="SettingBackgroundColorField" placeholder="Вставьте HEX код" />
+        <label>Цвет фона</label>
+      </div>
+      <div style="flex: 0 0 50%">
+        <input type="text" id="SettingColor1Field" placeholder="Вставьте HEX код" />
+        <label>Основной цвет блоков</label>
+      </div>
+      <div style="flex: 0 0 50%">
+        <input type="text" id="SettingColor2Field" placeholder="Вставьте HEX код" />
+        <label>Основной цвет чата</label>
+      </div>
+      <div style="flex: 0 0 50%">
+        <input type="text" id="SettingColor3Field" placeholder="Вставьте HEX код" />
+        <label>Цвет текста</label>
+      </div>
+      <div style="flex: 0 0 50%">
+        <input type="text" id="SettingColor4Field" placeholder="Вставьте HEX код" />
+        <label>Цвет ссылок</label>
+      </div>
+      <div style="flex: 0 0 50%">
+        <input type="text" id="SettingColor5Field" placeholder="Вставьте HEX код" />
+        <label title="Ваше имя в чате. Строка ввода сообщения. Кнопки. Слайдер громкости.">[?] Акценты 1</label>
+      </div>
+      <div style="flex: 0 0 50%">
+        <input type="text" id="SettingAccentColorField2" placeholder="Вставьте HEX код" />
+        <label title="Линии в чате и некоторых других частях.">[?] Акценты 2</label>
+      </div>
+      <div style="flex: 0 0 100%">
         <button id="SettingSaveButton2">Сохранить</button>
-        <p>Отличный сайт для выбора цветов с поддержкой прозрачности: https://rgbacolorpicker.com/color-wheel-picker</p>
+        <p>
+          Отличный сайт для выбора цветов с поддержкой прозрачности:
+          https://rgbacolorpicker.com/color-wheel-picker
+        </p>
       </div>
     </div>
+  </div>
 
-  <div id="news">
-
-    <button id="news-button">v1.8.0 - Ой а что ето тут тако-о-ое?</button>
-    <div id="news-list" style="display: none;">
+  <hr>
+  <div id="news-panel">
+    <button id="news-button">
+      v1.8.1 - Снова багофиксы, оптимизации, приколюхи и переоформления!
+    </button>
+    <div id="news-list" style="display: none">
       <h3>Главное</h3>
-      <p>— Медленно перевожу свой Stylus стиль в сам мод, что позволит мне иметь куда больше возможностей и предоставление удобных настроек пользователю.</p>
+      <p>
+        — Так как в будущем возможный прирост количества настроек, а скукоживать
+        всё я не особо рад, я решил сделать удобные переключаемые панели. Нет,
+        конечно в будущем будут скролл-бары, но сейчас такое решение мне кажется
+        более элегантное.
+      </p>
       <hr>
       <h3>Внешний вид</h3>
-      <p>— Добавлена возможность... эм... "Ставит фон на страницу, повторяющий фон Игровой локации, а так же размывает и затемняет его."</p>
-      <p>— Или ставить собственное изображение.</p>
-      <p>— А так же возможность выставлять собственные цвета. Наверное в будущем добавлю потом расширенные настройки цветов, чтобы побольше элементов настраивать. Но я пока доволен и таким результатом.</p>
+      <p>
+        — Мне не жалко ваши интернеты, поэтому держите ещё красивые иконочки и в
+        настройках.
+      </p>
+      <p>— Не явления, а эффекты. Пон?</p>
+      <p>— Вы видели эти новые переключаемые вкладки? Шик да?</p>
+      <p>— Больше Акцентов. Теперь 'hr линии' принимают отдельный цвет.</p>
+      <p>— Выдал им всплывашку за что отвечает тот или иной Акцент.</p>
+      <p>— Всплывающее окно при наведении на кота теперь тоже меняется от смены цветов.</p>
       <hr>
       <h3>Изменения кода</h3>
-      <p>— Погода фиксируется к окну, а не странице.</p>
-      <p>— Теперь модификатор погоды не будет только 1 или 2, а ещё и значениями между ними.</p>
-      <p>— Красивенько научился вставлять значения в текста. Вам это ничего не говорит, а за себя я чуть даже порадовался.</p>
-      <p>— Неизвестная температура теперь известна.</p>
-      <hr>
-      <p>Дата выпуска: 05.04.24</p>
-    </div>
+      <p>— Тут должно было быть как я круто измененил код, но я снова облажался, раньше было лучше, работает - не трогай, откаты вперёд.<p>
 
+      <hr>
+      <p>Дата выпуска: 06.04.24</p>
+    </div>
   </div>
 </div>
 `;
@@ -108,7 +171,8 @@ const uwusettings = `
 const extendedSettingsButton = `
 <div>
   <button type="button" id="extended-settings-button">
-    <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png" alt="Иконка" width="36" height="36">
+    <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png" alt="Иконка"
+      width="36" height="36">
   </button>
 
   <div id="extended-settings-container">
@@ -116,32 +180,42 @@ const extendedSettingsButton = `
       <p>Изменения, сделанные в этой панели, носят временный характер и не сохраняются.</p>
       <h3>Переключить погоду</h3>
       <input type="range" min="1" max="3" value="1" class="slider" id="manualWeather" list="WeatherStep">
-        <datalist id="WeatherStep">
-          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/sunny.png" width="36" height="36" option value="1"></option>
-          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/rain_cloud.png" width="36" height="36" option value="2"></option>
-          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/snow_cloud.png" width="36" height="36" option value="3"></option>
-        </datalist>
-        <div id="temperature-container">
-          <p id="temperature" title="На это умножается скорость частиц и делится их размер. В будущем будет возможность сохранять и изменять это значение под свой вкус.">[?] Текущий модификатор: ...уточнение...</p>
-        </div>
+      <datalist id="WeatherStep">
+        <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/sunny.png" width="36" height="36" option
+          value="1"></option>
+        <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/rain_cloud.png" width="36" height="36"
+          option value="2"></option>
+        <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/snow_cloud.png" width="36" height="36"
+          option value="3"></option>
+      </datalist>
+      <div id="temperature-container">
+        <p id="temperature"
+          title="На это умножается скорость частиц и делится их размер. В будущем будет возможность сохранять и изменять это значение под свой вкус.">
+          [?] Текущий модификатор: ...уточнение...</p>
+      </div>
 
-        <h3>Выбрать Северное Сияние</h3>
+      <h3>Выбрать Северное Сияние</h3>
       <div class="button-container">
         <button type="button" id="manualAurora_Off">
-          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96.png" alt="Иконка" width="48" height="48">
+          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96.png"
+            alt="Иконка" width="48" height="48">
         </button>
         <button type="button" id="manualAurora_B">
-          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96_blue.png" alt="Иконка" width="48" height="48">
+          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96_blue.png"
+            alt="Иконка" width="48" height="48">
         </button>
         <button type="button" id="manualAurora_G">
-          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96_green.png" alt="Иконка" width="48" height="48">
+          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96_green.png"
+            alt="Иконка" width="48" height="48">
         </button>
       </div>
     </div>
     <div id="aurora-settings-panel">
       <p>Изменения, сделанные в этой панели, сохранятся!</p>
-      <h5>Здесь будет возможность переместить Северное Сияние, исключать локации из генерации погоды, либо запрещать определённой погоде существовать на выбранной локации. Но это всё пока что лишь мечта...</h5>
-      <h5>А ещё держите маленький факт: Северные Сияния будет видно только ясной ночью, и только осенью и зимой. (А ещё, может быть, если я очень зажмочусь, то только в Северном Клане и Горах)</h5>
+      <h5>Здесь будет возможность переместить Северное Сияние, исключать локации из генерации погоды, либо запрещать
+        определённой погоде существовать на выбранной локации. Но это всё пока что лишь мечта...</h5>
+      <h5>А ещё держите маленький факт: Северные Сияния будет видно только ясной ночью, и только осенью и зимой. (А ещё,
+        может быть, если я очень зажмочусь, то только в Северном Клане и Горах)</h5>
     </div>
   </div>
 </div>
@@ -152,7 +226,7 @@ const extendedSettingsButton = `
 // ====================================================================================================================
 // Стили. Наверно. Не проверяйте пожалуйста, я тут потерялся.
 // Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд
-// TODO - Унифицировать шрифты, цвета текстов, прозрачность, закруглённость штучек ну кароче всё надо.
+// TODO - Унифицировать шрифты, цвета текстов, прозрачность, закруглённость штучек ну кароче всё как надо чтобы не сделать в итоге лабиринт.
 // TODO - Северное Сияние доработать, чтобы лепить снизу сверху или в середине.
 let css = `
 :root {
@@ -169,10 +243,10 @@ let css = `
   font-family: "Montserrat", sans-serif;
   margin: 0 auto;
   backdrop-filter: blur(12px);
-  background-color: rgba(255,255,255,0.03);
+  background-color: rgba(255, 255, 255, 0.03);
   border-radius: 20px;
   padding: 15px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 #uwusettings h1,
@@ -214,7 +288,7 @@ let css = `
   transform: translate(-10%, 30%);
   width: 35px;
   height: 18px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
@@ -238,7 +312,7 @@ let css = `
   height: 25px;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.3);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: background-color 0.2s ease-in-out, left 0.2s ease-in-out;
 }
 
@@ -246,10 +320,38 @@ let css = `
   left: calc(100% - 4px);
 }
 
+#uwusettings input[type="text"] {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 10px;
+  outline: none;
+  margin-right: 10px;
+}
+
 .rounded-image {
   background-repeat: repeat;
   background-attachment: fixed;
   border-radius: 20px;
+}
+
+#button-container {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+#button-container button {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#button-container button.active {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 #SettingSaveButton1, #SettingSaveButton2 {
@@ -266,14 +368,13 @@ let css = `
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-#SettingImageURLField, #SettingBackgroundColorField,
-#SettingColor1Field, #SettingColor2Field, #SettingColor3Field, #SettingColor4Field, #SettingColor5Field {
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 10px;
-  border-radius: 10px;
-  outline: none;
-  margin-right: 10px;
+#color-picker {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#color-picker div {
+  margin-bottom: 10px;
 }
 
 #global-container {
@@ -305,8 +406,8 @@ let css = `
   pointer-events: auto;
   cursor: pointer;
 
-  background-color: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.1);
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 
@@ -315,7 +416,7 @@ let css = `
   color: white;
   font-size: 15px;
   text-align: center;
-  
+
   position: fixed;
   bottom: 100px;
   right: 30px;
@@ -328,7 +429,7 @@ let css = `
 
   background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  
+
   display: grid;
   place-items: center;
   padding: 20px;
@@ -345,10 +446,10 @@ let css = `
 #news-button {
   width: 100%;
   border-radius: 10px;
-  
+
   background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  
+
   padding: 15px;
   display: flex;
   flex-direction: column;
@@ -385,10 +486,10 @@ let css = `
 #aurora-settings-panel {
   width: 100%;
   border-radius: 10px;
-  
+
   background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  
+
   padding: 15px;
   margin-top: 20px;
   box-sizing: border-box;
@@ -398,8 +499,8 @@ let css = `
   width: 100%;
   cursor: pointer;
   -webkit-appearance: none;
-  background-color: rgba(255,255,255,0.06) !important;
-  border: 1px solid rgba(255,255,255,0.1) !important;
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
   border-radius: 10px;
   height: 10px;
   outline: none;
@@ -414,7 +515,7 @@ let css = `
   border-radius: 50%;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
   transform: translateY(-35%);
 }
@@ -462,16 +563,16 @@ let css = `
   height: 60px;
   cursor: pointer;
   border-radius: 50%;
-  
-  background-color: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.1);
+
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 #extended-settings-button:hover,
 #manualAurora_Off:hover,
 #manualAurora_B:hover,
 #manualAurora_G:hover {
-  background-color: rgba(255,255,255,0.15);
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 @property --gradient-angle {
@@ -496,29 +597,28 @@ let css = `
 }
 
 .aurora-Blue {
-  background: conic-gradient(
-    from var(--gradient-angle),
-    var(--nlB-1),
-    var(--nlB-2),
-    var(--nlB-3),
-    var(--nlB-2),
-    var(--nlB-1));
+  background: conic-gradient(from var(--gradient-angle),
+      var(--nlB-1),
+      var(--nlB-2),
+      var(--nlB-3),
+      var(--nlB-2),
+      var(--nlB-1));
 }
 
 .aurora-Green {
-  background: conic-gradient(
-    from var(--gradient-angle),
-    var(--nlG-1),
-    var(--nlG-2),
-    var(--nlG-3),
-    var(--nlG-2),
-    var(--nlG-1));
+  background: conic-gradient(from var(--gradient-angle),
+      var(--nlG-1),
+      var(--nlG-2),
+      var(--nlG-3),
+      var(--nlG-2),
+      var(--nlG-1));
 }
 
 @keyframes aurora-spin {
   0% {
     --gradient-angle: 0deg;
   }
+
   100% {
     --gradient-angle: 360deg;
   }
@@ -597,6 +697,28 @@ if (targetSettings.test(window.location.href)) {
 }
 
 if (targetSettings.test(window.location.href)) {
+  const effectsPanel = document.getElementById("effects-panel");
+  const themePanel = document.getElementById("theme-panel");
+  const effectsButton = document.getElementById("effects-button");
+  const themeButton = document.getElementById("theme-button");
+
+  effectsButton.addEventListener("click", () => {
+    effectsPanel.style.display = "block";
+    themePanel.style.display = "none";
+    effectsButton.classList.add("active");
+    themeButton.classList.remove("active");
+  });
+
+  themeButton.addEventListener("click", () => {
+    effectsPanel.style.display = "none";
+    themePanel.style.display = "block";
+    effectsButton.classList.remove("active");
+    themeButton.classList.add("active");
+  });
+
+  // Скрытие одной из панелей по умолчанию
+  themePanel.style.display = "none";
+
   const SettingImageURLField = document.getElementById("SettingImageURLField");
   const SettingSaveButton1 = document.getElementById("SettingSaveButton1");
   const savedURL = localStorage.getItem("backgroundUserImageURL");
@@ -617,6 +739,9 @@ if (targetSettings.test(window.location.href)) {
   const SettingColor3Field = document.getElementById("SettingColor3Field");
   const SettingColor4Field = document.getElementById("SettingColor4Field");
   const SettingColor5Field = document.getElementById("SettingColor5Field");
+  const SettingAccentColorField2 = document.getElementById(
+    "SettingAccentColorField2"
+  );
   const SettingSaveButton2 = document.getElementById("SettingSaveButton2");
 
   window.onload = function () {
@@ -627,6 +752,8 @@ if (targetSettings.test(window.location.href)) {
     SettingColor3Field.value = localStorage.getItem("SettingColor3") || "";
     SettingColor4Field.value = localStorage.getItem("SettingColor4") || "";
     SettingColor5Field.value = localStorage.getItem("SettingColor5") || "";
+    SettingAccentColorField2.value =
+      localStorage.getItem("SettingAccentColor2") || "";
   };
 
   SettingSaveButton2.addEventListener("click", function () {
@@ -639,6 +766,7 @@ if (targetSettings.test(window.location.href)) {
     localStorage.setItem("SettingColor3", SettingColor3Field.value);
     localStorage.setItem("SettingColor4", SettingColor4Field.value);
     localStorage.setItem("SettingColor5", SettingColor5Field.value);
+    localStorage.setItem("SettingAccentColor2", SettingAccentColorField2.value);
   });
 }
 // ====================================================================================================================
@@ -664,6 +792,7 @@ if (window.location.href === targetCW3) {
   const SettingColor3 = localStorage.getItem("SettingColor3");
   const SettingColor4 = localStorage.getItem("SettingColor4");
   const SettingColor5 = localStorage.getItem("SettingColor5");
+  const SettingAccentColor2 = localStorage.getItem("SettingAccentColor2");
   // ====================================================================================================================
   if (extendedSettings === "true") {
     const extendedSettingsButtonElement = document.createElement("div");
@@ -777,14 +906,32 @@ if (window.location.href === targetCW3) {
         color: ${SettingColor3};
       }
     
-      input, select, hr, .ui-slider-horizontal {
+      input, select, .ui-slider-horizontal {
         background-color: ${SettingColor5};
         background: ${SettingColor5};
         border: solid 1px ${SettingColor5};
       }
 
+      hr {
+        border: solid 1px ${SettingAccentColor2};
+      }
+
       .myname {
         color: ${SettingColor5};
+      }
+
+      span.cat_tooltip {
+        background: ${SettingColor2} !important;
+        color: ${SettingColor3} !important;
+        border: 2px solid ${SettingAccentColor2} !important;
+      } 
+
+      span.cat_tooltip>span.online {
+        filter: brightness(200%) contrast(80%); 
+      }
+      
+      .cat:hover .cat_tooltip a { 
+        color: ${SettingColor4}; 
       }
 
       .move_name {
@@ -957,7 +1104,7 @@ if (window.location.href === targetCW3) {
 
       const temperatureDisplayElement = document.getElementById("temperature");
       if (temperatureDisplayElement) {
-        temperatureDisplayElement.innerHTML = `[?] Текущий модификатор: ${weatherModifier} (${temperatureDescription})`
+        temperatureDisplayElement.innerHTML = `[?] Текущий модификатор: ${weatherModifier} (${temperatureDescription})`;
       }
     } else {
       console.log("...я потерял бекграунд...");
@@ -1006,6 +1153,8 @@ if (window.location.href === targetCW3) {
     }
   }
 
+  // ====================================================================================================================
+  // TODO - Опробовать снова ивентЛисенеры.
   if (extendedSettings === "false") {
     setInterval(() => {
       getSkyType();
