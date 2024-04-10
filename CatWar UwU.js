@@ -1,15 +1,15 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.8.2-04.24
+// @version      v1.8.3-04.24
 // @description  Визуальное обновление CatWar'а.
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
 // @supportURL   https://catwar.su/cat1477928
-// @homepageURL  https://openuserjs.org/scripts/Ibirtem/Catwar_UwU
+// @homepageURL  https://openuserjs.org/scripts/Ibirtem/CatWar_UwU
 // @match        http*://*.catwar.su/*
-// @updateURL    https://github.com/Ibirtem/CatWar/raw/main/Catwar%20UwU.js
-// @downloadURL  https://github.com/Ibirtem/CatWar/raw/main/Catwar%20UwU.js
+// @updateURL    https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.js
+// @downloadURL  https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.js
 // @grant        GM_addStyle
 // @license      MIT
 // @iconURL      https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png
@@ -142,6 +142,7 @@ const uwusettings = `
       <p>
         — Прощу прощения за тех, чьи сохранённые цвета я съел. А ещё я пока не слишком буду занят прямо этим скриптом, так как заинтересованно принялся писать другие коды.
       </p>
+      <p> — А ещё я поплатился за то что неправильно назвал скрипт и решил лучше сейчас чем никогда. Я убил страницу скрипта и убил вам сохранения. Не победа ли?</p>
       <hr>
       <h3>Внешний вид</h3>
       <p> — Кружочек слайдера громкости зависит от Акцента 2.</p>
