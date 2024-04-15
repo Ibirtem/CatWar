@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.8.3-04.24
+// @version      v1.8.4-04.24
 // @description  Визуальное обновление CatWar'а.
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -135,26 +135,24 @@ const uwusettings = `
   <hr>
   <div id="news-panel">
     <button id="news-button">
-      v1.8.2 - А я вам сохры слома-а-ал.
+      v1.8.4 - Пиу.
     </button>
     <div id="news-list" style="display: none">
       <h3>Главное</h3>
       <p>
-        — Прощу прощения за тех, чьи сохранённые цвета я съел. А ещё я пока не слишком буду занят прямо этим скриптом, так как заинтересованно принялся писать другие коды.
+        — Сегодня без вкусностей.
       </p>
-      <p> — А ещё я поплатился за то что неправильно назвал скрипт и решил лучше сейчас чем никогда. Я убил страницу скрипта и убил вам сохранения. Не победа ли?</p>
       <hr>
       <h3>Внешний вид</h3>
-      <p> — Кружочек слайдера громкости зависит от Акцента 2.</p>
-      <p> — На слепую попробовать подправить цвет ссылок на душевых котиков.</p>
+      <p>— Пофиксил текст в окошке БР, теперь он снова чёрный. В будущем может выдам и его кастомайз, а то чего как не родной, белый весь.</p>
 
       <hr>
       <h3>Изменения кода</h3>
-      <p>— Крутая переписал логики сохранений, чтобы в будущем не было кошмарных спагетти.<p>
-      <p>— Неизвестная температура теперь... известна...?</p>
-
+      <p>— Настройки более корректно отображаются и загружаются.<p>
+      <p>— Так как в Засуху всё равно не идёт дождь, решил объеденить это в одно значение температуры "Жарко".<p>
+      <p>— Починил вычисление природы, а так же появления Северного Сияния. Добро пожаловать обратно, ргб подсветка кеквара.<p>
       <hr>
-      <p>Дата выпуска: 10.04.24</p>
+      <p>Дата выпуска: 15.04.24</p>
     </div>
   </div>
 </div>
@@ -689,7 +687,6 @@ if (targetSettings.test(window.location.href)) {
     }
   }
 
-  window.addEventListener("load", () => {
     loadSettings();
 
     // Обновление элементов ввода после загрузки настроек
@@ -703,7 +700,6 @@ if (targetSettings.test(window.location.href)) {
           element.value = settings[setting];
         }
       });
-  });
 
   document
     .querySelectorAll("#uwusettings [data-setting]")
@@ -922,6 +918,10 @@ if (window.location.href === targetCW3) {
       a, a:hover {
         color: ${settings.settingLinkColor};
       }
+
+      #fightPanel {
+        color: black;
+      }
     `;
 
     document.head.appendChild(newStyle);
@@ -963,7 +963,7 @@ if (window.location.href === targetCW3) {
     const skyElement = document.querySelector("#sky");
     const skyStyle = skyElement.getAttribute("style");
 
-    if (settings.weatherSettings) {
+    if (settings.weatherEnabled) {
       const match = skyStyle.match(/\/(\d+)\.png/);
       if (match) {
         const skyNumber = parseInt(match[1]);
@@ -1003,7 +1003,7 @@ if (window.location.href === targetCW3) {
     const timeElement = document.querySelector("#hour");
     const hourTime = timeElement.querySelector("img").getAttribute("src");
 
-    if (settings.weatherSettings) {
+    if (settings.weatherEnabled) {
       const hourNumber = parseInt(hourTime.match(/(\d+)\.png$/)[1]);
 
       if (hourNumber >= 6 && hourNumber <= 12) {
@@ -1057,8 +1057,7 @@ if (window.location.href === targetCW3) {
         { start: 206, end: 210, temperature: -1, description: "Прохладно" },
         { start: 21, end: 31, temperature: 1, description: "Тепло" },
         { start: 10, end: 18, temperature: 2, description: "Жарковато" },
-        { start: 4, end: 8, temperature: 3, description: "Жарко" },
-        { start: 3, end: 4, temperature: 4, description: "Засуха" },
+        { start: 1, end: 9, temperature: 3, description: "Жарко" },
       ];
 
       const backgroundColor = hexToHSL(foundBackground);
@@ -1082,14 +1081,13 @@ if (window.location.href === targetCW3) {
 
       if (
         currentTemperature === 1 ||
-        currentTemperature === -1 ||
-        currentTemperature === 4
+        currentTemperature === -1
       ) {
         weatherModifier = 2;
       } else if (currentTemperature === 2 || currentTemperature === -2) {
-        weatherModifier = 1.8;
+        weatherModifier = 1.5;
       } else if (currentTemperature === 3 || currentTemperature === -3) {
-        weatherModifier = 1.4;
+        weatherModifier = 1;
       } else {
         weatherModifier = 1;
       }
@@ -1437,7 +1435,7 @@ if (window.location.href === targetCW3) {
     requestAnimationFrame(animateWeather);
   }
 
-  if (settings.weatherSettings || settings.extendedSettings) {
+  if (settings.weatherEnabled || settings.extendedSettings) {
     animateWeather();
   }
 
@@ -1504,7 +1502,7 @@ if (window.location.href === targetCW3) {
     // console.log(`Количество элементов: ${elements.length}`)
   }
 
-  if (settings.extendedSettings || settings.weatherSettings) {
+  if (settings.extendedSettings || settings.weatherEnabled) {
     setInterval(() => {
       checkElements(raindrops, weatherContainer);
       checkElements(snowflakes, weatherContainer);
