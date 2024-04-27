@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.8.4-04.24
+// @version      v1.9.0-04.24
 // @description  Визуальное обновление CatWar'а.
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -63,9 +63,22 @@ const uwusettings = `
     <input type="checkbox" id="extended-settings" data-setting="extendedSettings"/>
     <label for="extended-settings">Расширенные настройки</label>
 
+    <p>Может очень слабо повлиять на производительность из-за возрастания количества частиц на экране.</p>
+    <input type="checkbox" id="drops" data-setting="drops"/>
+    <label for="drops-enabled">Эффекты приземления частиц</label>
+
     <p>Замена стандартных частиц на знакомые всеми пиксельные частицы.</p>
     <input type="checkbox" id="minecraft-style" data-setting="minecraftStyle"/>
     <label for="minecraft-style-enabled">Minecraft частицы</label>
+
+    <h3>Расположение Северного Сияния</h3>
+    <div id="aurora-panel">
+      <input type="range" min="1" max="2" value="1" class="slider" id="aurora-pos" list="auroraStep" data-setting="auroraPos">
+      <datalist id="auroraStep">
+        <option value="1">Верх</option>
+        <option value="2">Низ</option>
+      </datalist>
+      </div>
   </div>
 
   <div id="theme-panel">
@@ -135,24 +148,25 @@ const uwusettings = `
   <hr>
   <div id="news-panel">
     <button id="news-button">
-      v1.8.4 - Пиу.
+      v1.9.0 - Больше физики! Меньше фпс! А ещё с 2'мя тысячами строков кода меня!
     </button>
     <div id="news-list" style="display: none">
       <h3>Главное</h3>
       <p>
-        — Сегодня без вкусностей.
+        — Добавлена физика приземления частиц и Светлячки! Последнее вы увидите только когда наступит Лето в Игровой... Ну или добро пожаловать в Расширенные настройки!
       </p>
       <hr>
       <h3>Внешний вид</h3>
-      <p>— Пофиксил текст в окошке БР, теперь он снова чёрный. В будущем может выдам и его кастомайз, а то чего как не родной, белый весь.</p>
-
+      <p>— Возможность менять расположение Северного Сияния!</p>
+      <p>— А ещё Сияние теперь плавно появляется и исчезает!</p>
+      <p>— Снова чуть-чуть редизайна кнопочек в настойках.</p>
       <hr>
       <h3>Изменения кода</h3>
-      <p>— Настройки более корректно отображаются и загружаются.<p>
-      <p>— Так как в Засуху всё равно не идёт дождь, решил объеденить это в одно значение температуры "Жарко".<p>
-      <p>— Починил вычисление природы, а так же появления Северного Сияния. Добро пожаловать обратно, ргб подсветка кеквара.<p>
+      <p>— Снова мнимая оптимизация, которая сто раз потерялась.</p>
+      <p>— sus...?</p>
+      <p>— Подписал блоки кода для приятно и удобного чтения.</p>
       <hr>
-      <p>Дата выпуска: 15.04.24</p>
+      <p>Дата выпуска: 27.04.24</p>
     </div>
   </div>
 </div>
@@ -185,8 +199,8 @@ const extendedSettingsButton = `
           [?] Текущий модификатор: ...уточнение...</p>
       </div>
 
-      <h3>Выбрать Северное Сияние</h3>
-      <div class="button-container">
+      <h3>Северное Сияние</h3>
+      <div class="button-container-1">
         <button type="button" id="manualAurora_Off">
           <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96.png"
             alt="Иконка" width="48" height="48">
@@ -200,13 +214,20 @@ const extendedSettingsButton = `
             alt="Иконка" width="48" height="48">
         </button>
       </div>
+
+      <h3>Светлячки</h3>
+      <div class="button-container-2">
+        <button type="button" id="manualFirefly_On">
+          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/firefly.png"
+            alt="Иконка" width="48" height="48" title="Включает/Выключает">
+        </button>
+      </div>
+      
     </div>
     <div id="aurora-settings-panel">
       <p>Изменения, сделанные в этой панели, сохранятся!</p>
-      <h5>Здесь будет возможность переместить Северное Сияние, исключать локации из генерации погоды, либо запрещать
+      <h5>Здесь будет возможность переместить Северное Сияние в реальном времени, исключать локации из генерации погоды, либо запрещать
         определённой погоде существовать на выбранной локации. Но это всё пока что лишь мечта...</h5>
-      <h5>А ещё держите маленький факт: Северные Сияния будет видно только ясной ночью, и только осенью и зимой. (А ещё,
-        может быть, если я очень зажмочусь, то только в Северном Клане и Горах)</h5>
     </div>
   </div>
 </div>
@@ -286,7 +307,7 @@ let css = `
 }
 
 #uwusettings input[type="checkbox"]:checked {
-  background-color: rgba(154, 255, 132, 0.5);
+  background-color: #90ff78a8;
 }
 
 #uwusettings input[type="checkbox"]:not(:checked) {
@@ -326,23 +347,31 @@ let css = `
   border-radius: 20px;
 }
 
-#button-container {
+#button-container-1 {
   display: flex;
   justify-content: space-evenly;
   width: 100%;
 }
 
 #button-container button {
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: transparent;
+  border: none;
+
+  color: #ffffff57;
+
   padding: 10px 20px;
-  border-radius: 20px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: box-shadow 0.4s ease;
 }
 
 #button-container button.active {
-  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 -2px 0 0 #ffffff4d;
+  transition: box-shadow 0.4s ease;
+}
+
+#button-container button.active h2 {
+  color: #ffffff;
+  transition: color 0.4s ease;
 }
 
 #SettingSaveButton1, #SettingSaveButton2 {
@@ -362,6 +391,10 @@ let css = `
 #color-picker {
   display: flex;
   flex-wrap: wrap;
+}
+
+#aurora-panel {
+  width: 100px;
 }
 
 #color-picker div {
@@ -486,7 +519,7 @@ let css = `
   box-sizing: border-box;
 }
 
-#manualWeather {
+#manualWeather, #aurora-pos {
   width: 100%;
   cursor: pointer;
   -webkit-appearance: none;
@@ -498,6 +531,20 @@ let css = `
 }
 
 #manualWeather::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transform: translateY(-35%);
+}
+
+#aurora-pos::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 20px;
@@ -534,22 +581,36 @@ let css = `
   background: rgba(255, 255, 255, 0.4);
 }
 
-#WeatherStep {
+#WeatherStep, #auroraStep {
   margin-top: 10px;
   display: flex;
   justify-content: space-between;
   width: 100%;
 }
 
-.button-container {
+#button-container {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
+.button-container-1 {
   display: flex;
   justify-content: space-between;
   width: 100%;
 }
 
+.button-container-2 {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+}
+
 #manualAurora_Off,
 #manualAurora_B,
-#manualAurora_G {
+#manualAurora_G, 
+#manualFirefly_Off,
+#manualFirefly_On {
   width: 60px;
   height: 60px;
   cursor: pointer;
@@ -562,7 +623,9 @@ let css = `
 #extended-settings-button:hover,
 #manualAurora_Off:hover,
 #manualAurora_B:hover,
-#manualAurora_G:hover {
+#manualAurora_G:hover, 
+#manualFirefly_Off:hover,
+#manualFirefly_On:hover {
   background-color: rgba(255, 255, 255, 0.15);
 }
 
@@ -578,7 +641,6 @@ let css = `
   z-index: -1;
 
   position: fixed;
-  bottom: 0;
   left: 0;
   width: 100%;
   height: 30%;
@@ -614,8 +676,55 @@ let css = `
     --gradient-angle: 360deg;
   }
 }
+
+@keyframes auroraFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes auroraFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.firefly {
+  position: fixed;
+  background-color: rgba(255, 255, 153, 1);
+  border-radius: 50%;
+  filter: blur(5px);
+  pointer-events: none; 
+
+  animation: fadeIn 6s ease-in-out;
+}
+
+.firefly-glow {
+  position: fixed;
+  background-color: rgba(255, 255, 153, 0.2);
+  border-radius: 50%;
+  filter: blur(40px); 
+  pointer-events: none; 
+
+  animation: fadeIn 6s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.firefly-disappearing {
+  animation: fadeOut 6s ease-in-out forwards; /* Добавляем анимацию исчезновения */
+}
+
 `;
 GM_addStyle(css);
+// ====================================================================================================================
+//   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
 let settings = {
   weatherEnabled: false,
@@ -624,6 +733,8 @@ let settings = {
   backgroundRepeat: false,
   backgroundUser: false,
   userTheme: false,
+  drops: false,
+  auroraPos: "1",
   backgroundUserImageURL: "",
   settingBackgroundColor: "",
   settingBlocksColor: "",
@@ -633,6 +744,8 @@ let settings = {
   settingAccentColor1: "",
   settingAccentColor2: "",
 };
+// ====================================================================================================================
+//  . . . ПАНЕЛЬ НАСТРОЕК . . .
 // ====================================================================================================================
 function createSettingsBlock(blockId, settings) {
   const settingsContainer = document.querySelector("#branch");
@@ -687,19 +800,19 @@ if (targetSettings.test(window.location.href)) {
     }
   }
 
-    loadSettings();
+  loadSettings();
 
-    // Обновление элементов ввода после загрузки настроек
-    document
-      .querySelectorAll("#uwusettings [data-setting]")
-      .forEach((element) => {
-        const setting = element.dataset.setting;
-        if (element.type === "checkbox") {
-          element.checked = settings[setting];
-        } else {
-          element.value = settings[setting];
-        }
-      });
+  // Обновление элементов ввода после загрузки настроек
+  document
+    .querySelectorAll("#uwusettings [data-setting]")
+    .forEach((element) => {
+      const setting = element.dataset.setting;
+      if (element.type === "checkbox") {
+        element.checked = settings[setting];
+      } else {
+        element.value = settings[setting];
+      }
+    });
 
   document
     .querySelectorAll("#uwusettings [data-setting]")
@@ -740,7 +853,7 @@ if (targetSettings.test(window.location.href)) {
   themePanel.style.display = "none";
 }
 // ====================================================================================================================
-
+//  . . . ЗАГРУЗКА КОДА В ИГРОВОЙ . . .
 // ====================================================================================================================
 // Игровая ли... Я чё знаю?
 if (window.location.href === targetCW3) {
@@ -765,6 +878,8 @@ if (window.location.href === targetCW3) {
   loadSettings();
 
   // ====================================================================================================================
+  //  . . . РАСШИРЕННЫЕ НАСТРОЙКИ . . .
+  // ====================================================================================================================
   if (settings.extendedSettings) {
     const extendedSettingsButtonElement = document.createElement("div");
     extendedSettingsButtonElement.innerHTML = extendedSettingsButton;
@@ -786,8 +901,12 @@ if (window.location.href === targetCW3) {
     const manualAuroraBButton = document.getElementById("manualAurora_B");
     const manualAuroraGButton = document.getElementById("manualAurora_G");
 
+    const fireflyOnButton = document.getElementById("manualFirefly_On");
+
     manualAuroraOffButton.addEventListener("click", () => {
-      removeAurora();
+      for (const auroraElement of auroras) {
+        removeAurora(auroraElement);
+      }
     });
 
     manualAuroraBButton.addEventListener("click", () => {
@@ -797,7 +916,13 @@ if (window.location.href === targetCW3) {
     manualAuroraGButton.addEventListener("click", () => {
       createAurora("green");
     });
+
+    fireflyOnButton.addEventListener("click", () => {
+      toggleFireflies();
+    });
   }
+  // ====================================================================================================================
+  //   . . . ПОЛЬЗОВАТЕЛЬКИЙ ФОН . . .
   // ====================================================================================================================
   if (settings.backgroundRepeat) {
     const cagesDiv = document.querySelector("#cages_div");
@@ -858,6 +983,8 @@ if (window.location.href === targetCW3) {
     });
   }
   // ====================================================================================================================
+  //   . . . ПОЛЬЗОВАТЕЛЬСКИЕ ТЕМЫ / ЦВЕТА . . .
+  // ====================================================================================================================
   if (settings.userTheme) {
     const newStyle = document.createElement("style");
     newStyle.innerHTML = `
@@ -880,7 +1007,7 @@ if (window.location.href === targetCW3) {
       input, select, .ui-slider-horizontal {
         background-color: ${settings.settingAccentColor1};
         background: ${settings.settingAccentColor1};
-        border: solid 1px ${settings.settingAccentColor1};
+        border: solid 1px ${settings.settingAccentColor2};
       }
 
       .ui-widget-content .ui-state-default {
@@ -926,6 +1053,8 @@ if (window.location.href === targetCW3) {
 
     document.head.appendChild(newStyle);
   }
+  // ====================================================================================================================
+  //   . . . ОПРЕДЕЛЕНИЕ ПОГОДЫ В ИГРОВОЙ . . .
   // ====================================================================================================================
   var currentWeather = "null";
   var currentHour = "null";
@@ -992,7 +1121,6 @@ if (window.location.href === targetCW3) {
             currentWeather = "clear";
         }
       } else {
-        // Небо не найдено
         console.log("Потерял небо, небо найдись пж...");
         currentWeather = "unknown";
       }
@@ -1053,8 +1181,9 @@ if (window.location.href === targetCW3) {
       const foundBackground = backgroundValue[1];
 
       const temperatureRanges = [
-        { start: 203, end: 206, temperature: -2, description: "Холодно" },
-        { start: 206, end: 210, temperature: -1, description: "Прохладно" },
+        { start: 200, end: 202, temperature: -3, description: "Очень холодно" },
+        { start: 203, end: 206.5, temperature: -2, description: "Холодно" },
+        { start: 206.6, end: 210, temperature: -1, description: "Прохладно" },
         { start: 21, end: 31, temperature: 1, description: "Тепло" },
         { start: 10, end: 18, temperature: 2, description: "Жарковато" },
         { start: 1, end: 9, temperature: 3, description: "Жарко" },
@@ -1079,17 +1208,21 @@ if (window.location.href === targetCW3) {
           "Неизвестная температура. Разработчик скорее всего уже в курсе и в скором времени выпустит правку.";
       }
 
-      if (
-        currentTemperature === 1 ||
-        currentTemperature === -1
-      ) {
-        weatherModifier = 2;
-      } else if (currentTemperature === 2 || currentTemperature === -2) {
-        weatherModifier = 1.5;
-      } else if (currentTemperature === 3 || currentTemperature === -3) {
-        weatherModifier = 1;
-      } else {
-        weatherModifier = 1;
+      switch (currentTemperature) {
+        case 1:
+        case -1:
+          weatherModifier = 2;
+          break;
+        case 2:
+        case -2:
+          weatherModifier = 1.5;
+          break;
+        case 3:
+        case -3:
+          weatherModifier = 1;
+          break;
+        default:
+          weatherModifier = 1;
       }
 
       const temperatureDisplayElement = document.getElementById("temperature");
@@ -1154,7 +1287,7 @@ if (window.location.href === targetCW3) {
   }
   setInterval(getTemperature, 4000);
   // ====================================================================================================================
-
+  //   . . . ПОДГОТОВКА КОНТЕЙНЕРОВ / ИЗОБРАЖЕНИЙ . . .
   // ====================================================================================================================
   const weatherContainer = document.getElementById("global-container");
   const weatherCanvas = document.createElement("canvas");
@@ -1185,6 +1318,19 @@ if (window.location.href === targetCW3) {
       },
       {
         url: "https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/rain2.png",
+      },
+    ],
+    pixelSplash: [
+      {
+        url: "https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/splash_0.png",
+      },
+      {
+        url: "https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/splash_1.png",
+      },
+    ],
+    sus: [
+      {
+        url: "https://firebasestorage.googleapis.com/v0/b/xwx-823ac.appspot.com/o/images%2Ftiny-red-among-us.png?alt=media&token=354b34c6-6297-4a4d-8a73-f36a903170c0",
       },
     ],
   };
@@ -1219,11 +1365,15 @@ if (window.location.href === targetCW3) {
   }
   loadImages("pixelSnow");
   loadImages("pixelRain");
+  loadImages("pixelSplash");
+  loadImages("sus");
 
   const { raindrops } = generateRain();
   const { snowflakes } = generateSnowflakes();
   const { pixelRaindrops } = generatePixelRain();
   const { pixelSnowflakes } = generatePixelSnow();
+  // ====================================================================================================================
+  //   . . . ДОЖДЬ . . .
   // ====================================================================================================================
   function generateRain() {
     const raindrops = [];
@@ -1271,6 +1421,8 @@ if (window.location.href === targetCW3) {
     weatherCtx.fill();
   }
   // ====================================================================================================================
+  //   . . . СНЕГ . . .
+  // ====================================================================================================================
   function generateSnowflakes() {
     const snowflakes = [];
 
@@ -1294,8 +1446,9 @@ if (window.location.href === targetCW3) {
       const size = (Math.random() * 5 + 2) / weatherModifier;
       const ySpeed = size * 0.1 * weatherModifier;
       const xSpeed = (Math.random() - Math.random()) * 0.2;
+      const opacity = 1;
 
-      return { x, y, size, ySpeed, xSpeed };
+      return { x, y, size, ySpeed, xSpeed, opacity };
     }
 
     return { snowflakes };
@@ -1307,6 +1460,8 @@ if (window.location.href === targetCW3) {
     weatherCtx.fillStyle = "white";
     weatherCtx.fill();
   }
+  // ====================================================================================================================
+  //   . . . ПИКСЕЛЬНЫЙ ДОЖДЬ . . .
   // ====================================================================================================================
   function generatePixelRain() {
     const pixelRaindrops = [];
@@ -1355,6 +1510,8 @@ if (window.location.href === targetCW3) {
     );
   }
   // ====================================================================================================================
+  //   . . . ПИКСЕЛЬНЫЙ СНЕГ . . .
+  // ====================================================================================================================
   function generatePixelSnow() {
     const pixelSnowflakes = [];
 
@@ -1381,8 +1538,9 @@ if (window.location.href === targetCW3) {
       const imageData =
         images.pixelSnow[Math.floor(Math.random() * images.pixelSnow.length)];
       const image = imageData.image;
+      const opacity = 1;
 
-      return { x, y, size, ySpeed, xSpeed, image };
+      return { x, y, size, ySpeed, xSpeed, image, opacity };
     }
 
     return { pixelSnowflakes };
@@ -1391,6 +1549,8 @@ if (window.location.href === targetCW3) {
   function drawPixelSnowflake(x, y, size, image) {
     weatherCtx.drawImage(image, x - size / 2, y - size / 2, size, size);
   }
+  // ====================================================================================================================
+  //   . . . АНИМАЦИЯ ПОГОДЫ / ЧАСТИЦ . . .
   // ====================================================================================================================
   function animateWeather() {
     weatherCtx.clearRect(0, 0, weatherCanvas.width, weatherCanvas.height);
@@ -1434,32 +1594,53 @@ if (window.location.href === targetCW3) {
 
     requestAnimationFrame(animateWeather);
   }
-
   if (settings.weatherEnabled || settings.extendedSettings) {
     animateWeather();
   }
-
   // ====================================================================================================================
-  let aurora;
+  //   . . . СЕВЕРНОЕ СИЯНИЕ . . .
+  // ====================================================================================================================
+  const auroras = [];
   const auroraColors = {
     green: "aurora-Green",
     blue: "aurora-Blue",
   };
 
-  function removeAurora() {
-    if (aurora) {
-      weatherContainer.removeChild(aurora);
-      aurora = null;
-    }
+  function removeAurora(auroraElement) {
+    auroraElement.style.animation = "auroraFadeOut 6s ease-in-out";
+
+    // Удаляем северное сияние после завершения анимации
+    setTimeout(() => {
+      weatherContainer.removeChild(auroraElement);
+      const index = auroras.indexOf(auroraElement);
+      if (index > -1) {
+        auroras.splice(index, 1);
+      }
+    }, 6000);
   }
 
   function createAurora(color) {
-    if (!aurora || !aurora.classList.contains(auroraColors[color])) {
-      removeAurora();
-      aurora = document.createElement("div");
-      aurora.classList.add(auroraColors[color]);
-      weatherContainer.appendChild(aurora);
+    // Удаляем все предыдущие северные сияния
+    for (const auroraElement of auroras) {
+      removeAurora(auroraElement);
     }
+
+    // Создаем новое северное сияние
+    const newAurora = document.createElement("div");
+    newAurora.classList.add(auroraColors[color]);
+
+    // Устанавливаем позицию
+    if (settings.auroraPos === "1") {
+      newAurora.style.top = "-30%";
+    } else if (settings.auroraPos === "2") {
+      newAurora.style.bottom = "0";
+    }
+
+    // Добавляем новый элемент в DOM и массив
+    weatherContainer.appendChild(newAurora);
+    auroras.push(newAurora);
+
+    newAurora.style.animation = "auroraFadeIn 6s ease-in-out";
   }
 
   function toggleAurora() {
@@ -1470,7 +1651,8 @@ if (window.location.href === targetCW3) {
           (currentSeason === "autumn" || currentSeason === "winter")) ||
         currentWeather === "northernLights"
       ) {
-        if (!aurora) {
+        if (auroras.length === 0) {
+          // Проверяем, нет ли уже северного сияния
           const randomNumber = Math.random();
           if (randomNumber > 0.5) {
             createAurora("green");
@@ -1479,13 +1661,173 @@ if (window.location.href === targetCW3) {
           }
         }
       } else {
-        removeAurora();
+        // Удаляем все северные сияния
+        for (const auroraElement of auroras) {
+          removeAurora(auroraElement);
+        }
       }
     }
   }
 
-  setInterval(toggleAurora, 2000);
+  setInterval(() => {
+    toggleAurora();
+    if (!settings.extendedSettings) {
+      generateFirefliesNaturally();
+    }
+  }, 2000);
   // ====================================================================================================================
+  //   . . . СВЕТЛЯЧКИ . . .
+  // ====================================================================================================================
+  const fireflies = [];
+  const glowSizeMultiplier = 12;
+  const desiredNumberOfFireflies = 10;
+
+  function generateFirefly() {
+    const x = Math.random() * weatherCanvas.width;
+    const y = Math.random() * weatherCanvas.height;
+    const size = Math.random() * 5 + 10;
+    const xSpeed = (Math.random() - 0.5) * 0.5;
+    const ySpeed = (Math.random() - 0.5) * 0.5;
+
+    const firefly = document.createElement("div");
+    firefly.className = "firefly";
+    firefly.style.left = x + "px";
+    firefly.style.top = y + "px";
+    firefly.style.width = size + "px";
+    firefly.style.height = size + "px";
+
+    const glow = document.createElement("div");
+    glow.className = "firefly-glow";
+    glow.style.left = x + "px";
+    glow.style.top = y + "px";
+    glow.style.width = size * glowSizeMultiplier + "px";
+    glow.style.height = size * glowSizeMultiplier + "px";
+
+    return { element: firefly, glowElement: glow, x, y, size, xSpeed, ySpeed };
+  }
+
+  function createNewFirefliesIfNeeded() {
+    const missingFireflies = desiredNumberOfFireflies - fireflies.length;
+
+    for (let i = 0; i < missingFireflies; i++) {
+      const newFirefly = generateFirefly();
+      fireflies.push(newFirefly);
+      weatherContainer.appendChild(newFirefly.element);
+      weatherContainer.appendChild(newFirefly.glowElement);
+    }
+  }
+
+  function removeFireflies() {
+    for (const firefly of fireflies) {
+      weatherContainer.removeChild(firefly.element);
+      weatherContainer.removeChild(firefly.glowElement);
+    }
+    fireflies.length = 0;
+  }
+
+  function toggleFireflies() {
+    if (settings.extendedSettings) {
+      if (fireflies.length === 0) {
+        for (let i = 0; i < desiredNumberOfFireflies; i++) {
+          fireflies.push(generateFirefly());
+          weatherContainer.appendChild(fireflies[i].element);
+          weatherContainer.appendChild(fireflies[i].glowElement);
+        }
+      } else {
+        for (const firefly of fireflies) {
+          firefly.element.classList.add("firefly-disappearing");
+          firefly.glowElement.classList.add("firefly-disappearing");
+        }
+        setTimeout(() => {
+          removeFireflies();
+        }, 6000);
+      }
+    }
+  }
+
+  function generateFirefliesNaturally() {
+    if (
+      currentWeather === "clear" &&
+      currentHour === "night" &&
+      currentSeason === "summer"
+    ) {
+      if (fireflies.length === 0) {
+        for (let i = 0; i < desiredNumberOfFireflies; i++) {
+          fireflies.push(generateFirefly());
+          weatherContainer.appendChild(fireflies[i].element);
+          weatherContainer.appendChild(fireflies[i].glowElement);
+        }
+      }
+    } else {
+      for (const firefly of fireflies) {
+        firefly.element.classList.add("firefly-disappearing");
+        firefly.glowElement.classList.add("firefly-disappearing");
+      }
+      setTimeout(() => {
+        removeFireflies();
+      }, 6000);
+    }
+  }
+
+  function animateFireflies() {
+    for (let i = fireflies.length - 1; i >= 0; i--) {
+      const firefly = fireflies[i];
+      firefly.x += firefly.xSpeed;
+      firefly.y += firefly.ySpeed;
+
+      // Проверяем столкновение с краями экрана
+      if (firefly.x < 0 || firefly.x + firefly.size > weatherCanvas.width) {
+        firefly.xSpeed *= -1;
+      }
+      if (firefly.y < 0 || firefly.y + firefly.size > weatherCanvas.height) {
+        firefly.ySpeed *= -1;
+      }
+
+      firefly.element.style.left = firefly.x + "px";
+      firefly.element.style.top = firefly.y + "px";
+
+      firefly.glowElement.style.left =
+        firefly.x - (firefly.size * glowSizeMultiplier) / 2 + "px";
+      firefly.glowElement.style.top =
+        firefly.y - (firefly.size * glowSizeMultiplier) / 2 + "px";
+
+      createNewFirefliesIfNeeded();
+    }
+
+    requestAnimationFrame(animateFireflies);
+  }
+
+  if (settings.weatherEnabled || settings.extendedSettings) {
+    animateFireflies();
+  }
+  // ====================================================================================================================
+  //   . . . ПРИЗЕМЛЕНИЕ ЧАСТИЦ . . .
+  // ====================================================================================================================
+  const landedSnowflakes = [];
+  const landedPixelSnowflakes = [];
+  const splashes = [];
+  const pixelSplashes = [];
+
+  switch (true) {
+    case settings.extendedSettings && !settings.drops:
+    case settings.weatherEnabled && !settings.drops:
+      setInterval(() => {
+        checkElements(raindrops, weatherContainer);
+        checkElements(snowflakes, weatherContainer);
+        checkElements(pixelSnowflakes, weatherContainer);
+        checkElements(pixelRaindrops, weatherContainer);
+      }, 120);
+      break;
+
+    case settings.extendedSettings && settings.drops:
+    case settings.weatherEnabled && settings.drops:
+      animateLanding();
+      break;
+
+    default:
+      break;
+  }
+
   function checkElements(elements, container) {
     for (let i = elements.length - 1; i >= 0; i--) {
       const element = elements[i];
@@ -1502,14 +1844,160 @@ if (window.location.href === targetCW3) {
     // console.log(`Количество элементов: ${elements.length}`)
   }
 
-  if (settings.extendedSettings || settings.weatherEnabled) {
-    setInterval(() => {
-      checkElements(raindrops, weatherContainer);
-      checkElements(snowflakes, weatherContainer);
-      checkElements(pixelSnowflakes, weatherContainer);
-      checkElements(pixelRaindrops, weatherContainer);
-    }, 120);
+  function animateLanding() {
+    // Приземление снега
+    for (let i = snowflakes.length - 1; i >= 0; i--) {
+      const snowflake = snowflakes[i];
+      if (snowflake.y >= weatherCanvas.height - snowflake.size) {
+        snowflakes.splice(i, 1);
+        landedSnowflakes.push(snowflake);
+      }
+    }
+    for (let i = pixelSnowflakes.length - 1; i >= 0; i--) {
+      const pixelSnowflake = pixelSnowflakes[i];
+      if (pixelSnowflake.y >= weatherCanvas.height - pixelSnowflake.size) {
+        pixelSnowflakes.splice(i, 1);
+        landedPixelSnowflakes.push(pixelSnowflake);
+      }
+    }
+    // Анимация угасания снега
+    for (let i = landedSnowflakes.length - 1; i >= 0; i--) {
+      const snowflake = landedSnowflakes[i];
+      snowflake.opacity -= 0.001;
+      if (snowflake.opacity <= 0) {
+        landedSnowflakes.splice(i, 1);
+      }
+    }
+    for (const snowflake of landedSnowflakes) {
+      weatherCtx.globalAlpha = snowflake.opacity;
+      drawSnowflake(snowflake.x, snowflake.y, snowflake.size);
+    }
+
+    for (let i = landedPixelSnowflakes.length - 1; i >= 0; i--) {
+      const pixelSnowflake = landedPixelSnowflakes[i];
+      pixelSnowflake.opacity -= 0.001;
+
+      if (pixelSnowflake.opacity <= 0) {
+        landedPixelSnowflakes.splice(i, 1);
+      }
+    }
+    for (const pixelSnowflake of landedPixelSnowflakes) {
+      weatherCtx.globalAlpha = pixelSnowflake.opacity;
+      drawPixelSnowflake(
+        pixelSnowflake.x,
+        pixelSnowflake.y,
+        pixelSnowflake.size,
+        pixelSnowflake.image
+      );
+    }
+
+    // Приземление капель
+    for (let i = raindrops.length - 1; i >= 0; i--) {
+      const raindrop = raindrops[i];
+      if (raindrop.y >= weatherCanvas.height - raindrop.length) {
+        raindrops.splice(i, 1);
+        splashes.push(generateSplash(raindrop.x, weatherCanvas.height));
+      }
+    }
+
+    for (let i = pixelRaindrops.length - 1; i >= 0; i--) {
+      const pixelRaindrop = pixelRaindrops[i];
+      if (pixelRaindrop.y >= weatherCanvas.height - pixelRaindrop.size) {
+        pixelRaindrops.splice(i, 1);
+        pixelSplashes.push(
+          generateSplash(pixelRaindrop.x, weatherCanvas.height - 24)
+        );
+      }
+    }
+
+    // Анимация обычных брызг
+    for (const splash of splashes) {
+      splash.x += splash.xSpeed;
+      splash.y += splash.ySpeed;
+      splash.ySpeed += 0.1;
+
+      weatherCtx.beginPath();
+      weatherCtx.arc(splash.x, splash.y, splash.size / 2, 0, Math.PI * 2);
+      weatherCtx.fillStyle = "rgba(150, 150, 150, 0.4)";
+      weatherCtx.fill();
+    }
+
+    // Анимация пиксельных брызг
+    for (const pixelSplash of pixelSplashes) {
+      pixelSplash.x += pixelSplash.xSpeed;
+      pixelSplash.y += pixelSplash.ySpeed;
+      pixelSplash.ySpeed += 0.1;
+      weatherCtx.drawImage(
+        pixelSplash.image,
+        pixelSplash.x,
+        pixelSplash.y,
+        pixelSplash.size * weatherModifier * 3,
+        pixelSplash.size * weatherModifier * 3
+      );
+    }
+
+    checkSplashes();
+    checkPixelSplashes();
+    weatherCtx.globalAlpha = 1;
+    requestAnimationFrame(animateLanding);
+    // console.log(`Количество сплешев: ${pixelSplashes.length}`)
+  }
+
+  function generateSplash(x, y) {
+    const size = Math.random() * 5 + 2;
+    const xSpeed = (Math.random() - 0.5) * 2;
+    const ySpeed = -Math.random() * 2 - 1;
+    const imageData =
+      images.pixelSplash[Math.floor(Math.random() * images.pixelSplash.length)];
+    const image = imageData.image;
+
+    return { x, y, size, xSpeed, ySpeed, image };
+  }
+
+  function checkSplashes() {
+    for (let i = splashes.length - 1; i >= 0; i--) {
+      const splash = splashes[i];
+      if (
+        splash.y >= weatherCanvas.height ||
+        splash.x >= weatherCanvas.width ||
+        splash.x <= 0
+      ) {
+        splashes.splice(i, 1);
+      }
+    }
+  }
+  function checkPixelSplashes() {
+    for (let i = pixelSplashes.length - 1; i >= 0; i--) {
+      const pixelSplash = pixelSplashes[i];
+      if (
+        pixelSplash.y >= weatherCanvas.height ||
+        pixelSplash.x >= weatherCanvas.width ||
+        pixelSplash.x <= 0
+      ) {
+        pixelSplashes.splice(i, 1);
+      }
+    }
   }
   // ====================================================================================================================
 }
 // ====================================================================================================================
+
+// console.log('⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣤⣤⣤⣤⣤⣤⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀ ')
+// console.log('⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⡿⠛⠉⠙⠛⠛⠛⠛⠻⢿⣿⣷⣤⡀⠀⠀⠀⠀⠀ ')
+// console.log('⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⠋⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⠀⠈⢻⣿⣿⡄⠀⠀⠀⠀ ')
+// console.log('⠀⠀⠀⠀⠀⠀⠀⣸⣿⡏⠀⠀⠀⣠⣶⣾⣿⣿⣿⠿⠿⠿⢿⣿⣿⣿⣄⠀⠀⠀ ')
+// console.log('⠀⠀⠀⠀⠀⠀⠀⣿⣿⠁⠀⠀⢰⣿⣿⣯⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢿⣷⡄⠀ ')
+// console.log('⠀⠀⣀⣤⣴⣶⣶⣿⡟⠀⠀⢸⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣷⠀ ')
+// console.log('⠀⢰⣿⡟⠋⠉⣹⣿⡇⠀⠀⠘⣿⣿⣿⣿⣷⣦⣤⣤⣤⣶⣶⣶⣶⣿⣿⣿⠀ ')
+// console.log('⠀⢸⣿⡇⠀⠀⣿⣿⡇⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠃⠀ ')
+// console.log('⠀⣸⣿⡇⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠉⠻⠿⣿⣿⣿⣿⡿⠿⠿⠛⢻⣿⡇⠀⠀ ')
+// console.log('⠀⣿⣿⠁⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣧⠀⠀ ')
+// console.log('⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀ ')
+// console.log('⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀ ')
+// console.log('⠀⢿⣿⡆⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀ ')
+// console.log('⠀⠸⣿⣧⡀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠃⠀⠀ ')
+// console.log('⠀⠀⠛⢿⣿⣿⣿⣿⣇⠀⠀⠀⠀⣰⣿⣿⣷⣶⣶⣶⣶⠶⠀⠀⢠⣿⣿⠀⠀⠀ ')
+// console.log('⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⣽⣿⡏⠁⠀⠀⠀⢸⣿⡇⠀⠀⠀ ')
+// console.log('⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⢹⣿⡆⠀⠀⠀⠀⣸⣿⠇⠀⠀⠀ ')
+// console.log('⠀⠀⠀⠀⠀⠀⠀⢿⣿⣦⣄⣀⣠⣴⣿⣿⠁⠀⠈⠻⣿⣿⣿⣿⡿⠏⠀⠀⠀⠀ ')
+// console.log('⠀⠀⠀⠀⠀⠀⠀⠈⠛⠻⠿⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀')
