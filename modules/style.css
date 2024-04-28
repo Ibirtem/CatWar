@@ -9,4 +9,84 @@
     border-radius: 20px;
     padding: 15px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-  }
+}
+
+#uwusettings h1,
+#uwusettings h2 {
+    font-family: "Montserrat", sans-serif;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#uwusettings h4 {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    margin-left: 15px;
+}
+
+#uwusettings p {
+    margin-bottom: 5px;
+    font-size: 15px;
+}
+
+#uwusettings label {
+    font-size: 16px;
+}
+
+#uwusettings ul {
+    font-family: "Montserrat", sans-serif;
+    list-style-type: "+ ";
+}
+
+#uwusettings hr {
+    border: rgba(255, 255, 255, 0.1) solid;
+    border-radius: 15px;
+}
+
+#uwusettings input[type="checkbox"] {
+    margin-right: 8px;
+    appearance: none;
+    transform: translate(-10%, 30%);
+    width: 35px;
+    height: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#uwusettings input[type="checkbox"]:checked {
+    background-color: #90ff78a8;
+}
+
+#uwusettings input[type="checkbox"]:not(:checked) {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#uwusettings input[type="checkbox"]:before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 4px;
+    transform: translate(-50%, -50%);
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background-color 0.2s ease-in-out, left 0.2s ease-in-out;
+}
+
+#uwusettings input[type="checkbox"]:checked:before {
+    left: calc(100% - 4px);
+}
+
+#uwusettings input[type="text"] {
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 10px;
+    outline: none;
+    margin-right: 10px;
+}
