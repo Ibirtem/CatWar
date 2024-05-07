@@ -1,2 +1,2 @@
-style.css|Белый текст для настроек "CatWar UwU"|1.0.0
+style.css|Весь текст в настройках "CatWar UwU" становится белым|1.0.0
 void.js|Void is coming...|1.0.0
