@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.9.0-04.24
+// @version      v1.10.0-05.24
 // @description  Визуальное обновление CatWar'а.
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -46,6 +46,13 @@ const uwusettings = `
           height="24" />
       </h2>
     </button>
+    <button id="modules-button">
+      <h2>
+        Скрипты/Моды
+        <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/construction.png" alt="Иконка" width="24"
+          height="24" />
+      </h2>
+    </button>
   </div>
   <hr>
 
@@ -71,6 +78,7 @@ const uwusettings = `
     <input type="checkbox" id="minecraft-style" data-setting="minecraftStyle"/>
     <label for="minecraft-style-enabled">Minecraft частицы</label>
 
+    <hr>
     <h3>Расположение Северного Сияния</h3>
     <div id="aurora-panel">
       <input type="range" min="1" max="2" value="1" class="slider" id="aurora-pos" list="auroraStep" data-setting="auroraPos">
@@ -89,15 +97,13 @@ const uwusettings = `
     <input type="checkbox" id="background-repeat" data-setting="backgroundRepeat"/>
     <label for="weather-enabled">Фон страницы</label>
 
-    <p>
-      Перезаписывает повторение фона игровой на собственное изображение.
-      Размытие и затемнение всё ещё работают.
-    </p>
+    <p>Перезаписывает повторение фона игровой на собственное изображение.</p>
     <input type="checkbox" id="background-user" data-setting="backgroundUser"/>
     <label for="background-user-enabled">Использовать своё изображение</label>
     <input type="text" id="SettingImageURLField" placeholder="Вставьте URL изображения" data-setting="backgroundUserImageURL"/>
     <button id="SettingSaveButton1">Сохранить</button>
 
+    <hr>
     <p>
       Здесь вы можете выставить собственную тему для игровой. Принимаются "HEX"
       значения, а значит поддерживается ещё и прозрачность. Будьте аккуратны и
@@ -143,30 +149,85 @@ const uwusettings = `
         </p>
       </div>
     </div>
+
+    <hr>
+    <p>Та самая знаменитая Компактная Игровая, но с более расширенной кастомизацией.</p>
+    <input type="checkbox" id="custom-layout" data-setting="customLayout"/>
+    <label for="custom-layout">Редизайн Игровой</label>
+
+    <div id="layout-customizer">
+      <h2>Настройка расположения основных блоков в Игровой</h2>
+        <div id="layout-preview">
+          <div class="column left">
+          <!-- Левая колонка -->
+        </div>
+          <div class="column center">
+          <!-- Центральная колонка -->
+          <div class="block center-block">Поле Игровой</div>
+        </div>
+        <div class="column right">
+          <!-- Правая колонка -->
+        </div>
+    </div>
+    <p>Рекомендую не добавлять в левую колонку что-то ПОСЛЕ блока "Информация". Как и вообще отход от концепции оригинального расположения блоков в "Компактной Игровой" (Слева только Информация, справа Погода/Местность, Чат, Действия, Во рту).
+       Из-за особенности реализации, пока что сложно автоматизировать распределение блоков адекватно.</p>
+  <ul id="block-list">
+    <!-- Элементы списка блоков -->
+  </ul>
+  <button id="SettingSaveButton4">Сохранить</button>
+
+  <p>Визуальное разделение блока "Информация" на меньшие блоки "Параметров, Истории и Родственные связи".</p>
+  <input type="checkbox" id="slice-info-block" data-setting="sliceInfoBlock"/>
+  <label for="slice-info-block">Разделить блок Информации</label>
+
+  <p>Скругляет края блоков в Игровой. Имеет временные чоколадки с нераздельным блоком "Информация".</p>
+  <input type="checkbox" id="edge-trim-blocks" data-setting="edgeTrimBlocks"/>
+  <label for="edge-trim-blocks">Скругление блоков</label>
+
+</div>
+
+
   </div>
+
+  <div id="modules-panel">
+    <div id="module-info">
+
+    </div>
+
+    <input type="text" id="private-module-input" placeholder=" . . . "/>
+    <button id="SettingSaveButton3">Сохранить</button>
+  
+    </div>
 
   <hr>
   <div id="news-panel">
     <button id="news-button">
-      v1.9.0 - Больше физики! Меньше фпс! А ещё с 2'мя тысячами строков кода меня!
+      v1.10.0 - ОЧЕНЬ крупная обнова! Кастомизация блоков в Игровой! А ещё м о д у л ь н о с т ь скрипта!
     </button>
     <div id="news-list" style="display: none">
       <h3>Главное</h3>
       <p>
-        — Добавлена физика приземления частиц и Светлячки! Последнее вы увидите только когда наступит Лето в Игровой... Ну или добро пожаловать в Расширенные настройки!
+        — Добавлена кастомизация расположения блоков действий, историй, рта и прочего! 
+          А ещё вроде бы удачная попытка добавить скрипту поддержки модульности. Зачем? Таким образом я смогу объединить многие повторяющиеся функции своих скриптов/модов,
+          упростив тем самым себе будущее. Так же это будет прекрасной возможностью предоставлять некий 'лаунчер' для глав Кланов и Племён, где они бы смогли скачивать себе
+          приватные, именно что только для них, скрипты/моды.
+          Это лишь маленький шаг, который выглядит даже бесполезным, и таковым пока и является, но я надеюсь на крутое развитие в будущем этой штуки.
       </p>
       <hr>
       <h3>Внешний вид</h3>
-      <p>— Возможность менять расположение Северного Сияния!</p>
-      <p>— А ещё Сияние теперь плавно появляется и исчезает!</p>
-      <p>— Снова чуть-чуть редизайна кнопочек в настойках.</p>
+      <p>— Чучучуть компактнее текста в настройках.</p>
+      <p>— Больше полосочек удобно разделяющих функционал для восприятия.</p>
+      <p>— Настройки своих цветов применяются правильнее. Вроде бы. А это надо писать в Изменения кода?</p>
+      <p>— Из-за возможности самому писать дизайн, исправил множество ранее существовавших проблем растягивания "Во рту" и проблем длинных сообщений в чате.</p>
       <hr>
       <h3>Изменения кода</h3>
-      <p>— Снова мнимая оптимизация, которая сто раз потерялась.</p>
-      <p>— sus...?</p>
-      <p>— Подписал блоки кода для приятно и удобного чтения.</p>
+      <p>— Оказывается натуральная генерация погоды была поломана и никто мне это даже не сказал. Теперь работает вновь.</p>
+      <p>— Нет ну вы видели? Модули! Жесть...!</p>
+      <p>— А возможность редиза игровой?! Жесть...!</p>
+      <p>— Переписал код Северного Сияния и восстановил ему анимации.</p>
+      <p>— Настройки своих цветов применяются правильнее. Вроде бы. А это надо писать во Внешний вид?</p>
       <hr>
-      <p>Дата выпуска: 27.04.24</p>
+      <p>Дата выпуска: 10.05.24</p>
     </div>
   </div>
 </div>
@@ -241,16 +302,6 @@ const extendedSettingsButton = `
 // TODO - Унифицировать шрифты, цвета текстов, прозрачность, закруглённость штучек ну кароче всё как надо чтобы не сделать в итоге лабиринт.
 // TODO - Северное Сияние доработать, чтобы лепить снизу сверху или в середине.
 let css = `
-:root {
-  --nlB-1: #9DF5ED;
-  --nlB-2: #82BBF5;
-  --nlB-3: #725DFA;
-
-  --nlG-1: #aaff9d;
-  --nlG-2: #00faa0;
-  --nlG-3: #00ff62;
-}
-
 #uwusettings {
   font-family: "Montserrat", sans-serif;
   margin: 0 auto;
@@ -276,8 +327,7 @@ let css = `
 }
 
 #uwusettings p {
-  margin-bottom: 5px;
-  font-size: 15px;
+  margin-bottom: 0px;
 }
 
 #uwusettings label {
@@ -374,7 +424,7 @@ let css = `
   transition: color 0.4s ease;
 }
 
-#SettingSaveButton1, #SettingSaveButton2 {
+#SettingSaveButton1, #SettingSaveButton2, #SettingSaveButton3, #SettingSaveButton4 {
   background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 10px 20px;
@@ -384,8 +434,84 @@ let css = `
 }
 
 #SettingSaveButton1:hover,
-#SettingSaveButton2:hover {
+#SettingSaveButton2:hover,
+#SettingSaveButton3:hover,
+#SettingSaveButton4:hover {
   background-color: rgba(255, 255, 255, 0.2);
+}
+
+#modules-panel {
+  display: none;
+}
+
+.module-container {
+  width: 300px;
+  min-height: 150px;
+  position: relative;
+
+  box-sizing: border-box;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* Изменено */
+  padding: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.module-info {
+  flex-grow: 1;
+  margin-bottom: 10px;
+}
+
+.module-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+}
+
+#module-info {
+  flex-grow: 1;
+  margin-bottom: 10px;
+  
+  display: flex;
+  flex-wrap: wrap;
+  flex-basis: 100%;
+}
+
+.module-container label {
+  margin-top: 10px; 
+}
+
+#private-module-input {
+  margin: 10px;
+}
+
+.module-container button {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 5px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 5px;
+}
+
+.install-button {
+  background-color: #78c8ff87;
+}
+
+.remove-button {
+  background-color: #ff787887;
+}
+
+#module-info input[type="checkbox"] {
+  margin: 10px;
 }
 
 #color-picker {
@@ -399,6 +525,44 @@ let css = `
 
 #color-picker div {
   margin-bottom: 10px;
+}
+
+#layout-customizer button {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 5px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 5px;
+}
+
+#layout-customizer #layout-preview {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+#layout-customizer .column {
+  width: 200px;
+  border: 1px solid #ffffff1a;
+  border-radius: 10px;
+  padding: 5px;
+  margin: 0 5px;
+}
+
+#layout-customizer .block {
+  border-radius: 10px;
+  background-color: #ffffff08;
+  padding: 5px;
+  margin-bottom: 5px;
+}
+
+#layout-customizer .center-block {
+  height: 100%;
+  box-sizing: border-box;
+
+  border-radius: 10px;
+  background-color: #ffffff08;
 }
 
 #global-container {
@@ -635,38 +799,6 @@ let css = `
   inherits: false;
 }
 
-.aurora-Blue,
-.aurora-Green {
-  transform: translate(0, 60%);
-  z-index: -1;
-
-  position: fixed;
-  left: 0;
-  width: 100%;
-  height: 30%;
-  filter: blur(4rem);
-
-  animation: aurora-spin 15s linear infinite;
-}
-
-.aurora-Blue {
-  background: conic-gradient(from var(--gradient-angle),
-      var(--nlB-1),
-      var(--nlB-2),
-      var(--nlB-3),
-      var(--nlB-2),
-      var(--nlB-1));
-}
-
-.aurora-Green {
-  background: conic-gradient(from var(--gradient-angle),
-      var(--nlG-1),
-      var(--nlG-2),
-      var(--nlG-3),
-      var(--nlG-2),
-      var(--nlG-1));
-}
-
 @keyframes aurora-spin {
   0% {
     --gradient-angle: 0deg;
@@ -718,7 +850,7 @@ let css = `
 }
 
 .firefly-disappearing {
-  animation: fadeOut 6s ease-in-out forwards; /* Добавляем анимацию исчезновения */
+  animation: fadeOut 6s ease-in-out forwards;
 }
 
 `;
@@ -827,6 +959,124 @@ if (targetSettings.test(window.location.href)) {
         saveSettings();
       });
     });
+
+// ====================================================================================================================
+//  . . . МАКЕТ КАСТОМИЗАЦИИ ИГРОВОЙ . . .
+// ====================================================================================================================
+const blockNames = {
+  'tr_chat': 'Чат',
+  'tr_actions': 'Действия',
+  'tr_tos': 'Погода/Местность',
+  'tr_mouth': 'Во рту',
+  // 'tr_sky': 'Небо', 
+  'tr_info': 'Информация',
+};
+const blockList = document.getElementById("block-list");
+const listItems = [];
+const leftColumn = document.querySelector("#layout-customizer .column.left");
+const rightColumn = document.querySelector("#layout-customizer .column.right");
+
+// Функция для создания элемента блока
+function createBlockElement(blockId) {
+  const blockElement = document.createElement("div");
+  blockElement.classList.add("block", blockId);
+
+  const blockName = document.createElement("span");
+  blockName.textContent = blockNames[blockId];
+  blockElement.appendChild(blockName);
+
+  const removeButton = document.createElement("button");
+  removeButton.textContent = "Удалить";
+  removeButton.classList.add("remove-button");
+  removeButton.addEventListener("click", () => {
+    blockElement.remove();
+    const listItem = listItems.find(item => item.dataset.blockId === blockId);
+    if (listItem) {
+      blockList.appendChild(listItem);
+    }
+  });
+
+  blockElement.appendChild(removeButton);
+  return blockElement;
+}
+
+// Функция для создания кнопок "Слева" и "Справа"
+function createMoveButtons(listItem, blockId) {
+  const moveLeftButton = document.createElement("button");
+  moveLeftButton.textContent = "Слева";
+  moveLeftButton.classList.add("move-left", "install-button");
+  moveLeftButton.addEventListener("click", () => {
+    const blockElement = createBlockElement(blockId);
+    leftColumn.appendChild(blockElement);
+    listItem.remove();
+  });
+  listItem.appendChild(moveLeftButton);
+
+  const moveRightButton = document.createElement("button");
+  moveRightButton.textContent = "Справа";
+  moveRightButton.classList.add("move-right", "install-button");
+  moveRightButton.addEventListener("click", () => {
+    const blockElement = createBlockElement(blockId);
+    rightColumn.appendChild(blockElement);
+    listItem.remove();
+  });
+  listItem.appendChild(moveRightButton);
+}
+
+// Создание списка блоков
+for (const blockId in blockNames) {
+  const listItem = document.createElement("li");
+  const blockName = document.createElement("span");
+  blockName.textContent = blockNames[blockId];
+  listItem.appendChild(blockName);
+  listItem.dataset.blockId = blockId;
+
+  createMoveButtons(listItem, blockId);
+
+  blockList.appendChild(listItem);
+  listItems.push(listItem);
+}
+
+// Сохранение и загрузка настроек
+const saveButton = document.getElementById("SettingSaveButton4");
+
+saveButton.addEventListener("click", () => {
+  const leftBlocks = Array.from(leftColumn.querySelectorAll(".block")).map(
+    block => block.classList[1]
+  );
+  const rightBlocks = Array.from(rightColumn.querySelectorAll(".block")).map(
+    block => block.classList[1]
+  );
+
+  const layoutSettings = {
+    leftBlocks,
+    rightBlocks,
+  };
+
+  localStorage.setItem("layoutSettings", JSON.stringify(layoutSettings));
+});
+
+function loadLayoutSettings() {
+  const savedSettings = localStorage.getItem("layoutSettings");
+  if (savedSettings) {
+    const { leftBlocks, rightBlocks } = JSON.parse(savedSettings);
+
+    leftColumn.innerHTML = "";
+    rightColumn.innerHTML = "";
+
+    leftBlocks.forEach(blockId => {
+      const blockElement = createBlockElement(blockId);
+      leftColumn.appendChild(blockElement);
+    });
+
+    rightBlocks.forEach(blockId => {
+      const blockElement = createBlockElement(blockId);
+      rightColumn.appendChild(blockElement);
+    });
+  }
+}
+
+window.addEventListener("load", loadLayoutSettings);
 }
 
 // Переключение вкладок
@@ -835,23 +1085,279 @@ if (targetSettings.test(window.location.href)) {
   const themePanel = document.getElementById("theme-panel");
   const effectsButton = document.getElementById("effects-button");
   const themeButton = document.getElementById("theme-button");
+  const modulesButton = document.getElementById("modules-button");
+  const modulesPanel = document.getElementById("modules-panel");
 
   effectsButton.addEventListener("click", () => {
     effectsPanel.style.display = "block";
     themePanel.style.display = "none";
+    modulesPanel.style.display = "none";
     effectsButton.classList.add("active");
     themeButton.classList.remove("active");
+    modulesButton.classList.remove("active");
   });
 
   themeButton.addEventListener("click", () => {
     effectsPanel.style.display = "none";
     themePanel.style.display = "block";
+    modulesPanel.style.display = "none";
     effectsButton.classList.remove("active");
     themeButton.classList.add("active");
+    modulesButton.classList.remove("active");
+  });
+
+  modulesButton.addEventListener("click", () => {
+    effectsPanel.style.display = "none";
+    themePanel.style.display = "none";
+    modulesPanel.style.display = "block";
+    effectsButton.classList.remove("active");
+    themeButton.classList.remove("active");
+    modulesButton.classList.add("active");
   });
   // Скрытие одной из панелей по умолчанию
   themePanel.style.display = "none";
 }
+// ====================================================================================================================
+//  . . . МОДУЛЬНОСТЬ СКРИПТА . . .
+// ====================================================================================================================
+const moduleStates = {};
+const defaultModules = [
+  // "style.css",
+  // ...
+];
+const privateModules = {};
+
+function loadModuleStates() {
+  const storedModuleStates = localStorage.getItem("moduleStates");
+  if (storedModuleStates) {
+    const loadedModuleStates = JSON.parse(storedModuleStates);
+    Object.assign(moduleStates, loadedModuleStates);
+  } else {
+    for (const moduleName of defaultModules) {
+      moduleStates[moduleName] = true;
+    }
+  }
+
+  const storedPrivateModules = localStorage.getItem("privateModules");
+  if (storedPrivateModules) {
+    Object.assign(privateModules, JSON.parse(storedPrivateModules));
+  }
+}
+
+async function loadModuleList() {
+  const url = 'https://raw.githubusercontent.com/Ibirtem/CatWar/main/modules/modules.txt';
+  try {
+    const response = await fetch(url);
+    const moduleList = await response.text();
+    const modules = moduleList.split('\n').filter(line => line.trim() !== '');
+
+    const moduleInfoContainer = document.getElementById('module-info');
+    const privateModuleInput = document.getElementById('private-module-input');
+    const saveButton = document.getElementById('SettingSaveButton3');
+
+    for (const moduleInfo of modules) {
+      const [moduleName, description, version] = moduleInfo.split('|');
+      const isOnlineModule = !localStorage.getItem(moduleName);
+      const moduleContainer = createModuleContainer(moduleName, description, version, isOnlineModule);
+      moduleInfoContainer.appendChild(moduleContainer);
+
+      if (moduleStates[moduleName]) {
+        loadModule(moduleName, description, version);
+      }
+    }
+
+    for (const [moduleName, moduleInfo] of Object.entries(privateModules)) {
+      const { description, version } = moduleInfo;
+      const isPrivateModule = true;
+      const moduleContainer = createModuleContainer(moduleName, description, version, false, isPrivateModule);
+      moduleInfoContainer.appendChild(moduleContainer);
+
+      if (moduleStates[moduleName]) {
+        loadModule(moduleName, description, version);
+      }
+    }
+
+    saveButton.addEventListener('click', () => {
+      const privateModuleUrl = privateModuleInput.value.trim();
+      if (privateModuleUrl) {
+        loadPrivateModule(privateModuleUrl);
+        privateModuleInput.value = '';
+      }
+    });
+  } catch (error) {
+    console.error('Ошибка при загрузке списка модулей:', error);
+  }
+}
+
+function createModuleContainer(moduleName, description, version, isOnlineModule = false, isPrivateModule = false) {
+  const moduleContainer = document.createElement('div');
+  moduleContainer.classList.add('module-container');
+
+  const moduleInfo = document.createElement('div');
+  moduleInfo.classList.add('module-info');
+  moduleInfo.textContent = `${description}`;
+
+  const modulePanel = document.createElement('div');
+  modulePanel.classList.add('module-panel');
+
+  const versionInfo = document.createElement('span');
+  versionInfo.textContent = `Версия: ${version}`;
+  modulePanel.appendChild(versionInfo);
+
+  if (isOnlineModule) {
+    const installButton = document.createElement('button');
+    installButton.textContent = 'Установить';
+    installButton.classList.add('install-button');
+    installButton.addEventListener('click', () => {
+      loadModule(moduleName, description, version);
+      moduleContainer.remove();
+      createModuleContainer(moduleName, description, version, false, isPrivateModule);
+    });
+    modulePanel.appendChild(installButton);
+  } else {
+    const checkboxContainer = document.createElement('div');
+    checkboxContainer.classList.add('checkbox-container');
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = moduleName;
+    checkbox.checked = moduleStates[moduleName] || false;
+    checkboxContainer.appendChild(checkbox);
+
+    const removeButton = document.createElement('button');
+    removeButton.textContent = 'Удалить';
+    removeButton.classList.add('remove-button');
+    removeButton.addEventListener('click', () => {
+      unloadModule(moduleName);
+      moduleContainer.remove();
+    });
+    modulePanel.appendChild(removeButton);
+
+    checkbox.addEventListener('change', () => {
+      moduleStates[moduleName] = checkbox.checked;
+      localStorage.setItem("moduleStates", JSON.stringify(moduleStates));
+
+      if (checkbox.checked) {
+        loadModule(moduleName, description, version);
+      } else {
+        deactivateModule(moduleName);
+      }
+    });
+
+    moduleInfo.appendChild(checkboxContainer);
+  }
+
+  moduleContainer.appendChild(moduleInfo);
+  moduleContainer.appendChild(modulePanel);
+
+  return moduleContainer;
+}
+
+async function loadModule(moduleName, description, version) {
+  const cachedModule = localStorage.getItem(moduleName);
+
+  if (cachedModule) {
+    // Модуль есть в кеше, используем его
+    activateModule(cachedModule, moduleName, description, version);
+  } else {
+    // Модуля нет в кеше, загружаем его
+    const url = `https://raw.githubusercontent.com/Ibirtem/CatWar/main/modules/${moduleName}`;
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        const data = await response.text();
+        localStorage.setItem(moduleName, data);
+        activateModule(data, moduleName, description, version);
+
+        // Обновляем состояние moduleStates для загруженного модуля
+        moduleStates[moduleName] = true;
+        localStorage.setItem("moduleStates", JSON.stringify(moduleStates));
+
+        // Создаем контейнер для загруженного модуля
+        createModuleContainer(moduleName, description, version, false);
+
+        loadModuleStates();
+        clearModuleInfoContainer();
+        loadModuleList();
+      } else {
+        console.error(`Ошибка при загрузке модуля "${moduleName}": ${response.status} ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('Ошибка при загрузке модуля:', error);
+    }
+  }
+}
+
+async function loadPrivateModule(privateModuleUrl) {
+  try {
+    const isValidUrl = privateModuleUrl.startsWith('https://raw.githubusercontent.com/');
+    if (isValidUrl) {
+      const response = await fetch(privateModuleUrl);
+      if (response.ok) {
+        const data = await response.text();
+        const moduleName = getModuleNameFromUrl(privateModuleUrl);
+        const moduleInfo = { description: 'Приватный модуль', version: 'Н/Д' };
+        privateModules[moduleName] = moduleInfo;
+        localStorage.setItem("privateModules", JSON.stringify(privateModules));
+        const moduleContainer = createModuleContainer(moduleName, moduleInfo.description, moduleInfo.version);
+        const moduleInfoContainer = document.getElementById('module-info');
+        moduleInfoContainer.appendChild(moduleContainer);
+        activateModule(data, moduleName, moduleInfo.description, moduleInfo.version);
+      } else {
+        console.error(`Ошибка при загрузке приватного модуля: ${response.status} ${response.statusText}`);
+      }
+    } else {
+      console.error('Неверный формат ссылки. Ссылка должна начинаться с "https://raw.githubusercontent.com/"');
+    }
+  } catch (error) {
+    console.error('Ошибка при загрузке приватного модуля:', error);
+  }
+}
+
+function getModuleNameFromUrl(url) {
+  const lastSlash = url.lastIndexOf('/');
+  const fileName = url.substring(lastSlash + 1);
+  return fileName;
+}
+
+function activateModule(data, moduleName, description, version) {
+  // Активируем модуль
+  if (moduleName.endsWith('.css')) {
+    GM_addStyle(data);
+  } else if (moduleName.endsWith('.js')) {
+    try {
+      new Function(data);
+      eval(data);
+    } catch (error) {
+      console.error(`Ошибка при активации модуля "${moduleName}":`, error);
+    }
+  }
+}
+
+function unloadModule(moduleName) {
+  localStorage.removeItem(moduleName);
+  delete moduleStates[moduleName];
+  localStorage.setItem("moduleStates", JSON.stringify(moduleStates));
+
+  if (privateModules[moduleName]) {
+    delete privateModules[moduleName];
+    localStorage.setItem("privateModules", JSON.stringify(privateModules));
+  }
+
+  loadModuleStates();
+  clearModuleInfoContainer();
+  loadModuleList();
+}
+
+function clearModuleInfoContainer() {
+  const moduleInfoContainer = document.getElementById('module-info');
+  while (moduleInfoContainer.firstChild) {
+    moduleInfoContainer.removeChild(moduleInfoContainer.firstChild);
+  }
+}
+
+loadModuleStates();
+loadModuleList();
 // ====================================================================================================================
 //  . . . ЗАГРУЗКА КОДА В ИГРОВОЙ . . .
 // ====================================================================================================================
@@ -875,8 +1381,8 @@ if (window.location.href === targetCW3) {
       console.log("Нет сохраненных настроек");
     }
   }
-  loadSettings();
 
+  loadSettings();
   // ====================================================================================================================
   //  . . . РАСШИРЕННЫЕ НАСТРОЙКИ . . .
   // ====================================================================================================================
@@ -934,8 +1440,9 @@ if (window.location.href === targetCW3) {
     backgroundDiv.style.width = "102%";
     backgroundDiv.style.height = "102%";
     backgroundDiv.style.zIndex = "-1";
-    backgroundDiv.style.filter = "blur(16px)";
     backgroundDiv.style.overflow = "hidden";
+
+    backgroundDiv.style.filter = "blur(16px)";
     backgroundDiv.style.backgroundBlendMode = "overlay";
     backgroundDiv.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
 
@@ -992,8 +1499,17 @@ if (window.location.href === targetCW3) {
         background: ${settings.settingBackgroundColor};
       }
 
-      #tr_actions, #tr_actions > td, #tr_mouth, #tr_mouth > td, #info_main, #info_main > tbody > tr > td, #location, .small {
+      #cages_overflow {
+        background: black;
+      } 
+
+      #tr_actions > td, #tr_mouth > td, #location, .small {
         background-color: ${settings.settingBlocksColor};
+      }
+
+      #main_table, #tr_mouth, #tr_actions, #info_main {
+        background-color: unset;
+        background: none;
       }
     
       #tr_chat {
@@ -1050,9 +1566,277 @@ if (window.location.href === targetCW3) {
         color: black;
       }
     `;
-
     document.head.appendChild(newStyle);
   }
+  // ====================================================================================================================
+  //   . . . РЕДИЗАЙН ИГРОВОЙ . . .
+  // ====================================================================================================================
+  if (settings.customLayout) {
+    function applyLayoutSettings() {
+      const savedSettings = localStorage.getItem("layoutSettings");
+      if (savedSettings) {
+        const { leftBlocks, rightBlocks } = JSON.parse(savedSettings);
+
+        const mainTable = document.getElementById("main_table");
+        const tbody = mainTable.getElementsByTagName("tbody")[0];
+        const blocks = Array.from(tbody.children);
+
+        resetBlockStyles(tbody);
+
+        const gridAreaTemplate = generateGridTemplate(leftBlocks, rightBlocks);
+
+        // console.log(gridAreaTemplate);
+
+        tbody.style.display = "grid";
+        tbody.style.gridTemplateAreas = gridAreaTemplate;
+        tbody.style.gridTemplateColumns = "1fr auto 1fr";
+        tbody.style.gridTemplateRows = generateGridRowStyles(
+          leftBlocks,
+          rightBlocks,
+          predefinedHeights
+        );
+
+        // Устанавливаем grid-area для каждого блока
+        blocks.forEach((block) => {
+          if (block.id) {
+            block.style.gridArea = block.id;
+          }
+        });
+      }
+    }
+
+    function generateGridRowStyles(leftBlocks, rightBlocks, predefinedHeights) {
+      const numRows = Math.max(leftBlocks.length, rightBlocks.length);
+      let rowStyles = [];
+
+      for (let i = 0; i < numRows; i++) {
+        const leftBlockId = leftBlocks[i];
+        const rightBlockId = rightBlocks[i];
+
+        let rowHeight = "auto";
+
+        if (leftBlockId && predefinedHeights[leftBlockId]) {
+          rowHeight = predefinedHeights[leftBlockId];
+        }
+        if (rightBlockId && predefinedHeights[rightBlockId]) {
+          const rightHeight = predefinedHeights[rightBlockId];
+          // Если обе стороны имеют предопределенные высоты, выбираем минимальную
+          if (rowHeight !== "auto") {
+            rowHeight =
+              Math.min(parseInt(rowHeight), parseInt(rightHeight)) + "px";
+          } else {
+            rowHeight = rightHeight;
+          }
+        }
+
+        rowStyles.push(rowHeight);
+      }
+
+      const rowStylesString = rowStyles.join(" ");
+      // console.log(rowStylesString);
+      return rowStylesString;
+    }
+
+    // Предопределенные высоты для блоков
+    const predefinedHeights = {
+      tr_tos: "30px",
+      // Больше блоков сюда
+    };
+
+    function generateGridTemplate(leftBlocks, rightBlocks) {
+      const numRows = Math.max(leftBlocks.length, rightBlocks.length);
+      let template = "";
+      let lastLeftBlockId = "";
+      let lastRightBlockId = "";
+      let isFirstRow = true;
+    
+      for (let i = 0; i < numRows; i++) {
+        const leftBlockId = leftBlocks[i] || lastLeftBlockId;
+        const rightBlockId = rightBlocks[i] || lastRightBlockId;
+    
+        if (isFirstRow) {
+          template += `"${leftBlockId} tr_field ${rightBlockId}" `;
+          isFirstRow = false;
+        } else {
+          // Only replace with "." if the block ID is the same as the last one
+          template += `"${leftBlockId === lastLeftBlockId ? '.' : leftBlockId} . ${rightBlockId === lastRightBlockId ? '.' : rightBlockId}" `; 
+        }
+    
+        if (leftBlockId) {
+          lastLeftBlockId = leftBlockId;
+        }
+        if (rightBlockId) {
+          lastRightBlockId = rightBlockId;
+        }
+      }
+    
+      return template;
+    }
+
+    function resetBlockStyles(parent) {
+      const blocks = parent.querySelectorAll("tr > *");
+      blocks.forEach((block) => {
+        block.style.gridArea = "";
+      });
+    }
+
+    // Больше фикс стилей.
+    const fixStyle = document.createElement("style");
+    fixStyle.innerHTML = `
+
+  #main_table {
+    width: 100%;
+    max-width: unset;
+    height: 100%;
+
+    background: none;
+  }
+
+  #app {
+    width: 100%;
+    height: 100%;
+  }
+  
+  #chat_msg, #cws_chat_msg {
+    width: auto;
+  }
+
+  #history_block > div { 
+    visibility: hidden; 
+  }
+
+  #history_block { 
+    display: block;
+    max-height: 200px; 
+    overflow-y: auto;
+  }
+
+  #family_block, #cws_quick_settings_block { 
+    display: block;
+    max-height: 150px; 
+    overflow-y: auto;
+  }
+
+  .small {
+    font-size: 16px;
+  }
+
+  .infos {
+    width: auto;
+  }
+
+  #cages_overflow {
+    background: black;
+  }
+
+  .chat_text {
+    width: auto;
+  }
+
+  #chat_form {
+    margin: unset;
+  }
+
+  #chat_form {
+    margin: 5px;
+  }
+
+  #volume {
+    margin: 5px;
+  }
+
+  #app > p:last-of-type {
+    position: absolute;
+    bottom: 0px;
+  }
+
+  h2 {
+    margin-top: 5px;
+    margin-bottom: 10px;
+  }
+
+  .chat_text {
+    overflow-wrap: anywhere;
+  }
+
+  #itemList {
+    overflow-y: auto;
+    max-height: 180px;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  `;
+    document.head.appendChild(fixStyle);
+    applyLayoutSettings();
+
+    function applyLayoutSettingsForInfoMain() {
+      const infoMainTable = document.getElementById("info_main");
+      const tableRow = infoMainTable.querySelector("tr");
+      const tds = tableRow.getElementsByTagName("td");
+
+      for (const td of tds) {
+        td.style.gridArea = "";
+      }
+
+      tableRow.style.display = "grid";
+      // хахахах поглядите на смешного строчного
+      tableRow.style.gridTemplateAreas = `"parameter"
+                                        "history"
+                                        "family"`;
+
+      tds[0].style.gridArea = "family";
+      tds[1].style.gridArea = "history";
+      tds[2].style.gridArea = "parameter";
+    }
+
+    applyLayoutSettingsForInfoMain();
+  }
+  // ====================================================================================================================
+  //   . . . ДОПОЛНИТЕЛЬНЫЕ РЕДИЗАЙНЫ . . .
+  // ====================================================================================================================
+  const sliceInfoStyle = document.createElement("style");
+  if (settings.sliceInfoBlock) {
+    sliceInfoStyle.innerHTML = `
+      #info_main > tbody > tr > td {
+        background-color: ${settings.settingBlocksColor};
+        margin-bottom: 5px;
+      }
+    `;
+  } else {
+    sliceInfoStyle.innerHTML = `
+      #info_main > tbody {
+        background-color: ${settings.settingBlocksColor};
+      }
+    `;
+  }
+  document.head.appendChild(sliceInfoStyle);
+
+  const edgeTrimBlocksStyle = document.createElement("style");
+  if (settings.edgeTrimBlocks) {
+    edgeTrimBlocksStyle.innerHTML = `
+      #info_main > tbody > tr > td, .small {
+        width: fit-content;
+        border-radius: 10px;
+        padding: 5px;
+        margin: 5px;
+      }
+      
+      #info_main, #tos, #cages_overflow, #cages_div {
+        border-radius: 10px;
+      }
+
+      #main_table > tbody > #tr_actions, #main_table > tbody > #tr_mouth, #main_table > tbody > #tr_chat {
+        margin: 5px;
+      }
+
+      #tr_chat, #tr_actions > td, #tr_mouth > td {
+        border-radius: 10px;
+        padding: 5px !important;
+      }
+
+    `;
+  }
+  document.head.appendChild(edgeTrimBlocksStyle);
   // ====================================================================================================================
   //   . . . ОПРЕДЕЛЕНИЕ ПОГОДЫ В ИГРОВОЙ . . .
   // ====================================================================================================================
@@ -1154,6 +1938,9 @@ if (window.location.href === targetCW3) {
     if (match) {
       const seasonNumber = parseInt(match[1]);
       switch (seasonNumber) {
+        case 0:
+          currentSeason = "winter";
+          break;
         case 1:
           currentSeason = "spring";
           break;
@@ -1163,11 +1950,9 @@ if (window.location.href === targetCW3) {
         case 3:
           currentSeason = "autumn";
           break;
-        case 4:
-          currentSeason = "winter";
-          break;
       }
     }
+    console.log(currentSeason);
   }
 
   function getTemperature() {
@@ -1600,16 +2385,23 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   //   . . . СЕВЕРНОЕ СИЯНИЕ . . .
   // ====================================================================================================================
-  const auroras = [];
   const auroraColors = {
-    green: "aurora-Green",
-    blue: "aurora-Blue",
+    green: {
+      1: "#aaff9d",
+      2: "#00faa0",
+      3: "#00ff62",
+    },
+    blue: {
+      1: "#9DF5ED",
+      2: "#82BBF5",
+      3: "#725DFA",
+    },
   };
+  const auroras = [];
 
   function removeAurora(auroraElement) {
     auroraElement.style.animation = "auroraFadeOut 6s ease-in-out";
 
-    // Удаляем северное сияние после завершения анимации
     setTimeout(() => {
       weatherContainer.removeChild(auroraElement);
       const index = auroras.indexOf(auroraElement);
@@ -1620,39 +2412,48 @@ if (window.location.href === targetCW3) {
   }
 
   function createAurora(color) {
-    // Удаляем все предыдущие северные сияния
     for (const auroraElement of auroras) {
       removeAurora(auroraElement);
     }
 
-    // Создаем новое северное сияние
     const newAurora = document.createElement("div");
-    newAurora.classList.add(auroraColors[color]);
 
-    // Устанавливаем позицию
+    newAurora.style.cssText = `
+    transform: translate(0, 60%);
+    z-index: -1;
+    position: fixed;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    filter: blur(4rem);
+    animation: aurora-spin 15s linear infinite, auroraFadeIn 6s ease-in-out;
+    background: conic-gradient(from var(--gradient-angle),
+    ${auroraColors[color][1]},
+    ${auroraColors[color][2]},
+    ${auroraColors[color][3]},
+    ${auroraColors[color][2]},
+    ${auroraColors[color][1]});
+`;
+
     if (settings.auroraPos === "1") {
       newAurora.style.top = "-30%";
     } else if (settings.auroraPos === "2") {
       newAurora.style.bottom = "0";
     }
 
-    // Добавляем новый элемент в DOM и массив
     weatherContainer.appendChild(newAurora);
     auroras.push(newAurora);
-
-    newAurora.style.animation = "auroraFadeIn 6s ease-in-out";
   }
 
   function toggleAurora() {
     if (!settings.extendedSettings) {
       if (
+        currentWeather === "northernLights" ||
         (currentWeather === "clear" &&
           currentHour === "night" &&
-          (currentSeason === "autumn" || currentSeason === "winter")) ||
-        currentWeather === "northernLights"
+          (currentSeason === "autumn" || currentSeason === "winter"))
       ) {
         if (auroras.length === 0) {
-          // Проверяем, нет ли уже северного сияния
           const randomNumber = Math.random();
           if (randomNumber > 0.5) {
             createAurora("green");
@@ -1661,7 +2462,6 @@ if (window.location.href === targetCW3) {
           }
         }
       } else {
-        // Удаляем все северные сияния
         for (const auroraElement of auroras) {
           removeAurora(auroraElement);
         }
