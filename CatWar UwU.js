@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.10.0-05.24
+// @version      v1.10.1-05.24
 // @description  Визуальное обновление CatWar'а.
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -168,12 +168,13 @@ const uwusettings = `
         <div class="column right">
           <!-- Правая колонка -->
         </div>
+        <ul id="block-list">
+        <!-- Элементы списка блоков -->
+      </ul>
     </div>
-    <p>Рекомендую не добавлять в левую колонку что-то ПОСЛЕ блока "Информация". Как и вообще отход от концепции оригинального расположения блоков в "Компактной Игровой" (Слева только Информация, справа Погода/Местность, Чат, Действия, Во рту).
-       Из-за особенности реализации, пока что сложно автоматизировать распределение блоков адекватно.</p>
-  <ul id="block-list">
-    <!-- Элементы списка блоков -->
-  </ul>
+
+  <p>!!! Не добавляйте что-то в колонку вместе с блоком "Информация". Из-за особенности реализации, пока что сложно автоматизировать распределение блоков адекватно.
+     А так же не забудьте распределить все блоки по желанным местам, иначе в Игровой не распределённые блоки будут летать !!!</p>
   <button id="SettingSaveButton4">Сохранить</button>
 
   <p>Визуальное разделение блока "Информация" на меньшие блоки "Параметров, Истории и Родственные связи".</p>
@@ -202,30 +203,22 @@ const uwusettings = `
   <hr>
   <div id="news-panel">
     <button id="news-button">
-      v1.10.0 - ОЧЕНЬ крупная обнова! Кастомизация блоков в Игровой! А ещё м о д у л ь н о с т ь скрипта!
+      v1.10.1 - А вот и фиксы подъехали.
     </button>
     <div id="news-list" style="display: none">
       <h3>Главное</h3>
       <p>
-        — Добавлена кастомизация расположения блоков действий, историй, рта и прочего! 
-          А ещё вроде бы удачная попытка добавить скрипту поддержки модульности. Зачем? Таким образом я смогу объединить многие повторяющиеся функции своих скриптов/модов,
-          упростив тем самым себе будущее. Так же это будет прекрасной возможностью предоставлять некий 'лаунчер' для глав Кланов и Племён, где они бы смогли скачивать себе
-          приватные, именно что только для них, скрипты/моды.
-          Это лишь маленький шаг, который выглядит даже бесполезным, и таковым пока и является, но я надеюсь на крутое развитие в будущем этой штуки.
+        — Фиксы . . . ?
       </p>
       <hr>
       <h3>Внешний вид</h3>
-      <p>— Чучучуть компактнее текста в настройках.</p>
-      <p>— Больше полосочек удобно разделяющих функционал для восприятия.</p>
-      <p>— Настройки своих цветов применяются правильнее. Вроде бы. А это надо писать в Изменения кода?</p>
-      <p>— Из-за возможности самому писать дизайн, исправил множество ранее существовавших проблем растягивания "Во рту" и проблем длинных сообщений в чате.</p>
+      <p>— Чуть сделал более понятное описание проблемы с блоком "Информация" в Настройках расположения блоков. В недалёком будущем многие недостатки я исправлю.</p>
+      <p>— Компактнее настройки Компактной игровой.</p>
+      <p>— Чуть пофиксил внешний вид верхней строки в Игровой, которая та самая "Моя кошка", "Чат" и т.д.</p>
       <hr>
       <h3>Изменения кода</h3>
-      <p>— Оказывается натуральная генерация погоды была поломана и никто мне это даже не сказал. Теперь работает вновь.</p>
-      <p>— Нет ну вы видели? Модули! Жесть...!</p>
-      <p>— А возможность редиза игровой?! Жесть...!</p>
-      <p>— Переписал код Северного Сияния и восстановил ему анимации.</p>
-      <p>— Настройки своих цветов применяются правильнее. Вроде бы. А это надо писать во Внешний вид?</p>
+      <p>— Стили на чат применяются чуть более насильно и правильно. Должен перестать улетать и сдвигать Игровую.</p>
+      <p>— Вернул название локации на своё законное место.</p>
       <hr>
       <p>Дата выпуска: 10.05.24</p>
     </div>
@@ -1114,7 +1107,6 @@ if (targetSettings.test(window.location.href)) {
     themeButton.classList.remove("active");
     modulesButton.classList.add("active");
   });
-  // Скрытие одной из панелей по умолчанию
   themePanel.style.display = "none";
 }
 // ====================================================================================================================
@@ -1321,7 +1313,6 @@ function getModuleNameFromUrl(url) {
 }
 
 function activateModule(data, moduleName, description, version) {
-  // Активируем модуль
   if (moduleName.endsWith('.css')) {
     GM_addStyle(data);
   } else if (moduleName.endsWith('.js')) {
@@ -1545,7 +1536,7 @@ if (window.location.href === targetCW3) {
         border: 2px solid ${settings.settingAccentColor2} !important;
       } 
 
-      span.cat_tooltip>span.online {
+      span.cat_tooltip > span.online {
         filter: brightness(200%) contrast(80%); 
       }
       
@@ -1658,7 +1649,6 @@ if (window.location.href === targetCW3) {
           template += `"${leftBlockId} tr_field ${rightBlockId}" `;
           isFirstRow = false;
         } else {
-          // Only replace with "." if the block ID is the same as the last one
           template += `"${leftBlockId === lastLeftBlockId ? '.' : leftBlockId} . ${rightBlockId === lastRightBlockId ? '.' : rightBlockId}" `; 
         }
     
@@ -1717,10 +1707,6 @@ if (window.location.href === targetCW3) {
     overflow-y: auto;
   }
 
-  .small {
-    font-size: 16px;
-  }
-
   .infos {
     width: auto;
   }
@@ -1731,13 +1717,15 @@ if (window.location.href === targetCW3) {
 
   .chat_text {
     width: auto;
+    overflow-wrap: anywhere;
+  }
+
+  .chat_text.vlm5 {
+    width: auto !important;
   }
 
   #chat_form {
     margin: unset;
-  }
-
-  #chat_form {
     margin: 5px;
   }
 
@@ -1755,15 +1743,29 @@ if (window.location.href === targetCW3) {
     margin-bottom: 10px;
   }
 
-  .chat_text {
-    overflow-wrap: anywhere;
-  }
-
   #itemList {
     overflow-y: auto;
     max-height: 180px;
     display: flex;
     flex-wrap: wrap;
+  }
+
+  #location {
+    visibility: visible;
+    position: fixed;
+    right: 0px;
+    top: 0px;
+    font-size: 16px;
+    background-color: ${settings.settingBlocksColor};
+    z-index: 1;
+  }
+
+  .small {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    font-size: 16px;
+    z-index: 1;
   }
   `;
     document.head.appendChild(fixStyle);
@@ -1814,7 +1816,7 @@ if (window.location.href === targetCW3) {
   const edgeTrimBlocksStyle = document.createElement("style");
   if (settings.edgeTrimBlocks) {
     edgeTrimBlocksStyle.innerHTML = `
-      #info_main > tbody > tr > td, .small {
+      #info_main > tbody > tr > td {
         width: fit-content;
         border-radius: 10px;
         padding: 5px;
@@ -1829,11 +1831,10 @@ if (window.location.href === targetCW3) {
         margin: 5px;
       }
 
-      #tr_chat, #tr_actions > td, #tr_mouth > td {
+      #tr_chat, #tr_actions > td, #tr_mouth > td, #location, .small {
         border-radius: 10px;
         padding: 5px !important;
       }
-
     `;
   }
   document.head.appendChild(edgeTrimBlocksStyle);
