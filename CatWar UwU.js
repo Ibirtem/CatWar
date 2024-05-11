@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.10.1-05.24
+// @version      v1.10.2-05.24
 // @description  Визуальное обновление CatWar'а.
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -60,33 +60,34 @@ const uwusettings = `
     <p>
       Отображение динамичной погоды в Игровой, такие как дождь или снегопад.
     </p>
-    <input type="checkbox" id="weather-enabled" data-setting="weatherEnabled"/>
+    <input type="checkbox" id="weather-enabled" data-setting="weatherEnabled" />
     <label for="weather-enabled">Показывать погоду</label>
 
     <p>
       Отображение кнопки Расширенных настроек погоды в Игровой. Временно
       выключает натуральную генерацию погоды.
     </p>
-    <input type="checkbox" id="extended-settings" data-setting="extendedSettings"/>
+    <input type="checkbox" id="extended-settings" data-setting="extendedSettings" />
     <label for="extended-settings">Расширенные настройки</label>
 
     <p>Может очень слабо повлиять на производительность из-за возрастания количества частиц на экране.</p>
-    <input type="checkbox" id="drops" data-setting="drops"/>
-    <label for="drops-enabled">Эффекты приземления частиц</label>
+    <input type="checkbox" id="weather-drops" data-setting="weatherDrops" />
+    <label for="weather-drops">Эффекты приземления частиц</label>
 
     <p>Замена стандартных частиц на знакомые всеми пиксельные частицы.</p>
-    <input type="checkbox" id="minecraft-style" data-setting="minecraftStyle"/>
+    <input type="checkbox" id="minecraft-style" data-setting="minecraftStyle" />
     <label for="minecraft-style-enabled">Minecraft частицы</label>
 
     <hr>
     <h3>Расположение Северного Сияния</h3>
     <div id="aurora-panel">
-      <input type="range" min="1" max="2" value="1" class="slider" id="aurora-pos" list="auroraStep" data-setting="auroraPos">
+      <input type="range" min="1" max="2" value="1" class="slider" id="aurora-pos" list="auroraStep"
+        data-setting="auroraPos">
       <datalist id="auroraStep">
         <option value="1">Верх</option>
         <option value="2">Низ</option>
       </datalist>
-      </div>
+    </div>
   </div>
 
   <div id="theme-panel">
@@ -94,13 +95,13 @@ const uwusettings = `
       Ставит фон на страницу, повторяющий фон Игровой локации, а так же
       размывает и затемняет его.
     </p>
-    <input type="checkbox" id="background-repeat" data-setting="backgroundRepeat"/>
+    <input type="checkbox" id="background-repeat" data-setting="backgroundRepeat" />
     <label for="weather-enabled">Фон страницы</label>
 
     <p>Перезаписывает повторение фона игровой на собственное изображение.</p>
-    <input type="checkbox" id="background-user" data-setting="backgroundUser"/>
+    <input type="checkbox" id="background-user" data-setting="backgroundUser" />
     <label for="background-user-enabled">Использовать своё изображение</label>
-    <input type="text" id="SettingImageURLField" placeholder="Вставьте URL изображения" data-setting="backgroundUserImageURL"/>
+    <input type="text" id="SettingImageURLField" placeholder="Вставьте URL" data-setting="backgroundUserImageURL" />
     <button id="SettingSaveButton1">Сохранить</button>
 
     <hr>
@@ -110,35 +111,39 @@ const uwusettings = `
       не забывайте выключать другие темы в других скриптах/модах. Очистите поле
       чтобы вернуться к стандартным цветам.
     </p>
-    <input type="checkbox" id="user-theme" data-setting="userTheme"/>
+    <input type="checkbox" id="user-theme" data-setting="userTheme" />
     <label for="user-theme-enabled">Использовать свои цвета</label>
     <div id="color-picker">
-      <div style="flex: 0 0 50%">
-        <input type="text" id="SettingBackgroundColorField" placeholder="Вставьте HEX код" data-setting="settingBackgroundColor"/>
+      <div id="color-picker-input">
+        <input type="text" id="SettingBackgroundColorField" placeholder="Вставьте HEX код"
+          data-setting="settingBackgroundColor" />
         <label>Цвет фона</label>
       </div>
-      <div style="flex: 0 0 50%">
-        <input type="text" id="SettingBlocksColorField" placeholder="Вставьте HEX код" data-setting="settingBlocksColor"/>
+      <div id="color-picker-input">
+        <input type="text" id="SettingBlocksColorField" placeholder="Вставьте HEX код"
+          data-setting="settingBlocksColor" />
         <label>Основной цвет блоков</label>
       </div>
-      <div style="flex: 0 0 50%">
-        <input type="text" id="SettingChatColorField" placeholder="Вставьте HEX код" data-setting="settingChatColor"/>
+      <div id="color-picker-input">
+        <input type="text" id="SettingChatColorField" placeholder="Вставьте HEX код" data-setting="settingChatColor" />
         <label>Основной цвет чата</label>
       </div>
-      <div style="flex: 0 0 50%">
-        <input type="text" id="SettingTextColorField" placeholder="Вставьте HEX код" data-setting="settingTextColor"/>
+      <div id="color-picker-input">
+        <input type="text" id="SettingTextColorField" placeholder="Вставьте HEX код" data-setting="settingTextColor" />
         <label>Цвет текста</label>
       </div>
-      <div style="flex: 0 0 50%">
-        <input type="text" id="SettingLinkColorField" placeholder="Вставьте HEX код" data-setting="settingLinkColor"/>
+      <div id="color-picker-input">
+        <input type="text" id="SettingLinkColorField" placeholder="Вставьте HEX код" data-setting="settingLinkColor" />
         <label>Цвет ссылок</label>
       </div>
-      <div style="flex: 0 0 50%">
-        <input type="text" id="SettingAccentColorField1" placeholder="Вставьте HEX код" data-setting="settingAccentColor1"/>
+      <div id="color-picker-input">
+        <input type="text" id="SettingAccentColorField1" placeholder="Вставьте HEX код"
+          data-setting="settingAccentColor1" />
         <label title="Ваше имя в чате. Строка ввода сообщения. Кнопки. Слайдер громкости.">[?] Акценты 1</label>
       </div>
-      <div style="flex: 0 0 50%">
-        <input type="text" id="SettingAccentColorField2" placeholder="Вставьте HEX код" data-setting="settingAccentColor2"/>
+      <div id="color-picker-input">
+        <input type="text" id="SettingAccentColorField2" placeholder="Вставьте HEX код"
+          data-setting="settingAccentColor2" />
         <label title="Линии в чате и некоторых других частях. Кружочек слайдера громкости.">[?] Акценты 2</label>
       </div>
       <div style="flex: 0 0 100%">
@@ -152,16 +157,16 @@ const uwusettings = `
 
     <hr>
     <p>Та самая знаменитая Компактная Игровая, но с более расширенной кастомизацией.</p>
-    <input type="checkbox" id="custom-layout" data-setting="customLayout"/>
+    <input type="checkbox" id="custom-layout" data-setting="customLayout" />
     <label for="custom-layout">Редизайн Игровой</label>
 
     <div id="layout-customizer">
       <h2>Настройка расположения основных блоков в Игровой</h2>
-        <div id="layout-preview">
-          <div class="column left">
+      <div id="layout-preview">
+        <div class="column left">
           <!-- Левая колонка -->
         </div>
-          <div class="column center">
+        <div class="column center">
           <!-- Центральная колонка -->
           <div class="block center-block">Поле Игровой</div>
         </div>
@@ -169,23 +174,43 @@ const uwusettings = `
           <!-- Правая колонка -->
         </div>
         <ul id="block-list">
-        <!-- Элементы списка блоков -->
-      </ul>
+          <!-- Элементы списка блоков -->
+        </ul>
+      </div>
+
+      <p>!!! Не добавляйте что-то в колонку вместе с блоком "Информация". Из-за особенности реализации, пока что сложно
+        автоматизировать распределение блоков адекватно.
+        А так же не забудьте распределить все блоки по желанным местам, иначе в Игровой не распределённые блоки будут
+        летать !!!</p>
+      <button id="SettingSaveButton4">Сохранить</button>
+
+      <div>
+        <input type="text" id="chat-height" placeholder="Вставьте значение" data-setting="chatHeight" />
+        <label for="chat-height">px; Высота Чата</label>
+      </div>
+      <div>
+        <input type="text" id="history-height" placeholder="Вставьте значение" data-setting="historyHeight" />
+        <label for="history-height">px; Высота Истории</label>
+      </div>
+
+      <p>Визуальное разделение блока "Информация" на меньшие блоки "Параметров, Истории и Родственные связи".</p>
+      <input type="checkbox" id="slice-info-block" data-setting="sliceInfoBlock" />
+      <label for="slice-info-block">Разделить блок Информации</label>
+
+      <p>Скругляет края блоков в Игровой. Имеет временные чоколадки с нераздельным блоком "Информация".</p>
+      <input type="checkbox" id="edge-trim-blocks" data-setting="edgeTrimBlocks" />
+      <label for="edge-trim-blocks">Скругление блоков</label>
+
+      <hr>
+      <p>Добавляет аватар с профиля отправителя на его комментарий.</p>
+      <input type="checkbox" id="comments-avatars" data-setting="commentsAvatars" />
+      <label for="comments-avatars">Аватарки в комментариях</label>
+
+      <p>Более современный аналог строки ввода в Игровой. Насильно берёт цвета с "Использовать свои цвета".</p>
+      <input type="checkbox" id="new-chat" data-setting="newChat" />
+      <label for="new-chat">Редизайн строки отправки сообщений</label>
+
     </div>
-
-  <p>!!! Не добавляйте что-то в колонку вместе с блоком "Информация". Из-за особенности реализации, пока что сложно автоматизировать распределение блоков адекватно.
-     А так же не забудьте распределить все блоки по желанным местам, иначе в Игровой не распределённые блоки будут летать !!!</p>
-  <button id="SettingSaveButton4">Сохранить</button>
-
-  <p>Визуальное разделение блока "Информация" на меньшие блоки "Параметров, Истории и Родственные связи".</p>
-  <input type="checkbox" id="slice-info-block" data-setting="sliceInfoBlock"/>
-  <label for="slice-info-block">Разделить блок Информации</label>
-
-  <p>Скругляет края блоков в Игровой. Имеет временные чоколадки с нераздельным блоком "Информация".</p>
-  <input type="checkbox" id="edge-trim-blocks" data-setting="edgeTrimBlocks"/>
-  <label for="edge-trim-blocks">Скругление блоков</label>
-
-</div>
 
 
   </div>
@@ -195,32 +220,39 @@ const uwusettings = `
 
     </div>
 
-    <input type="text" id="private-module-input" placeholder=" . . . "/>
+    <input type="text" id="private-module-input" placeholder=" . . . " />
     <button id="SettingSaveButton3">Сохранить</button>
-  
-    </div>
+
+  </div>
 
   <hr>
   <div id="news-panel">
     <button id="news-button">
-      v1.10.1 - А вот и фиксы подъехали.
+      v1.10.2 - Аватарки в комментариях и Редизайн строки ввода Игровой! И ещё больше исправлений недочётов и мелких недостатков. А ещё с днём 3к строчек кода!
     </button>
     <div id="news-list" style="display: none">
       <h3>Главное</h3>
       <p>
-        — Фиксы . . . ?
+        — Обобщать лень, много что добавилось.
       </p>
       <hr>
       <h3>Внешний вид</h3>
-      <p>— Чуть сделал более понятное описание проблемы с блоком "Информация" в Настройках расположения блоков. В недалёком будущем многие недостатки я исправлю.</p>
-      <p>— Компактнее настройки Компактной игровой.</p>
-      <p>— Чуть пофиксил внешний вид верхней строки в Игровой, которая та самая "Моя кошка", "Чат" и т.д.</p>
+      <p>— Небольшие внутренние отступы в блоках теперь привязаны к любому виду Редизайна.</p>
+      <p>— Добавлена возможность дать начальную высоту Чата и Истории.</p>
+      <p>— Возможность растягивать вручную высоту Чата и Истории.</p>
+      <p>— Чуть снова визуально скукожил Настройки, уменьшив размер кнопок и строк ввода.</p>
+      <p>— Немного увеличил размер названия Локации.</p>
+      <p>— Переименовал блок "Погода/Местность" на просто погоду, тк как оно и не влияет на положение названия местности.</p>
       <hr>
       <h3>Изменения кода</h3>
-      <p>— Стили на чат применяются чуть более насильно и правильно. Должен перестать улетать и сдвигать Игровую.</p>
-      <p>— Вернул название локации на своё законное место.</p>
+      <p>— Очень не элегантное решение того, что блоки "Информация" и "Поле Игровой" не ломают высоту противоположных
+        блоков.</p>
+      <p>— Выключил забытый мною технический спам в консоль браузера.</p>
+      <p>— Стандартная чистка кода.</p>
+      <p>— Игровая всегда готова к прыганию, от чего теперь, при наведение на котов в нижних клетках, у вас не будет эпилептических припадков.</p>
+      <p>— Снова чуть поломал сохранения. На сей раз только галочку эффектов приземления.</p>
       <hr>
-      <p>Дата выпуска: 10.05.24</p>
+      <p>Дата выпуска: 11.05.24</p>
     </div>
   </div>
 </div>
@@ -272,15 +304,16 @@ const extendedSettingsButton = `
       <h3>Светлячки</h3>
       <div class="button-container-2">
         <button type="button" id="manualFirefly_On">
-          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/firefly.png"
-            alt="Иконка" width="48" height="48" title="Включает/Выключает">
+          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/firefly.png" alt="Иконка" width="48"
+            height="48" title="Включает/Выключает">
         </button>
       </div>
-      
+
     </div>
     <div id="aurora-settings-panel">
       <p>Изменения, сделанные в этой панели, сохранятся!</p>
-      <h5>Здесь будет возможность переместить Северное Сияние в реальном времени, исключать локации из генерации погоды, либо запрещать
+      <h5>Здесь будет возможность переместить Северное Сияние в реальном времени, исключать локации из генерации погоды,
+        либо запрещать
         определённой погоде существовать на выбранной локации. Но это всё пока что лишь мечта...</h5>
     </div>
   </div>
@@ -376,12 +409,14 @@ let css = `
 }
 
 #uwusettings input[type="text"] {
+  width: 150px;
   background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 10px;
+  padding: 8px;
   border-radius: 10px;
   outline: none;
-  margin-right: 10px;
+  margin: 5px;
+  margin-left: 0px;
 }
 
 .rounded-image {
@@ -417,13 +452,18 @@ let css = `
   transition: color 0.4s ease;
 }
 
-#SettingSaveButton1, #SettingSaveButton2, #SettingSaveButton3, #SettingSaveButton4 {
+#SettingSaveButton1,
+#SettingSaveButton2,
+#SettingSaveButton3,
+#SettingSaveButton4 {
   background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 10px 20px;
+  padding: 8px 15px;
   border-radius: 20px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin: 5px;
+  margin-left: 0px;
 }
 
 #SettingSaveButton1:hover,
@@ -472,14 +512,14 @@ let css = `
 #module-info {
   flex-grow: 1;
   margin-bottom: 10px;
-  
+
   display: flex;
   flex-wrap: wrap;
   flex-basis: 100%;
 }
 
 .module-container label {
-  margin-top: 10px; 
+  margin-top: 10px;
 }
 
 #private-module-input {
@@ -512,15 +552,15 @@ let css = `
   flex-wrap: wrap;
 }
 
+#color-picker-input {
+  flex: 30%;
+}
+
 #aurora-panel {
   width: 100px;
 }
 
-#color-picker div {
-  margin-bottom: 10px;
-}
-
-#layout-customizer button {
+#layout-preview button {
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 5px 10px;
   border-radius: 20px;
@@ -590,7 +630,6 @@ let css = `
   background-color: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 
 #extended-settings-container {
   font-family: "Montserrat", sans-serif;
@@ -676,7 +715,8 @@ let css = `
   box-sizing: border-box;
 }
 
-#manualWeather, #aurora-pos {
+#manualWeather,
+#aurora-pos {
   width: 100%;
   cursor: pointer;
   -webkit-appearance: none;
@@ -738,7 +778,8 @@ let css = `
   background: rgba(255, 255, 255, 0.4);
 }
 
-#WeatherStep, #auroraStep {
+#WeatherStep,
+#auroraStep {
   margin-top: 10px;
   display: flex;
   justify-content: space-between;
@@ -765,7 +806,7 @@ let css = `
 
 #manualAurora_Off,
 #manualAurora_B,
-#manualAurora_G, 
+#manualAurora_G,
 #manualFirefly_Off,
 #manualFirefly_On {
   width: 60px;
@@ -780,7 +821,7 @@ let css = `
 #extended-settings-button:hover,
 #manualAurora_Off:hover,
 #manualAurora_B:hover,
-#manualAurora_G:hover, 
+#manualAurora_G:hover,
 #manualFirefly_Off:hover,
 #manualFirefly_On:hover {
   background-color: rgba(255, 255, 255, 0.15);
@@ -803,13 +844,21 @@ let css = `
 }
 
 @keyframes auroraFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes auroraFadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 .firefly {
@@ -817,7 +866,7 @@ let css = `
   background-color: rgba(255, 255, 153, 1);
   border-radius: 50%;
   filter: blur(5px);
-  pointer-events: none; 
+  pointer-events: none;
 
   animation: fadeIn 6s ease-in-out;
 }
@@ -826,26 +875,33 @@ let css = `
   position: fixed;
   background-color: rgba(255, 255, 153, 0.2);
   border-radius: 50%;
-  filter: blur(40px); 
-  pointer-events: none; 
+  filter: blur(40px);
+  pointer-events: none;
 
   animation: fadeIn 6s ease-in-out;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 .firefly-disappearing {
   animation: fadeOut 6s ease-in-out forwards;
 }
-
 `;
 GM_addStyle(css);
 // ====================================================================================================================
@@ -858,8 +914,12 @@ let settings = {
   backgroundRepeat: false,
   backgroundUser: false,
   userTheme: false,
-  drops: false,
+  weatherDrops: false,
+  commentsAvatars: false,
+  newChat: false,
   auroraPos: "1",
+  chatHeight: "275",
+  historyHeight: "215",
   backgroundUserImageURL: "",
   settingBackgroundColor: "",
   settingBlocksColor: "",
@@ -953,126 +1013,132 @@ if (targetSettings.test(window.location.href)) {
       });
     });
 
-// ====================================================================================================================
-//  . . . МАКЕТ КАСТОМИЗАЦИИ ИГРОВОЙ . . .
-// ====================================================================================================================
-const blockNames = {
-  'tr_chat': 'Чат',
-  'tr_actions': 'Действия',
-  'tr_tos': 'Погода/Местность',
-  'tr_mouth': 'Во рту',
-  // 'tr_sky': 'Небо', 
-  'tr_info': 'Информация',
-};
-const blockList = document.getElementById("block-list");
-const listItems = [];
-const leftColumn = document.querySelector("#layout-customizer .column.left");
-const rightColumn = document.querySelector("#layout-customizer .column.right");
-
-// Функция для создания элемента блока
-function createBlockElement(blockId) {
-  const blockElement = document.createElement("div");
-  blockElement.classList.add("block", blockId);
-
-  const blockName = document.createElement("span");
-  blockName.textContent = blockNames[blockId];
-  blockElement.appendChild(blockName);
-
-  const removeButton = document.createElement("button");
-  removeButton.textContent = "Удалить";
-  removeButton.classList.add("remove-button");
-  removeButton.addEventListener("click", () => {
-    blockElement.remove();
-    const listItem = listItems.find(item => item.dataset.blockId === blockId);
-    if (listItem) {
-      blockList.appendChild(listItem);
-    }
-  });
-
-  blockElement.appendChild(removeButton);
-  return blockElement;
-}
-
-// Функция для создания кнопок "Слева" и "Справа"
-function createMoveButtons(listItem, blockId) {
-  const moveLeftButton = document.createElement("button");
-  moveLeftButton.textContent = "Слева";
-  moveLeftButton.classList.add("move-left", "install-button");
-  moveLeftButton.addEventListener("click", () => {
-    const blockElement = createBlockElement(blockId);
-    leftColumn.appendChild(blockElement);
-    listItem.remove();
-  });
-  listItem.appendChild(moveLeftButton);
-
-  const moveRightButton = document.createElement("button");
-  moveRightButton.textContent = "Справа";
-  moveRightButton.classList.add("move-right", "install-button");
-  moveRightButton.addEventListener("click", () => {
-    const blockElement = createBlockElement(blockId);
-    rightColumn.appendChild(blockElement);
-    listItem.remove();
-  });
-  listItem.appendChild(moveRightButton);
-}
-
-// Создание списка блоков
-for (const blockId in blockNames) {
-  const listItem = document.createElement("li");
-  const blockName = document.createElement("span");
-  blockName.textContent = blockNames[blockId];
-  listItem.appendChild(blockName);
-  listItem.dataset.blockId = blockId;
-
-  createMoveButtons(listItem, blockId);
-
-  blockList.appendChild(listItem);
-  listItems.push(listItem);
-}
-
-// Сохранение и загрузка настроек
-const saveButton = document.getElementById("SettingSaveButton4");
-
-saveButton.addEventListener("click", () => {
-  const leftBlocks = Array.from(leftColumn.querySelectorAll(".block")).map(
-    block => block.classList[1]
-  );
-  const rightBlocks = Array.from(rightColumn.querySelectorAll(".block")).map(
-    block => block.classList[1]
-  );
-
-  const layoutSettings = {
-    leftBlocks,
-    rightBlocks,
+  // ====================================================================================================================
+  //  . . . МАКЕТ КАСТОМИЗАЦИИ ИГРОВОЙ . . .
+  // ====================================================================================================================
+  const blockNames = {
+    tr_chat: "Чат",
+    tr_actions: "Действия",
+    tr_tos: "Погода",
+    tr_mouth: "Во рту",
+    // 'tr_sky': 'Небо',
+    tr_info: "Информация",
   };
+  const blockList = document.getElementById("block-list");
+  const listItems = [];
+  const leftColumn = document.querySelector("#layout-customizer .column.left");
+  const rightColumn = document.querySelector(
+    "#layout-customizer .column.right"
+  );
 
-  localStorage.setItem("layoutSettings", JSON.stringify(layoutSettings));
-});
+  // Функция для создания элемента блока
+  function createBlockElement(blockId) {
+    const blockElement = document.createElement("div");
+    blockElement.classList.add("block", blockId);
 
-function loadLayoutSettings() {
-  const savedSettings = localStorage.getItem("layoutSettings");
-  if (savedSettings) {
-    const { leftBlocks, rightBlocks } = JSON.parse(savedSettings);
+    const blockName = document.createElement("span");
+    blockName.textContent = blockNames[blockId];
+    blockElement.appendChild(blockName);
 
-    leftColumn.innerHTML = "";
-    rightColumn.innerHTML = "";
+    const removeButton = document.createElement("button");
+    removeButton.textContent = "Удалить";
+    removeButton.classList.add("remove-button");
+    removeButton.addEventListener("click", () => {
+      blockElement.remove();
+      const listItem = listItems.find(
+        (item) => item.dataset.blockId === blockId
+      );
+      if (listItem) {
+        blockList.appendChild(listItem);
+      }
+    });
 
-    leftBlocks.forEach(blockId => {
+    blockElement.appendChild(removeButton);
+    return blockElement;
+  }
+
+  // Функция для создания кнопок "Слева" и "Справа"
+  function createMoveButtons(listItem, blockId) {
+    const moveLeftButton = document.createElement("button");
+    moveLeftButton.textContent = "Слева";
+    moveLeftButton.classList.add("move-left", "install-button");
+    moveLeftButton.addEventListener("click", () => {
       const blockElement = createBlockElement(blockId);
       leftColumn.appendChild(blockElement);
+      listItem.remove();
     });
+    listItem.appendChild(moveLeftButton);
 
-    rightBlocks.forEach(blockId => {
+    const moveRightButton = document.createElement("button");
+    moveRightButton.textContent = "Справа";
+    moveRightButton.classList.add("move-right", "install-button");
+    moveRightButton.addEventListener("click", () => {
       const blockElement = createBlockElement(blockId);
       rightColumn.appendChild(blockElement);
+      listItem.remove();
     });
+    listItem.appendChild(moveRightButton);
   }
+
+  // Создание списка блоков
+  for (const blockId in blockNames) {
+    const listItem = document.createElement("li");
+    const blockName = document.createElement("span");
+    blockName.textContent = blockNames[blockId];
+    listItem.appendChild(blockName);
+    listItem.dataset.blockId = blockId;
+
+    createMoveButtons(listItem, blockId);
+
+    blockList.appendChild(listItem);
+    listItems.push(listItem);
+  }
+
+  // Сохранение и загрузка настроек
+  const saveButton = document.getElementById("SettingSaveButton4");
+
+  saveButton.addEventListener("click", () => {
+    const leftBlocks = Array.from(leftColumn.querySelectorAll(".block")).map(
+      (block) => block.classList[1]
+    );
+    const rightBlocks = Array.from(rightColumn.querySelectorAll(".block")).map(
+      (block) => block.classList[1]
+    );
+
+    const layoutSettings = {
+      leftBlocks,
+      rightBlocks,
+    };
+
+    localStorage.setItem("layoutSettings", JSON.stringify(layoutSettings));
+  });
+
+  function loadLayoutSettings() {
+    const savedSettings = localStorage.getItem("layoutSettings");
+    if (savedSettings) {
+      const { leftBlocks, rightBlocks } = JSON.parse(savedSettings);
+
+      leftColumn.innerHTML = "";
+      rightColumn.innerHTML = "";
+
+      leftBlocks.forEach((blockId) => {
+        const blockElement = createBlockElement(blockId);
+        leftColumn.appendChild(blockElement);
+      });
+
+      rightBlocks.forEach((blockId) => {
+        const blockElement = createBlockElement(blockId);
+        rightColumn.appendChild(blockElement);
+      });
+    }
+  }
+
+  window.addEventListener("load", loadLayoutSettings);
 }
 
-window.addEventListener("load", loadLayoutSettings);
-}
-
-// Переключение вкладок
+// ====================================================================================================================
+//  . . . ВКЛАДКИ ГЛАВНЫХ НАСТРОЕК . . .
+// ====================================================================================================================
 if (targetSettings.test(window.location.href)) {
   const effectsPanel = document.getElementById("effects-panel");
   const themePanel = document.getElementById("theme-panel");
@@ -1137,20 +1203,26 @@ function loadModuleStates() {
 }
 
 async function loadModuleList() {
-  const url = 'https://raw.githubusercontent.com/Ibirtem/CatWar/main/modules/modules.txt';
+  const url =
+    "https://raw.githubusercontent.com/Ibirtem/CatWar/main/modules/modules.txt";
   try {
     const response = await fetch(url);
     const moduleList = await response.text();
-    const modules = moduleList.split('\n').filter(line => line.trim() !== '');
+    const modules = moduleList.split("\n").filter((line) => line.trim() !== "");
 
-    const moduleInfoContainer = document.getElementById('module-info');
-    const privateModuleInput = document.getElementById('private-module-input');
-    const saveButton = document.getElementById('SettingSaveButton3');
+    const moduleInfoContainer = document.getElementById("module-info");
+    const privateModuleInput = document.getElementById("private-module-input");
+    const saveButton = document.getElementById("SettingSaveButton3");
 
     for (const moduleInfo of modules) {
-      const [moduleName, description, version] = moduleInfo.split('|');
+      const [moduleName, description, version] = moduleInfo.split("|");
       const isOnlineModule = !localStorage.getItem(moduleName);
-      const moduleContainer = createModuleContainer(moduleName, description, version, isOnlineModule);
+      const moduleContainer = createModuleContainer(
+        moduleName,
+        description,
+        version,
+        isOnlineModule
+      );
       moduleInfoContainer.appendChild(moduleContainer);
 
       if (moduleStates[moduleName]) {
@@ -1161,7 +1233,13 @@ async function loadModuleList() {
     for (const [moduleName, moduleInfo] of Object.entries(privateModules)) {
       const { description, version } = moduleInfo;
       const isPrivateModule = true;
-      const moduleContainer = createModuleContainer(moduleName, description, version, false, isPrivateModule);
+      const moduleContainer = createModuleContainer(
+        moduleName,
+        description,
+        version,
+        false,
+        isPrivateModule
+      );
       moduleInfoContainer.appendChild(moduleContainer);
 
       if (moduleStates[moduleName]) {
@@ -1169,63 +1247,75 @@ async function loadModuleList() {
       }
     }
 
-    saveButton.addEventListener('click', () => {
+    saveButton.addEventListener("click", () => {
       const privateModuleUrl = privateModuleInput.value.trim();
       if (privateModuleUrl) {
         loadPrivateModule(privateModuleUrl);
-        privateModuleInput.value = '';
+        privateModuleInput.value = "";
       }
     });
   } catch (error) {
-    console.error('Ошибка при загрузке списка модулей:', error);
+    console.error("Ошибка при загрузке списка модулей:", error);
   }
 }
 
-function createModuleContainer(moduleName, description, version, isOnlineModule = false, isPrivateModule = false) {
-  const moduleContainer = document.createElement('div');
-  moduleContainer.classList.add('module-container');
+function createModuleContainer(
+  moduleName,
+  description,
+  version,
+  isOnlineModule = false,
+  isPrivateModule = false
+) {
+  const moduleContainer = document.createElement("div");
+  moduleContainer.classList.add("module-container");
 
-  const moduleInfo = document.createElement('div');
-  moduleInfo.classList.add('module-info');
+  const moduleInfo = document.createElement("div");
+  moduleInfo.classList.add("module-info");
   moduleInfo.textContent = `${description}`;
 
-  const modulePanel = document.createElement('div');
-  modulePanel.classList.add('module-panel');
+  const modulePanel = document.createElement("div");
+  modulePanel.classList.add("module-panel");
 
-  const versionInfo = document.createElement('span');
+  const versionInfo = document.createElement("span");
   versionInfo.textContent = `Версия: ${version}`;
   modulePanel.appendChild(versionInfo);
 
   if (isOnlineModule) {
-    const installButton = document.createElement('button');
-    installButton.textContent = 'Установить';
-    installButton.classList.add('install-button');
-    installButton.addEventListener('click', () => {
+    const installButton = document.createElement("button");
+    installButton.textContent = "Установить";
+    installButton.classList.add("install-button");
+    installButton.addEventListener("click", () => {
       loadModule(moduleName, description, version);
       moduleContainer.remove();
-      createModuleContainer(moduleName, description, version, false, isPrivateModule);
+      createModuleContainer(
+        moduleName,
+        description,
+        version,
+        false,
+        isPrivateModule
+      );
     });
     modulePanel.appendChild(installButton);
   } else {
-    const checkboxContainer = document.createElement('div');
-    checkboxContainer.classList.add('checkbox-container');
+    const checkboxContainer = document.createElement("div");
+    checkboxContainer.classList.add("checkbox-container");
 
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
     checkbox.id = moduleName;
     checkbox.checked = moduleStates[moduleName] || false;
     checkboxContainer.appendChild(checkbox);
 
-    const removeButton = document.createElement('button');
-    removeButton.textContent = 'Удалить';
-    removeButton.classList.add('remove-button');
-    removeButton.addEventListener('click', () => {
+    const removeButton = document.createElement("button");
+    removeButton.textContent = "Удалить";
+    removeButton.classList.add("remove-button");
+    removeButton.addEventListener("click", () => {
       unloadModule(moduleName);
       moduleContainer.remove();
     });
     modulePanel.appendChild(removeButton);
 
-    checkbox.addEventListener('change', () => {
+    checkbox.addEventListener("change", () => {
       moduleStates[moduleName] = checkbox.checked;
       localStorage.setItem("moduleStates", JSON.stringify(moduleStates));
 
@@ -1272,50 +1362,67 @@ async function loadModule(moduleName, description, version) {
         clearModuleInfoContainer();
         loadModuleList();
       } else {
-        console.error(`Ошибка при загрузке модуля "${moduleName}": ${response.status} ${response.statusText}`);
+        console.error(
+          `Ошибка при загрузке модуля "${moduleName}": ${response.status} ${response.statusText}`
+        );
       }
     } catch (error) {
-      console.error('Ошибка при загрузке модуля:', error);
+      console.error("Ошибка при загрузке модуля:", error);
     }
   }
 }
 
 async function loadPrivateModule(privateModuleUrl) {
   try {
-    const isValidUrl = privateModuleUrl.startsWith('https://raw.githubusercontent.com/');
+    const isValidUrl = privateModuleUrl.startsWith(
+      "https://raw.githubusercontent.com/"
+    );
     if (isValidUrl) {
       const response = await fetch(privateModuleUrl);
       if (response.ok) {
         const data = await response.text();
         const moduleName = getModuleNameFromUrl(privateModuleUrl);
-        const moduleInfo = { description: 'Приватный модуль', version: 'Н/Д' };
+        const moduleInfo = { description: "Приватный модуль", version: "Н/Д" };
         privateModules[moduleName] = moduleInfo;
         localStorage.setItem("privateModules", JSON.stringify(privateModules));
-        const moduleContainer = createModuleContainer(moduleName, moduleInfo.description, moduleInfo.version);
-        const moduleInfoContainer = document.getElementById('module-info');
+        const moduleContainer = createModuleContainer(
+          moduleName,
+          moduleInfo.description,
+          moduleInfo.version
+        );
+        const moduleInfoContainer = document.getElementById("module-info");
         moduleInfoContainer.appendChild(moduleContainer);
-        activateModule(data, moduleName, moduleInfo.description, moduleInfo.version);
+        activateModule(
+          data,
+          moduleName,
+          moduleInfo.description,
+          moduleInfo.version
+        );
       } else {
-        console.error(`Ошибка при загрузке приватного модуля: ${response.status} ${response.statusText}`);
+        console.error(
+          `Ошибка при загрузке приватного модуля: ${response.status} ${response.statusText}`
+        );
       }
     } else {
-      console.error('Неверный формат ссылки. Ссылка должна начинаться с "https://raw.githubusercontent.com/"');
+      console.error(
+        'Неверный формат ссылки. Ссылка должна начинаться с "https://raw.githubusercontent.com/"'
+      );
     }
   } catch (error) {
-    console.error('Ошибка при загрузке приватного модуля:', error);
+    console.error("Ошибка при загрузке приватного модуля:", error);
   }
 }
 
 function getModuleNameFromUrl(url) {
-  const lastSlash = url.lastIndexOf('/');
+  const lastSlash = url.lastIndexOf("/");
   const fileName = url.substring(lastSlash + 1);
   return fileName;
 }
 
 function activateModule(data, moduleName, description, version) {
-  if (moduleName.endsWith('.css')) {
+  if (moduleName.endsWith(".css")) {
     GM_addStyle(data);
-  } else if (moduleName.endsWith('.js')) {
+  } else if (moduleName.endsWith(".js")) {
     try {
       new Function(data);
       eval(data);
@@ -1341,7 +1448,7 @@ function unloadModule(moduleName) {
 }
 
 function clearModuleInfoContainer() {
-  const moduleInfoContainer = document.getElementById('module-info');
+  const moduleInfoContainer = document.getElementById("module-info");
   while (moduleInfoContainer.firstChild) {
     moduleInfoContainer.removeChild(moduleInfoContainer.firstChild);
   }
@@ -1349,6 +1456,91 @@ function clearModuleInfoContainer() {
 
 loadModuleStates();
 loadModuleList();
+// ====================================================================================================================
+//   . . . ЗАГРУЗКА НАСТРОЕК . . .
+// ====================================================================================================================
+function loadSettings() {
+  const storedSettings = localStorage.getItem("uwu-settings");
+  if (storedSettings) {
+    const loadedSettings = JSON.parse(storedSettings);
+    for (const key in loadedSettings) {
+      if (loadedSettings.hasOwnProperty(key)) {
+        settings[key] = loadedSettings[key];
+      }
+    }
+  } else {
+    console.log("Нет сохраненных настроек");
+  }
+}
+
+loadSettings();
+// ====================================================================================================================
+//   . . . АВАТАРЫ В КОММЕНТАРИЯХ . . .
+// ====================================================================================================================
+if (window.location.href !== targetCW3) {
+  if (settings.commentsAvatars) {
+    const checkForComments = setInterval(() => {
+      const comments = document.querySelectorAll(".view-comment.has-buttons");
+      if (comments.length > 0) {
+        clearInterval(checkForComments);
+
+        comments.forEach((comment) => {
+          const authorLink = comment.querySelector(".author");
+          if (authorLink) {
+            const catId = authorLink
+              .getAttribute("href")
+              .match(/\/cat(\d+)/)?.[1];
+            if (catId) {
+              const avatarImg = document.createElement("img");
+
+              avatarImg.alt = "Аватар пользователя";
+              avatarImg.style.width = "100px";
+              avatarImg.style.height = "100px";
+              avatarImg.style.objectFit = "cover";
+              avatarImg.style.float = "left";
+              avatarImg.style.margin = "5px";
+              avatarImg.style.border = "black solid 1px";
+
+              loadAvatar(catId, (avatarUrl) => {
+                if (avatarUrl) {
+                  avatarImg.src = avatarUrl;
+                  comment.insertBefore(avatarImg, comment.firstChild);
+                }
+              });
+            }
+          }
+        });
+      }
+    }, 200);
+  }
+
+  function loadAvatar(catId, callback) {
+    const formats = ["png", "jpg", "gif"];
+    let currentFormat = 0;
+
+    function tryNextFormat() {
+      const url = `https://e.catwar.su/avatar/${catId}.${formats[currentFormat]}`;
+      const img = new Image();
+
+      img.onload = function () {
+        callback(url);
+      };
+
+      img.onerror = function () {
+        currentFormat++;
+        if (currentFormat < formats.length) {
+          tryNextFormat();
+        } else {
+          callback(null);
+        }
+      };
+
+      img.src = url;
+    }
+
+    tryNextFormat();
+  }
+}
 // ====================================================================================================================
 //  . . . ЗАГРУЗКА КОДА В ИГРОВОЙ . . .
 // ====================================================================================================================
@@ -1358,22 +1550,6 @@ if (window.location.href === targetCW3) {
   const globalContainerElement = document.createElement("div");
   globalContainerElement.id = "global-container";
   containerElement.appendChild(globalContainerElement);
-
-  function loadSettings() {
-    const storedSettings = localStorage.getItem("uwu-settings");
-    if (storedSettings) {
-      const loadedSettings = JSON.parse(storedSettings);
-      for (const key in loadedSettings) {
-        if (loadedSettings.hasOwnProperty(key)) {
-          settings[key] = loadedSettings[key];
-        }
-      }
-    } else {
-      console.log("Нет сохраненных настроек");
-    }
-  }
-
-  loadSettings();
   // ====================================================================================================================
   //  . . . РАСШИРЕННЫЕ НАСТРОЙКИ . . .
   // ====================================================================================================================
@@ -1640,18 +1816,20 @@ if (window.location.href === targetCW3) {
       let lastLeftBlockId = "";
       let lastRightBlockId = "";
       let isFirstRow = true;
-    
+
       for (let i = 0; i < numRows; i++) {
         const leftBlockId = leftBlocks[i] || lastLeftBlockId;
         const rightBlockId = rightBlocks[i] || lastRightBlockId;
-    
+
         if (isFirstRow) {
           template += `"${leftBlockId} tr_field ${rightBlockId}" `;
           isFirstRow = false;
         } else {
-          template += `"${leftBlockId === lastLeftBlockId ? '.' : leftBlockId} . ${rightBlockId === lastRightBlockId ? '.' : rightBlockId}" `; 
+          template += `"${
+            leftBlockId === lastLeftBlockId ? "." : leftBlockId
+          } . ${rightBlockId === lastRightBlockId ? "." : rightBlockId}" `;
         }
-    
+
         if (leftBlockId) {
           lastLeftBlockId = leftBlockId;
         }
@@ -1659,7 +1837,7 @@ if (window.location.href === targetCW3) {
           lastRightBlockId = rightBlockId;
         }
       }
-    
+
       return template;
     }
 
@@ -1673,7 +1851,6 @@ if (window.location.href === targetCW3) {
     // Больше фикс стилей.
     const fixStyle = document.createElement("style");
     fixStyle.innerHTML = `
-
   #main_table {
     width: 100%;
     max-width: unset;
@@ -1695,10 +1872,11 @@ if (window.location.href === targetCW3) {
     visibility: hidden; 
   }
 
-  #history_block { 
+  #history_block {
     display: block;
-    max-height: 200px; 
+    height: ${settings.historyHeight}px; 
     overflow-y: auto;
+    resize: vertical;
   }
 
   #family_block, #cws_quick_settings_block { 
@@ -1755,7 +1933,7 @@ if (window.location.href === targetCW3) {
     position: fixed;
     right: 0px;
     top: 0px;
-    font-size: 16px;
+    font-size: 1.2rem;
     background-color: ${settings.settingBlocksColor};
     z-index: 1;
   }
@@ -1766,6 +1944,23 @@ if (window.location.href === targetCW3) {
     top: 0px;
     font-size: 16px;
     z-index: 1;
+  }
+
+  body {
+    overflow-y: scroll;
+  }
+
+  #tr_chat, #tr_actions > td, #tr_mouth > td, #location, .small, #info_main > tbody > tr > td {
+    padding: 5px !important;
+  }
+
+  #chat_msg, #cws_chat_msg {
+    height: ${settings.chatHeight}px;
+    resize: vertical;
+  }
+
+  #tr_field, #tr_info {
+    height: 10px;
   }
   `;
     document.head.appendChild(fixStyle);
@@ -1790,11 +1985,49 @@ if (window.location.href === targetCW3) {
       tds[1].style.gridArea = "history";
       tds[2].style.gridArea = "parameter";
     }
-
     applyLayoutSettingsForInfoMain();
   }
   // ====================================================================================================================
-  //   . . . ДОПОЛНИТЕЛЬНЫЕ РЕДИЗАЙНЫ . . .
+  //   . . . НОВЫЙ ВВОД ЧАТА . . .
+  // ====================================================================================================================
+  if (settings.newChat) {
+  const txtSpan = document.getElementById("txt");
+  const inputField = txtSpan.querySelector("input#text");
+  const textarea = document.createElement("textarea");
+  textarea.id = "text";
+  textarea.maxLength = 255;
+  textarea.style.height = "auto";
+  textarea.style.width = "100%";
+  textarea.style.resize = "vertical";
+  textarea.value = inputField.value;
+  txtSpan.replaceChild(textarea, inputField);
+
+  textarea.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      if (event.shiftKey) {
+        event.preventDefault();
+        textarea.value += "\n";
+      } else {
+        // Имитируем нажатие кнопки
+        const sendButton = document.getElementById("msg_send");
+        sendButton.click();
+        textarea.value = "";
+      }
+    }
+  });
+}
+const NewChatDesign = document.createElement("style");
+NewChatDesign.innerHTML = `
+  #text {
+    color: ${settings.settingTextColor};
+    background: ${settings.settingAccentColor1};
+    border: solid 1px ${settings.settingAccentColor2};
+    font-family: Verdana;
+  }
+  `
+document.head.appendChild(NewChatDesign);
+  // ====================================================================================================================
+  //   . . . РЕДИЗАЙНЫ ++ ЗАКРУГЛЕНИЕ БЛОКОВ . . .
   // ====================================================================================================================
   const sliceInfoStyle = document.createElement("style");
   if (settings.sliceInfoBlock) {
@@ -1816,25 +2049,32 @@ if (window.location.href === targetCW3) {
   const edgeTrimBlocksStyle = document.createElement("style");
   if (settings.edgeTrimBlocks) {
     edgeTrimBlocksStyle.innerHTML = `
-      #info_main > tbody > tr > td {
-        width: fit-content;
-        border-radius: 10px;
-        padding: 5px;
-        margin: 5px;
-      }
-      
-      #info_main, #tos, #cages_overflow, #cages_div {
-        border-radius: 10px;
-      }
-
-      #main_table > tbody > #tr_actions, #main_table > tbody > #tr_mouth, #main_table > tbody > #tr_chat {
-        margin: 5px;
-      }
-
-      #tr_chat, #tr_actions > td, #tr_mouth > td, #location, .small {
-        border-radius: 10px;
-        padding: 5px !important;
-      }
+    #info_main > tbody > tr > td {
+      width: fit-content;
+      border-radius: 10px;
+      margin: 5px;
+    }
+    
+    #info_main,
+    #tos,
+    #cages_overflow,
+    #cages_div {
+      border-radius: 10px;
+    }
+    
+    #main_table > tbody > #tr_actions,
+    #main_table > tbody > #tr_mouth,
+    #main_table > tbody > #tr_chat {
+      margin: 5px;
+    }
+    
+    #tr_chat,
+    #tr_actions > td,
+    #tr_mouth > td,
+    #location,
+    .small {
+      border-radius: 10px;
+    }    
     `;
   }
   document.head.appendChild(edgeTrimBlocksStyle);
@@ -1953,7 +2193,7 @@ if (window.location.href === targetCW3) {
           break;
       }
     }
-    console.log(currentSeason);
+    // console.log(currentSeason);
   }
 
   function getTemperature() {
@@ -2610,8 +2850,8 @@ if (window.location.href === targetCW3) {
   const pixelSplashes = [];
 
   switch (true) {
-    case settings.extendedSettings && !settings.drops:
-    case settings.weatherEnabled && !settings.drops:
+    case settings.extendedSettings && !settings.weatherDrops:
+    case settings.weatherEnabled && !settings.weatherDrops:
       setInterval(() => {
         checkElements(raindrops, weatherContainer);
         checkElements(snowflakes, weatherContainer);
@@ -2620,8 +2860,8 @@ if (window.location.href === targetCW3) {
       }, 120);
       break;
 
-    case settings.extendedSettings && settings.drops:
-    case settings.weatherEnabled && settings.drops:
+    case settings.extendedSettings && settings.weatherDrops:
+    case settings.weatherEnabled && settings.weatherDrops:
       animateLanding();
       break;
 
