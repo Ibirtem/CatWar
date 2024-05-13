@@ -1,3 +1,3 @@
-    #fightPanel, span.cat_tooltip {
-      backdrop-filter: blur(16px);
-    } 
+#fightPanel, span.cat_tooltip, #tr_chat, #tr_actions > td, #tr_mouth > td, #location, .small, #info_main > tbody > tr > td {
+    backdrop-filter: blur(16px);
+} 
