@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.11.0-05.24
+// @version      v1.12.0-05.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -26,10 +26,18 @@ const targetCW3 = "https://catwar.su/cw3/";
 // ====================================================================================================================
 
 // ====================================================================================================================
-// div'ы Настроек milky_way
+// div'ы Настроек
 const uwusettings = `
 <div id="uwusettings">
   <h1>Настройки CatWar UwU</h1>
+
+  <div id="ref-vk" title="ВК Группа по Скрипту/Моду.">
+    <a href="https://vk.com/catwar_uwu" target="_blank" rel="noopener noreferrer">
+      <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/VK_logo.png" alt="Иконка" width="36"
+        height="36">
+    </a>
+  </div>
+
   <hr>
   <div id="button-container">
     <button id="effects-button" class="active">
@@ -43,6 +51,13 @@ const uwusettings = `
       <h2>
         Оформление
         <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/sparkles.png" alt="Иконка" width="24"
+          height="24" />
+      </h2>
+    </button>
+    <button id="utility-button">
+      <h2>
+        Инструментарий
+        <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/flashlight.png" alt="Иконка" width="24"
           height="24" />
       </h2>
     </button>
@@ -67,8 +82,7 @@ const uwusettings = `
 
     <div>
       <p>
-        Отображение кнопки Расширенных настроек погоды в Игровой. Временно
-        выключает натуральную генерацию погоды.
+        Отображение кнопки Расширенных настроек погоды в Игровой. Выключает натуральную генерацию погоды.
       </p>
       <input type="checkbox" id="extended-settings" data-setting="extendedSettings" />
       <label for="extended-settings">Расширенные настройки</label>
@@ -86,9 +100,15 @@ const uwusettings = `
       <label for="minecraft-style-enabled">Minecraft частицы</label>
     </div>
 
+    <div>
+      <p>Поле Игровой всегда яркое.</p>
+      <input type="checkbox" id="always-day" data-setting="alwaysDay" />
+      <label for="always-day">Всегда день</label>
+    </div>
+
     <hr>
-    <h3>Расположение Северного Сияния</h3>
-    <div id="aurora-panel">
+    <p>Расположение Северного Сияния</p>
+    <div id="auroraPanel">
       <input type="range" min="1" max="2" value="1" class="slider" id="aurora-pos" list="auroraStep"
         data-setting="auroraPos">
       <datalist id="auroraStep">
@@ -96,6 +116,14 @@ const uwusettings = `
         <option value="2">Низ</option>
       </datalist>
     </div>
+
+    <div>
+      <p>Делает небо шапкой страницы, пряча под игровую, а так же по факту чинит его потерю при Редизайне игровой. Будет
+        выглядеть не очень на широкоформатных мониторах из-за растягивания изображения.</p>
+      <input type="checkbox" id="sky-in-the-sky" data-setting="skyInHeader" />
+      <label for="sky-in-the-sky">Небо в небе.</label>
+    </div>
+
   </div>
 
   <div id="theme-panel">
@@ -161,12 +189,19 @@ const uwusettings = `
       <div id="color-picker-input">
         <input type="text" id="SettingAccentColorField1" placeholder="Вставьте HEX код"
           data-setting="settingAccentColor1" />
-        <label title="Ваше имя в чате. Строка ввода сообщения. Кнопки. Слайдер громкости.">[?] Акценты 1</label>
+        <label
+          title="В основном всякие кнопки, слайдеры и строки ввода + цвет букв упоминания вас в Чате. Старайтесь пока делать просто оттенки чёрного цвета.">[?]
+          Акценты 1</label>
       </div>
       <div id="color-picker-input">
         <input type="text" id="SettingAccentColorField2" placeholder="Вставьте HEX код"
           data-setting="settingAccentColor2" />
-        <label title="Линии в чате и некоторых других частях. Кружочек слайдера громкости.">[?] Акценты 2</label>
+        <label title="Линии в чате и некоторых других частях, кружочек слайдера громкости.">[?] Акценты 2</label>
+      </div>
+      <div id="color-picker-input">
+        <input type="text" id="SettingAccentColorField3" placeholder="Вставьте HEX код"
+          data-setting="settingAccentColor3" />
+        <label title="Цвет уведомлений. Например ЛС и васего имени в Чате">[?] Акценты 3</label>
       </div>
 
       <div style="flex: 0 0 100%">
@@ -184,7 +219,6 @@ const uwusettings = `
     <label for="custom-layout">Редизайн Игровой</label>
 
     <div id="layout-customizer">
-      <h2>Настройка расположения основных блоков в Игровой</h2>
       <div id="layout-preview">
         <div class="column left">
           <!-- Левая колонка -->
@@ -200,53 +234,109 @@ const uwusettings = `
           <!-- Элементы списка блоков -->
         </ul>
       </div>
+    </div>
 
-      <p>!!! Не добавляйте что-то в колонку вместе с блоком "Информация". Из-за особенности реализации, пока что сложно
-        автоматизировать распределение блоков адекватно.
-        А так же не забудьте распределить все блоки по желанным местам, иначе в Игровой не распределённые блоки будут
-        летать !!!</p>
-      <button id="SettingSaveButton4">Сохранить</button>
+    <p>!!! Не добавляйте что-то в колонку вместе с блоком "Информация". Из-за особенности реализации, пока что сложно
+      автоматизировать распределение блоков адекватно.
+      А так же не забудьте распределить все блоки по желанным местам, иначе в Игровой не распределённые блоки будут
+      летать !!!</p>
+    <button id="SettingSaveButton4">Сохранить</button>
 
-      <div>
-        <input type="text" id="chat-height" placeholder="Вставьте значение" data-setting="chatHeight" />
-        <label for="chat-height">px; Высота Чата</label>
+    <div>
+      <input type="text" id="chat-height" placeholder="Вставьте значение" data-setting="chatHeight" />
+      <label for="chat-height">px; Высота Чата</label>
+    </div>
+
+    <div>
+      <input type="text" id="history-height" placeholder="Вставьте значение" data-setting="historyHeight" />
+      <label for="history-height">px; Макс. Высота Истории</label>
+    </div>
+
+    <div>
+      <p>Визуальное разделение блока "Информация" на меньшие блоки "Параметров, Истории и Родственные связи".</p>
+      <input type="checkbox" id="slice-info-block" data-setting="sliceInfoBlock" />
+      <label for="slice-info-block">Разделить блок Информации</label>
+    </div>
+
+    <div>
+      <p>Скругляет края блоков в Игровой. Имеет временные чоколадки с нераздельным блоком "Информация".</p>
+      <input type="checkbox" id="edge-trim-blocks" data-setting="edgeTrimBlocks" />
+      <label for="edge-trim-blocks">Скругление блоков</label>
+    </div>
+
+    <hr>
+    <div>
+      <p>Добавляет аватар с профиля отправителя на его комментарий.</p>
+      <input type="checkbox" id="comments-avatars" data-setting="commentsAvatars" />
+      <label for="comments-avatars">Аватарки в комментариях</label>
+    </div>
+
+    <div>
+      <p>Более функциональный новый Чат: ID отправителя рядом с его именем и звуковое уведомление при вашем упоминании.
+      </p>
+      <input type="checkbox" id="new-chat" data-setting="newChat" />
+      <label for="new-chat">Современный Чат</label>
+    </div>
+
+    <div class="custom-select" id="myNameNotificationSound">
+      <div class="select-selected">Выберите звук</div>
+      <div class="select-items">
+        <!-- Опции будут добавлены сюда -->
       </div>
+    </div>
 
-      <div>
-        <input type="text" id="history-height" placeholder="Вставьте значение" data-setting="historyHeight" />
-        <label for="history-height">px; Высота Истории</label>
-      </div>
+    <p>Громкость уведомления</p>
+    <div id="notification-volume">
+      <input type="range" min="1" max="10" value="5" class="slider" id="notification-MyName-Volume" list="volumeStep"
+        data-setting="notificationMyNameVolume">
+      <datalist id="volumeStep">
+        <option value="1">10%</option>
+        <option value="5">50%</option>
+        <option value="10">100%</option>
+      </datalist>
+    </div>
 
-      <div>
-        <p>Визуальное разделение блока "Информация" на меньшие блоки "Параметров, Истории и Родственные связи".</p>
-        <input type="checkbox" id="slice-info-block" data-setting="sliceInfoBlock" />
-        <label for="slice-info-block">Разделить блок Информации</label>
-      </div>
+    <div>
+      <p>Более современный аналог строки ввода в Игровой. Насильно берёт цвета с "Использовать свои цвета".</p>
+      <input type="checkbox" id="new-chat-input" data-setting="newChatInput" />
+      <label for="new-chat-input">Редизайн строки отправки сообщений</label>
+    </div>
 
-      <div>
-        <p>Скругляет края блоков в Игровой. Имеет временные чоколадки с нераздельным блоком "Информация".</p>
-        <input type="checkbox" id="edge-trim-blocks" data-setting="edgeTrimBlocks" />
-        <label for="edge-trim-blocks">Скругление блоков</label>
-      </div>
+  </div>
 
-      <hr>
-      <div>
-        <p>Добавляет аватар с профиля отправителя на его комментарий.</p>
-        <input type="checkbox" id="comments-avatars" data-setting="commentsAvatars" />
-        <label for="comments-avatars">Аватарки в комментариях</label>
-      </div>
+  <div id="utility-panel">
 
-      <div>
-        <p>ID отправителя рядом с его именем, а так же... Пока что всё.</p>
-        <input type="checkbox" id="new-chat" data-setting="newChat" />
-        <label for="new-chat">Редизайн чата</label>
-      </div>
+    <p>Быстрые ссылки в Игровой</p>
+    <div>
+      <input type="checkbox" id="quick-Link1" data-setting="quickLink1" />
+      <label for="quick-Link1">Настройки</label>
+    </div>
 
-      <div>
-        <p>Более современный аналог строки ввода в Игровой. Насильно берёт цвета с "Использовать свои цвета".</p>
-        <input type="checkbox" id="new-chat-input" data-setting="newChatInput" />
-        <label for="new-chat-input">Редизайн строки отправки сообщений</label>
-      </div>
+    <div>
+      <input type="checkbox" id="quick-Link2" data-setting="quickLink2" />
+      <label for="quick-Link2">Памятка</label>
+    </div>
+
+    <div>
+      <input type="checkbox" id="quick-Link3" data-setting="quickLink3" />
+      <label for="quick-Link3">Блоги</label>
+    </div>
+
+    <div>
+      <input type="checkbox" id="quick-Link4" data-setting="quickLink4" />
+      <label for="quick-Link4">Лента</label>
+    </div>
+
+    <div>
+      <p>Ваши ссылки. Вставляете ссылку, пробел и пишите название, для множества просто пишите через запятую. Пример:
+        https://мяу Мяу, https://мяу2 Мяу2</p>
+      <input type="text" id="users-quick-Links" placeholder=". . ." data-setting="userQuickLinks" />
+    </div>
+
+    <div>
+      <p>Настройка уведомлений</p>
+      <input type="checkbox" id="notificationPM" data-setting="notificationPM" />
+      <label for="notificationPM">Личные Сообщения</label>
 
     </div>
 
@@ -254,7 +344,6 @@ const uwusettings = `
 
   <div id="modules-panel">
     <div id="module-info">
-
     </div>
 
     <input type="text" id="private-module-input" placeholder=" . . . " />
@@ -263,35 +352,50 @@ const uwusettings = `
   </div>
 
   <hr>
-  <div id="news-panel">
-    <button id="news-button">
-      v1.11.0 - ID Котов в чате! А ещё больше фиксов, и чуть ещё больше кастомайза игровой!
-    </button>
-    <div id="news-list" style="display: none">
-      <h3>Главное</h3>
-      <p>
-        — Фиксы, фиксы, фиксы... Возможность настройки цвета всплывашке "О коте" и панели БР!
-      </p>
-      <hr>
-      <h3>Внешний вид</h3>
-      <p>— Буковки названия локации теперь побольше.</p>
-      <p>— Возможность блюра элементов при помощи новых модулей в "Моды/Скрипты"</p>
-      <hr>
-      <h3>Изменения кода</h3>
-      <p>— Починина возможность общаться с ботами при "Редизайне строки отправки сообщений" + Строчка ввода скрывается
-        при общении с ботом.</p>
-      <p>— Своя функция писания ID сообщениям. А ещё я вам этим снова сломал сохру. ПроститеИзвините.</p>
-      <p>— Отправка сообщения больше не вставляет потом красную строку. Только Shift-Enter!</p>
-      <p>— Исправлено, что чат всё равно ломался от разных размеров громкости в сообщениях.</p>
-      <p>— Исправлена работоспособность модулей на других страницах.</p>
-      <p>— Обернул многие элементы настроек в div. Буду думать как интересно спрятать расширенное описание переключалок.</p>
-      <p>— Блюр и затемнение больше не применяется к "Своему изображению".</p>
-      <p>— А ещё крутое расширение функций настроек для прописи взаимоисключающих галочек. Как раз для чекбоксов Фона.</p>
-      <p>— Чучучуть больше комментариев кода.</p>
-        <hr>
-        <p>Дата выпуска: 13.05.24</p>
-      </div>
-    </div>
+</div>
+`;
+
+// Новостной блок
+const newsPanel = `
+<div id="news-panel">
+  <button id="news-button">
+    v1.12.0 - Ура, снова крутой апдейт! Перепись ванильного чата на более Крутой Чат и побольше плюшек!
+  </button>
+  <div id="news-list" style="display: none">
+    <h3>Главное</h3>
+    <p>
+      — А ещё возможность "Вечно Яркой Игровой" и установка Неба на шапку страницы! Да, в целом я потихоньку дублирую некоторые другие функции скриптов
+      и допиливаю их на свой лад. В коем-веке вынужденная мера и личная хотелка. А ещё кнопочка ссылки на вк группу скрипта...
+    </p>
+    <hr>
+    <h3>Внешний вид</h3>
+    <p>— Кнопки панели БР теперь цвета Акцента 1.</p>
+    <p>— Чат наконец дотягивается до краёв.</p>
+    <p>— История вновь сжимается когда пустая.</p>
+    <p>— Чуть уменьшены размеры брызг дождя.</p>
+    <p>— Более яркий и выразительный статус онлайна кота в "О коте".</p>
+    <p>— Длинный неинтересный текст о Тёмных баллах сокращён и теперь не висит в воздухе.</p>
+    <p>— Снова кое-где кое-как подправленны некоторые описания.</p>
+    <p>— Новый "Ацент 3", который меняет цвет уведомления в ЛС и вашего имени в Чате.</p>
+    <p>— Чуть подправил подсказку Акцента 1.</p>
+    <hr>
+    <h3>Изменения кода</h3>
+    <p>— Добавлен модуль звуков.</p>
+    <p>— Чтобы при уведомлении вас в чате, вы слышали звук.</p>
+    <p>— Поддержка телефонов. Настройки теперь отображаются и на них. Наверно.</p>
+    <p>— Скрываю кнопки распределения игровой, когда они уже распределены.</p>
+    <p>— Фоны сметились на z-индекс 2, освобождая место под Небо.</p>
+    <p>— Разделил html код Новостей от кода Настроек. Теперь просто удобнее читать сам код.</p>
+    <p>— Маленький шаг в сокращении CSS повторений.</p>
+    <p>— Возможность кликать на имена, чтобы вставлялись в чат.</p>
+    <p>— Я глупый искал комментарии по кнопкам Варомода, от чего без него ломались аватарки к ним. Теперь аватарки вставляются ванильно-нормально-нереально.</p>
+    <p>— Адаптивный код, которой всё равно на количество панельных кнопок. Достаточно добавить "#название-button" в "#button-container" и "#название-panel" и мой код автоматически их свяжет.</p>
+    <p>— Сломал и потом починил громкость звуков в чате.</p>
+    <p>— Тестом создал Панель "Инструментарий".</p>
+    <p>— Где чтобы не было там грустно, снова скопировал уже существующие в других скриптах быстрые ссылки и типо сделал лучше ой что.</p>
+    <p>— А ещё звук уведомлений при сообщениях в ЛС.</p>
+    <hr>
+    <p>Дата выпуска: 16.05.24</p>
   </div>
 </div>
 `;
@@ -364,7 +468,6 @@ const extendedSettingsButton = `
 // Стили. Наверно. Не проверяйте пожалуйста, я тут потерялся.
 // Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд
 // TODO - Унифицировать шрифты, цвета текстов, прозрачность, закруглённость штучек ну кароче всё как надо чтобы не сделать в итоге лабиринт.
-// TODO - Северное Сияние доработать, чтобы лепить снизу сверху или в середине.
 let css = `
 #uwusettings {
   font-family: "Montserrat", sans-serif;
@@ -379,7 +482,7 @@ let css = `
 #uwusettings h1,
 #uwusettings h2 {
   font-family: "Montserrat", sans-serif;
-  margin-top: 15px;
+  margin-top: 10px;
   margin-bottom: 15px;
   text-align: center;
 }
@@ -461,6 +564,12 @@ let css = `
   background-repeat: repeat;
   background-attachment: fixed;
   border-radius: 20px;
+}
+
+#ref-vk {
+  top: 25px;
+  right: 25px;
+  position: absolute;
 }
 
 #button-container-1 {
@@ -594,8 +703,12 @@ let css = `
   flex: 30%;
 }
 
-#aurora-panel {
-  width: 100px;
+#auroraPanel {
+  width: 120px;
+}
+
+#notification-volume {
+  width: 150px;
 }
 
 #layout-preview button {
@@ -754,7 +867,8 @@ let css = `
 }
 
 #manualWeather,
-#aurora-pos {
+#aurora-pos,
+#notification-MyName-Volume {
   width: 100%;
   cursor: pointer;
   -webkit-appearance: none;
@@ -765,7 +879,9 @@ let css = `
   outline: none;
 }
 
-#manualWeather::-webkit-slider-thumb {
+#manualWeather::-webkit-slider-thumb,
+#aurora-pos::-webkit-slider-thumb,
+#notification-MyName-Volume::-webkit-slider-thumb  {
   -webkit-appearance: none;
   appearance: none;
   width: 20px;
@@ -779,18 +895,13 @@ let css = `
   transform: translateY(-35%);
 }
 
-#aurora-pos::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  cursor: pointer;
-  transform: translateY(-35%);
+#WeatherStep,
+#auroraStep,
+#volumeStep {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
 
 #extended-settings-container::-webkit-scrollbar {
@@ -814,14 +925,6 @@ let css = `
 
 #extended-settings-container::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.4);
-}
-
-#WeatherStep,
-#auroraStep {
-  margin-top: 10px;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
 }
 
 #button-container {
@@ -861,7 +964,7 @@ let css = `
 #manualAurora_B:hover,
 #manualAurora_G:hover,
 #manualFirefly_Off:hover,
-#manualFirefly_On:hover {
+#manualFirefly_On:hover{
   background-color: rgba(255, 255, 255, 0.15);
 }
 
@@ -940,6 +1043,50 @@ let css = `
 .firefly-disappearing {
   animation: fadeOut 6s ease-in-out forwards;
 }
+
+.custom-select {
+  position: relative;
+  display: inline-block;
+}
+
+.select-selected {
+  margin-top: 10px;
+  width: 120px;
+  border-radius: 10px;
+  color: white;
+  background-color: #5c5c5c;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px); 
+  padding: 10px;
+  cursor: pointer;
+}
+
+.select-items {
+  margin-top: 5px;
+  display: none;
+  position: absolute;
+  border-radius: 10px;
+  width: 120px;
+  color: white;
+  background-color: #5c5c5c;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px); 
+  z-index: 1;
+}
+
+.select-items div {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.select-items div:hover {
+  background-color: #757575;
+}
+
+.custom-select.active .select-items {
+  display: block;
+}
 `;
 GM_addStyle(css);
 // ====================================================================================================================
@@ -949,6 +1096,8 @@ let settings = {
   weatherEnabled: false,
   extendedSettings: false,
   minecraftStyle: false,
+  alwaysDay: false,
+  skyInHeader: false,
   backgroundRepeat: false,
   backgroundUser: false,
   userTheme: false,
@@ -956,6 +1105,10 @@ let settings = {
   commentsAvatars: false,
   newChat: false,
   newChatInput: false,
+  notificationPM: false,
+  myNameNotificationSound: "notificationSound1",
+  notificationMyNameVolume: "5",
+  userQuickLinks: "",
   auroraPos: "1",
   chatHeight: "275",
   historyHeight: "215",
@@ -969,12 +1122,15 @@ let settings = {
   settingLinkColor: "",
   settingAccentColor1: "",
   settingAccentColor2: "",
+  settingAccentColor3: "",
 };
 // ====================================================================================================================
 //  . . . ПАНЕЛЬ НАСТРОЕК . . .
 // ====================================================================================================================
 function createSettingsBlock(blockId, settings) {
-  const settingsContainer = document.querySelector("#branch");
+  const siteTable = document.querySelector("#site_table");
+  const dataMobile = siteTable.getAttribute("data-mobile");
+
   const backgroundImageURL = window.getComputedStyle(
     document.body
   ).backgroundImage;
@@ -985,7 +1141,12 @@ function createSettingsBlock(blockId, settings) {
   settingsElement.innerHTML = settings;
   settingsElement.style.backgroundImage = backgroundImageURL;
 
-  settingsContainer.appendChild(settingsElement);
+  if (dataMobile === "0") {
+    const settingsContainer = document.querySelector("#branch");
+    settingsContainer.appendChild(settingsElement);
+  } else {
+    siteTable.appendChild(settingsElement);
+  }
 }
 
 if (targetSettings.test(window.location.href)) {
@@ -1026,24 +1187,26 @@ if (targetSettings.test(window.location.href)) {
       }
     });
 
-    // Взаимоисключащиеся чекбоксы
-    const exclusiveCheckboxGroups = [
-      ['backgroundRepeat', 'backgroundUser']
-    ];
+  // Взаимоисключащиеся чекбоксы
+  const exclusiveCheckboxGroups = [["backgroundRepeat", "backgroundUser"]];
 
-    // Вызов сохранения настроек при изменениях чекбоксов
-    document
+  // Вызов сохранения настроек при изменениях чекбоксов
+  document
     .querySelectorAll("#uwusettings [data-setting]")
     .forEach((element) => {
       const setting = element.dataset.setting;
       element.addEventListener("change", () => {
         if (element.type === "checkbox") {
-          const group = exclusiveCheckboxGroups.find(g => g.includes(setting));
+          const group = exclusiveCheckboxGroups.find((g) =>
+            g.includes(setting)
+          );
           if (group) {
-            group.forEach(s => {
+            group.forEach((s) => {
               if (s !== setting) {
                 settings[s] = false;
-                document.querySelector(`#uwusettings [data-setting="${s}"]`).checked = false;
+                document.querySelector(
+                  `#uwusettings [data-setting="${s}"]`
+                ).checked = false;
               }
             });
           }
@@ -1054,6 +1217,30 @@ if (targetSettings.test(window.location.href)) {
         saveSettings();
       });
     });
+
+  const uwuSettingsElement = document.getElementById("uwusettings");
+  if (uwuSettingsElement) {
+    uwuSettingsElement.insertAdjacentHTML("beforeend", newsPanel);
+  }
+
+  // Проба опций
+  const notificationSounds = [
+    { name: "Звук 1", id: "notificationSound1" },
+    { name: "Звук 2", id: "notificationSound2" },
+    { name: "Звук 3", id: "notificationSound3" },
+  ];
+
+  createCustomSelect("myNameNotificationSound", notificationSounds);
+  // Загрузка сохраненного значения
+  loadSettings();
+  if (settings["myNameNotificationSound"]) {
+    const selectedOption = notificationSounds.find(
+      (option) => option.id === settings["myNameNotificationSound"]
+    );
+    document
+      .getElementById("myNameNotificationSound")
+      .querySelector(".select-selected").textContent = selectedOption.name;
+  }
 
   // Кнопка Новостей
   window.addEventListener("load", () => {
@@ -1071,15 +1258,42 @@ if (targetSettings.test(window.location.href)) {
     }
   });
   // ====================================================================================================================
+  //   . . . СОЗДАНИЕ ВЫПАДАЮЩИХ СПИСКОВ . . .
+  // ====================================================================================================================
+  function createCustomSelect(selectId, options) {
+    const selectContainer = document.getElementById(selectId);
+    const selectedElement = selectContainer.querySelector(".select-selected");
+    const optionsContainer = selectContainer.querySelector(".select-items");
+
+    options.forEach((option, index) => {
+      const optionElement = document.createElement("div");
+      optionElement.textContent = option.name;
+      optionElement.dataset.id = option.id;
+
+      optionElement.addEventListener("click", () => {
+        selectedElement.textContent = option.name;
+        settings[selectId] = option.id; // Сохраняем ID выбранной опции
+        saveSettings();
+        selectContainer.classList.remove("active");
+      });
+
+      optionsContainer.appendChild(optionElement);
+    });
+
+    selectedElement.addEventListener("click", () => {
+      selectContainer.classList.toggle("active");
+    });
+  }
+  // ====================================================================================================================
   //  . . . МАКЕТ КАСТОМИЗАЦИИ ИГРОВОЙ . . .
   // ====================================================================================================================
   const blockNames = {
+    tr_info: "Информация",
+    tr_tos: "Погода",
     tr_chat: "Чат",
     tr_actions: "Действия",
-    tr_tos: "Погода",
     tr_mouth: "Во рту",
     // 'tr_sky': 'Небо',
-    tr_info: "Информация",
   };
   const blockList = document.getElementById("block-list");
   const listItems = [];
@@ -1102,10 +1316,15 @@ if (targetSettings.test(window.location.href)) {
     removeButton.classList.add("remove-button");
     removeButton.addEventListener("click", () => {
       blockElement.remove();
+      // Показываем кнопки "Слева" и "Справа"
       const listItem = listItems.find(
         (item) => item.dataset.blockId === blockId
       );
       if (listItem) {
+        const moveLeftButton = listItem.querySelector(".move-left");
+        const moveRightButton = listItem.querySelector(".move-right");
+        moveLeftButton.style.display = "inline-block";
+        moveRightButton.style.display = "inline-block";
         blockList.appendChild(listItem);
       }
     });
@@ -1116,15 +1335,20 @@ if (targetSettings.test(window.location.href)) {
 
   // Функция для создания кнопок "Слева" и "Справа"
   function createMoveButtons(listItem, blockId) {
+    const blockWrapper = document.createElement("div");
+    blockWrapper.classList.add("block-wrapper");
+    blockWrapper.dataset.blockId = blockId;
+
     const moveLeftButton = document.createElement("button");
     moveLeftButton.textContent = "Слева";
     moveLeftButton.classList.add("move-left", "install-button");
     moveLeftButton.addEventListener("click", () => {
       const blockElement = createBlockElement(blockId);
       leftColumn.appendChild(blockElement);
-      listItem.remove();
+      moveLeftButton.style.display = "none";
+      moveRightButton.style.display = "none";
     });
-    listItem.appendChild(moveLeftButton);
+    blockWrapper.appendChild(moveLeftButton);
 
     const moveRightButton = document.createElement("button");
     moveRightButton.textContent = "Справа";
@@ -1132,23 +1356,36 @@ if (targetSettings.test(window.location.href)) {
     moveRightButton.addEventListener("click", () => {
       const blockElement = createBlockElement(blockId);
       rightColumn.appendChild(blockElement);
-      listItem.remove();
+      moveLeftButton.style.display = "none";
+      moveRightButton.style.display = "none";
     });
-    listItem.appendChild(moveRightButton);
+    blockWrapper.appendChild(moveRightButton);
+
+    const savedSettings = localStorage.getItem("layoutSettings");
+    if (savedSettings) {
+      const { leftBlocks, rightBlocks } = JSON.parse(savedSettings);
+      if (leftBlocks.includes(blockId) || rightBlocks.includes(blockId)) {
+        moveLeftButton.style.display = "none";
+        moveRightButton.style.display = "none";
+      }
+    }
+
+    listItem.appendChild(blockWrapper);
   }
 
   // Создание списка блоков
   for (const blockId in blockNames) {
     const listItem = document.createElement("li");
+    listItem.id = `block-item-${blockId}`;
     const blockName = document.createElement("span");
     blockName.textContent = blockNames[blockId];
     listItem.appendChild(blockName);
     listItem.dataset.blockId = blockId;
 
-    createMoveButtons(listItem, blockId);
-
     blockList.appendChild(listItem);
     listItems.push(listItem);
+
+    createMoveButtons(listItem, blockId);
   }
 
   // Сохранение и загрузка настроек
@@ -1181,56 +1418,76 @@ if (targetSettings.test(window.location.href)) {
       leftBlocks.forEach((blockId) => {
         const blockElement = createBlockElement(blockId);
         leftColumn.appendChild(blockElement);
+        const blockWrapper = document.querySelector(
+          `.block-wrapper [data-block-id="${blockId}"]`
+        );
+        if (blockWrapper) {
+          const moveLeftButton = blockWrapper.querySelector(".move-left");
+          const moveRightButton = blockWrapper.querySelector(".move-right");
+          moveLeftButton.style.display = "none";
+          moveRightButton.style.display = "none";
+        }
       });
 
       rightBlocks.forEach((blockId) => {
         const blockElement = createBlockElement(blockId);
         rightColumn.appendChild(blockElement);
+        const blockWrapper = document.querySelector(
+          `.block-wrapper [data-block-id="${blockId}"]`
+        );
+        if (blockWrapper) {
+          const moveLeftButton = blockWrapper.querySelector(".move-left");
+          const moveRightButton = blockWrapper.querySelector(".move-right");
+          moveLeftButton.style.display = "none";
+          moveRightButton.style.display = "none";
+        }
       });
     }
   }
 
   window.addEventListener("load", loadLayoutSettings);
 }
-
 // ====================================================================================================================
 //  . . . ВКЛАДКИ ГЛАВНЫХ НАСТРОЕК . . .
 // ====================================================================================================================
 if (targetSettings.test(window.location.href)) {
-  const effectsPanel = document.getElementById("effects-panel");
-  const themePanel = document.getElementById("theme-panel");
-  const effectsButton = document.getElementById("effects-button");
-  const themeButton = document.getElementById("theme-button");
-  const modulesButton = document.getElementById("modules-button");
-  const modulesPanel = document.getElementById("modules-panel");
+  const buttonContainer = document.getElementById("button-container");
+  const panels = document.querySelectorAll('[id$="-panel"]');
+  const newsPanel = document.getElementById("news-panel"); // Панель новостей
+  const defaultButton = buttonContainer.querySelector("button");
+  const defaultPanelId = defaultButton.id.replace("button", "panel");
+  const defaultPanel = document.getElementById(defaultPanelId);
 
-  effectsButton.addEventListener("click", () => {
-    effectsPanel.style.display = "block";
-    themePanel.style.display = "none";
-    modulesPanel.style.display = "none";
-    effectsButton.classList.add("active");
-    themeButton.classList.remove("active");
-    modulesButton.classList.remove("active");
+  buttonContainer.addEventListener("click", (event) => {
+    const clickedElement = event.target;
+    const clickedButton = clickedElement.closest("button");
+    if (!clickedButton) return;
+
+    const panelId = clickedButton.id.replace("button", "panel");
+    const targetPanel = document.getElementById(panelId);
+
+    panels.forEach(panel => {
+      // Скрываем панель, только если она не является панелью новостей 
+      if (panel !== newsPanel) {
+        panel.style.display = panel === targetPanel ? "block" : "none";
+      }
+    });
+
+    buttonContainer.querySelectorAll("button").forEach(button => {
+      button.classList.toggle("active", button === clickedButton);
+    });
   });
 
-  themeButton.addEventListener("click", () => {
-    effectsPanel.style.display = "none";
-    themePanel.style.display = "block";
-    modulesPanel.style.display = "none";
-    effectsButton.classList.remove("active");
-    themeButton.classList.add("active");
-    modulesButton.classList.remove("active");
+  // Скрываем все панели, кроме первой и панели новостей
+  panels.forEach(panel => {
+    if (panel !== defaultPanel && panel !== newsPanel) {
+      panel.style.display = "none";
+    }
   });
 
-  modulesButton.addEventListener("click", () => {
-    effectsPanel.style.display = "none";
-    themePanel.style.display = "none";
-    modulesPanel.style.display = "block";
-    effectsButton.classList.remove("active");
-    themeButton.classList.remove("active");
-    modulesButton.classList.add("active");
-  });
-  themePanel.style.display = "none";
+  // Показываем первую панель и делаем первую кнопку активной
+  defaultPanel.style.display = "block";
+  defaultButton.classList.add("active"); 
 }
 // ====================================================================================================================
 //  . . . МОДУЛЬНОСТЬ СКРИПТА . . .
@@ -1265,7 +1522,7 @@ async function loadModuleListOnSettings() {
   // Проверка URL
   const targetSettings = /^https:\/\/catwar\.su\/settings/;
   if (!targetSettings.test(window.location.href)) {
-    return; // Выход, если URL не соответствует
+    return;
   }
 
   try {
@@ -1277,7 +1534,6 @@ async function loadModuleListOnSettings() {
     const privateModuleInput = document.getElementById("private-module-input");
     const saveButton = document.getElementById("SettingSaveButton3");
 
-    // Проверка наличия контейнера модулей
     if (!moduleInfoContainer) {
       console.error("Контейнер модулей не найден!");
       return;
@@ -1453,7 +1709,6 @@ async function loadModule(moduleName, description, version) {
         moduleStates[moduleName] = true;
         localStorage.setItem("moduleStates", JSON.stringify(moduleStates));
 
-        // Создаем контейнер для загруженного модуля
         createModuleContainer(moduleName, description, version, false);
 
         loadModuleStates();
@@ -1579,7 +1834,8 @@ loadSettings();
 if (window.location.href !== targetCW3) {
   if (settings.commentsAvatars) {
     const checkForComments = setInterval(() => {
-      const comments = document.querySelectorAll(".view-comment.has-buttons");
+      // Ищем комментарии по классу view-comment
+      const comments = document.querySelectorAll(".view-comment");
       if (comments.length > 0) {
         clearInterval(checkForComments);
 
@@ -1641,6 +1897,40 @@ if (window.location.href !== targetCW3) {
   }
 }
 // ====================================================================================================================
+//   . . . ЗАГРУЗКА ЗВУКОВ . . .
+// ====================================================================================================================
+function createSoundManager() {
+  const sounds = {};
+
+  // Функция для загрузки звука
+  function loadSound(id, url) {
+    const audio = new Audio(url);
+    sounds[id] = audio;
+  }
+
+  // Функция для воспроизведения звука
+  function playSound(id, volume) {
+    if (sounds[id]) {
+      sounds[id].currentTime = 0;
+      sounds[id].volume = volume / 10;
+      sounds[id].play();
+    } else {
+      console.error(`Звук с ID ${id} не найден.`);
+    }
+  }
+
+  return {
+    loadSound,
+    playSound,
+  };
+}
+const soundManager = createSoundManager();
+
+// Список звуков
+soundManager.loadSound("notificationSound1", 'https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_1.ogg');
+soundManager.loadSound("notificationSound2", 'https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_2.ogg');
+soundManager.loadSound("notificationSound3", 'https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_3.ogg');
+// ====================================================================================================================
 //  . . . ЗАГРУЗКА КОДА В ИГРОВОЙ . . .
 // ====================================================================================================================
 // Игровая ли... Я чё знаю?
@@ -1694,6 +1984,58 @@ if (window.location.href === targetCW3) {
     });
   }
   // ====================================================================================================================
+  //   . . . БЫСТРЫЕ ССЫЛКИ В ИГРОВОЙ . . .
+  // ====================================================================================================================
+  const quickLinks = {
+    quickLink1: {
+      href: "/settings",
+      text: "Настройки"
+    },
+    quickLink2: {
+      href: "/ls?id=0",
+      text: "Памятка"
+    },
+    quickLink3: {
+      href: "/blogs",
+      text: "Блоги"
+    },
+    quickLink4: {
+      href: "/sniff",
+      text: "Лента"
+    }
+  };
+  
+  const spanElement = document.querySelector("span.small");
+  
+  Object.entries(quickLinks).forEach(([key, link]) => {
+    if (settings[key]) {
+      const newLink = document.createElement("a");
+      newLink.href = link.href;
+      newLink.textContent = link.text;
+
+      const pipe = document.createTextNode(" | ");
+      spanElement.appendChild(pipe);
+      spanElement.appendChild(newLink);
+    }
+  });
+
+  // Добавление пользовательских ссылок
+  if (settings.userQuickLinks) {
+    const userLinksArray = settings.userQuickLinks.split(", ");
+  
+    userLinksArray.forEach(userLink => {
+      const [href, text] = userLink.trim().split(" ");
+      
+      const newLink = document.createElement("a");
+      newLink.href = href;
+      newLink.textContent = text;
+  
+      const pipe = document.createTextNode(" | ");
+      spanElement.appendChild(pipe);
+      spanElement.appendChild(newLink);
+    });
+  }
+  // ====================================================================================================================
   //   . . . ПОЛЬЗОВАТЕЛЬКИЙ ФОН . . .
   // ====================================================================================================================
   const cagesDiv = document.querySelector("#cages_div");
@@ -1706,7 +2048,7 @@ if (window.location.href === targetCW3) {
     backgroundDiv.style.left = "-1%";
     backgroundDiv.style.width = "102%";
     backgroundDiv.style.height = "102%";
-    backgroundDiv.style.zIndex = "-1";
+    backgroundDiv.style.zIndex = "-2";
     backgroundDiv.style.overflow = "hidden";
     return backgroundDiv;
   }
@@ -1723,7 +2065,6 @@ if (window.location.href === targetCW3) {
     }
   }
   
-  // backgroundRepeat
   if (settings.backgroundRepeat) {
     const backgroundDiv = createBackgroundDiv();
   
@@ -1753,7 +2094,6 @@ if (window.location.href === targetCW3) {
     observer.observe(cagesDiv, { attributes: true, attributeFilter: ["style"] });
   }
   
-  // backgroundUser
   if (settings.backgroundUser) {
     const backgroundDiv = createBackgroundDiv();
   
@@ -1812,6 +2152,7 @@ if (window.location.href === targetCW3) {
 
       .myname {
         color: ${settings.settingAccentColor1};
+        background: ${settings.settingAccentColor3};
       }
 
       span.cat_tooltip {
@@ -1821,7 +2162,7 @@ if (window.location.href === targetCW3) {
       } 
 
       span.cat_tooltip > span.online {
-        filter: brightness(200%) contrast(80%); 
+        filter: brightness(2) contrast(150%);
       }
       
       .cat:hover .cat_tooltip a, .other_cats_list > a { 
@@ -1839,6 +2180,14 @@ if (window.location.href === targetCW3) {
 
       #fightPanel {
         background-color: ${settings.settingFightPanelBackground};
+      }
+
+      .hotkey {
+        background-color: ${settings.settingAccentColor1};
+      }
+
+      #newchat, #newls {
+        color: ${settings.settingAccentColor3};
       }
     `;
     document.head.appendChild(newStyle);
@@ -1982,7 +2331,7 @@ if (window.location.href === targetCW3) {
 
   #history_block {
     display: block;
-    height: ${settings.historyHeight}px; 
+    max-height: ${settings.historyHeight}px; 
     overflow-y: auto;
     resize: vertical;
   }
@@ -2016,8 +2365,9 @@ if (window.location.href === targetCW3) {
   }
 
   #app > p:last-of-type {
-    position: absolute;
+    position: fixed;
     bottom: 0px;
+    margin: 8px;
   }
 
   h2 {
@@ -2058,6 +2408,10 @@ if (window.location.href === targetCW3) {
     padding: 5px !important;
   }
 
+  #tr_chat > td {
+    display: contents;
+  }
+
   #chat_msg, #cws_chat_msg {
     height: ${settings.chatHeight}px;
     resize: vertical;
@@ -2066,9 +2420,16 @@ if (window.location.href === targetCW3) {
   #tr_field, #tr_info {
     height: 10px;
   }
+
+  #newchat, #newls {
+    background-color: transparent;
+  }
   `;
     document.head.appendChild(fixStyle);
     applyLayoutSettings();
+
+    const paragraph = document.querySelector("#app > p > b");
+    paragraph.textContent = "ТБ:";
 
     function applyLayoutSettingsForInfoMain() {
       const infoMainTable = document.getElementById("info_main");
@@ -2092,58 +2453,144 @@ if (window.location.href === targetCW3) {
     applyLayoutSettingsForInfoMain();
   }
   // ====================================================================================================================
-  //   . . . НОВЫЙ ЧАТ . . .
+  //   . . . ЗВУКОВЫЕ УВЕДОМЛЕНИЯ . . . 
   // ====================================================================================================================
-  if (settings.newChat) {
-    function addProfileIdToChatMessage(chatMessage) {
-      // Удаляем старый ID, если он есть
-      const existingIdSpan = chatMessage.querySelector(".nick + span");
-      if (existingIdSpan && existingIdSpan.textContent.trim().startsWith("[")) {
-        existingIdSpan.remove();
-      }
-    
-      const profileLink = chatMessage.querySelector('a[href^="/cat"], a[href^="/"]');
-      if (profileLink) {
-        const profileIdMatch = profileLink.getAttribute("href").match(/\/cat(\d+)|^\/(\d+)$/);
-        if (profileIdMatch) {
-          const profileId = profileIdMatch[1] || profileIdMatch[2];
-          const nickElement = chatMessage.querySelector(".nick");
-          const profileIdElement = document.createElement("span");
-          profileIdElement.textContent = ` [${profileId}]`;
-          nickElement.parentNode.insertBefore(profileIdElement, nickElement.nextSibling);
-        }
+  if (settings.notificationPM) {
+    const newlsElement = document.getElementById("newls");
+    if (newlsElement) {
+      const observer = new MutationObserver(handleNewlsChange);
+      observer.observe(newlsElement, {
+        characterData: true,
+        subtree: true
+      });
+    }
+  
+    function handleNewlsChange(mutations) {
+      // Проверяем, было ли хоть одно изменение
+      if (mutations.length > 0) {
+        soundManager.playSound(
+          "notificationSound1",
+          settings.notificationMyNameVolume
+        );
       }
     }
-    
-    function updateAllChatMessages() {
-      const chatElement = document.getElementById('chat_msg');
-      if (chatElement) {
-        const allMessages = Array.from(chatElement.querySelectorAll('span > hr + table'));
-        allMessages.forEach(message => {
-          addProfileIdToChatMessage(message);
-        });
-      }
-    }
-    
-    function setupChatObserver() {
-      const chatElement = document.getElementById('chat_msg');
-    
-      if (chatElement) {
-        updateAllChatMessages(); // Обновляем ID при запуске
-    
-        // Настраиваем MutationObserver
-        const observer = new MutationObserver(mutations => {
-          updateAllChatMessages(); // Обновляем ID при каждом изменении
-        });
-    
-        observer.observe(chatElement, { childList: true });
-      } else {
-        setTimeout(setupChatObserver, 500);
-      }
-    }
-    
-    setupChatObserver();
   }
+  // ====================================================================================================================
+  //   . . . НОВЫЙ ЧАТ . . . 
+  // ====================================================================================================================
+  // я на этом инвалиде потерял все нервы кетвар желаю тебе счастья удачи и всего хорошего 😌😌😌😌😌😌😌😌😌😌
+  // Разрабу шведа я делаю низкий поклон как он сам не потерял свои нервы на эти пиксели.............
+  if (settings.newChat) {
+    const newChatContainer = document.createElement("div");
+    newChatContainer.id = "uwu_chat_msg";
+    const chatForm = document.getElementById("chat_form");
+    chatForm.parentNode.insertBefore(newChatContainer, chatForm.nextSibling);
+
+    // Обработка клика на имени кота
+    newChatContainer.addEventListener("click", handleNickClick);
+    function handleNickClick(event) {
+      const textArea = document.getElementById("text");
+      const nickElement = event.target.closest(".nick");
+
+      if (nickElement) {
+        textArea.value += nickElement.textContent;
+      }
+    }
+
+    // Ставим наблюдатель на старый чат
+    const chatElement = document.getElementById("chat_msg");
+    if (chatElement) {
+      const observer = new MutationObserver(handleNewChatMessage);
+      observer.observe(chatElement, { childList: true, subtree: true });
+    }
+
+    // Счетчик добавленных <span>
+    let addedSpanCount = 0;
+    function handleNewChatMessage(mutations) {
+      mutations.forEach((mutation) => {
+        if (mutation.type === "childList") {
+          mutation.addedNodes.forEach((node) => {
+            if (
+              node.nodeName === "SPAN" &&
+              node.querySelector("td > .chat_text")
+            ) {
+              addedSpanCount++;
+            }
+          });
+        }
+      });
+      // Обработка сообщений после подсчета добавленных <span>
+      processChatMessages(addedSpanCount);
+      addedSpanCount = 0;
+    }
+
+    // Функция для обработки сообщений
+    function processChatMessages(messageCount) {
+      const chatMessages = document.querySelectorAll("#chat_msg > span");
+      const messagesArray = Array.from(chatMessages);
+      // Обработка messageCount сообщений сверху вниз
+      const messagesToProcess = messagesArray.slice(0, messageCount);
+      // Инвертируем порядок сообщений
+      messagesToProcess.reverse();
+
+      messagesToProcess.forEach((message) => {
+        copyMessageToNewChat(message);
+      });
+    }
+
+    // Создаём новое сообщение из старого
+    function copyMessageToNewChat(chatMessage) {
+      const chatTextSpan = chatMessage.querySelector("td > .chat_text");
+      const chatTextHTML = chatTextSpan.innerHTML;
+      const chatTextClasses = chatTextSpan.className;
+
+      // Уведомление при имени в чате
+      if (chatTextSpan.querySelector(".myname")) {
+        soundManager.playSound(
+          settings.myNameNotificationSound,
+          settings.notificationMyNameVolume
+        );
+      }
+
+      // Получаем ссылку на профиль и ID кота
+      const profileLink = chatMessage.querySelector('a[href^="/cat"]').href;
+      const catIdMatch = profileLink.match(/\/cat(\d+)/);
+      const catId = catIdMatch ? catIdMatch[1] : ". . .";
+
+      // Создаем HTML нового сообщения с классами
+      const newChatMessageHTML = `
+    <hr>
+      <div id="msg">
+        <div class="${chatTextClasses}">${chatTextHTML} [<i>${catId}</i>]</div> 
+        <div>
+            <a href="${profileLink}" title="Перейти в профиль" target="_blank" rel="noopener noreferrer">➝</a>&nbsp;|&nbsp;
+            <a href="#" title="Пожаловаться на нарушение ОПИ" class="msg_report">X</a>
+        </div>
+    </div>
+  `;
+      // Вставляем в начало
+      newChatContainer.insertAdjacentHTML("afterbegin", newChatMessageHTML);
+    }
+
+    const uwuChatMsg = document.createElement("style");
+    uwuChatMsg.innerHTML = `
+        #uwu_chat_msg {
+          height: ${settings.chatHeight}px;
+          resize: vertical;
+          overflow-y: auto;
+        }
+  
+        #chat_msg {
+          display: none;
+        }
+  
+        #msg {
+          display: flex;
+          justify-content: space-between;
+        }
+   `;
+    document.head.appendChild(uwuChatMsg);
+  }  
   // ====================================================================================================================
   //   . . . НОВЫЙ ВВОД ЧАТА . . .
   // ====================================================================================================================
@@ -2192,6 +2639,7 @@ if (window.location.href === targetCW3) {
 
     observer.observe(txtSpan, { childList: true });
 
+    // Make Enter great again!
     textarea.addEventListener("keydown", function (event) {
       if (event.key === "Enter") {
         if (event.shiftKey) {
@@ -2221,7 +2669,7 @@ if (window.location.href === targetCW3) {
     document.head.appendChild(NewChatDesign);
   }
   // ====================================================================================================================
-  //   . . . РЕДИЗАЙНЫ ++ ЗАКРУГЛЕНИЕ БЛОКОВ . . .
+  //   . . . РЕДИЗАЙНЫ + + ЗАКРУГЛЕНИЕ БЛОКОВ . . .
   // ====================================================================================================================
   const sliceInfoStyle = document.createElement("style");
   if (settings.sliceInfoBlock) {
@@ -2231,14 +2679,15 @@ if (window.location.href === targetCW3) {
         margin-bottom: 5px;
       }
     `;
+    document.head.appendChild(sliceInfoStyle);
   } else {
     sliceInfoStyle.innerHTML = `
       #info_main > tbody {
         background-color: ${settings.settingBlocksColor};
       }
     `;
+    document.head.appendChild(sliceInfoStyle);
   }
-  document.head.appendChild(sliceInfoStyle);
 
   const edgeTrimBlocksStyle = document.createElement("style");
   if (settings.edgeTrimBlocks) {
@@ -2270,10 +2719,87 @@ if (window.location.href === targetCW3) {
       border-radius: 10px;
     }    
     `;
+    document.head.appendChild(edgeTrimBlocksStyle);
   }
-  document.head.appendChild(edgeTrimBlocksStyle);
   // ====================================================================================================================
-  //   . . . ОПРЕДЕЛЕНИЕ ПОГОДЫ В ИГРОВОЙ . . .
+  //   . . . ВСЕГДА ДЕНЬ В ИГРОВОЙ . . .
+  // ====================================================================================================================
+  // Вот бы всё писалось именно так...........
+  const alwaysDay = document.createElement("style");
+  if (settings.alwaysDay) {
+    alwaysDay.innerHTML = `
+    #cages_div {
+      opacity: 1 !important;
+    }   
+    `;
+    document.head.appendChild(alwaysDay);
+  }
+  // ====================================================================================================================
+  //   . . . НЕБО - ШАПКА . . . 
+  // ====================================================================================================================
+  if (settings.skyInHeader) {
+    // URL изображения неба
+    function getSkyUrl() {
+      const skyElement = document.querySelector("#sky");
+      if (skyElement) {
+        const skyStyle = skyElement.getAttribute("style");
+        const match = skyStyle.match(/url\((.*?)\)/); 
+        if (match) {
+          return match[1].trim();
+        } else {
+          console.log("Не удалось найти URL изображения неба");
+        }
+      }
+      return "";
+    }
+  
+    const skyDiv = document.createElement('div');
+    skyDiv.id = 'skyDuplicate';
+    
+    const globalContainerElement = document.getElementById("global-container");
+    globalContainerElement.appendChild(skyDiv);
+  
+    const skyStyle = document.createElement("style");
+    skyStyle.innerHTML = `
+    #skyDuplicate {
+      height: 15%;
+      width: 100%;
+      mask-image: linear-gradient(to bottom, 
+        rgba(0, 0, 0, 1), 
+        rgba(0, 0, 0, 0.40) 50%,
+        rgba(0, 0, 0, 0)
+      );
+      top: 0;
+      left: 0;
+      z-index: -1;
+      position: absolute;
+      background-size: cover;
+    }
+    `;
+    document.head.appendChild(skyStyle);
+  
+    // Cкрываем оригинальное небо
+    const originalSkyStyle = document.createElement("style");
+    originalSkyStyle.innerHTML = `
+    #tr_sky {
+      display: none;
+    }
+    `;
+    document.head.appendChild(originalSkyStyle);
+  
+    // Обновление неба
+    function updateSkyImage() {
+      const skyUrl = getSkyUrl();
+      if (skyUrl) {
+        skyDiv.style.backgroundImage = `url(${skyUrl})`;
+      }
+    }
+  
+    updateSkyImage();
+    setInterval(updateSkyImage, 2000); 
+  }
+  // ====================================================================================================================
+  //   . . . ОПРЕДЕЛЕНИЕ ПОГОДЫ В ИГРОВОЙ . . . 🛠️
   // ====================================================================================================================
   var currentWeather = "null";
   var currentHour = "null";
@@ -2390,6 +2916,17 @@ if (window.location.href === targetCW3) {
     // console.log(currentSeason);
   }
 
+  // TODO - мне всё же очень больно видеть конвертации цветов и рейнджы какие та противные, всё же проще и лучше будет создать массив из известных температур.
+  // Это мне даст в будущем возможность более плавно и красиво настраивать цвета. Наверно. Может быть.
+
+  // Очень холодно
+  // Прохладно
+  // Прохладно
+  // Тепло #F8A37A; 
+  // Жарковато
+  // Жарко
+  // Засуха
+
   function getTemperature() {
     const temperatureElement = document.querySelector("#tos");
     const temperatureElementHTML = temperatureElement.outerHTML;
@@ -2454,7 +2991,7 @@ if (window.location.href === targetCW3) {
     }
   }
 
-  // Чуть ли не маленькая личная библиотека по цветоконвертации, представляете?
+  // Чуть ли не маленькая личная библиотека по цветоконвертации, представляете? а зочем............
   function hexToHSL(hex) {
     const r = parseInt(hex.slice(1, 3), 16) / 255;
     const g = parseInt(hex.slice(3, 5), 16) / 255;
@@ -2507,7 +3044,7 @@ if (window.location.href === targetCW3) {
   }
   setInterval(getTemperature, 4000);
   // ====================================================================================================================
-  //   . . . ПОДГОТОВКА КОНТЕЙНЕРОВ / ИЗОБРАЖЕНИЙ . . .
+  //   . . . ПОДГОТОВКА КОНТЕЙНЕРОВ / ИЗОБРАЖЕНИЙ . . . 🖼️
   // ====================================================================================================================
   const weatherContainer = document.getElementById("global-container");
   const weatherCanvas = document.createElement("canvas");
@@ -2593,7 +3130,7 @@ if (window.location.href === targetCW3) {
   const { pixelRaindrops } = generatePixelRain();
   const { pixelSnowflakes } = generatePixelSnow();
   // ====================================================================================================================
-  //   . . . ДОЖДЬ . . .
+  //   . . . ДОЖДЬ . . . 🌧️
   // ====================================================================================================================
   function generateRain() {
     const raindrops = [];
@@ -2641,7 +3178,7 @@ if (window.location.href === targetCW3) {
     weatherCtx.fill();
   }
   // ====================================================================================================================
-  //   . . . СНЕГ . . .
+  //   . . . СНЕГ . . . 🌨️
   // ====================================================================================================================
   function generateSnowflakes() {
     const snowflakes = [];
@@ -2681,7 +3218,7 @@ if (window.location.href === targetCW3) {
     weatherCtx.fill();
   }
   // ====================================================================================================================
-  //   . . . ПИКСЕЛЬНЫЙ ДОЖДЬ . . .
+  //   . . . ПИКСЕЛЬНЫЙ ДОЖДЬ . . . 🌧️
   // ====================================================================================================================
   function generatePixelRain() {
     const pixelRaindrops = [];
@@ -2730,7 +3267,7 @@ if (window.location.href === targetCW3) {
     );
   }
   // ====================================================================================================================
-  //   . . . ПИКСЕЛЬНЫЙ СНЕГ . . .
+  //   . . . ПИКСЕЛЬНЫЙ СНЕГ . . . 🌨️
   // ====================================================================================================================
   function generatePixelSnow() {
     const pixelSnowflakes = [];
@@ -2770,7 +3307,7 @@ if (window.location.href === targetCW3) {
     weatherCtx.drawImage(image, x - size / 2, y - size / 2, size, size);
   }
   // ====================================================================================================================
-  //   . . . АНИМАЦИЯ ПОГОДЫ / ЧАСТИЦ . . .
+  //   . . . АНИМАЦИЯ ПОГОДЫ / ЧАСТИЦ . . . 
   // ====================================================================================================================
   function animateWeather() {
     weatherCtx.clearRect(0, 0, weatherCanvas.width, weatherCanvas.height);
@@ -2818,7 +3355,7 @@ if (window.location.href === targetCW3) {
     animateWeather();
   }
   // ====================================================================================================================
-  //   . . . СЕВЕРНОЕ СИЯНИЕ . . .
+  //   . . . СЕВЕРНОЕ СИЯНИЕ . . . 🌟
   // ====================================================================================================================
   const auroraColors = {
     green: {
@@ -2911,7 +3448,7 @@ if (window.location.href === targetCW3) {
     }
   }, 2000);
   // ====================================================================================================================
-  //   . . . СВЕТЛЯЧКИ . . .
+  //   . . . СВЕТЛЯЧКИ . . . 🪲
   // ====================================================================================================================
   const fireflies = [];
   const glowSizeMultiplier = 12;
@@ -3036,7 +3573,7 @@ if (window.location.href === targetCW3) {
     animateFireflies();
   }
   // ====================================================================================================================
-  //   . . . ПРИЗЕМЛЕНИЕ ЧАСТИЦ . . .
+  //   . . . ПРИЗЕМЛЕНИЕ ЧАСТИЦ . . . ☔
   // ====================================================================================================================
   const landedSnowflakes = [];
   const landedPixelSnowflakes = [];
@@ -3152,7 +3689,7 @@ if (window.location.href === targetCW3) {
       splash.ySpeed += 0.1;
 
       weatherCtx.beginPath();
-      weatherCtx.arc(splash.x, splash.y, splash.size / 2, 0, Math.PI * 2);
+      weatherCtx.arc(splash.x, splash.y, splash.size / 1.2 / weatherModifier, 0, Math.PI * 2);
       weatherCtx.fillStyle = "rgba(150, 150, 150, 0.4)";
       weatherCtx.fill();
     }
@@ -3166,8 +3703,8 @@ if (window.location.href === targetCW3) {
         pixelSplash.image,
         pixelSplash.x,
         pixelSplash.y,
-        pixelSplash.size * weatherModifier * 3,
-        pixelSplash.size * weatherModifier * 3
+        pixelSplash.size * weatherModifier * 2,
+        pixelSplash.size * weatherModifier * 2
       );
     }
 
