@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.13.0-05.24
+// @version      v1.14.0-05.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -23,6 +23,7 @@
 // Мне нравится как тут всё false...
 let settings = {
   weatherEnabled: false,
+  lowPerformanceMode: false,
   extendedSettings: false,
   minecraftStyle: false,
   alwaysDay: false,
@@ -35,6 +36,11 @@ let settings = {
   newChat: false,
   newChatInput: false,
   notificationPM: false,
+  cellsBorders: false,
+  cellsBordersThickness: "1",
+  cellsNumbers: false,
+  compactMouth: false,
+  showMoreCatInfo: false,
   climbingPanel: false,
   climbingNotificationsNumbers: false,
   climbingRefreshNotification: false,
@@ -120,6 +126,14 @@ const uwusettings = `
     </div>
 
     <div>
+    <p>
+      Сильно сокращает количество всех частиц, увеличивая тем самым производительность на слабых устройствах.
+    </p>
+    <input type="checkbox" id="low-Performance-Mode" data-setting="lowPerformanceMode" />
+    <label for="low-Performance-Mode">Режим низкой производительности</label>
+  </div>
+
+    <div>
       <p>
         Отображение кнопки Расширенных настроек погоды в Игровой. Выключает натуральную генерацию погоды.
       </p>
@@ -166,6 +180,29 @@ const uwusettings = `
   </div>
 
   <div id="theme-panel">
+
+  <div>
+    <p>Отрисовывает границы клеток в Игровой</p>
+    <input type="checkbox" id="cells-Borders" data-setting="cellsBorders" />
+    <label for="cells-Borders">Границы клеток</label>
+  </div>
+  <p>Толщина/Яркость границ</p>
+  <div id="step-slider">
+    <input type="range" min="1" max="9" value="1" class="slider" id="cells-Borders-Thickness" list="ThicknessStep"
+     data-setting="cellsBordersThickness">
+    <datalist id="ThicknessStep">
+     <option value="1">0.1</option>
+     <option value="5">0.5</option>
+     <option value="9">0.9</option>
+    </datalist>
+  </div>
+  
+  <div>
+  <p>Ставит число клеточки в клеточку.</p>
+    <input type="checkbox" id="cells-Numbers" data-setting="cellsNumbers" />
+    <label for="cells-Numbers">Нумерация клеток</label>
+  </div>
+
     <div>
       <p>
         Ставит на страницу фон, повторяющий фон Игровой локации, а так же
@@ -348,9 +385,21 @@ const uwusettings = `
   <div id="utility-panel">
 
     <div>
+      <p>Добавляет в всплывающее окно "О коте" кнопку для просмотра большей полезной информации.</p>
+      <input type="checkbox" id="show-More-Cat-Info" data-setting="showMoreCatInfo" />
+      <label for="show-More-Cat-Info">Больше информации о Коте</label>
+    </div>
+
+    <div>
+      <p>Прописывает количество повторяющихся предметов в "О коте".</p>
+      <input type="checkbox" id="compact-Mouth" data-setting="compactMouth" />
+      <label for="compact-Mouth">Компактные инвентари</label>
+    </div>
+
+    <div>
     <p>Включает окно для расчерчивания минного поля в Игровой.
     Выбранная ячейка готова принять в себя значение с клавиатуры от "0" до "7", минус "-" равняется красной клетке, а знак равно =" ставит более яркую клетку, например для переходов,
-    которая не будет очищаться при "Очистить всё поле/таблицу". Нажмите на заполненную клетку ещё раз, чтобы очистить её значение.</p>
+    которая не будет очищаться при "Очистить всё поле/таблицу". Два раза прожмите на ячейку, чтобы очистить её значение.</p>
       <input type="checkbox" id="climbing-panel" data-setting="climbingPanel" />
       <label for="climbing-panel">Минное поле</label>
       <p>Здесь вы можете добавить/удалить Вкладки для хранения Таблиц и количество самих таблиц в выбранной вкладке.
@@ -427,7 +476,6 @@ const uwusettings = `
       <p>Уведомлять звуком, когда:</p>
       <input type="checkbox" id="notificationPM" data-setting="notificationPM" />
       <label for="notificationPM">Личные Сообщения</label> 
-
     </div>
 
   </div>
@@ -437,44 +485,42 @@ const uwusettings = `
     </div>
 
     <input type="text" id="private-module-input" placeholder=" . . . " />
-    <button id="SettingSaveButton3">Сохранить</button>
+    <button id="SettingSaveButton3">Сохранить</button> 
 
   </div>
 
   <hr>
 </div>
 `;
-
 // ====================================================================================================================
 //   . . . HTML БЛОК НОВОСТЕЙ . . .
 // ====================================================================================================================
 const newsPanel = `
 <div id="news-panel">
   <button id="news-button">
-    v1.13.0 - ☀️ Лето в Игровой, а значит пора качать ЛУ! Вуху, Расчерчивание минных полей! А ещё с днём 4к+ строчек кода! 
+    v1.14.0 - ☀️ С днём очередных фиксов и правок! И новых функци!
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
     <p>
-      — Продолжаю переносить критично важные функции под свой лад и редизайн...
+      — Добавлены отрисовки ячеек Игровой, Режим низкой производительности для погоды, Больше информации и сокращение инвентаря в "О коте". 
+      А ещё фикс звуковых уведомлений на лазалках. Простите все кто падали и не получили звук.
     </p>
     <hr>
     <h3>Внешний вид</h3>
-    <p>— Поменял описание уведомлений на чуть более понятное.</p>
-    <p>— Кнопки вкладок настроек научились не выходить за пределы экрана при нехватке места, а перемещаться на новую строчку.</p>
-    <p>— Вернул возможность растягивать блок Истории как угодно, а в настройках ставится не Максимальная высота, а просто стандартная высота для отображения при загрузке страницы (Как чат вообщем).</p>
+    <p>— Убрал фиксированные полоски прокруток для блока Родсвенных связей и настроек Шеда, но дал растягивалку.</p>
+    <p>— Модуль отвечающий за блюр "О коте" и БР, теперь размывает и новое окошко с большей информации О коте. Переустановите этот модуль.</p>
     <hr>
     <h3>Изменения кода</h3>
-    <p>— Дофиксил адаптивные кнопки вкладок настроек.</p>
-    <p>— Целая отдельная строчка какой я клёвый сделал минные поля свои клёвые ого вау супер.</p>
-    <p>— Функция для вставки кнопки Теста выставленных звуков, и, понятное дело, её использование.</p>
-    <p>— Совсем каплю реорганизовал код.</p>
+    <p>— Я дурачок я дурачок я дурачок. Фикс пропажи звуков в лазалках при обновлении клеток.</p>
+    <p>— Минная панель не позволит себя вытащить за экран.</p>
+    <p>— Если вы умудритесь, то она сбросит себя в нулевые позиции при перезагрузке страницы.</p>
+    <p>— Очистка клетки в минном поле требует двойной клик, а не одиночный.</p>
     <hr>
-    <p>Дата выпуска: 21.05.24</p>
+    <p>Дата выпуска: 24.05.24</p>
   </div>
 </div>
 `;
-
 // ====================================================================================================================
 //   . . . HTML ПАНЕЛЬ РАСШИРЕННЫХ НАСТРОЕК . . .
 // ====================================================================================================================
@@ -783,7 +829,8 @@ let css = `
   width: 120px;
 }
 
-#notification-volume {
+#notification-volume,
+#step-slider {
   width: 150px;
 }
 
@@ -966,7 +1013,8 @@ let css = `
 #manualWeather,
 #aurora-pos,
 #notification-MyName-Volume,
-#climbing-Refresh-Notification-Volume {
+#climbing-Refresh-Notification-Volume,
+#cells-Borders-Thickness {
   width: 100%;
   cursor: pointer;
   -webkit-appearance: none;
@@ -980,7 +1028,8 @@ let css = `
 #manualWeather::-webkit-slider-thumb,
 #aurora-pos::-webkit-slider-thumb,
 #notification-MyName-Volume::-webkit-slider-thumb,
-#climbing-Refresh-Notification-Volume::-webkit-slider-thumb  {
+#climbing-Refresh-Notification-Volume::-webkit-slider-thumb,
+#cells-Borders-Thickness::-webkit-slider-thumb  {
   -webkit-appearance: none;
   appearance: none;
   width: 20px;
@@ -996,7 +1045,8 @@ let css = `
 
 #WeatherStep,
 #auroraStep,
-#volumeStep {
+#volumeStep,
+#ThicknessStep {
   margin-top: 10px;
   display: flex;
   justify-content: space-between;
@@ -1596,7 +1646,7 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
       this.switchTab(this.tabs.length - 1);
     },
   
-    createTable(tableName = `Локация ${this.tabs[this.currentTabIndex].tables.length + 1}`) { // Добавляем параметр tableName
+    createTable(tableName = `Локация ${this.tabs[this.currentTabIndex].tables.length + 1}`) {
       const currentTab = this.tabs[this.currentTabIndex];
       currentTab.tables.push({name: tableName}); // Добавляем имя к полю
       this.saveState(); 
@@ -1826,7 +1876,6 @@ if (targetSettings.test(window.location.href)) {
     const panelId = clickedButton.id.replace("button", "panel");
     const targetPanel = document.getElementById(panelId);
 
-    // Скрываем все панели, кроме целевой
     buttonContainer.querySelectorAll("button").forEach(button => {
       const correspondingPanelId = button.id.replace("button", "panel");
       const correspondingPanel = document.getElementById(correspondingPanelId);
@@ -1836,7 +1885,6 @@ if (targetSettings.test(window.location.href)) {
     });
   });
 
-  // Скрываем все панели, кроме первой
   const defaultButton = buttonContainer.querySelector("button");
   const defaultPanelId = defaultButton.id.replace("button", "panel");
   const defaultPanel = document.getElementById(defaultPanelId);
@@ -1885,7 +1933,6 @@ function loadModuleStates() {
 async function loadModuleListOnSettings() {
   const url = "https://raw.githubusercontent.com/Ibirtem/CatWar/main/modules/modules.txt";
 
-  // Проверка URL
   const targetSettings = /^https:\/\/catwar\.su\/settings/;
   if (!targetSettings.test(window.location.href)) {
     return;
@@ -2059,7 +2106,6 @@ async function loadModule(moduleName, description, version) {
   const cachedModule = localStorage.getItem(moduleName);
 
   if (cachedModule) {
-    // Модуль есть в кеше, используем его
     activateModule(cachedModule, moduleName, description, version);
   } else {
     // Модуля нет в кеше, загружаем его
@@ -2349,59 +2395,360 @@ if (window.location.href === targetCW3) {
       toggleFireflies();
     });
   }
+
+  // ====================================================================================================================
+  //  . . . ДЕЙСТВИЯ ПРИ НАВОДКЕ НА КОТА . . .
+  // ====================================================================================================================
+  // Общий обработчик mouseover для ".cat"
+  document.addEventListener("mouseover", (event) => {
+    const cat = event.target.closest(".cat");
+
+    if (cat) {
+      if (settings.compactMouth) {
+        compactInventory(cat);
+      }
+
+      if (
+        !cat.querySelector(".cat_tooltip .more-info-link") &&
+        (settings.compactMouth || settings.showMoreCatInfo)
+      ) {
+        const moreInfoLink = document.createElement("a");
+        moreInfoLink.classList.add("more-info-link");
+        moreInfoLink.textContent = "Подробнее";
+        moreInfoLink.addEventListener("click", () => {
+          showCatInfo(cat);
+        });
+
+        const moreInfoContainer = document.createElement("div");
+        moreInfoContainer.classList.add("more-info-container");
+        moreInfoContainer.appendChild(moreInfoLink);
+
+        const onlineSpan = cat.querySelector(".cat_tooltip span.online");
+        onlineSpan.parentNode.insertBefore(moreInfoContainer, onlineSpan);
+      }
+    }
+  });
+  // ====================================================================================================================
+  //  . . . КОМПАКТНЫЙ РОТ АХХАХХА . . .
+  // ====================================================================================================================
+    function compactInventory(cat) {
+      const mouthList = cat.querySelector(".cat_tooltip .mouth");
+
+      if (mouthList && !mouthList.classList.contains("processed")) {
+        const inventory = {};
+
+        mouthList.querySelectorAll("li").forEach((item) => {
+          const imgSrc = item.querySelector("img").getAttribute("src");
+          inventory[imgSrc] = (inventory[imgSrc] || 0) + 1;
+        });
+
+        mouthList.innerHTML = "";
+
+        Object.entries(inventory).forEach(([imgSrc, count]) => {
+          const li = document.createElement("li");
+          const img = document.createElement("img");
+          img.setAttribute("src", imgSrc);
+          li.appendChild(img);
+
+          if (count > 1) {
+            const countSpan = document.createElement("span");
+            countSpan.textContent = `x${count}`;
+            li.appendChild(countSpan);
+          }
+
+          mouthList.appendChild(li);
+        });
+
+        mouthList.classList.add("processed");
+      }
+    }
+  // ====================================================================================================================
+  //  . . . БОЛЬШЕ ИНФОРМАЦИИ В "О КОТЕ" . . .
+  // ====================================================================================================================
+    const defectsInfo = {
+      poisoning: {
+        wound: {
+          name: "Раны",
+          states: {
+            1: "царапины",
+            2: "лёгкие раны",
+            3: "глубокие раны",
+            4: "смертельные раны",
+          },
+        },
+        name: "Отравление",
+        states: {
+          1: "недомогание",
+          2: "лёгкое отравление",
+          3: "сильное отравление",
+          4: "смертельное отравление",
+        },
+      },
+      drown: {
+        name: "Травмы от утопления",
+        states: {
+          1: "ссадины",
+          2: "небольшие кровоподтёки",
+          3: "сильные травмы",
+          4: "смертельные травмы",
+        },
+      },
+      disease: {
+        name: "Болезнь",
+        states: {
+          1: "кашель",
+          2: "кашель",
+          3: "кашель",
+          4: "кашель",
+        },
+      },
+      trauma: {
+        name: "Переломы",
+        states: {
+          1: "синяки",
+          2: "лёгкие ушибы",
+          3: "сильные ушибы",
+          4: "смертельные ушибы",
+        },
+      },
+      dirt: {
+        name: "Грязь",
+        states: {
+          1: "грязные лапы",
+          2: "грязевые пятна",
+          3: "клещи",
+          4: "блохи",
+        },
+      },
+    };
+
+    let globalContainer = document.getElementById("global-container");
+    if (!globalContainer) {
+      globalContainer = document.createElement("div");
+      globalContainer.id = "global-container";
+      globalContainer.style.display = "none";
+      document.body.appendChild(globalContainer);
+    }
+
+    function showCatInfo(cat) {
+      const catName = cat.querySelector(".cat_tooltip a").textContent;
+      const catSize = cat.querySelector(".d .first").style.backgroundSize;
+      const catImage = cat
+        .querySelector(".d .first")
+        .style.backgroundImage.slice(5, -2);
+
+      const defectElements = Array.from(
+        cat.querySelectorAll(".d > div:not(.first)")
+      );
+
+      const uniqueDefects = new Set();
+
+      const catDefects = defectElements
+        .map((element) => {
+          const defectUrl = element.style.backgroundImage;
+
+          const defectParts = defectUrl.split("/");
+          const lastPart = defectParts.pop();
+          const defectLevel = parseInt(lastPart.split("/")[0]);
+          const defectType = defectParts[5];
+          const defectKey = `${defectType}-${defectLevel}`;
+
+          if (uniqueDefects.has(defectKey)) {
+            return null;
+          } else {
+            uniqueDefects.add(defectKey);
+            return { type: defectType, level: defectLevel };
+          }
+        })
+        .filter(Boolean);
+
+      const globalContainer = document.getElementById("global-container");
+      let catInfoElement = globalContainer.querySelector(".cat-info");
+
+      if (catInfoElement) {
+        globalContainer.removeChild(catInfoElement);
+      }
+
+      catInfoElement = document.createElement("div");
+      catInfoElement.classList.add("cat-info");
+
+      const closeInfoContainer = document.createElement("div");
+      closeInfoContainer.classList.add("close-info-container");
+
+      const closeButton = document.createElement("button");
+      closeButton.textContent = "Закрыть";
+      closeButton.classList.add("close-info");
+
+      const closeButtonHandler = () => {
+        globalContainer.removeChild(catInfoElement);
+      };
+      closeButton.addEventListener("click", closeButtonHandler);
+      closeInfoContainer.appendChild(closeButton);
+
+      // Добавляем информацию о дефектах в блок
+      const defectsDescriptions = catDefects.map((defect) => {
+        const defectData = defectsInfo[defect.type];
+        if (defectData) {
+          const defectState = defectData.states[defect.level] || "";
+          return `${defectData.name} (${defect.level} стадия, ${defectState})`;
+        }
+        return "";
+      });
+
+      const defectsText = defectsDescriptions.some(Boolean)
+        ? defectsDescriptions.filter(Boolean).join(", ")
+        : "нет";
+
+      const catId = cat
+        .querySelector(".cat_tooltip a")
+        .getAttribute("href")
+        .slice(4);
+
+      catInfoElement.innerHTML = `
+    <h2>${catName}</h2>
+    <p>ID: ${catId}</p>
+    <p>Размер: ${catSize}</p>
+    <img src="${catImage}">
+    <p>Дефекты: ${defectsText}</p>
+  `;
+
+      catInfoElement.appendChild(closeInfoContainer);
+
+      const customStyle = `
+    .cat-info {
+    pointer-events: auto;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px #00000033;
+    z-index: 5;
+    width: 300px;
+    text-align: center;
+    display: block;
+    background-color: white;
+    color: black;
+    }
+
+    .close-info-container {
+    text-align: right;
+    }
+
+    .close-info {
+    cursor: pointer;
+    }
+
+    .more-info-container {
+    cursor: pointer;
+    }
+`;
+
+      GM_addStyle(customStyle);
+
+      globalContainer.appendChild(catInfoElement);
+    }
+  // ====================================================================================================================
+  //  . . . ГРАНИЦЫ ЯЧЕЕК . . . cellsNumbers
+  // ====================================================================================================================
+  if (settings.cellsBorders) {
+    const cellsBorders = document.createElement("style");
+    cellsBorders.innerHTML = `
+    .cage {
+      box-shadow: inset 0 0 0 0.${settings.cellsBordersThickness}px #ffffff;
+    }
+   `;
+    document.head.appendChild(cellsBorders);
+  }
+  // ====================================================================================================================
+  //  . . . НУМЕРАЦИЯ ЯЧЕЕК . . .
+  // ====================================================================================================================
+  if (settings.cellsNumbers) {
+    function createCellNumbers(style) {
+      let css = `
+        #cages_div { position: relative; }
+        #cages td { position: relative; }
+        #cages td::before { 
+          content: attr(data-cell-num);
+          position: absolute; 
+          z-index: 0; 
+          top: 5px; 
+          right: 5px;
+          color: ${style.color || "#000"}; 
+          opacity: ${style.opacity || 0.8}; 
+          font-size: 16px; 
+          font-weight: bold;
+        }
+      `;
+
+      let cagesNums = document.createElement("style");
+      cagesNums.id = "cages_nums";
+      cagesNums.innerHTML = css;
+      document.head.appendChild(cagesNums);
+
+      let table = document.getElementById("cages");
+      let rows = table.querySelectorAll("tr");
+      for (let i = 0; i < rows.length; i++) {
+        let cells = rows[i].querySelectorAll("td");
+        for (let j = 0; j < cells.length; j++) {
+          cells[j].setAttribute("data-cell-num", (j + 1).toString());
+        }
+      }
+    }
+
+    createCellNumbers({
+      color: "white",
+      opacity: 0.8,
+    });
+  }
   // ====================================================================================================================
   //   . . . ЧИСЛОВАЯ ГРОМКОСТЬ УВЕДОМЛЕНИЙ . . .
   // ====================================================================================================================
-  function addClimbingNotificationsStyles() {
-    if (!settings.climbingNotificationsNumbers) return;
-
-    const styles = Array.from(
-      { length: 11 },
-      (_, i) => `
+  if (settings.climbingNotificationsNumbers) {
+    function addClimbingNotificationsStyles() {
+      const styles = Array.from(
+        { length: 11 },
+        (_, i) => `
       .vlm${i} > .nick[style*="italic"]:after {
         content: " [${i}]";
       }
     `
-    ).join("");
+      ).join("");
 
-    $("head").append(`<style>${styles}</style>`);
+      $("head").append(`<style>${styles}</style>`);
+    }
+
+    addClimbingNotificationsStyles();
   }
-
-  addClimbingNotificationsStyles();
   // ====================================================================================================================
   //   . . . ЗВУКОВОЕ УВЕДОМЛЕНИЕ ПРИ ОБНОВЛЕНИИ КЛЕТОК . . .
   // ====================================================================================================================
-  function handleClimbingRefresh() {
-    if (!settings.climbingRefreshNotification) return;
+  if (settings.climbingRefreshNotification) {
+    function handleClimbingRefresh() {
+      const refreshRegex = /Услышала? оглушительн/;
 
-    let lastEntry;
-    let isRead = false;
+      const updateHistory = () => {
+        const entries = $("#ist").html().split(".");
+        const lastEntry = entries[entries.length - 2];
 
-    const refreshRegex = /Услышала? оглушительн/;
-
-    const updateHistory = () => {
-      const entries = $("#ist").html().split(".");
-      lastEntry = entries[entries.length - 2];
-
-      if (lastEntry !== undefined) {
-        if (refreshRegex.test(lastEntry) && !isRead) {
+        if (lastEntry !== undefined && refreshRegex.test(lastEntry)) {
           soundManager.playSound(
             settings.climbingRefreshNotificationSound,
             settings.climbingRefreshNotificationVolume
           );
-          isRead = true;
         }
-      }
-    };
+      };
 
-    $("#history_block").on("DOMSubtreeModified", "#ist", updateHistory);
+      $("#history_block").on("DOMSubtreeModified", "#ist", updateHistory);
+    }
+
+    handleClimbingRefresh();
   }
-
-  handleClimbingRefresh();
   // ====================================================================================================================
   //   . . . МИННОЕ ПОЛЕ . . .
   // ====================================================================================================================
-  // Вторая по ненависти работа с кодами. Но уже к самому себе а не к сайту......... 
+  // Вторая по ненависти работа с кодами. Но уже к самому себе а не к сайту.........
   // чат уже ничего не перебьёт....... наверно????????????
   if (settings.climbingPanel) {
     // Работа с ячейками
@@ -2435,11 +2782,18 @@ if (window.location.href === targetCW3) {
       });
     }
 
+    let lastClickedCell;
+
     function handleCellClick(event) {
       const cell = event.target.closest("td");
       if (cell && cell.closest("#uwu-climbingPanel")) {
-        updateCell(cell, "");
-        transferColors();
+        if (lastClickedCell === cell) {
+          updateCell(cell, "");
+          transferColors();
+          lastClickedCell = null;
+        } else {
+          lastClickedCell = cell;
+        }
       }
     }
 
@@ -2558,12 +2912,12 @@ if (window.location.href === targetCW3) {
     const tabManager = {
       tabs: [],
       currentTabIndex: 0,
-      currentTableId: 0, // Инициализируем currentTableId
+      currentTableId: 0,
 
       createTab(name) {
         const newTab = {
           name: name,
-          tables: [], // Инициализируем tables как массив
+          tables: [],
         };
 
         this.tabs.push(newTab);
@@ -2676,7 +3030,7 @@ if (window.location.href === targetCW3) {
       renderTable(tableIndex) {
         // Получаем контейнер для таблицы
         const tableContainer = document.getElementById("uwu-tableContainer");
-        tableContainer.innerHTML = ""; // Очищаем контейнер
+        tableContainer.innerHTML = "";
 
         // Создаем таблицу
         const climbingPanel = document.createElement("table");
@@ -2688,7 +3042,7 @@ if (window.location.href === targetCW3) {
           for (let j = 0; j < 10; j++) {
             const cell = document.createElement("td");
             cell.setAttribute("tabindex", "0");
-            cell.addEventListener("click", handleCellClick); // Добавляем обработчик событий
+            cell.addEventListener("click", handleCellClick);
             row.appendChild(cell);
           }
           climbingPanel.appendChild(row);
@@ -2753,8 +3107,8 @@ if (window.location.href === targetCW3) {
     // Создание панели
     createClimbingPanel();
     // Отображение вкладок и таблиц
-    tabManager.renderTabs(); // Вызываем renderTabs
-    tabManager.renderTables(); // Вызываем renderTables
+    tabManager.renderTabs();
+    tabManager.renderTables();
 
     function getTableData(tableId) {
       const table = document.getElementById(tableId);
@@ -2827,6 +3181,19 @@ if (window.location.href === targetCW3) {
         currentX = e.clientX - initialX;
         currentY = e.clientY - initialY;
 
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        const panelWidth = climbingMainPanel.offsetWidth;
+        const panelHeight = climbingMainPanel.offsetHeight;
+
+        // Проверяем, не выходит ли панель за пределы экрана по горизонтали
+        const maxX = windowWidth - panelWidth;
+        currentX = Math.max(0, Math.min(currentX, maxX));
+
+        // Проверяем, не выходит ли панель за пределы экрана по вертикали
+        const maxY = windowHeight - panelHeight;
+        currentY = Math.max(0, Math.min(currentY, maxY));
+
         setPosition(currentX, currentY, climbingMainPanel);
 
         wasDragging = true;
@@ -2857,16 +3224,40 @@ if (window.location.href === targetCW3) {
       );
     }
 
-    const savedPanelPosition = JSON.parse(
-      localStorage.getItem("climbingPanelPosition")
-    );
-    if (savedPanelPosition) {
-      setPosition(
-        savedPanelPosition.x,
-        savedPanelPosition.y,
-        climbingMainPanel
+    function checkAndResetPanelPosition() {
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      const panelWidth = climbingMainPanel.offsetWidth;
+      const panelHeight = climbingMainPanel.offsetHeight;
+
+      const savedPanelPosition = JSON.parse(
+        localStorage.getItem("climbingPanelPosition")
       );
+
+      if (savedPanelPosition) {
+        currentX = savedPanelPosition.x;
+        currentY = savedPanelPosition.y;
+      } else {
+        // Если нет сохраненной позиции, начинаем с 0,0
+        currentX = 0;
+        currentY = 0;
+      }
+
+      // Проверяем, не выходит ли панель за пределы экрана и сбрасываем, если нужно
+      if (
+        currentX + panelWidth > windowWidth ||
+        currentY + panelHeight > windowHeight
+      ) {
+        currentX = 0;
+        currentY = 0;
+        saveClimbingPanelPosition(currentX, currentY); // Сохраняем сброшенную позицию
+      }
+
+      setPosition(currentX, currentY, climbingMainPanel);
     }
+
+    // Вызываем проверку при загрузке страницы
+    window.addEventListener("load", checkAndResetPanelPosition);
     // =====================  =====================
 
     const uwuClimbingPanel = document.createElement("style");
@@ -3195,6 +3586,11 @@ if (window.location.href === targetCW3) {
       #newchat, #newls {
         color: ${settings.settingAccentColor3};
       }
+
+    .cat-info {
+      background-color: ${settings.settingСatTooltipBackground} !important;
+      color: ${settings.settingTextColor} !important;
+      }
     `;
     document.head.appendChild(newStyle);
   }
@@ -3342,10 +3738,10 @@ if (window.location.href === targetCW3) {
     resize: vertical;
   }
 
-  #family_block, #cws_quick_settings_block { 
+  #family { 
     display: block;
-    max-height: 150px; 
     overflow-y: auto;
+    resize: vertical;
   }
 
   .infos {
@@ -3929,8 +4325,8 @@ if (window.location.href === targetCW3) {
   // Прохладно
   // Прохладно
   // Тепло #F8A37A;
-  // Жарковато #F58F6B; #F17A5C;
-  // Жарко
+  // Жарковато #F58F6B; #F17A5C; #EF6B50;
+  // Жарко #ED6149; #EB5741;
   // Засуха
 
   function getTemperature() {
@@ -4135,6 +4531,23 @@ if (window.location.href === targetCW3) {
   const { snowflakes } = generateSnowflakes();
   const { pixelRaindrops } = generatePixelRain();
   const { pixelSnowflakes } = generatePixelSnow();
+
+  // ====================================================================================================================
+  //   . . . РЕЖИМ НИЗКОЙ ПРОИЗВОДИТЕЛЬНОСТИ . . . + . . . Может быть уже даже готовка к динамичному количеству частиц.
+  // ====================================================================================================================
+  var rainNumParticles = 10;
+  var snowTimerValue = 120;
+  var desiredNumberOfFireflies = 10;
+
+  function setWeatherPerformanceMode() {
+    rainNumParticles = settings.lowPerformanceMode ? 5 : 10;
+    snowTimerValue = settings.lowPerformanceMode ? 200 : 120;
+    desiredNumberOfFireflies = settings.lowPerformanceMode ? 6 : 10;
+
+    return { rainNumParticles, snowTimerValue, desiredNumberOfFireflies };
+  }
+
+  setWeatherPerformanceMode();
   // ====================================================================================================================
   //   . . . ДОЖДЬ . . . 🌧️
   // ====================================================================================================================
@@ -4143,7 +4556,7 @@ if (window.location.href === targetCW3) {
 
     setInterval(() => {
       if (currentWeather === "rain") {
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < rainNumParticles; i++) {
           const raindrop = generateRaindrop();
           if (raindrop) {
             raindrops.push(raindrop);
@@ -4188,6 +4601,7 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   function generateSnowflakes() {
     const snowflakes = [];
+    const snowTimerValue = setWeatherPerformanceMode().snowTimerValue;
 
     setInterval(() => {
       if (currentWeather === "snow") {
@@ -4198,7 +4612,7 @@ if (window.location.href === targetCW3) {
           }
         }
       }
-    }, 120);
+    }, snowTimerValue);
 
     function generateSnowflake() {
       if (document.hidden) {
@@ -4231,7 +4645,7 @@ if (window.location.href === targetCW3) {
 
     setInterval(() => {
       if (currentWeather === "pixelRain") {
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < rainNumParticles; i++) {
           const pixelRaindrop = generatePixelRaindrop();
           if (pixelRaindrop) {
             pixelRaindrops.push(pixelRaindrop);
@@ -4277,6 +4691,7 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   function generatePixelSnow() {
     const pixelSnowflakes = [];
+    const snowTimerValue = setWeatherPerformanceMode().snowTimerValue;
 
     setInterval(() => {
       if (currentWeather === "pixelSnow") {
@@ -4287,7 +4702,7 @@ if (window.location.href === targetCW3) {
           }
         }
       }
-    }, 120);
+    }, snowTimerValue);
 
     function generatePixelSnowflake() {
       if (document.hidden) {
@@ -4458,7 +4873,6 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   const fireflies = [];
   const glowSizeMultiplier = 12;
-  const desiredNumberOfFireflies = 10;
 
   function generateFirefly() {
     const x = Math.random() * weatherCanvas.width;
