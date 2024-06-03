@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.14.0-05.24
+// @version      v1.15.0-06.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -48,6 +48,7 @@ let settings = {
   climbingRefreshNotificationVolume: "5",
   myNameNotificationSound: "notificationSound2",
   notificationMyNameVolume: "5",
+  namesForNotification: "",
   userQuickLinks: "",
   auroraPos: "1",
   chatHeight: "275",
@@ -119,15 +120,15 @@ const uwusettings = `
   <div id="effects-panel">
     <div>
       <p>
-        Отображение динамичной погоды в Игровой, такие как дождь или снегопад.
+        Включает генерацию Динамичной погоды в Игровой, такие как дождь, снегопады или Северные Сияния.
       </p>
       <input type="checkbox" id="weather-enabled" data-setting="weatherEnabled" />
-      <label for="weather-enabled">Показывать погоду</label>
+      <label for="weather-enabled">Показывать природные эффекты</label>
     </div>
 
     <div>
     <p>
-      Сильно сокращает количество всех частиц, увеличивая тем самым производительность на слабых устройствах.
+      Сокращает количество частиц динамичной погоды, увеличивая тем самым производительность на слабых устройствах.
     </p>
     <input type="checkbox" id="low-Performance-Mode" data-setting="lowPerformanceMode" />
     <label for="low-Performance-Mode">Режим низкой производительности</label>
@@ -135,14 +136,14 @@ const uwusettings = `
 
     <div>
       <p>
-        Отображение кнопки Расширенных настроек погоды в Игровой. Выключает натуральную генерацию погоды.
+        Отображает кнопку Расширенных настроек в Игровой для тестирования природных эффектов. Выключает натуральную генерацию погоды.
       </p>
       <input type="checkbox" id="extended-settings" data-setting="extendedSettings" />
       <label for="extended-settings">Расширенные настройки</label>
     </div>
 
     <div>
-      <p>Может очень слабо повлиять на производительность из-за возрастания количества частиц на экране.</p>
+      <p>Может немного повлиять на производительность из-за возрастания количества частиц на экране.</p>
       <input type="checkbox" id="weather-drops" data-setting="weatherDrops" />
       <label for="weather-drops">Эффекты приземления частиц</label>
     </div>
@@ -182,7 +183,7 @@ const uwusettings = `
   <div id="theme-panel">
 
   <div>
-    <p>Отрисовывает границы клеток в Игровой</p>
+    <p>Отрисовывает границы клеток Игрового поля.</p>
     <input type="checkbox" id="cells-Borders" data-setting="cellsBorders" />
     <label for="cells-Borders">Границы клеток</label>
   </div>
@@ -198,7 +199,7 @@ const uwusettings = `
   </div>
   
   <div>
-  <p>Ставит число клеточки в клеточку.</p>
+  <p>Обозначает клетки Игрового поля числами.</p>
     <input type="checkbox" id="cells-Numbers" data-setting="cellsNumbers" />
     <label for="cells-Numbers">Нумерация клеток</label>
   </div>
@@ -213,7 +214,7 @@ const uwusettings = `
     </div>
 
     <div>
-      <p>Ставит на страницу фон по ссылке.</p>
+      <p>Ставит на страницу фон из предоставленной ссылки.</p>
       <input type="checkbox" id="background-user" data-setting="backgroundUser" />
       <label for="background-user-enabled">Свой фон страницы.</label>
       <input type="text" id="SettingImageURLField" placeholder="Вставьте URL" data-setting="backgroundUserImageURL" />
@@ -222,9 +223,9 @@ const uwusettings = `
 
     <hr>
     <p>
-      Здесь вы можете выставить собственную тему для игровой. Принимаются "HEX"
-      значения, а значит поддерживается ещё и прозрачность. Будьте аккуратны и
-      не забывайте выключать другие темы в других скриптах/модах. Очистите поле
+      Здесь вы можете выставить собственные цвета для игровой. Принимаются "HEX"
+      значения (Пример: #000) с поддержкой прозрачности. Будьте аккуратны и
+      не забывайте выключать другие цвета/темы в других скриптах/модах. Очистите поле
       чтобы вернуться к стандартным цветам.
     </p>
     <input type="checkbox" id="user-theme" data-setting="userTheme" />
@@ -277,7 +278,7 @@ const uwusettings = `
       <div id="color-picker-input">
         <input type="text" id="SettingAccentColorField3" placeholder="Вставьте HEX код"
           data-setting="settingAccentColor3" />
-        <label title="Цвет уведомлений. Например ЛС и васего имени в Чате">[?] Акценты 3</label>
+        <label title="Цвет уведомлений. Например ЛС и вашего имени в Чате">[?] Акценты 3</label>
       </div>
 
       <div style="flex: 0 0 100%">
@@ -348,7 +349,7 @@ const uwusettings = `
     </div>
 
     <div>
-      <p>Более функциональный новый Чат: ID отправителя рядом с его именем и звуковое уведомление при вашем упоминании.
+      <p>Более функциональный Чат: допись ID отправителя и звуковое уведомление при вашем упоминании.
       </p>
       <input type="checkbox" id="new-chat" data-setting="newChat" />
       <label for="new-chat">Современный Чат</label>
@@ -374,10 +375,15 @@ const uwusettings = `
     </div>
   </div>
 
+  <div>
+    <p>Ваши собственные имена и клички на упоминания в чате. Просто пропишите их через запятую. Пример: Мяу, Мяуич, Мяу МяуВкин</p>
+    <input type="text" id="names-For-Notification" placeholder=". . ." data-setting="namesForNotification" />
+  </div>
+
     <div>
-      <p>Более современный аналог строки ввода в Игровой. Насильно берёт цвета с "Использовать свои цвета".</p>
+      <p>Более удобная строка ввода сообщений над чатом с возможностью растягивания. Пока что насильно берёт цвета с "Использовать свои цвета".</p>
       <input type="checkbox" id="new-chat-input" data-setting="newChatInput" />
-      <label for="new-chat-input">Редизайн строки отправки сообщений</label>
+      <label for="new-chat-input">Альтернативная строка ввода сообщений</label>
     </div>
 
   </div>
@@ -385,7 +391,7 @@ const uwusettings = `
   <div id="utility-panel">
 
     <div>
-      <p>Добавляет в всплывающее окно "О коте" кнопку для просмотра большей полезной информации.</p>
+      <p>Добавляет во всплывающее окно "О коте" кнопку "Подробнее" для просмотра большей полезной информации.</p>
       <input type="checkbox" id="show-More-Cat-Info" data-setting="showMoreCatInfo" />
       <label for="show-More-Cat-Info">Больше информации о Коте</label>
     </div>
@@ -396,14 +402,15 @@ const uwusettings = `
       <label for="compact-Mouth">Компактные инвентари</label>
     </div>
 
+    <hr>
     <div>
     <p>Включает окно для расчерчивания минного поля в Игровой.
-    Выбранная ячейка готова принять в себя значение с клавиатуры от "0" до "7", минус "-" равняется красной клетке, а знак равно =" ставит более яркую клетку, например для переходов,
+    Выбранная ячейка готова принять в себя значение с клавиатуры от "0" до "7", "минус" ( - ) равняется красной клетке, а знак "равно" ( = ) ставит более яркую клетку, например для переходов,
     которая не будет очищаться при "Очистить всё поле/таблицу". Два раза прожмите на ячейку, чтобы очистить её значение.</p>
       <input type="checkbox" id="climbing-panel" data-setting="climbingPanel" />
       <label for="climbing-panel">Минное поле</label>
       <p>Здесь вы можете добавить/удалить Вкладки для хранения Таблиц и количество самих таблиц в выбранной вкладке.
-      Не изменяйте !одновременно! ячейки минного поля и структуру Вкладок и Таблиц.</p>
+      Не изменяйте !одновременно! ячейки минного поля и структуру Вкладок и Таблиц, а то можете потерять выставленные новые ячейки.</p>
         <h4>Вкладки</h4>
         <div id="uwu-buttonRow1-settings"></div>
         <h4>Локации</h4>
@@ -411,13 +418,13 @@ const uwusettings = `
     </div>
 
     <div>
-      <p>Дописывает в чате громкость уведомления числом (В основном, когда с вами взаимодействуют боты, а в данном случае количества опасных клеток вокруг вас)</p>
+      <p>Дописывает в чате громкость уведомления числом (В основном, когда с вами взаимодействуют боты, а в случае с лазалками - количество опасных клеток вокруг вас)</p>
       <input type="checkbox" id="climbing-Notifications-Numbers" data-setting="climbingNotificationsNumbers" />
       <label for="climbing-Notifications-Numbers">Подписывать громкость уведомления</label>
     </div>
 
     <div>
-      <p>Звуковое уведомление, когда карта локации обновляется</p>
+      <p>Звуковое уведомление, когда карта локации обновляется.</p>
       <input type="checkbox" id="climbing-Refresh-Notification" data-setting="climbingRefreshNotification" />
       <label for="climbing-Refresh-Notification">Уведомлять об перестановке</label>
     </div>
@@ -444,7 +451,7 @@ const uwusettings = `
 
     <hr>
 
-    <p>Быстрые ссылки в Игровой</p>
+    <p>Быстрые ссылки в Игровой.</p>
     <div>
       <input type="checkbox" id="quick-Link1" data-setting="quickLink1" />
       <label for="quick-Link1">Настройки</label>
@@ -466,8 +473,8 @@ const uwusettings = `
     </div>
 
     <div>
-      <p>Ваши ссылки. Вставляете ссылку, пробел и пишите название, для множества просто пишите через запятую. Пример:
-        https://мяу Мяу, https://мяу2 Мяу2</p>
+      <p>Ваши ссылки. Вставляете ссылку, пробел и пишите название. Для множества просто пишите через запятую. Пример:
+        https://мяу Мяу, https://мяу2 Мяу-2</p>
       <input type="text" id="users-quick-Links" placeholder=". . ." data-setting="userQuickLinks" />
     </div>
 
@@ -481,6 +488,8 @@ const uwusettings = `
   </div>
 
   <div id="modules-panel">
+  <p>Онлайн сборник стилей/модов/скриптов, которые не попали в основной функционал Скрипта/Мода UwU.</p>
+  <hr>
     <div id="module-info">
     </div>
 
@@ -498,26 +507,32 @@ const uwusettings = `
 const newsPanel = `
 <div id="news-panel">
   <button id="news-button">
-    v1.14.0 - ☀️ С днём очередных фиксов и правок! И новых функци!
+    v1.15.0 - 🍂 Я всё ещё живой! Ура-а-а! С днём обновы! Клички в чате! Вуху! Прикольно! Ржека!!!!!!!!!!!! 🗿🗿🗿🗿🗿🌌😭😭😭😭😭🌌😎😎😎😎😎🎉🎉🎉🎉🎉🪲🪲🪲🪲☔☔☔☔⚡⚡🍂🍂🍂🧇🧇🧇🧇🧇🧇🥨🥨🥗🥗🥗🥗🥐🍔🍔🍳🍳🍳🍳
+    Гооооолл!!!!!!!!!!!!!!!!!!!!!!!! ****** мы код дописываем!!!!!!!!!
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
     <p>
-      — Добавлены отрисовки ячеек Игровой, Режим низкой производительности для погоды, Больше информации и сокращение инвентаря в "О коте". 
-      А ещё фикс звуковых уведомлений на лазалках. Простите все кто падали и не получили звук.
+      — 5к+ строчек кода, на что я и рассчитывать не мог, когда приступал к этому проекту. Половина из всего этого жуткие повторяшки, и много что можно написать и переписать в разы лучше.
+      Молчу уже о том, что я не использую какие-либо библиотеки и фреймворки, как другие скрипты, а значит мне приходится писать всегда побольше, чем могло бы быть, но с этого и плюс
+      конечному пользователю в виде чуть большей производительности (наверно)! Но, в общем, как проект к которому я приступил вообще не зная адекватного программирования, я очень доволен собой и вышедшими результатами.
     </p>
     <hr>
     <h3>Внешний вид</h3>
-    <p>— Убрал фиксированные полоски прокруток для блока Родсвенных связей и настроек Шеда, но дал растягивалку.</p>
-    <p>— Модуль отвечающий за блюр "О коте" и БР, теперь размывает и новое окошко с большей информации О коте. Переустановите этот модуль.</p>
+    <p>— Небольшая перепись подписей в настройках для более ясного понимания их предназначения.</p>
+    <p>— Обобщения описания скрипта/мода на разных всяких его страницах для установок.</p>
     <hr>
     <h3>Изменения кода</h3>
-    <p>— Я дурачок я дурачок я дурачок. Фикс пропажи звуков в лазалках при обновлении клеток.</p>
-    <p>— Минная панель не позволит себя вытащить за экран.</p>
-    <p>— Если вы умудритесь, то она сбросит себя в нулевые позиции при перезагрузке страницы.</p>
-    <p>— Очистка клетки в минном поле требует двойной клик, а не одиночный.</p>
+    <p>— Небольшая минорная оптимизация кода своего чата.</p>
+    <p>— Звуковое уведомление об ЛС теперь только когда прибавляются сообщения, а не при любом изменении.</p>
+    <p>— Теперь "менеджер звуков" хранит и будет пытаться воспроизвести последний вызванный звук, если пользователь ещё не взаимодействовал со страницей.</p>
+    <p>— Хороший код - понятный код. Мне он не понятен, поэтому почистил бесполезные комментарии в нём. Теперь он стал ещё более непонятный.</p>
+    <p>— Эммм эмммм даже я не знаю каким боком было так раньше, но починил кривущее хранения дефектов. Удивительно что оно работало.</p>
+    <p>— Отделил зависимость Сортировки инвентаря котов от настроек "Подробнее о коте". Проще говоря, сортировка работает как надо.</p>
+    <p>— Рефактор кода сортировки инвентаря.</p>
+    <p>— Мелкая чистка кода вставки настроек.</p>
     <hr>
-    <p>Дата выпуска: 24.05.24</p>
+    <p>Дата выпуска: 04.06.24</p>
   </div>
 </div>
 `;
@@ -1260,32 +1275,28 @@ GM_addStyle(css);
 // ====================================================================================================================
 //  . . . ПАНЕЛЬ НАСТРОЕК . . .
 // ====================================================================================================================
-function createSettingsBlock(blockId, settings) {
+function createSettingsBlock(blockId, content) {
   const siteTable = document.querySelector("#site_table");
-  const dataMobile = siteTable.getAttribute("data-mobile");
-
-  const backgroundImageURL = window.getComputedStyle(
+  const isMobile = siteTable.getAttribute("data-mobile") === "0";
+  const backgroundImage = window.getComputedStyle(
     document.body
   ).backgroundImage;
 
   const settingsElement = document.createElement("div");
   settingsElement.classList.add("rounded-image");
   settingsElement.id = blockId;
-  settingsElement.innerHTML = settings;
-  settingsElement.style.backgroundImage = backgroundImageURL;
+  settingsElement.innerHTML = content;
+  settingsElement.style.backgroundImage = backgroundImage;
 
-  if (dataMobile === "0") {
-    const settingsContainer = document.querySelector("#branch");
-    settingsContainer.appendChild(settingsElement);
-  } else {
-    siteTable.appendChild(settingsElement);
-  }
+  const settingsContainer = isMobile
+    ? document.querySelector("#branch")
+    : siteTable;
+  settingsContainer.appendChild(settingsElement);
 }
 
 if (targetSettings.test(window.location.href)) {
   createSettingsBlock("uwu-settings", uwusettings);
 
-  // Загрузка настроек из сохранений
   function loadSettings() {
     const storedSettings = localStorage.getItem("uwu-settings");
     if (storedSettings && typeof storedSettings === "string") {
@@ -1296,7 +1307,6 @@ if (targetSettings.test(window.location.href)) {
     }
   }
 
-  // Сохраняем настройки в сохранения
   function saveSettings() {
     try {
       localStorage.setItem("uwu-settings", JSON.stringify(settings));
@@ -1308,7 +1318,6 @@ if (targetSettings.test(window.location.href)) {
 
   loadSettings();
 
-  // Обновление элементов ввода после загрузки настроек
   document
     .querySelectorAll("#uwusettings [data-setting]")
     .forEach((element) => {
@@ -1320,10 +1329,10 @@ if (targetSettings.test(window.location.href)) {
       }
     });
 
-  // Взаимоисключащиеся чекбоксы
+  // ===================== СПИСОК ВЗАИМОИСКЛЮЧАЮЩСЯ ЧЕКБОКСОВ =====================
   const exclusiveCheckboxGroups = [["backgroundRepeat", "backgroundUser"]];
+  // ===================== ================================== =====================
 
-  // Вызов сохранения настроек при изменениях чекбоксов
   document
     .querySelectorAll("#uwusettings [data-setting]")
     .forEach((element) => {
@@ -1356,17 +1365,16 @@ if (targetSettings.test(window.location.href)) {
     uwuSettingsElement.insertAdjacentHTML("beforeend", newsPanel);
   }
 
-// ====================================================================================================================
-//  . . . СОЗДАНИЕ ВЫПАДАЮЩИХ СПИСКОВ ПРИ ПОМОЩИ ФУНКЦИИ createCustomSelect . . .
-// ====================================================================================================================
+  // ====================================================================================================================
+  //  . . . СОЗДАНИЕ ВЫПАДАЮЩИХ СПИСКОВ ПРИ ПОМОЩИ ФУНКЦИИ createCustomSelect . . .
+  // ====================================================================================================================
   // Звуки звуки звуки, вуху.
   const notificationSounds = [
     { name: "Звук 1", id: "notificationSound1" },
     { name: "Звук 2", id: "notificationSound2" },
     { name: "Звук 3", id: "notificationSound3" },
-  ]; 
+  ];
 
-  // Загрузка сохраненного значения
   loadSettings();
   if (settings["myNameNotificationSound"]) {
     const selectedOption = notificationSounds.find(
@@ -1377,7 +1385,6 @@ if (targetSettings.test(window.location.href)) {
       .querySelector(".select-selected").textContent = selectedOption.name;
   }
 
-  // Загрузка сохраненного значения
   loadSettings();
   if (settings["climbingRefreshNotificationSound"]) {
     const selectedOption = notificationSounds.find(
@@ -1391,7 +1398,6 @@ if (targetSettings.test(window.location.href)) {
   createCustomSelect("climbingRefreshNotificationSound", notificationSounds);
   createCustomSelect("myNameNotificationSound", notificationSounds);
 
-  // Кнопка Новостей
   window.addEventListener("load", () => {
     const newsButton = document.getElementById("news-button");
     const newsList = document.getElementById("news-list");
@@ -1409,7 +1415,11 @@ if (targetSettings.test(window.location.href)) {
   // ====================================================================================================================
   //   . . . КНОПКА ТЕСТА ЗВУКОВ . . .
   // ====================================================================================================================
-  function addSoundTestButton(containerId, settingsKeyForSound, settingsKeyForVolume) {
+  function addSoundTestButton(
+    containerId,
+    settingsKeyForSound,
+    settingsKeyForVolume
+  ) {
     const container = document.getElementById(containerId);
     if (!container) {
       console.error(`Контейнер с ID ${containerId} не найден.`);
@@ -1419,21 +1429,30 @@ if (targetSettings.test(window.location.href)) {
     const testButton = document.createElement("button");
     testButton.textContent = "Тест звука";
     testButton.addEventListener("click", () => {
-      // Получаем ID звука и громкость из объекта settings
       const selectedSoundId = settings[settingsKeyForSound];
       const volume = settings[settingsKeyForVolume] || 5; // Используется 50% по умолчанию если я каким-то боком забыл выставить значение Дефолтом
       if (selectedSoundId) {
         soundManager.playSound(selectedSoundId, volume);
       } else {
-        console.error(`Выбранный звук для контейнера ${containerId} не найден.`);
+        console.error(
+          `Выбранный звук для контейнера ${containerId} не найден.`
+        );
       }
     });
 
     container.appendChild(testButton);
-}
+  }
 
-addSoundTestButton("climbingRefreshNotificationSoundContainer", "climbingRefreshNotificationSound", "climbingRefreshNotificationVolume");
-addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound", "notificationMyNameVolume");
+  addSoundTestButton(
+    "climbingRefreshNotificationSoundContainer",
+    "climbingRefreshNotificationSound",
+    "climbingRefreshNotificationVolume"
+  );
+  addSoundTestButton(
+    "myNameNotificationSoundContainer",
+    "myNameNotificationSound",
+    "notificationMyNameVolume"
+  );
   // ====================================================================================================================
   //   . . . СОЗДАНИЕ ВЫПАДАЮЩИХ СПИСКОВ . . .
   // ====================================================================================================================
@@ -1449,14 +1468,13 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
 
       optionElement.addEventListener("click", () => {
         selectedElement.textContent = option.name;
-        settings[selectId] = option.id; // Сохраняем ID выбранной опции
+        settings[selectId] = option.id;
         saveSettings();
         selectContainer.classList.remove("active");
       });
 
       optionsContainer.appendChild(optionElement);
     });
-    
 
     selectedElement.addEventListener("click", () => {
       selectContainer.classList.toggle("active");
@@ -1480,7 +1498,6 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
     "#layout-customizer .column.right"
   );
 
-  // Функция для создания элемента блока
   function createBlockElement(blockId) {
     const blockElement = document.createElement("div");
     blockElement.classList.add("block", blockId);
@@ -1494,7 +1511,6 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
     removeButton.classList.add("remove-button");
     removeButton.addEventListener("click", () => {
       blockElement.remove();
-      // Показываем кнопки "Слева" и "Справа"
       const listItem = listItems.find(
         (item) => item.dataset.blockId === blockId
       );
@@ -1511,7 +1527,6 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
     return blockElement;
   }
 
-  // Функция для создания кнопок "Слева" и "Справа"
   function createMoveButtons(listItem, blockId) {
     const blockWrapper = document.createElement("div");
     blockWrapper.classList.add("block-wrapper");
@@ -1551,7 +1566,6 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
     listItem.appendChild(blockWrapper);
   }
 
-  // Создание списка блоков
   for (const blockId in blockNames) {
     const listItem = document.createElement("li");
     listItem.id = `block-item-${blockId}`;
@@ -1566,7 +1580,6 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
     createMoveButtons(listItem, blockId);
   }
 
-  // Сохранение и загрузка настроек
   const saveButton = document.getElementById("SettingSaveButton4");
 
   saveButton.addEventListener("click", () => {
@@ -1636,30 +1649,34 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
     createTab(name) {
       const newTab = {
         name: name,
-        tables: [], // Инициализируем tables как массив
-        currentTableId: 0 // Добавляем currentTableId для отслеживания текущего поля
+        tables: [],
+        currentTableId: 0,
       };
-  
+
       this.tabs.push(newTab);
       this.renderTabs();
       renderTablesInSettings();
       this.switchTab(this.tabs.length - 1);
     },
-  
-    createTable(tableName = `Локация ${this.tabs[this.currentTabIndex].tables.length + 1}`) {
+
+    createTable(
+      tableName = `Локация ${this.tabs[this.currentTabIndex].tables.length + 1}`
+    ) {
       const currentTab = this.tabs[this.currentTabIndex];
-      currentTab.tables.push({name: tableName}); // Добавляем имя к полю
-      this.saveState(); 
-      renderTablesInSettings(); // Вызываем renderTablesInSettings
+      currentTab.tables.push({ name: tableName });
+      this.saveState();
+      renderTablesInSettings();
     },
-  
+
     removeTable(tableIndex) {
       const currentTab = this.tabs[this.currentTabIndex];
       if (currentTab && currentTab.tables[tableIndex]) {
-        currentTab.tables.splice(tableIndex, 1); // Удаляем поле из массива
-        // Обновляем currentTableId, если удалено текущее поле
+        currentTab.tables.splice(tableIndex, 1);
         if (currentTab.currentTableId === tableIndex) {
-          currentTab.currentTableId = Math.max(0, currentTab.currentTableId - 1);
+          currentTab.currentTableId = Math.max(
+            0,
+            currentTab.currentTableId - 1
+          );
         }
         renderTablesInSettings();
       }
@@ -1677,8 +1694,7 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
     switchTab(index) {
       this.currentTabIndex = index;
       renderTablesInSettings();
-  
-      // Обновляем стили кнопок вкладок:
+
       const tabButtons = document.querySelectorAll(".tab-button");
       tabButtons.forEach((button, i) => {
         if (i === this.currentTabIndex) {
@@ -1689,7 +1705,6 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
       });
     },
 
-    // Функция для переключения полей
     switchTable(tableIndex) {
       const currentTab = this.tabs[this.currentTabIndex];
       if (currentTab) {
@@ -1697,7 +1712,7 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
         renderTablesInSettings();
       }
     },
-  
+
     saveState() {
       localStorage.setItem("climbingPanelState", JSON.stringify(this));
     },
@@ -1711,7 +1726,6 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
         tabButton.textContent = tab.name;
         tabButton.classList.add("tab-button");
 
-        // Добавляем класс active, если это текущая вкладка
         if (index === this.currentTabIndex) {
           tabButton.classList.add("active");
         }
@@ -1732,7 +1746,6 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
         tabRow.appendChild(tabContainer);
       });
 
-      // Кнопка добавления вкладки
       const addTabButton = document.createElement("button");
       addTabButton.textContent = "+";
       addTabButton.classList.add("add-button");
@@ -1743,7 +1756,6 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
     },
   };
 
-  // Загрузка состояния
   const savedState = localStorage.getItem("climbingPanelState");
   if (savedState) {
     const state = JSON.parse(savedState);
@@ -1765,7 +1777,7 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
 
       tabButton.addEventListener("click", () => {
         tabManager.switchTab(index);
-        renderTablesInSettings(); // Обновляем список таблиц при переключении вкладки
+        renderTablesInSettings();
       });
 
       const removeButton = document.createElement("button");
@@ -1774,8 +1786,8 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
 
       removeButton.addEventListener("click", () => {
         tabManager.removeTab(index);
-        renderTabsInSettings(); // Обновляем список вкладок
-        renderTablesInSettings(); // Обновляем список таблиц
+        renderTabsInSettings();
+        renderTablesInSettings();
         tabManager.saveState();
       });
 
@@ -1786,7 +1798,6 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
 
       tabRow.appendChild(tabContainer);
     });
-    // Кнопка добавления вкладки
     const addTabButton = document.createElement("button");
     addTabButton.textContent = "+";
     addTabButton.classList.add("add-button");
@@ -1794,7 +1805,7 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
       const tabName = prompt("Введите имя вкладки:");
       if (tabName) {
         tabManager.createTab(tabName);
-        renderTabsInSettings(); // Обновляем список вкладок
+        renderTabsInSettings();
         tabManager.saveState();
       }
     });
@@ -1807,19 +1818,16 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
 
     const currentTab = tabManager.tabs[tabManager.currentTabIndex];
 
-    // Проверяем, есть ли вкладки
     if (tabManager.tabs.length > 0 && currentTab) {
-      currentTab.tables.forEach((table, index) => { // Используем forEach для массива tables
+      currentTab.tables.forEach((table, index) => {
         const tableButton = document.createElement("button");
-        tableButton.textContent = table.name; // Используем имя поля из объекта table
+        tableButton.textContent = table.name;
         tableButton.classList.add("table-button");
 
-        // Передаем tabManager в обработчик:
         tableButton.addEventListener("click", () => {
-          tabManager.switchTable(index); // Вызываем switchTable
+          tabManager.switchTable(index);
         });
 
-        // Устанавливаем data-tableindex:
         tableButton.dataset.tableindex = index;
 
         const removeButton = document.createElement("button");
@@ -1829,8 +1837,8 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
         removeButton.addEventListener("click", () => {
           tabManager.removeTable(index);
           renderTablesInSettings();
-          tabManager.saveState(); // Сохраняем состояние после удаления поля
-        }); 
+          tabManager.saveState();
+        });
 
         const tableContainer = document.createElement("div");
         tableContainer.classList.add("table-container");
@@ -1840,16 +1848,14 @@ addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound"
         tableRow.appendChild(tableContainer);
       });
 
-      // Кнопка добавления таблицы
       const addTableButton = document.createElement("button");
       addTableButton.textContent = "+";
       addTableButton.classList.add("add-button");
 
-      // Передаем tabManager в обработчик:
       addTableButton.addEventListener("click", () => {
-        const tableName = prompt("Введите имя поля:"); // Запрашиваем имя поля
+        const tableName = prompt("Введите имя поля:");
         if (tableName) {
-          tabManager.createTable(tableName); // Вызываем createTable с именем
+          tabManager.createTable(tableName);
           renderTablesInSettings();
           tabManager.saveState();
         }
@@ -1876,12 +1882,13 @@ if (targetSettings.test(window.location.href)) {
     const panelId = clickedButton.id.replace("button", "panel");
     const targetPanel = document.getElementById(panelId);
 
-    buttonContainer.querySelectorAll("button").forEach(button => {
+    buttonContainer.querySelectorAll("button").forEach((button) => {
       const correspondingPanelId = button.id.replace("button", "panel");
       const correspondingPanel = document.getElementById(correspondingPanelId);
 
-      correspondingPanel.style.display = correspondingPanel === targetPanel ? "block" : "none";
-      button.classList.toggle("active", button === clickedButton); 
+      correspondingPanel.style.display =
+        correspondingPanel === targetPanel ? "block" : "none";
+      button.classList.toggle("active", button === clickedButton);
     });
   });
 
@@ -1889,7 +1896,7 @@ if (targetSettings.test(window.location.href)) {
   const defaultPanelId = defaultButton.id.replace("button", "panel");
   const defaultPanel = document.getElementById(defaultPanelId);
 
-  buttonContainer.querySelectorAll("button").forEach(button => {
+  buttonContainer.querySelectorAll("button").forEach((button) => {
     const correspondingPanelId = button.id.replace("button", "panel");
     const correspondingPanel = document.getElementById(correspondingPanelId);
 
@@ -1898,9 +1905,8 @@ if (targetSettings.test(window.location.href)) {
     }
   });
 
-  // Показываем первую панель и делаем первую кнопку активной
   defaultPanel.style.display = "block";
-  defaultButton.classList.add("active"); 
+  defaultButton.classList.add("active");
 }
 // ====================================================================================================================
 //  . . . МОДУЛЬНОСТЬ СКРИПТА . . .
@@ -1931,7 +1937,8 @@ function loadModuleStates() {
 }
 
 async function loadModuleListOnSettings() {
-  const url = "https://raw.githubusercontent.com/Ibirtem/CatWar/main/modules/modules.txt";
+  const url =
+    "https://raw.githubusercontent.com/Ibirtem/CatWar/main/modules/modules.txt";
 
   const targetSettings = /^https:\/\/catwar\.su\/settings/;
   if (!targetSettings.test(window.location.href)) {
@@ -1998,7 +2005,8 @@ async function loadModuleListOnSettings() {
 }
 
 async function activateModules() {
-  const url = "https://raw.githubusercontent.com/Ibirtem/CatWar/main/modules/modules.txt";
+  const url =
+    "https://raw.githubusercontent.com/Ibirtem/CatWar/main/modules/modules.txt";
 
   try {
     const response = await fetch(url);
@@ -2108,7 +2116,6 @@ async function loadModule(moduleName, description, version) {
   if (cachedModule) {
     activateModule(cachedModule, moduleName, description, version);
   } else {
-    // Модуля нет в кеше, загружаем его
     const url = `https://raw.githubusercontent.com/Ibirtem/CatWar/main/modules/${moduleName}`;
     try {
       const response = await fetch(url);
@@ -2117,7 +2124,6 @@ async function loadModule(moduleName, description, version) {
         localStorage.setItem(moduleName, data);
         activateModule(data, moduleName, description, version);
 
-        // Обновляем состояние moduleStates для загруженного модуля
         moduleStates[moduleName] = true;
         localStorage.setItem("moduleStates", JSON.stringify(moduleStates));
 
@@ -2221,7 +2227,7 @@ function clearModuleInfoContainer() {
 
 loadModuleStates();
 loadModuleListOnSettings();
-window.addEventListener('load', activateModules);
+window.addEventListener("load", activateModules);
 // ====================================================================================================================
 //   . . . ЗАГРУЗКА НАСТРОЕК . . .
 // ====================================================================================================================
@@ -2246,7 +2252,6 @@ loadSettings();
 if (window.location.href !== targetCW3) {
   if (settings.commentsAvatars) {
     const checkForComments = setInterval(() => {
-      // Ищем комментарии по классу view-comment
       const comments = document.querySelectorAll(".view-comment");
       if (comments.length > 0) {
         clearInterval(checkForComments);
@@ -2309,39 +2314,92 @@ if (window.location.href !== targetCW3) {
   }
 }
 // ====================================================================================================================
-//   . . . ЗВУКОВОЙ ПЛЕЕР . . .
+//   . . . МЕНЕДЖЕР ЗВУКОВ . . .
 // ====================================================================================================================
 function createSoundManager() {
   const sounds = {};
+  let isUserInteracted = false;
+  let lastPendingSound = null;
 
-  // Функция для загрузки звука
   function loadSound(id, url) {
     const audio = new Audio(url);
     sounds[id] = audio;
   }
 
-  // Функция для воспроизведения звука
   function playSound(id, volume) {
-    if (sounds[id]) {
-      sounds[id].currentTime = 0;
-      sounds[id].volume = volume / 10;
-      sounds[id].play();
-    } else {
-      console.error(`Звук с ID ${id} не найден.`);
+    return new Promise((resolve, reject) => {
+      if (sounds[id]) {
+        sounds[id].currentTime = 0;
+        sounds[id].volume = volume / 10;
+        sounds[id]
+          .play()
+          .then(resolve)
+          .catch((error) => {
+            if (!isUserInteracted) {
+              console.log(
+                "Политика браузера заблокировала звук. Ждём взаимодействия со стороны пользователя для новой попытки."
+              );
+              lastPendingSound = { id, volume, resolve };
+            } else {
+              reject(error);
+            }
+          });
+      } else {
+        reject(new Error(`Звук с ID ${id} не найден.`));
+      }
+    });
+  }
+
+  function playSoundNow(id, volume, resolve) {
+    sounds[id]
+      .play()
+      .then(resolve)
+      .catch((error) => {
+        console.error(`Не удалось воспроизвести звук с ID ${id}:`, error);
+        resolve();
+      });
+  }
+
+  function handleUserInteraction() {
+    isUserInteracted = true;
+    document.removeEventListener("click", handleUserInteraction);
+    document.removeEventListener("touchstart", handleUserInteraction);
+    document.removeEventListener("keydown", handleUserInteraction);
+
+    if (lastPendingSound) {
+      const { id, volume, resolve } = lastPendingSound;
+      playSoundNow(id, volume, resolve);
+      lastPendingSound = null;
     }
   }
+
+  document.addEventListener("click", handleUserInteraction);
+  document.addEventListener("touchstart", handleUserInteraction);
+  document.addEventListener("keydown", handleUserInteraction);
 
   return {
     loadSound,
     playSound,
   };
 }
+
 const soundManager = createSoundManager();
 
-// Список звуков
-soundManager.loadSound("notificationSound1", 'https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_1.ogg');
-soundManager.loadSound("notificationSound2", 'https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_2.ogg');
-soundManager.loadSound("notificationSound3", 'https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_3.ogg');
+// ===================== СПИСОК ДОСТУПНЫХ ЗВУКОВ =====================
+soundManager.loadSound(
+  "notificationSound1",
+  "https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_1.ogg"
+);
+soundManager.loadSound(
+  "notificationSound2",
+  "https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_2.ogg"
+);
+soundManager.loadSound(
+  "notificationSound3",
+  "https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_3.ogg"
+);
+// =====================  =====================
+
 // ====================================================================================================================
 //  . . . ЗАГРУЗКА КОДА В ИГРОВОЙ . . .
 // ====================================================================================================================
@@ -2397,214 +2455,214 @@ if (window.location.href === targetCW3) {
   }
 
   // ====================================================================================================================
-  //  . . . ДЕЙСТВИЯ ПРИ НАВОДКЕ НА КОТА . . .
+  //  . . . ДЕЙСТВИЯ ПРИ НАВОДКЕ НА .cat . . .
   // ====================================================================================================================
-  // Общий обработчик mouseover для ".cat"
   document.addEventListener("mouseover", (event) => {
-    const cat = event.target.closest(".cat");
+    const catElement = event.target.closest(".cat");
 
-    if (cat) {
-      if (settings.compactMouth) {
-        compactInventory(cat);
-      }
+    if (catElement) {
+      const catTooltip = catElement.querySelector(".cat_tooltip");
 
       if (
-        !cat.querySelector(".cat_tooltip .more-info-link") &&
-        (settings.compactMouth || settings.showMoreCatInfo)
+        settings.showMoreCatInfo &&
+        !catTooltip.querySelector(".more-info-link")
       ) {
         const moreInfoLink = document.createElement("a");
         moreInfoLink.classList.add("more-info-link");
         moreInfoLink.textContent = "Подробнее";
         moreInfoLink.addEventListener("click", () => {
-          showCatInfo(cat);
+          showCatInfo(catElement);
         });
 
         const moreInfoContainer = document.createElement("div");
         moreInfoContainer.classList.add("more-info-container");
         moreInfoContainer.appendChild(moreInfoLink);
 
-        const onlineSpan = cat.querySelector(".cat_tooltip span.online");
+        const onlineSpan = catTooltip.querySelector("span.online");
         onlineSpan.parentNode.insertBefore(moreInfoContainer, onlineSpan);
+      }
+
+      if (settings.compactMouth) {
+        compactInventory(catElement);
       }
     }
   });
   // ====================================================================================================================
   //  . . . КОМПАКТНЫЙ РОТ АХХАХХА . . .
   // ====================================================================================================================
-    function compactInventory(cat) {
-      const mouthList = cat.querySelector(".cat_tooltip .mouth");
+  function compactInventory(cat) {
+    const inventoryList = cat.querySelector(".cat_tooltip .mouth");
 
-      if (mouthList && !mouthList.classList.contains("processed")) {
-        const inventory = {};
+    if (inventoryList && !inventoryList.classList.contains("processed")) {
+      const inventory = new Map();
 
-        mouthList.querySelectorAll("li").forEach((item) => {
-          const imgSrc = item.querySelector("img").getAttribute("src");
-          inventory[imgSrc] = (inventory[imgSrc] || 0) + 1;
-        });
+      [...inventoryList.querySelectorAll("li img")].forEach((img) => {
+        const itemSrc = img.getAttribute("src");
+        inventory.set(itemSrc, (inventory.get(itemSrc) || 0) + 1);
+      });
 
-        mouthList.innerHTML = "";
+      inventoryList.innerHTML = "";
 
-        Object.entries(inventory).forEach(([imgSrc, count]) => {
-          const li = document.createElement("li");
-          const img = document.createElement("img");
-          img.setAttribute("src", imgSrc);
-          li.appendChild(img);
+      for (const [itemSrc, count] of inventory) {
+        const listItem = document.createElement("li");
+        const itemImage = document.createElement("img");
+        itemImage.setAttribute("src", itemSrc);
+        listItem.appendChild(itemImage);
 
-          if (count > 1) {
-            const countSpan = document.createElement("span");
-            countSpan.textContent = `x${count}`;
-            li.appendChild(countSpan);
-          }
+        if (count > 1) {
+          const countSpan = document.createElement("span");
+          countSpan.textContent = `x${count}`;
+          listItem.appendChild(countSpan);
+        }
 
-          mouthList.appendChild(li);
-        });
-
-        mouthList.classList.add("processed");
+        inventoryList.appendChild(listItem);
       }
+
+      inventoryList.classList.add("processed");
     }
+  }
   // ====================================================================================================================
   //  . . . БОЛЬШЕ ИНФОРМАЦИИ В "О КОТЕ" . . .
   // ====================================================================================================================
-    const defectsInfo = {
-      poisoning: {
-        wound: {
-          name: "Раны",
-          states: {
-            1: "царапины",
-            2: "лёгкие раны",
-            3: "глубокие раны",
-            4: "смертельные раны",
-          },
-        },
-        name: "Отравление",
-        states: {
-          1: "недомогание",
-          2: "лёгкое отравление",
-          3: "сильное отравление",
-          4: "смертельное отравление",
-        },
+  const defectsInfo = {
+    wound: {
+      name: "Раны",
+      states: {
+        1: "царапины",
+        2: "лёгкие раны",
+        3: "глубокие раны",
+        4: "смертельные раны",
       },
-      drown: {
-        name: "Травмы от утопления",
-        states: {
-          1: "ссадины",
-          2: "небольшие кровоподтёки",
-          3: "сильные травмы",
-          4: "смертельные травмы",
-        },
+    },
+    poisoning: {
+      name: "Отравление",
+      states: {
+        1: "недомогание",
+        2: "лёгкое отравление",
+        3: "сильное отравление",
+        4: "смертельное отравление",
       },
-      disease: {
-        name: "Болезнь",
-        states: {
-          1: "кашель",
-          2: "кашель",
-          3: "кашель",
-          4: "кашель",
-        },
+    },
+    drown: {
+      name: "Травмы от утопления",
+      states: {
+        1: "ссадины",
+        2: "небольшие кровоподтёки",
+        3: "сильные травмы",
+        4: "смертельные травмы",
       },
-      trauma: {
-        name: "Переломы",
-        states: {
-          1: "синяки",
-          2: "лёгкие ушибы",
-          3: "сильные ушибы",
-          4: "смертельные ушибы",
-        },
+    },
+    disease: {
+      name: "Болезнь",
+      states: {
+        1: "кашель",
+        2: "кашель",
+        3: "кашель",
+        4: "кашель",
       },
-      dirt: {
-        name: "Грязь",
-        states: {
-          1: "грязные лапы",
-          2: "грязевые пятна",
-          3: "клещи",
-          4: "блохи",
-        },
+    },
+    trauma: {
+      name: "Переломы",
+      states: {
+        1: "синяки",
+        2: "лёгкие ушибы",
+        3: "сильные ушибы",
+        4: "смертельные ушибы",
       },
-    };
+    },
+    dirt: {
+      name: "Грязь",
+      states: {
+        1: "грязные лапы",
+        2: "грязевые пятна",
+        3: "клещи",
+        4: "блохи",
+      },
+    },
+  };
 
-    let globalContainer = document.getElementById("global-container");
-    if (!globalContainer) {
-      globalContainer = document.createElement("div");
-      globalContainer.id = "global-container";
-      globalContainer.style.display = "none";
-      document.body.appendChild(globalContainer);
+  let globalContainer = document.getElementById("global-container");
+  if (!globalContainer) {
+    globalContainer = document.createElement("div");
+    globalContainer.id = "global-container";
+    globalContainer.style.display = "none";
+    document.body.appendChild(globalContainer);
+  }
+
+  function showCatInfo(cat) {
+    const catName = cat.querySelector(".cat_tooltip a").textContent;
+    const catSize = cat.querySelector(".d .first").style.backgroundSize;
+    const catImage = cat
+      .querySelector(".d .first")
+      .style.backgroundImage.slice(5, -2);
+
+    const defectElements = Array.from(
+      cat.querySelectorAll(".d > div:not(.first)")
+    );
+
+    const uniqueDefects = new Set();
+
+    const catDefects = defectElements
+      .map((element) => {
+        const defectUrl = element.style.backgroundImage;
+
+        const defectParts = defectUrl.split("/");
+        const lastPart = defectParts.pop();
+        const defectLevel = parseInt(lastPart.split("/")[0]);
+        const defectType = defectParts[5];
+        const defectKey = `${defectType}-${defectLevel}`;
+
+        if (uniqueDefects.has(defectKey)) {
+          return null;
+        } else {
+          uniqueDefects.add(defectKey);
+          return { type: defectType, level: defectLevel };
+        }
+      })
+      .filter(Boolean);
+
+    const globalContainer = document.getElementById("global-container");
+    let catInfoElement = globalContainer.querySelector(".cat-info");
+
+    if (catInfoElement) {
+      globalContainer.removeChild(catInfoElement);
     }
 
-    function showCatInfo(cat) {
-      const catName = cat.querySelector(".cat_tooltip a").textContent;
-      const catSize = cat.querySelector(".d .first").style.backgroundSize;
-      const catImage = cat
-        .querySelector(".d .first")
-        .style.backgroundImage.slice(5, -2);
+    catInfoElement = document.createElement("div");
+    catInfoElement.classList.add("cat-info");
 
-      const defectElements = Array.from(
-        cat.querySelectorAll(".d > div:not(.first)")
-      );
+    const closeInfoContainer = document.createElement("div");
+    closeInfoContainer.classList.add("close-info-container");
 
-      const uniqueDefects = new Set();
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "Закрыть";
+    closeButton.classList.add("close-info");
 
-      const catDefects = defectElements
-        .map((element) => {
-          const defectUrl = element.style.backgroundImage;
+    const closeButtonHandler = () => {
+      globalContainer.removeChild(catInfoElement);
+    };
+    closeButton.addEventListener("click", closeButtonHandler);
+    closeInfoContainer.appendChild(closeButton);
 
-          const defectParts = defectUrl.split("/");
-          const lastPart = defectParts.pop();
-          const defectLevel = parseInt(lastPart.split("/")[0]);
-          const defectType = defectParts[5];
-          const defectKey = `${defectType}-${defectLevel}`;
-
-          if (uniqueDefects.has(defectKey)) {
-            return null;
-          } else {
-            uniqueDefects.add(defectKey);
-            return { type: defectType, level: defectLevel };
-          }
-        })
-        .filter(Boolean);
-
-      const globalContainer = document.getElementById("global-container");
-      let catInfoElement = globalContainer.querySelector(".cat-info");
-
-      if (catInfoElement) {
-        globalContainer.removeChild(catInfoElement);
+    const defectsDescriptions = catDefects.map((defect) => {
+      const defectData = defectsInfo[defect.type];
+      if (defectData) {
+        const defectState = defectData.states[defect.level] || "";
+        return `${defectData.name} (${defect.level} стадия, ${defectState})`;
       }
+      return "";
+    });
 
-      catInfoElement = document.createElement("div");
-      catInfoElement.classList.add("cat-info");
+    const defectsText = defectsDescriptions.some(Boolean)
+      ? defectsDescriptions.filter(Boolean).join(", ")
+      : "нет";
 
-      const closeInfoContainer = document.createElement("div");
-      closeInfoContainer.classList.add("close-info-container");
+    const catId = cat
+      .querySelector(".cat_tooltip a")
+      .getAttribute("href")
+      .slice(4);
 
-      const closeButton = document.createElement("button");
-      closeButton.textContent = "Закрыть";
-      closeButton.classList.add("close-info");
-
-      const closeButtonHandler = () => {
-        globalContainer.removeChild(catInfoElement);
-      };
-      closeButton.addEventListener("click", closeButtonHandler);
-      closeInfoContainer.appendChild(closeButton);
-
-      // Добавляем информацию о дефектах в блок
-      const defectsDescriptions = catDefects.map((defect) => {
-        const defectData = defectsInfo[defect.type];
-        if (defectData) {
-          const defectState = defectData.states[defect.level] || "";
-          return `${defectData.name} (${defect.level} стадия, ${defectState})`;
-        }
-        return "";
-      });
-
-      const defectsText = defectsDescriptions.some(Boolean)
-        ? defectsDescriptions.filter(Boolean).join(", ")
-        : "нет";
-
-      const catId = cat
-        .querySelector(".cat_tooltip a")
-        .getAttribute("href")
-        .slice(4);
-
-      catInfoElement.innerHTML = `
+    catInfoElement.innerHTML = `
     <h2>${catName}</h2>
     <p>ID: ${catId}</p>
     <p>Размер: ${catSize}</p>
@@ -2612,9 +2670,9 @@ if (window.location.href === targetCW3) {
     <p>Дефекты: ${defectsText}</p>
   `;
 
-      catInfoElement.appendChild(closeInfoContainer);
+    catInfoElement.appendChild(closeInfoContainer);
 
-      const customStyle = `
+    const customStyle = `
     .cat-info {
     pointer-events: auto;
     position: fixed;
@@ -2645,10 +2703,10 @@ if (window.location.href === targetCW3) {
     }
 `;
 
-      GM_addStyle(customStyle);
+    GM_addStyle(customStyle);
 
-      globalContainer.appendChild(catInfoElement);
-    }
+    globalContainer.appendChild(catInfoElement);
+  }
   // ====================================================================================================================
   //  . . . ГРАНИЦЫ ЯЧЕЕК . . . cellsNumbers
   // ====================================================================================================================
@@ -2676,7 +2734,7 @@ if (window.location.href === targetCW3) {
           top: 5px; 
           right: 5px;
           color: ${style.color || "#000"}; 
-          opacity: ${style.opacity || 0.8}; 
+          opacity: ${style.opacity || 0.4}; 
           font-size: 16px; 
           font-weight: bold;
         }
@@ -2751,13 +2809,11 @@ if (window.location.href === targetCW3) {
   // Вторая по ненависти работа с кодами. Но уже к самому себе а не к сайту.........
   // чат уже ничего не перебьёт....... наверно????????????
   if (settings.climbingPanel) {
-    // Работа с ячейками
     function updateCell(cell, value, backgroundColor) {
       cell.textContent = value || "";
       cell.style.backgroundColor = backgroundColor || "";
     }
 
-    // Переносы и очистки цветов
     function transferColors() {
       const transferCheckbox = document.getElementById("uwu-transferCheckbox");
       if (transferCheckbox.checked) {
@@ -2797,11 +2853,11 @@ if (window.location.href === targetCW3) {
       }
     }
 
-    // Обработчик события нажатия клавиши с сохранением данных
     function handleKeyDown(event) {
       const keyPressed = event.key;
       const activeElement = document.activeElement;
 
+      // TODO - Кастомайз цветов
       if (
         activeElement &&
         activeElement.tagName === "TD" &&
@@ -2814,7 +2870,7 @@ if (window.location.href === targetCW3) {
         } else if (keyPressed === "=") {
           updateCell(activeElement, "", "#ffffff87");
         }
-        saveTableData(tabManager.currentTableId); // Сохраняем данные после изменения
+        saveTableData(tabManager.currentTableId);
       }
     }
 
@@ -2822,7 +2878,6 @@ if (window.location.href === targetCW3) {
       event.target.checked ? transferColors() : clearColors();
     }
 
-    // Создания элементов панели
     const uwuClimbingPanelContainer = `
     <div id="uwu-climbingMainPanel">
     <div id="uwu-climbingPanelButton">
@@ -2853,7 +2908,6 @@ if (window.location.href === targetCW3) {
 
       const transferCheckbox = document.getElementById("uwu-transferCheckbox");
 
-      // Добавление обработчиков событий
       document.addEventListener("keydown", handleKeyDown);
       transferCheckbox.addEventListener("change", handleTransferCheckboxChange);
       document.addEventListener("keydown", (event) => {
@@ -2868,28 +2922,24 @@ if (window.location.href === targetCW3) {
       });
     }
 
-    // Функция для сохранения данных таблицы в localStorage
     function saveTableData(tableIndex) {
       const climbingPanel = document.getElementById("uwu-climbingPanel");
       if (climbingPanel) {
-        const tableData = getTableData(climbingPanel.id); // Получаем данные ячеек
+        const tableData = getTableData(climbingPanel.id);
         const currentTab = tabManager.tabs[tabManager.currentTabIndex];
-        // Сохраняем данные в объект таблицы, включая имя
         currentTab.tables[tableIndex] = {
-          name: currentTab.tables[tableIndex].name, // Сохраняем имя
-          data: tableData, // Сохраняем данные ячеек
+          name: currentTab.tables[tableIndex].name,
+          data: tableData,
         };
-        tabManager.saveState(); // Сохраняем состояние tabManager
+        tabManager.saveState();
       }
     }
 
-    // Функция для очистки таблицы
     function clearTable() {
       const climbingPanel = document.getElementById("uwu-climbingPanel");
       if (climbingPanel) {
         const cells = Array.from(climbingPanel.querySelectorAll("td"));
         cells.forEach((cell) => {
-          // Очищаем ячейку, только если ее цвет фона не rgba(255, 255, 255, 0.53) мне лень чинить, потом будет адекватна
           if (
             getComputedStyle(cell).backgroundColor !==
             "rgba(255, 255, 255, 0.53)"
@@ -2899,10 +2949,9 @@ if (window.location.href === targetCW3) {
         });
 
         const currentTab = tabManager.tabs[tabManager.currentTabIndex];
-        // Сохраняем данные таблицы, включая имя
         currentTab.tables[tabManager.currentTableId] = {
-          name: currentTab.tables[tabManager.currentTableId].name, // Сохраняем имя
-          data: getTableData(climbingPanel.id), // Обновляем данные ячеек
+          name: currentTab.tables[tabManager.currentTableId].name,
+          data: getTableData(climbingPanel.id),
         };
         tabManager.saveState();
       }
@@ -2939,7 +2988,6 @@ if (window.location.href === targetCW3) {
           this.currentTableId = null;
         }
 
-        // Обновляем стили кнопок вкладок
         const tabButtons = document.querySelectorAll(".tab-button");
         tabButtons.forEach((button, i) => {
           if (i === this.currentTabIndex) {
@@ -2955,7 +3003,6 @@ if (window.location.href === targetCW3) {
         this.currentTableId = tableIndex;
         this.renderTable(tableIndex);
 
-        // Обновляем стили кнопок таблиц
         const tableButtons = document.querySelectorAll(".table-button");
         tableButtons.forEach((button) => {
           const buttonIndex = parseInt(button.dataset.tableindex);
@@ -2981,7 +3028,6 @@ if (window.location.href === targetCW3) {
           tabButton.textContent = tab.name;
           tabButton.classList.add("tab-button");
 
-          // Добавляем класс active, если это текущая вкладка
           if (index === this.currentTabIndex) {
             tabButton.classList.add("active");
           }
@@ -3007,15 +3053,13 @@ if (window.location.href === targetCW3) {
             let tableName = table.name || `Локация ${index + 1}`;
 
             const tableButton = document.createElement("button");
-            tableButton.textContent = tableName; // Используем имя таблицы, если оно задано, иначе дефолтное имя
+            tableButton.textContent = tableName;
             tableButton.classList.add("table-button");
 
-            // Передаем tabManager в обработчик
             tableButton.addEventListener("click", () => {
               tabManager.switchTable(parseInt(tableIndex));
             });
 
-            // Устанавливаем data-tableindex
             tableButton.dataset.tableindex = tableIndex;
 
             const tableContainer = document.createElement("div");
@@ -3028,15 +3072,12 @@ if (window.location.href === targetCW3) {
       },
 
       renderTable(tableIndex) {
-        // Получаем контейнер для таблицы
         const tableContainer = document.getElementById("uwu-tableContainer");
         tableContainer.innerHTML = "";
 
-        // Создаем таблицу
         const climbingPanel = document.createElement("table");
         climbingPanel.id = "uwu-climbingPanel";
 
-        // Создание строк и ячеек таблицы
         for (let i = 0; i < 6; i++) {
           const row = document.createElement("tr");
           for (let j = 0; j < 10; j++) {
@@ -3048,12 +3089,10 @@ if (window.location.href === targetCW3) {
           climbingPanel.appendChild(row);
         }
 
-        // Восстановление данных из tabManager
         const currentTab = this.tabs[this.currentTabIndex];
-        const tableData = currentTab.tables[tableIndex]?.data; // Используем индекс массива
+        const tableData = currentTab.tables[tableIndex]?.data;
 
         if (tableData) {
-          // Если tableData существует, восстанавливаем данные ячеек
           for (let i = 0; i < tableData.length; i++) {
             for (let j = 0; j < tableData[i].length; j++) {
               const cellData = tableData[i][j];
@@ -3063,50 +3102,41 @@ if (window.location.href === targetCW3) {
             }
           }
         }
-
-        // Добавляем таблицу в контейнер
         tableContainer.appendChild(climbingPanel);
 
-        // Сохранение данных при изменении ячейки
         climbingPanel.addEventListener("click", () => {
-          const tableData = currentTab.tables[tableIndex]; // Получаем текущие данные таблицы
+          const tableData = currentTab.tables[tableIndex];
           currentTab.tables[tableIndex] = {
-            name: tableData.name, // Сохраняем имя
-            data: getTableData(climbingPanel.id), // Обновляем данные ячеек
+            name: tableData.name,
+            data: getTableData(climbingPanel.id),
           };
-          tabManager.saveState(); // Сохраняем состояние tabManager
+          tabManager.saveState();
         });
 
-        // Добавляем кнопку очистки таблицы
         const clearButton = document.createElement("button");
         clearButton.textContent = "Очистить всё поле/таблицу";
-        clearButton.id = "button-clear-table"; // Добавляем ID для кнопки
+        clearButton.id = "button-clear-table";
         clearButton.addEventListener("click", clearTable);
-        tableContainer.appendChild(clearButton); // Добавляем кнопку в контейнер
+        tableContainer.appendChild(clearButton);
       },
     };
 
-    // Загрузка состояния
     const savedState = localStorage.getItem("climbingPanelState");
     if (savedState) {
       const state = JSON.parse(savedState);
       Object.assign(tabManager, state);
 
-      // Проверка валидности currentTableId
       const currentTab = tabManager.tabs[tabManager.currentTabIndex];
       if (currentTab && currentTab.tables.length > 0) {
         if (tabManager.currentTableId >= currentTab.tables.length) {
-          tabManager.currentTableId = 0; // Сброс currentTableId на первую таблицу
+          tabManager.currentTableId = 0;
         }
       } else {
-        // Если нет таблиц, сбрасываем currentTableId
         tabManager.currentTableId = null;
       }
     }
-
-    // Создание панели
     createClimbingPanel();
-    // Отображение вкладок и таблиц
+
     tabManager.renderTabs();
     tabManager.renderTables();
 
@@ -3128,7 +3158,9 @@ if (window.location.href === targetCW3) {
 
       return tableData;
     }
+
     // ===================== ПЕРЕТАСКИВАНИЕ =====================
+
     const climbingMainPanel = document.getElementById("uwu-climbingMainPanel");
     const climbingPanelButton = document.getElementById(
       "uwu-climbingPanelButton"
@@ -3186,11 +3218,9 @@ if (window.location.href === targetCW3) {
         const panelWidth = climbingMainPanel.offsetWidth;
         const panelHeight = climbingMainPanel.offsetHeight;
 
-        // Проверяем, не выходит ли панель за пределы экрана по горизонтали
         const maxX = windowWidth - panelWidth;
         currentX = Math.max(0, Math.min(currentX, maxX));
 
-        // Проверяем, не выходит ли панель за пределы экрана по вертикали
         const maxY = windowHeight - panelHeight;
         currentY = Math.max(0, Math.min(currentY, maxY));
 
@@ -3238,25 +3268,21 @@ if (window.location.href === targetCW3) {
         currentX = savedPanelPosition.x;
         currentY = savedPanelPosition.y;
       } else {
-        // Если нет сохраненной позиции, начинаем с 0,0
         currentX = 0;
         currentY = 0;
       }
 
-      // Проверяем, не выходит ли панель за пределы экрана и сбрасываем, если нужно
       if (
         currentX + panelWidth > windowWidth ||
         currentY + panelHeight > windowHeight
       ) {
         currentX = 0;
         currentY = 0;
-        saveClimbingPanelPosition(currentX, currentY); // Сохраняем сброшенную позицию
+        saveClimbingPanelPosition(currentX, currentY);
       }
 
       setPosition(currentX, currentY, climbingMainPanel);
     }
-
-    // Вызываем проверку при загрузке страницы
     window.addEventListener("load", checkAndResetPanelPosition);
     // =====================  =====================
 
@@ -3408,7 +3434,6 @@ if (window.location.href === targetCW3) {
     }
   });
 
-  // Добавление пользовательских ссылок
   if (settings.userQuickLinks) {
     const userLinksArray = settings.userQuickLinks.split(", ");
 
@@ -3429,7 +3454,6 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   const cagesDiv = document.querySelector("#cages_div");
 
-  // Функция для создания фонового div
   function createBackgroundDiv() {
     const backgroundDiv = document.createElement("div");
     backgroundDiv.style.position = "fixed";
@@ -3442,7 +3466,6 @@ if (window.location.href === targetCW3) {
     return backgroundDiv;
   }
 
-  // Функция для обновления фонового изображения
   function updateBackgroundImage(backgroundDiv, imageUrl) {
     if (imageUrl) {
       backgroundDiv.style.backgroundImage = `url(${imageUrl})`;
@@ -3469,7 +3492,6 @@ if (window.location.href === targetCW3) {
     updateBackgroundImage(backgroundDiv, backgroundImageUrl);
     globalContainerElement.appendChild(backgroundDiv);
 
-    // Наблюдатель за изменениями стиля cagesDiv
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (
@@ -3622,7 +3644,6 @@ if (window.location.href === targetCW3) {
           predefinedHeights
         );
 
-        // Устанавливаем grid-area для каждого блока
         blocks.forEach((block) => {
           if (block.id) {
             block.style.gridArea = block.id;
@@ -3666,7 +3687,8 @@ if (window.location.href === targetCW3) {
     // Предопределенные высоты для блоков
     const predefinedHeights = {
       tr_tos: "30px",
-      // Больше блоков сюда
+      // Больше блоков сюда стоп а зачем
+      // TODO - Переделать всю эту проклятую систему во что-то адекватное.
     };
 
     function generateGridTemplate(leftBlocks, rightBlocks) {
@@ -3857,6 +3879,8 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   //   . . . ЗВУКОВЫЕ УВЕДОМЛЕНИЯ . . .
   // ====================================================================================================================
+  let previousCount = 0;
+
   if (settings.notificationPM) {
     const newlsElement = document.getElementById("newls");
     if (newlsElement) {
@@ -3868,17 +3892,27 @@ if (window.location.href === targetCW3) {
     }
 
     function handleNewlsChange(mutations) {
-      // Проверяем, было ли хоть одно изменение
       if (mutations.length > 0) {
-        soundManager.playSound(
-          "notificationSound1",
-          settings.notificationMyNameVolume
+        const currentText = newlsElement.textContent;
+        const currentCount = parseInt(
+          currentText.match(/\(\d+\)/)?.[0].slice(1, -1) || 0,
+          10
         );
+
+        if (!isNaN(currentCount) && currentCount > previousCount) {
+          soundManager.playSound(
+            "notificationSound1",
+            settings.notificationMyNameVolume
+          );
+          previousCount = currentCount;
+        } else if (!isNaN(currentCount)) {
+          previousCount = currentCount;
+        }
       }
     }
   }
   // ====================================================================================================================
-  //   . . . НОВЫЙ ЧАТ . . .
+  //   . . . СОВРЕМЕННЫЙ (НОВЫЙ) ЧАТ . . .
   // ====================================================================================================================
   // я на этом инвалиде потерял все нервы кетвар желаю тебе счастья удачи и всего хорошего 😌😌😌😌😌😌😌😌😌😌
   // Разрабу шведа я делаю низкий поклон как он сам не потерял свои нервы на эти пиксели.............
@@ -3888,7 +3922,6 @@ if (window.location.href === targetCW3) {
     const chatForm = document.getElementById("chat_form");
     chatForm.parentNode.insertBefore(newChatContainer, chatForm.nextSibling);
 
-    // Обработка клика на имени кота
     newChatContainer.addEventListener("click", handleNickClick);
     function handleNickClick(event) {
       const textArea = document.getElementById("text");
@@ -3899,40 +3932,31 @@ if (window.location.href === targetCW3) {
       }
     }
 
-    // Ставим наблюдатель на старый чат
     const chatElement = document.getElementById("chat_msg");
     if (chatElement) {
       const observer = new MutationObserver(handleNewChatMessage);
       observer.observe(chatElement, { childList: true, subtree: true });
     }
 
-    // Счетчик добавленных <span>
     let addedSpanCount = 0;
+
     function handleNewChatMessage(mutations) {
-      mutations.forEach((mutation) => {
-        if (mutation.type === "childList") {
-          mutation.addedNodes.forEach((node) => {
-            if (
-              node.nodeName === "SPAN" &&
-              node.querySelector("td > .chat_text")
-            ) {
-              addedSpanCount++;
-            }
-          });
-        }
-      });
-      // Обработка сообщений после подсчета добавленных <span>
+      const addedNodes = Array.from(mutations)
+        .flatMap((mutation) => Array.from(mutation.addedNodes))
+        .filter(
+          (node) =>
+            node.nodeName === "SPAN" && node.querySelector("td > .chat_text")
+        );
+
+      addedSpanCount += addedNodes.length;
       processChatMessages(addedSpanCount);
       addedSpanCount = 0;
     }
 
-    // Функция для обработки сообщений
     function processChatMessages(messageCount) {
       const chatMessages = document.querySelectorAll("#chat_msg > span");
       const messagesArray = Array.from(chatMessages);
-      // Обработка messageCount сообщений сверху вниз
       const messagesToProcess = messagesArray.slice(0, messageCount);
-      // Инвертируем порядок сообщений
       messagesToProcess.reverse();
 
       messagesToProcess.forEach((message) => {
@@ -3940,37 +3964,57 @@ if (window.location.href === targetCW3) {
       });
     }
 
-    // Создаём новое сообщение из старого
     function copyMessageToNewChat(chatMessage) {
       const chatTextSpan = chatMessage.querySelector("td > .chat_text");
-      const chatTextHTML = chatTextSpan.innerHTML;
+      let chatTextHTML = chatTextSpan.innerHTML;
       const chatTextClasses = chatTextSpan.className;
+      let nameFound = false;
 
-      // Уведомление при имени в чате
+      if (settings.namesForNotification) {
+        const names = settings.namesForNotification
+          .trim()
+          .split(/\s*,\s*/)
+          .filter((name) => name);
+
+        names.forEach((name) => {
+          const regex = new RegExp(`(?<![<\\w])${name}(?![\\w>])`, "gi");
+          const matches = chatTextHTML.match(regex);
+
+          if (matches) {
+            nameFound = true;
+            chatTextHTML = chatTextHTML.replace(
+              regex,
+              '<span class="myname">$&</span>'
+            );
+          }
+        });
+      }
+
       if (chatTextSpan.querySelector(".myname")) {
+        nameFound = true;
+      }
+
+      if (nameFound) {
         soundManager.playSound(
           settings.myNameNotificationSound,
           settings.notificationMyNameVolume
         );
       }
 
-      // Получаем ссылку на профиль и ID кота
       const profileLink = chatMessage.querySelector('a[href^="/cat"]').href;
       const catIdMatch = profileLink.match(/\/cat(\d+)/);
       const catId = catIdMatch ? catIdMatch[1] : ". . .";
 
-      // Создаем HTML нового сообщения с классами
       const newChatMessageHTML = `
-    <hr>
-      <div id="msg">
-        <div class="${chatTextClasses}">${chatTextHTML} [<i>${catId}</i>]</div> 
-        <div>
+        <hr>
+        <div id="msg">
+          <div class="${chatTextClasses}">${chatTextHTML} [<i>${catId}</i>]</div>
+          <div>
             <a href="${profileLink}" title="Перейти в профиль" target="_blank" rel="noopener noreferrer">➝</a>&nbsp;|&nbsp;
             <a href="#" title="Пожаловаться на нарушение ОПИ" class="msg_report">X</a>
+          </div>
         </div>
-    </div>
-  `;
-      // Вставляем в начало
+      `;
       newChatContainer.insertAdjacentHTML("afterbegin", newChatMessageHTML);
     }
 
@@ -4126,7 +4170,7 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   //   . . . ВСЕГДА ДЕНЬ В ИГРОВОЙ . . .
   // ====================================================================================================================
-  // Вот бы всё писалось именно так...........
+  // Вот бы всё писалось так кратко и легко...........
   const alwaysDay = document.createElement("style");
   if (settings.alwaysDay) {
     alwaysDay.innerHTML = `
@@ -4140,7 +4184,6 @@ if (window.location.href === targetCW3) {
   //   . . . НЕБО - ШАПКА . . .
   // ====================================================================================================================
   if (settings.skyInHeader) {
-    // URL изображения неба
     function getSkyUrl() {
       const skyElement = document.querySelector("#sky");
       if (skyElement) {
@@ -4180,7 +4223,6 @@ if (window.location.href === targetCW3) {
     `;
     document.head.appendChild(skyStyle);
 
-    // Cкрываем оригинальное небо
     const originalSkyStyle = document.createElement("style");
     originalSkyStyle.innerHTML = `
     #tr_sky {
@@ -4189,7 +4231,6 @@ if (window.location.href === targetCW3) {
     `;
     document.head.appendChild(originalSkyStyle);
 
-    // Обновление неба
     function updateSkyImage() {
       const skyUrl = getSkyUrl();
       if (skyUrl) {
@@ -4325,8 +4366,8 @@ if (window.location.href === targetCW3) {
   // Прохладно
   // Прохладно
   // Тепло #F8A37A;
-  // Жарковато #F58F6B; #F17A5C; #EF6B50;
-  // Жарко #ED6149; #EB5741;
+  // Жарковато #F6946F; #F58F6B; #F17A5C; #EF6B50;
+  // Жарко #ED6149; #EB5741; #EB523D; #E73D2E; #E6382A;
   // Засуха
 
   function getTemperature() {
@@ -4967,7 +5008,6 @@ if (window.location.href === targetCW3) {
       firefly.x += firefly.xSpeed;
       firefly.y += firefly.ySpeed;
 
-      // Проверяем столкновение с краями экрана
       if (firefly.x < 0 || firefly.x + firefly.size > weatherCanvas.width) {
         firefly.xSpeed *= -1;
       }
@@ -5037,7 +5077,6 @@ if (window.location.href === targetCW3) {
   }
 
   function animateLanding() {
-    // Приземление снега
     for (let i = snowflakes.length - 1; i >= 0; i--) {
       const snowflake = snowflakes[i];
       if (snowflake.y >= weatherCanvas.height - snowflake.size) {
@@ -5052,7 +5091,6 @@ if (window.location.href === targetCW3) {
         landedPixelSnowflakes.push(pixelSnowflake);
       }
     }
-    // Анимация угасания снега
     for (let i = landedSnowflakes.length - 1; i >= 0; i--) {
       const snowflake = landedSnowflakes[i];
       snowflake.opacity -= 0.001;
@@ -5083,7 +5121,6 @@ if (window.location.href === targetCW3) {
       );
     }
 
-    // Приземление капель
     for (let i = raindrops.length - 1; i >= 0; i--) {
       const raindrop = raindrops[i];
       if (raindrop.y >= weatherCanvas.height - raindrop.length) {
@@ -5102,7 +5139,6 @@ if (window.location.href === targetCW3) {
       }
     }
 
-    // Анимация обычных брызг
     for (const splash of splashes) {
       splash.x += splash.xSpeed;
       splash.y += splash.ySpeed;
@@ -5120,7 +5156,6 @@ if (window.location.href === targetCW3) {
       weatherCtx.fill();
     }
 
-    // Анимация пиксельных брызг
     for (const pixelSplash of pixelSplashes) {
       pixelSplash.x += pixelSplash.xSpeed;
       pixelSplash.y += pixelSplash.ySpeed;
@@ -5179,23 +5214,24 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
 }
 // ====================================================================================================================
-
-// console.log('⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣤⣤⣤⣤⣤⣤⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀ ')
-// console.log('⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⡿⠛⠉⠙⠛⠛⠛⠛⠻⢿⣿⣷⣤⡀⠀⠀⠀⠀⠀ ')
-// console.log('⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⠋⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⠀⠈⢻⣿⣿⡄⠀⠀⠀⠀ ')
-// console.log('⠀⠀⠀⠀⠀⠀⠀⣸⣿⡏⠀⠀⠀⣠⣶⣾⣿⣿⣿⠿⠿⠿⢿⣿⣿⣿⣄⠀⠀⠀ ')
-// console.log('⠀⠀⠀⠀⠀⠀⠀⣿⣿⠁⠀⠀⢰⣿⣿⣯⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢿⣷⡄⠀ ')
-// console.log('⠀⠀⣀⣤⣴⣶⣶⣿⡟⠀⠀⢸⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣷⠀ ')
-// console.log('⠀⢰⣿⡟⠋⠉⣹⣿⡇⠀⠀⠘⣿⣿⣿⣿⣷⣦⣤⣤⣤⣶⣶⣶⣶⣿⣿⣿⠀ ')
-// console.log('⠀⢸⣿⡇⠀⠀⣿⣿⡇⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠃⠀ ')
-// console.log('⠀⣸⣿⡇⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠉⠻⠿⣿⣿⣿⣿⡿⠿⠿⠛⢻⣿⡇⠀⠀ ')
-// console.log('⠀⣿⣿⠁⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣧⠀⠀ ')
-// console.log('⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀ ')
-// console.log('⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀ ')
-// console.log('⠀⢿⣿⡆⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀ ')
-// console.log('⠀⠸⣿⣧⡀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠃⠀⠀ ')
-// console.log('⠀⠀⠛⢿⣿⣿⣿⣿⣇⠀⠀⠀⠀⣰⣿⣿⣷⣶⣶⣶⣶⠶⠀⠀⢠⣿⣿⠀⠀⠀ ')
-// console.log('⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⣽⣿⡏⠁⠀⠀⠀⢸⣿⡇⠀⠀⠀ ')
-// console.log('⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⢹⣿⡆⠀⠀⠀⠀⣸⣿⠇⠀⠀⠀ ')
-// console.log('⠀⠀⠀⠀⠀⠀⠀⢿⣿⣦⣄⣀⣠⣴⣿⣿⠁⠀⠈⠻⣿⣿⣿⣿⡿⠏⠀⠀⠀⠀ ')
-// console.log('⠀⠀⠀⠀⠀⠀⠀⠈⠛⠻⠿⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀')
+function amogusSus() {
+  console.log("⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣤⣤⣤⣤⣤⣤⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀ ");
+  console.log("⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⡿⠛⠉⠙⠛⠛⠛⠛⠻⢿⣿⣷⣤⡀⠀⠀⠀⠀⠀ ");
+  console.log("⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⠋⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⠀⠈⢻⣿⣿⡄⠀⠀⠀⠀ ");
+  console.log("⠀⠀⠀⠀⠀⠀⠀⣸⣿⡏⠀⠀⠀⣠⣶⣾⣿⣿⣿⠿⠿⠿⢿⣿⣿⣿⣄⠀⠀⠀ ");
+  console.log("⠀⠀⠀⠀⠀⠀⠀⣿⣿⠁⠀⠀⢰⣿⣿⣯⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢿⣷⡄⠀ ");
+  console.log("⠀⠀⣀⣤⣴⣶⣶⣿⡟⠀⠀⢸⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣷⠀ ");
+  console.log("⠀⢰⣿⡟⠋⠉⣹⣿⡇⠀⠀⠘⣿⣿⣿⣿⣷⣦⣤⣤⣤⣶⣶⣶⣶⣿⣿⣿⠀ ");
+  console.log("⠀⢸⣿⡇⠀⠀⣿⣿⡇⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠃⠀ ");
+  console.log("⠀⣸⣿⡇⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠉⠻⠿⣿⣿⣿⣿⡿⠿⠿⠛⢻⣿⡇⠀⠀ ");
+  console.log("⠀⣿⣿⠁⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣧⠀⠀ ");
+  console.log("⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀ ");
+  console.log("⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀ ");
+  console.log("⠀⢿⣿⡆⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀ ");
+  console.log("⠀⠸⣿⣧⡀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠃⠀⠀ ");
+  console.log("⠀⠀⠛⢿⣿⣿⣿⣿⣇⠀⠀⠀⠀⣰⣿⣿⣷⣶⣶⣶⣶⠶⠀⠀⢠⣿⣿⠀⠀⠀ ");
+  console.log("⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⣽⣿⡏⠁⠀⠀⠀⢸⣿⡇⠀⠀⠀ ");
+  console.log("⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⢹⣿⡆⠀⠀⠀⠀⣸⣿⠇⠀⠀⠀ ");
+  console.log("⠀⠀⠀⠀⠀⠀⠀⢿⣿⣦⣄⣀⣠⣴⣿⣿⠁⠀⠈⠻⣿⣿⣿⣿⡿⠏⠀⠀⠀⠀ ");
+  console.log("⠀⠀⠀⠀⠀⠀⠀⠈⠛⠻⠿⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀");
+}
