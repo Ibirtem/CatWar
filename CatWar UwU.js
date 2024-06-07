@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.15.1-06.24
+// @version      v1.16.0-06.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -39,6 +39,7 @@ let settings = {
   cellsBorders: false,
   cellsBordersThickness: "1",
   cellsNumbers: false,
+  displayParametersPercentages: false,
   compactMouth: false,
   showMoreCatInfo: false,
   climbingPanel: false,
@@ -118,6 +119,9 @@ const uwusettings = `
   <hr>
 
   <div id="effects-panel">
+
+  <h2>Природа и окружение</h2>
+
     <div>
       <p>
         Включает генерацию Динамичной погоды в Игровой, такие как дождь, снегопады или Северные Сияния.
@@ -182,6 +186,8 @@ const uwusettings = `
 
   <div id="theme-panel">
 
+  <h2>Поле Игровой</h2>
+
   <div>
     <p>Отрисовывает границы клеток Игрового поля.</p>
     <input type="checkbox" id="cells-Borders" data-setting="cellsBorders" />
@@ -222,6 +228,8 @@ const uwusettings = `
     </div>
 
     <hr>
+    <h2>Темы и цвета Игровой</h2>
+
     <p>
       Здесь вы можете выставить собственные цвета для игровой. Принимаются "HEX"
       значения (Пример: #000) с поддержкой прозрачности. Будьте аккуратны и
@@ -291,9 +299,11 @@ const uwusettings = `
     </div>
 
     <hr>
-    <p>Та самая знаменитая Компактная Игровая, но с более расширенной кастомизацией (лолНет).</p>
+    <h2>Редизайны Игровой</h2>
+
+    <p>Тот самый знаменитный редизайн, но с почти более расширенной кастомизацией.</p>
     <input type="checkbox" id="custom-layout" data-setting="customLayout" />
-    <label for="custom-layout">Редизайн Игровой</label>
+    <label for="custom-layout">Компактный редизайн</label>
 
     <div id="layout-customizer">
       <div id="layout-preview">
@@ -336,14 +346,16 @@ const uwusettings = `
     </div>
 
     <div>
-      <p>Скругляет края блоков в Игровой. Имеет временные чоколадки с нераздельным блоком "Информация".</p>
+      <p>Скругляет края блоков в Игровой.</p>
       <input type="checkbox" id="edge-trim-blocks" data-setting="edgeTrimBlocks" />
       <label for="edge-trim-blocks">Скругление блоков</label>
     </div>
 
     <hr>
+    <h2>Общение</h2>
+
     <div>
-      <p>Добавляет аватар с профиля отправителя на его комментарий.</p>
+      <p>Добавляет аватар с профиля отправителя на его комментарий в лентах и блогах.</p>
       <input type="checkbox" id="comments-avatars" data-setting="commentsAvatars" />
       <label for="comments-avatars">Аватарки в комментариях</label>
     </div>
@@ -386,9 +398,21 @@ const uwusettings = `
       <label for="new-chat-input">Альтернативная строка ввода сообщений</label>
     </div>
 
+    <hr>
+    <h2>Параметры и навыки</h2>
+    
+    <div>
+      <p>Показывает процент Параметра рядом с собой.</p>
+      <input type="checkbox" id="display-Parameters-Percentages" data-setting="displayParametersPercentages" />
+      <label for="display-Parameters-Percentages">Отображать проценты Параметров</label>
+    </div>
+
+
   </div>
 
   <div id="utility-panel">
+
+  <h2>"О коте"</h2>
 
     <div>
       <p>Добавляет во всплывающее окно "О коте" кнопку "Подробнее" для просмотра большей полезной информации.</p>
@@ -403,6 +427,8 @@ const uwusettings = `
     </div>
 
     <hr>
+    <h2>Минное поле</h2>
+
     <div>
     <p>Включает окно для расчерчивания минного поля в Игровой.
     Выбранная ячейка готова принять в себя значение с клавиатуры от "0" до "7", "минус" ( - ) равняется красной клетке, а знак "равно" ( = ) ставит более яркую клетку, например для переходов,
@@ -450,6 +476,7 @@ const uwusettings = `
   </div>
 
     <hr>
+    <h2>Быстрые ссылки</h2>
 
     <p>Быстрые ссылки в Игровой.</p>
     <div>
@@ -507,22 +534,27 @@ const uwusettings = `
 const newsPanel = `
 <div id="news-panel">
   <button id="news-button">
-    v1.15.1 - 🍂 Фикс кличек.
+    v1.16.0 - 🍂 Информация о своих Параметрах и навыков!
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
     <p>
-      — 🦐⚡⚡⚡⚡⚡⚡🦐🦐🦐🦐⚡⚡🦐🦐🦐🦐🦐🦐🦐⚡⚡⚡
+      — Ищите новую функцию в "Оформление" и ожидайте туда новые будущие дополнения! А ещё вуху, очередные ✨ фиксы ✨
     </p>
     <hr>
     <h3>Внешний вид</h3>
-    <p>— Лишние 10px отступа от верхнего края в Редизайне. Теперь строка с быстрыми кнопками не накладывается на Игровое поле.</p>
+    <p>— Ещё более понятное разделение оглавлениями Настроек UwU.</p>
+    <p>— Снова мелочно подправил некоторые описания.</p>
+    <p>— Переоформление вида "Подробнее" в "О коте".</p>
+    <p>— "Разделить блок Информации" и "Скругление блоков" теперь выглядят как должны, и не конфликтуют.</p>
+    <p>— Минусанул какой-то мешающий "border-spacing: 2px;" . . .</p>
+    <p>— И унифиицировал пробелы при загруглениях блоков. Выглядит в разы опрятнее.</p>
     <hr>
     <h3>Изменения кода</h3>
-    <p>— При Режиме низкой производительности теперь ещё чуть меньше частиц.</p>
-    <p>— Клички должны определяться более правильно и строго.</p>
+    <p>— Я такой "uwu-global-container" теперь, же-е-есть.</p>
+    <p>— Сортировка инвентаря работает адекватно и правильно, и не должно терять котов и прочего.</p>
     <hr>
-    <p>Дата выпуска: 05.06.24</p>
+    <p>Дата выпуска: 07.06.24</p>
   </div>
 </div>
 `;
@@ -898,7 +930,7 @@ let css = `
   background-color: #abf6ffb0;
 }
 
-#global-container {
+#uwu-global-container {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -2397,7 +2429,7 @@ soundManager.loadSound(
 if (window.location.href === targetCW3) {
   const containerElement = document.querySelector("body");
   const globalContainerElement = document.createElement("div");
-  globalContainerElement.id = "global-container";
+  globalContainerElement.id = "uwu-global-container";
   containerElement.appendChild(globalContainerElement);
   // ====================================================================================================================
   //  . . . РАСШИРЕННЫЕ НАСТРОЙКИ . . .
@@ -2481,18 +2513,37 @@ if (window.location.href === targetCW3) {
   //  . . . КОМПАКТНЫЙ РОТ АХХАХХА . . .
   // ====================================================================================================================
   function compactInventory(cat) {
-    const inventoryList = cat.querySelector(".cat_tooltip .mouth");
+    const originalMouth = cat.querySelector(".cat_tooltip .mouth");
 
-    if (inventoryList && !inventoryList.classList.contains("processed")) {
+    if (originalMouth) {
+      let newMouth = originalMouth.nextElementSibling;
+
+      if (!newMouth || !newMouth.classList.contains("uwu-sorted")) {
+        newMouth = document.createElement("ol");
+        newMouth.classList.add("mouth", "uwu-sorted");
+        originalMouth.parentNode.insertBefore(
+          newMouth,
+          originalMouth.nextSibling
+        );
+      }
+
+      originalMouth.style.display = "none";
+
       const inventory = new Map();
+      const cats = [];
 
-      [...inventoryList.querySelectorAll("li img")].forEach((img) => {
+      [...originalMouth.querySelectorAll("li img")].forEach((img) => {
         const itemSrc = img.getAttribute("src");
         inventory.set(itemSrc, (inventory.get(itemSrc) || 0) + 1);
       });
 
-      inventoryList.innerHTML = "";
+      [...originalMouth.querySelectorAll("li")].forEach((item) => {
+        if (!item.querySelector("img")) {
+          cats.push(item.innerHTML);
+        }
+      });
 
+      newMouth.innerHTML = "";
       for (const [itemSrc, count] of inventory) {
         const listItem = document.createElement("li");
         const itemImage = document.createElement("img");
@@ -2505,10 +2556,14 @@ if (window.location.href === targetCW3) {
           listItem.appendChild(countSpan);
         }
 
-        inventoryList.appendChild(listItem);
+        newMouth.appendChild(listItem);
       }
 
-      inventoryList.classList.add("processed");
+      cats.forEach((catHtml) => {
+        const listItem = document.createElement("li");
+        listItem.innerHTML = catHtml;
+        newMouth.appendChild(listItem);
+      });
     }
   }
   // ====================================================================================================================
@@ -2571,10 +2626,10 @@ if (window.location.href === targetCW3) {
     },
   };
 
-  let globalContainer = document.getElementById("global-container");
+  let globalContainer = document.getElementById("uwu-global-container");
   if (!globalContainer) {
     globalContainer = document.createElement("div");
-    globalContainer.id = "global-container";
+    globalContainer.id = "uwu-global-container";
     globalContainer.style.display = "none";
     document.body.appendChild(globalContainer);
   }
@@ -2596,22 +2651,23 @@ if (window.location.href === targetCW3) {
       .map((element) => {
         const defectUrl = element.style.backgroundImage;
 
-        const defectParts = defectUrl.split("/");
-        const lastPart = defectParts.pop();
-        const defectLevel = parseInt(lastPart.split("/")[0]);
-        const defectType = defectParts[5];
-        const defectKey = `${defectType}-${defectLevel}`;
+        if (defectUrl.includes("/defects/")) {
+          const defectParts = defectUrl.split("/");
+          const lastPart = defectParts.pop();
+          const defectLevel = parseInt(lastPart.split("/")[0]);
+          const defectType = defectParts[5];
+          const defectKey = `${defectType}-${defectLevel}`;
 
-        if (uniqueDefects.has(defectKey)) {
-          return null;
-        } else {
-          uniqueDefects.add(defectKey);
-          return { type: defectType, level: defectLevel };
+          if (!uniqueDefects.has(defectKey)) {
+            uniqueDefects.add(defectKey);
+            return { type: defectType, level: defectLevel };
+          }
         }
+        return null;
       })
       .filter(Boolean);
 
-    const globalContainer = document.getElementById("global-container");
+    const globalContainer = document.getElementById("uwu-global-container");
     let catInfoElement = globalContainer.querySelector(".cat-info");
 
     if (catInfoElement) {
@@ -2634,31 +2690,41 @@ if (window.location.href === targetCW3) {
     closeButton.addEventListener("click", closeButtonHandler);
     closeInfoContainer.appendChild(closeButton);
 
-    const defectsDescriptions = catDefects.map((defect) => {
-      const defectData = defectsInfo[defect.type];
-      if (defectData) {
-        const defectState = defectData.states[defect.level] || "";
-        return `${defectData.name} (${defect.level} стадия, ${defectState})`;
-      }
-      return "";
-    });
-
-    const defectsText = defectsDescriptions.some(Boolean)
-      ? defectsDescriptions.filter(Boolean).join(", ")
-      : "нет";
-
     const catId = cat
       .querySelector(".cat_tooltip a")
       .getAttribute("href")
       .slice(4);
 
     catInfoElement.innerHTML = `
-    <h2>${catName}</h2>
-    <p>ID: ${catId}</p>
-    <p>Размер: ${catSize}</p>
-    <img src="${catImage}">
-    <p>Дефекты: ${defectsText}</p>
-  `;
+      <h2>${catName}</h2>
+      <p><strong>ID</strong>: ${catId}</p>
+      <p><strong>Размер</strong>: ${catSize}</p>
+      <img src="${catImage}">
+    `;
+
+    const defectsContainer = document.createElement("div");
+    if (catDefects.length > 0) {
+      defectsContainer.innerHTML = "<p>Дефекты:</p>";
+      catDefects.forEach((defect) => {
+        const defectData = defectsInfo[defect.type];
+        if (defectData) {
+          const defectState = defectData.states[defect.level] || "";
+          const defectLine = document.createElement("p");
+          const defectNameSpan = document.createElement("strong");
+          defectNameSpan.textContent = defectData.name;
+          defectLine.appendChild(defectNameSpan);
+          defectLine.insertAdjacentHTML(
+            "beforeend",
+            ` (${defect.level} стадия, ${defectState})`
+          );
+
+          defectsContainer.appendChild(defectLine);
+        }
+      });
+      catInfoElement.appendChild(defectsContainer);
+    } else {
+      catInfoElement.innerHTML += "<p><strong>Здоровый</strong></p>";
+    }
 
     catInfoElement.appendChild(closeInfoContainer);
 
@@ -2748,6 +2814,71 @@ if (window.location.href === targetCW3) {
     createCellNumbers({
       color: "white",
       opacity: 0.8,
+    });
+  }
+  // ====================================================================================================================
+  //   . . . ПРОЦЕНТЫ ПАРАМЕТРОВ . . .
+  // ====================================================================================================================
+  if (settings.displayParametersPercentages) {
+    const parameterTableIds = [
+      "dream_table",
+      "hunger_table",
+      "thirst_table",
+      "need_table",
+      "health_table",
+      "clean_table",
+    ];
+
+    function updateParameterPercentages(tableId) {
+      const table = document.getElementById(tableId);
+      if (table) {
+        const row = table.querySelector("tbody tr");
+        const greenBar = row.querySelector(
+          "td[style*='background-color: green;']"
+        );
+        const redBar = row.querySelector("td[style*='background-color: red;']");
+        const greenBarWidth = parseInt(greenBar.style.width, 10);
+        const redBarWidth = parseInt(redBar.style.width, 10);
+        const totalWidth = greenBarWidth + redBarWidth;
+        let percentage = (greenBarWidth / totalWidth) * 100;
+        percentage =
+          percentage % 1 !== 0 ? percentage.toFixed(2) : Math.round(percentage);
+
+        let percentageCell = row.querySelector(".percentage-cell");
+        if (!percentageCell) {
+          percentageCell = document.createElement("td");
+          percentageCell.classList.add("percentage-cell");
+          row.appendChild(percentageCell);
+        }
+        percentageCell.textContent = `${percentage}%`;
+      }
+    }
+
+    function observeBarChanges(tableId) {
+      const table = document.getElementById(tableId);
+      if (table) {
+        const row = table.querySelector("tbody tr");
+        const greenBar = row.querySelector(
+          "td[style*='background-color: green;']"
+        );
+        const redBar = row.querySelector("td[style*='background-color: red;']");
+
+        const observer = new MutationObserver(() => {
+          updateParameterPercentages(tableId);
+        });
+
+        const config = { attributes: true, attributeFilter: ["style"] };
+
+        observer.observe(greenBar, config);
+        observer.observe(redBar, config);
+      }
+    }
+
+    window.addEventListener("load", () => {
+      parameterTableIds.forEach((tableId) => {
+        updateParameterPercentages(tableId);
+        observeBarChanges(tableId);
+      });
     });
   }
   // ====================================================================================================================
@@ -2890,7 +3021,7 @@ if (window.location.href === targetCW3) {
   `;
 
     function createClimbingPanel() {
-      const globalContainer = document.getElementById("global-container");
+      const globalContainer = document.getElementById("uwu-global-container");
       globalContainer.insertAdjacentHTML(
         "beforeend",
         uwuClimbingPanelContainer
@@ -3728,6 +3859,7 @@ if (window.location.href === targetCW3) {
     height: 100%;
 
     background: none;
+    border-spacing: 0px !important;
   }
 
   #main_table > tbody {
@@ -4160,7 +4292,7 @@ if (window.location.href === targetCW3) {
     document.head.appendChild(sliceInfoStyle);
   } else {
     sliceInfoStyle.innerHTML = `
-      #info_main > tbody {
+      #tr_info > td {
         background-color: ${settings.settingBlocksColor};
       }
     `;
@@ -4173,7 +4305,7 @@ if (window.location.href === targetCW3) {
     #info_main > tbody > tr > td {
       width: fit-content;
       border-radius: 10px;
-      margin: 5px;
+      margin-bottom: 10px;
     }
     
     #info_main,
@@ -4185,17 +4317,20 @@ if (window.location.href === targetCW3) {
     
     #main_table > tbody > #tr_actions,
     #main_table > tbody > #tr_mouth,
-    #main_table > tbody > #tr_chat {
-      margin: 5px;
+    #main_table > tbody > #tr_chat,
+    #main_table > tbody > #tr_tos,
+    #main_table > tbody > #tr_info {
+      margin: 0px 10px 10px 10px;
     }
     
     #tr_chat,
     #tr_actions > td,
     #tr_mouth > td,
     #location,
-    .small {
+    .small,
+    #tr_info > td {
       border-radius: 10px;
-    }    
+    }
     `;
     document.head.appendChild(edgeTrimBlocksStyle);
   }
@@ -4233,7 +4368,7 @@ if (window.location.href === targetCW3) {
     const skyDiv = document.createElement("div");
     skyDiv.id = "skyDuplicate";
 
-    const globalContainerElement = document.getElementById("global-container");
+    const globalContainerElement = document.getElementById("uwu-global-container");
     globalContainerElement.appendChild(skyDiv);
 
     const skyStyle = document.createElement("style");
@@ -4397,8 +4532,8 @@ if (window.location.href === targetCW3) {
   // Очень холодно
   // Прохладно
   // Прохладно
-  // Тепло #F8A37A;
-  // Жарковато #F6946F; #F58F6B; #F28060; #F17A5C; #EF6B50;
+  // Тепло #FCBD8E; #F8A37A;
+  // Жарковато #F79973; #F6946F; #F58F6B; #F28060; #F17A5C; #EF6B50;
   // Жарко #ED6149; #EB5741; #EB523D; #E73D2E; #E6382A;
   // Засуха
 
@@ -4521,7 +4656,7 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   //   . . . ПОДГОТОВКА КОНТЕЙНЕРОВ / ИЗОБРАЖЕНИЙ . . . 🖼️
   // ====================================================================================================================
-  const weatherContainer = document.getElementById("global-container");
+  const weatherContainer = document.getElementById("uwu-global-container");
   const weatherCanvas = document.createElement("canvas");
   weatherCanvas.classList.add("weatherCanvas");
   weatherContainer.appendChild(weatherCanvas);
