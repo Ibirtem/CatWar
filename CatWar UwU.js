@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.16.0-06.24
+// @version      v1.16.1-06.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -388,7 +388,7 @@ const uwusettings = `
   </div>
 
   <div>
-    <p>Ваши собственные имена и клички на упоминания в чате. Просто пропишите их через запятую. Пример: Мяу, Мяуич, Мяу МяуВкин</p>
+    <p>Ваши собственные имена и клички на упоминания в чате. Просто пропишите их через запятую. Пример: Мяу, Мяуич, МяуВкин</p>
     <input type="text" id="names-For-Notification" placeholder=". . ." data-setting="namesForNotification" />
   </div>
 
@@ -412,7 +412,7 @@ const uwusettings = `
 
   <div id="utility-panel">
 
-  <h2>"О коте"</h2>
+  <h2>"О котах"</h2>
 
     <div>
       <p>Добавляет во всплывающее окно "О коте" кнопку "Подробнее" для просмотра большей полезной информации.</p>
@@ -421,7 +421,7 @@ const uwusettings = `
     </div>
 
     <div>
-      <p>Прописывает количество повторяющихся предметов в "О коте".</p>
+      <p>Сокращает и прописывает количество повторяющихся предметов в "О коте".</p>
       <input type="checkbox" id="compact-Mouth" data-setting="compactMouth" />
       <label for="compact-Mouth">Компактные инвентари</label>
     </div>
@@ -501,7 +501,7 @@ const uwusettings = `
 
     <div>
       <p>Ваши ссылки. Вставляете ссылку, пробел и пишите название. Для множества просто пишите через запятую. Пример:
-        https://мяу Мяу, https://мяу2 Мяу-2</p>
+        https://мяу Котики, https://мяу2 Больше-котиков</p>
       <input type="text" id="users-quick-Links" placeholder=". . ." data-setting="userQuickLinks" />
     </div>
 
@@ -534,27 +534,26 @@ const uwusettings = `
 const newsPanel = `
 <div id="news-panel">
   <button id="news-button">
-    v1.16.0 - 🍂 Информация о своих Параметрах и навыков!
+    v1.16.1 - 🍂 Реворки кода и некоторые фиксы.
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
     <p>
-      — Ищите новую функцию в "Оформление" и ожидайте туда новые будущие дополнения! А ещё вуху, очередные ✨ фиксы ✨
+      — 🍂 🍂 🍂
     </p>
     <hr>
     <h3>Внешний вид</h3>
-    <p>— Ещё более понятное разделение оглавлениями Настроек UwU.</p>
-    <p>— Снова мелочно подправил некоторые описания.</p>
-    <p>— Переоформление вида "Подробнее" в "О коте".</p>
-    <p>— "Разделить блок Информации" и "Скругление блоков" теперь выглядят как должны, и не конфликтуют.</p>
-    <p>— Минусанул какой-то мешающий "border-spacing: 2px;" . . .</p>
-    <p>— И унифиицировал пробелы при загруглениях блоков. Выглядит в разы опрятнее.</p>
+    <p>— Модуль, делающий текст в моих настройках полностью белым, теперь делает чуть более приглушённый белый.
+    Сегодня всё ещё без автоматических определений версий, поэтому переустановите вручную.</p>
+    <p>— Бесконечные хотелочные правки описаний и всяких штукенций.</p>
     <hr>
     <h3>Изменения кода</h3>
-    <p>— Я такой "uwu-global-container" теперь, же-е-есть.</p>
-    <p>— Сортировка инвентаря работает адекватно и правильно, и не должно терять котов и прочего.</p>
+    <p>— "Числовая громкость уведомлений" и 
+    "Звук обновления лазательной локации" реворкнуты и теперь не используют чужие фреймворки. (Не спрашивайте, почему они это делали раньше...)</p>
+    <p>— Компактные инвентари теперь не привержены поломкам, в особенности при индивидуальных обнюхиваниях.</p>
+    <p>— Более мягкое определение кличек в чате. Теперь должны определяться лучше.</p>
     <hr>
-    <p>Дата выпуска: 07.06.24</p>
+    <p>Дата выпуска: 09.06.24</p>
   </div>
 </div>
 `;
@@ -1934,6 +1933,7 @@ if (targetSettings.test(window.location.href)) {
 //  . . . МОДУЛЬНОСТЬ СКРИПТА . . .
 // ====================================================================================================================
 // буду вечно задаваться вопросом, а зачем я это вообще сделал..................
+// фортнайт магазин сделать вхъазваъхзпъхазыв
 const moduleStates = {};
 const defaultModules = [
   // "style.css",
@@ -2516,16 +2516,15 @@ if (window.location.href === targetCW3) {
     const originalMouth = cat.querySelector(".cat_tooltip .mouth");
 
     if (originalMouth) {
-      let newMouth = originalMouth.nextElementSibling;
+      const existingSortedMouths = cat.querySelectorAll(".mouth.uwu-sorted");
+      existingSortedMouths.forEach((mouth) => mouth.remove());
 
-      if (!newMouth || !newMouth.classList.contains("uwu-sorted")) {
-        newMouth = document.createElement("ol");
-        newMouth.classList.add("mouth", "uwu-sorted");
-        originalMouth.parentNode.insertBefore(
-          newMouth,
-          originalMouth.nextSibling
-        );
-      }
+      const newMouth = document.createElement("ol");
+      newMouth.classList.add("mouth", "uwu-sorted");
+      originalMouth.parentNode.insertBefore(
+        newMouth,
+        originalMouth.nextSibling
+      );
 
       originalMouth.style.display = "none";
 
@@ -2889,39 +2888,64 @@ if (window.location.href === targetCW3) {
       const styles = Array.from(
         { length: 11 },
         (_, i) => `
-      .vlm${i} > .nick[style*="italic"]:after {
-        content: " [${i}]";
-      }
-    `
+          .vlm${i} > .nick[style*="italic"]:after {
+            content: " [${i}]";
+          }
+        `
       ).join("");
-
-      $("head").append(`<style>${styles}</style>`);
+  
+      const styleElement = document.createElement("style");
+      styleElement.textContent = styles;
+      document.head.appendChild(styleElement);
     }
-
+  
     addClimbingNotificationsStyles();
   }
   // ====================================================================================================================
   //   . . . ЗВУКОВОЕ УВЕДОМЛЕНИЕ ПРИ ОБНОВЛЕНИИ КЛЕТОК . . .
   // ====================================================================================================================
+  // TODO - debounceTimer, если не сработает решение со сравнением историй. P.S. Вроде работает.
   if (settings.climbingRefreshNotification) {
     function handleClimbingRefresh() {
       const refreshRegex = /Услышала? оглушительн/;
-
+      let previousHistory = "";
+  
       const updateHistory = () => {
-        const entries = $("#ist").html().split(".");
-        const lastEntry = entries[entries.length - 2];
-
-        if (lastEntry !== undefined && refreshRegex.test(lastEntry)) {
-          soundManager.playSound(
-            settings.climbingRefreshNotificationSound,
-            settings.climbingRefreshNotificationVolume
-          );
+        const istElement = document.getElementById("ist");
+        const currentHistory = istElement.innerHTML;
+  
+        if (currentHistory !== previousHistory) {
+          previousHistory = currentHistory;
+  
+          const entries = currentHistory.split(".");
+          const lastEntry = entries[entries.length - 2];
+  
+          if (lastEntry !== undefined && refreshRegex.test(lastEntry)) {
+            const lastPlayedEntry = entries[entries.length - 3];
+  
+            if (!lastPlayedEntry || !refreshRegex.test(lastPlayedEntry)) {
+              soundManager.playSound(
+                settings.climbingRefreshNotificationSound,
+                settings.climbingRefreshNotificationVolume
+              );
+            }
+          }
         }
       };
-
-      $("#history_block").on("DOMSubtreeModified", "#ist", updateHistory);
+  
+      const historyBlock = document.getElementById("history_block");
+      const observer = new MutationObserver(() => {
+        updateHistory();
+      });
+  
+      const config = {
+        childList: true,
+        subtree: true,
+        characterData: true
+      };
+      observer.observe(historyBlock, config);
     }
-
+  
     handleClimbingRefresh();
   }
   // ====================================================================================================================
@@ -4041,8 +4065,7 @@ if (window.location.href === targetCW3) {
   //   . . . СОВРЕМЕННЫЙ (НОВЫЙ) ЧАТ . . .
   // ====================================================================================================================
   // я на этом инвалиде потерял все нервы кетвар желаю тебе счастья удачи и всего хорошего 😌😌😌😌😌😌😌😌😌😌
-  // Разрабу шведа я делаю низкий поклон как он сам не потерял свои нервы на эти пиксели.............
-  // TODO - ну вот теперь это некрасивое мессиво которое надо бы переделать в будущем.
+  // TODO - как-то пределать шоле
   if (settings.newChat) {
     const newChatContainer = document.createElement("div");
     newChatContainer.id = "uwu_chat_msg";
@@ -4096,49 +4119,36 @@ if (window.location.href === targetCW3) {
       let chatTextHTML = chatTextSpan.innerHTML;
       const chatTextClasses = chatTextSpan.className;
       let nameFound = false;
-
+    
       if (settings.namesForNotification) {
         const names = settings.namesForNotification
           .trim()
           .split(/\s*,\s*/)
           .filter((name) => name);
-        // console.log("Ищем клички:", names);
-
-        names.forEach((name) => {
-          const textNodes = getTextNodes(chatTextSpan);
-          // console.log("Текстовые ноды:", textNodes);
-
-          const updatedTextNodes = [];
-
-          textNodes.forEach((node) => {
-            const regex = new RegExp(`(^|\\s+)(${name})(\\s+|$)`, "gi");
-            let updatedText = node.textContent;
-
-            if (node.textContent.match(regex)) {
-              // console.log("Нашли кличку:", name);
-
+    
+        const textNodes = getTextNodes(chatTextSpan);
+    
+        textNodes.forEach((node) => {
+          let updatedText = node.textContent;
+    
+          names.forEach((name) => {
+            const regex = new RegExp(`(^|\\s|[.,!?])(${name})(?=$|\\s|[.,!?])`, 'gi');
+            updatedText = updatedText.replace(regex, (match, p1, p2) => {
               nameFound = true;
-
-              const mynameSpan = document.createElement("span");
-              mynameSpan.className = "myname";
-              mynameSpan.textContent = name;
-
-              const newHTML = node.textContent.replace(
-                regex,
-                `$1${mynameSpan.outerHTML}$3`
-              );
-
-              const newNode = document.createElement("span");
-              newNode.innerHTML = newHTML;
-              node.parentNode.replaceChild(newNode, node);
-            }
-            updatedTextNodes.push(updatedText);
+              return `${p1}<span class="myname">${p2}</span>`;
+            });
           });
+    
+          if (updatedText !== node.textContent) {
+            const newNode = document.createElement("span");
+            newNode.innerHTML = updatedText;
+            node.parentNode.replaceChild(newNode, node);
+          }
         });
-
+    
         chatTextHTML = chatTextSpan.innerHTML;
       }
-
+    
       function getTextNodes(node) {
         const textNodes = [];
         const walk = document.createTreeWalker(
@@ -4153,22 +4163,22 @@ if (window.location.href === targetCW3) {
         }
         return textNodes;
       }
-
+    
       if (chatTextSpan.querySelector(".myname")) {
         nameFound = true;
       }
-
+    
       if (nameFound) {
         soundManager.playSound(
           settings.myNameNotificationSound,
           settings.notificationMyNameVolume
         );
       }
-
+    
       const profileLink = chatMessage.querySelector('a[href^="/cat"]').href;
       const catIdMatch = profileLink.match(/\/cat(\d+)/);
       const catId = catIdMatch ? catIdMatch[1] : ". . .";
-
+    
       const newChatMessageHTML = `
         <hr>
         <div id="msg">
@@ -4528,14 +4538,14 @@ if (window.location.href === targetCW3) {
 
   // TODO - мне всё же очень больно видеть конвертации цветов и рейнджы какие та противные, всё же проще и лучше будет создать массив из известных температур.
   // Это мне даст в будущем возможность более плавно и красиво настраивать цвета. Наверно. Может быть.
+  // либо я скоро психану и буду парсить данные ещё и с https://catwar.su/time
 
   // Очень холодно
-  // Прохладно
-  // Прохладно
+  // Холодно
+  // Прохладно #3B6C9B;
   // Тепло #FCBD8E; #F8A37A;
   // Жарковато #F79973; #F6946F; #F58F6B; #F28060; #F17A5C; #EF6B50;
   // Жарко #ED6149; #EB5741; #EB523D; #E73D2E; #E6382A;
-  // Засуха
 
   function getTemperature() {
     const temperatureElement = document.querySelector("#tos");
@@ -4741,8 +4751,9 @@ if (window.location.href === targetCW3) {
   const { pixelSnowflakes } = generatePixelSnow();
 
   // ====================================================================================================================
-  //   . . . РЕЖИМ НИЗКОЙ ПРОИЗВОДИТЕЛЬНОСТИ . . . + . . . Может быть уже даже готовка к динамичному количеству частиц.
+  //   . . . РЕЖИМ НИЗКОЙ ПРОИЗВОДИТЕЛЬНОСТИ . . . 
   // ====================================================================================================================
+  // Может быть уже даже готовка к динамичному количеству частиц.
   var rainNumParticles = 10;
   var snowTimerValue = 120;
   var desiredNumberOfFireflies = 10;
@@ -5034,7 +5045,7 @@ if (window.location.href === targetCW3) {
     ${auroraColors[color][3]},
     ${auroraColors[color][2]},
     ${auroraColors[color][1]});
-`;
+    `;
 
     if (settings.auroraPos === "1") {
       newAurora.style.top = "-30%";
