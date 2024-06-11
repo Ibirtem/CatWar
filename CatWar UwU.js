@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.16.1-06.24
+// @version      v1.17.0-06.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,8 +20,9 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-// Мне нравится как тут всё false...
+// Мне нравится как тут всё false... Уже не всё, вхазахв
 let settings = {
+  extendedHints: true,
   weatherEnabled: false,
   lowPerformanceMode: false,
   extendedSettings: false,
@@ -33,15 +34,20 @@ let settings = {
   userTheme: false,
   weatherDrops: false,
   commentsAvatars: false,
+  draggingFightPanel: false,
   newChat: false,
   newChatInput: false,
   notificationPM: false,
+  notificationActionEnd: false,
+  notificationInMouth: false,
+  notificationInFightMode: false,
   cellsBorders: false,
   cellsBordersThickness: "1",
   cellsNumbers: false,
   displayParametersPercentages: false,
   compactMouth: false,
   showMoreCatInfo: false,
+  FightPanelAdjustableHeight: false,
   climbingPanel: false,
   climbingNotificationsNumbers: false,
   climbingRefreshNotification: false,
@@ -52,6 +58,7 @@ let settings = {
   namesForNotification: "",
   userQuickLinks: "",
   auroraPos: "1",
+  FightPanelHeight: "70",
   chatHeight: "275",
   historyHeight: "215",
   backgroundUserImageURL: "",
@@ -110,7 +117,7 @@ const uwusettings = `
     </button>
     <button id="modules-button">
       <h2>
-        Моды/Скрипты
+        Надстройки
         <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/construction.png" alt="Иконка" width="24"
           height="24" />
       </h2>
@@ -131,12 +138,12 @@ const uwusettings = `
     </div>
 
     <div>
-    <p>
+      <p>
       Сокращает количество частиц динамичной погоды, увеличивая тем самым производительность на слабых устройствах.
-    </p>
+      </p>
     <input type="checkbox" id="low-Performance-Mode" data-setting="lowPerformanceMode" />
     <label for="low-Performance-Mode">Режим низкой производительности</label>
-  </div>
+    </div>
 
     <div>
       <p>
@@ -293,7 +300,7 @@ const uwusettings = `
         <button id="SettingSaveButton2">Сохранить</button>
         <p>
           Отличный сайт для выбора цветов с поддержкой прозрачности:
-          https://rgbacolorpicker.com/color-wheel-picker
+          <a href="https://get-color.ru/transparent/" target="_blank">https://get-color.ru/transparent/</a>
         </p>
       </div>
     </div>
@@ -412,6 +419,26 @@ const uwusettings = `
 
   <div id="utility-panel">
 
+    <h2>Боевой режим</h2>
+
+    <div>
+      <p>Позволяет перетаскивать панель Боевого режима за штучку.</p>
+      <input type="checkbox" id="dragging-Fight-Panel" data-setting="draggingFightPanel" />
+      <label for="dragging-Fight-Panel">Перетаскивание панели Боевого режима</label>
+    </div>
+
+    <div>
+      <p>Возможность растягивать высоту панели и её начальная высота.</p>
+      <input type="checkbox" id="Fight-Panel-Adjustable-Height" data-setting="FightPanelAdjustableHeight" />
+      <label for="Fight-Panel-Adjustable-Height">Настраиваемая высота панели</label>
+    </div>
+
+    <div>
+      <input type="text" id="FightPanelHeightField" placeholder=". . ." data-setting="FightPanelHeight" />
+      <label>px - Начальная высота панели</label>
+    </div>
+
+  <hr>
   <h2>"О котах"</h2>
 
     <div>
@@ -505,17 +532,44 @@ const uwusettings = `
       <input type="text" id="users-quick-Links" placeholder=". . ." data-setting="userQuickLinks" />
     </div>
 
+    <hr>
     <div>
       <h2>Настройки уведомлений</h2>
       <p>Уведомлять звуком, когда:</p>
-      <input type="checkbox" id="notificationPM" data-setting="notificationPM" />
-      <label for="notificationPM">Личные Сообщения</label> 
+    </div>
+    
+    <div>
+      <input type="checkbox" id="notification-PM" data-setting="notificationPM" />
+      <label for="notification-PM">Новое Личное Сообщение</label>
+    </div>
+
+    <div>
+      <input type="checkbox" id="notification-Action-End" data-setting="notificationActionEnd" />
+      <label for="notification-Action-End">Действие закончилось</label>
+    </div>
+
+    <div>
+      <input type="checkbox" id="notification-In-Mouth" data-setting="notificationInMouth" />
+      <label for="notification-In-Mouth">Кто-то меня поднял</label>
+    </div>
+
+    <div>
+      <input type="checkbox" id="notification-In-Fight-Mode" data-setting="notificationInFightMode" />
+      <label for="notification-In-Fight-Mode">Ввели в боевую стойку через Т+2 или Т+3</label>
     </div>
 
   </div>
 
   <div id="modules-panel">
-  <p>Онлайн сборник стилей/модов/скриптов, которые не попали в основной функционал Скрипта/Мода UwU.</p>
+    
+    <div>
+      <p>Скрывать или отображать расширенные подсказки к настройкам. Привет, я та самая расширенная подсказка. Делает Настройки CatWar UwU очень компактным на вид.</p>
+      <input type="checkbox" id="extended-Hints" data-setting="extendedHints" />
+      <label for="extended-Hints">Расширенные подсказки</label>
+    </div>
+
+  <hr>
+    <p>Онлайн сборник стилей/модов/скриптов, которые не попали в основной функционал Скрипта/Мода UwU. Может и будет пополняться.</p>
   <hr>
     <div id="module-info">
     </div>
@@ -534,26 +588,25 @@ const uwusettings = `
 const newsPanel = `
 <div id="news-panel">
   <button id="news-button">
-    v1.16.1 - 🍂 Реворки кода и некоторые фиксы.
+    v1.17.0 - 🍂 Больше настроек уведомлений и возможность перетаскивать панель БР! А ещё...
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
     <p>
-      — 🍂 🍂 🍂
+      — Пока что без редактирования звука под конкретные действия, но всё же! Зато панель БР теперь сохраняет свои позиции, вуху! И можно растягивать!
+      А ещё в Моды/Скрипты завезена возможность скрывать Расширенные подсказки и описания, если они вам мешаются и вы умненький.
     </p>
     <hr>
     <h3>Внешний вид</h3>
-    <p>— Модуль, делающий текст в моих настройках полностью белым, теперь делает чуть более приглушённый белый.
-    Сегодня всё ещё без автоматических определений версий, поэтому переустановите вручную.</p>
-    <p>— Бесконечные хотелочные правки описаний и всяких штукенций.</p>
+    <p>— Изменён предложенный сайт для HEX цветов и выдана ему возможность быть кликабельной.</p>
+    <p>— Вернул потерявшиеся полосочки разделения категорий в Настройках. Вуху!</p>
+    <p>— Моды/Скрипты переименованны в "Надстройки", так как это отражает действительность теперь чуть лучше.</p>
     <hr>
     <h3>Изменения кода</h3>
-    <p>— "Числовая громкость уведомлений" и 
-    "Звук обновления лазательной локации" реворкнуты и теперь не используют чужие фреймворки. (Не спрашивайте, почему они это делали раньше...)</p>
-    <p>— Компактные инвентари теперь не привержены поломкам, в особенности при индивидуальных обнюхиваниях.</p>
-    <p>— Более мягкое определение кличек в чате. Теперь должны определяться лучше.</p>
+    <p>— Какой раз пытаюсь починить и реворкнуть "Современный Чат". Ну хоть сейчас-то всё будет хорошо, да?</p>
+    <p>— Чуть не сломал из-за этого "Подписывание громкости уведомления".</p>
     <hr>
-    <p>Дата выпуска: 09.06.24</p>
+    <p>Дата выпуска: 11.06.24</p>
   </div>
 </div>
 `;
@@ -1338,6 +1391,16 @@ if (targetSettings.test(window.location.href)) {
   }
 
   loadSettings();
+
+  if (!settings.extendedHints) {
+    const uwuHideHints = document.createElement("style");
+    uwuHideHints.innerHTML = `
+    #uwusettings p {
+      display: none;
+    }
+    `;
+    document.head.appendChild(uwuHideHints);
+  }
 
   document
     .querySelectorAll("#uwusettings [data-setting]")
@@ -2358,7 +2421,7 @@ function createSoundManager() {
           .then(resolve)
           .catch((error) => {
             if (!isUserInteracted) {
-              console.log(
+              console.warn(
                 "Политика браузера заблокировала звук. Ждём взаимодействия со стороны пользователя для новой попытки."
               );
               lastPendingSound = { id, volume, resolve };
@@ -2893,12 +2956,12 @@ if (window.location.href === targetCW3) {
           }
         `
       ).join("");
-  
+
       const styleElement = document.createElement("style");
       styleElement.textContent = styles;
       document.head.appendChild(styleElement);
     }
-  
+
     addClimbingNotificationsStyles();
   }
   // ====================================================================================================================
@@ -2909,20 +2972,20 @@ if (window.location.href === targetCW3) {
     function handleClimbingRefresh() {
       const refreshRegex = /Услышала? оглушительн/;
       let previousHistory = "";
-  
+
       const updateHistory = () => {
         const istElement = document.getElementById("ist");
         const currentHistory = istElement.innerHTML;
-  
+
         if (currentHistory !== previousHistory) {
           previousHistory = currentHistory;
-  
+
           const entries = currentHistory.split(".");
           const lastEntry = entries[entries.length - 2];
-  
+
           if (lastEntry !== undefined && refreshRegex.test(lastEntry)) {
             const lastPlayedEntry = entries[entries.length - 3];
-  
+
             if (!lastPlayedEntry || !refreshRegex.test(lastPlayedEntry)) {
               soundManager.playSound(
                 settings.climbingRefreshNotificationSound,
@@ -2932,20 +2995,20 @@ if (window.location.href === targetCW3) {
           }
         }
       };
-  
+
       const historyBlock = document.getElementById("history_block");
       const observer = new MutationObserver(() => {
         updateHistory();
       });
-  
+
       const config = {
         childList: true,
         subtree: true,
-        characterData: true
+        characterData: true,
       };
       observer.observe(historyBlock, config);
     }
-  
+
     handleClimbingRefresh();
   }
   // ====================================================================================================================
@@ -4029,6 +4092,10 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   //   . . . ЗВУКОВЫЕ УВЕДОМЛЕНИЯ . . .
   // ====================================================================================================================
+  // мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу
+  // ====================================================================================================================
+  //   . . . ЛИЧНЫЕ СООБЩЕНИЯ . . .
+  // ====================================================================================================================
   let previousCount = 0;
 
   if (settings.notificationPM) {
@@ -4062,9 +4129,96 @@ if (window.location.href === targetCW3) {
     }
   }
   // ====================================================================================================================
+  //   . . . ОКОНЧАНИЕ ДЕЙСТВИЯ . . .
+  // ====================================================================================================================
+  if (settings.notificationActionEnd) {
+    const blockMess = document.getElementById("block_mess");
+    let wasBlockMessEmpty = blockMess.innerHTML.trim() === "";
+    let actionStartTime = null;
+
+    const observer = new MutationObserver(() => {
+      const isBlockMessEmptyNow = blockMess.innerHTML.trim() === "";
+
+      if (!isBlockMessEmptyNow && !actionStartTime) {
+        actionStartTime = Date.now();
+      } else if (isBlockMessEmptyNow && actionStartTime) {
+        const actionEndTime = Date.now();
+        const actionDuration = actionEndTime - actionStartTime;
+
+        if (actionDuration >= 6000) {
+          soundManager.playSound(
+            "notificationSound3",
+            settings.notificationMyNameVolume
+          );
+        }
+        actionStartTime = null;
+      }
+
+      wasBlockMessEmpty = isBlockMessEmptyNow;
+    });
+
+    observer.observe(blockMess, { childList: true, subtree: true });
+  }
+  // ====================================================================================================================
+  //   . . . ПОДНЯЛИ В РОТ . . .
+  // ====================================================================================================================
+  if (settings.notificationInMouth) {
+    const blockMess = document.getElementById("block_mess");
+
+    const observer = new MutationObserver(() => {
+      if (blockMess.innerHTML.includes("во рту. Вы не сможете выбраться")) {
+        soundManager.playSound(
+          "notificationSound1",
+          settings.notificationMyNameVolume
+        );
+      }
+    });
+
+    observer.observe(blockMess, { childList: true, subtree: true });
+  }
+  // ====================================================================================================================
+  //   . . . ВВЕЛИ В БОЕВУЮ СТОЙКУ . . .
+  // ====================================================================================================================
+  if (settings.notificationInFightMode) {
+    const attackRegex = /в боевую стойку, поскольку на меня напал/;
+    let previousHistory = "";
+
+    const updateHistory = () => {
+      const istElement = document.getElementById("ist");
+      const currentHistory = istElement.innerHTML;
+
+      if (currentHistory !== previousHistory) {
+        previousHistory = currentHistory;
+
+        const entries = currentHistory.split(".");
+        const lastEntry = entries[entries.length - 2];
+
+        if (lastEntry !== undefined && attackRegex.test(lastEntry)) {
+          soundManager.playSound(
+            "notificationSound1",
+            settings.notificationMyNameVolume
+          );
+        }
+      }
+    };
+
+    const historyBlock = document.getElementById("history_block");
+    const observer = new MutationObserver(() => {
+      updateHistory();
+    });
+
+    const config = {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    };
+    observer.observe(historyBlock, config);
+  }
+  // ====================================================================================================================
   //   . . . СОВРЕМЕННЫЙ (НОВЫЙ) ЧАТ . . .
   // ====================================================================================================================
   // я на этом инвалиде потерял все нервы кетвар желаю тебе счастья удачи и всего хорошего 😌😌😌😌😌😌😌😌😌😌
+  // И ДО СИХ ПОР ТЕРЯЮ ААААА
   // TODO - как-то пределать шоле
   if (settings.newChat) {
     const newChatContainer = document.createElement("div");
@@ -4116,73 +4270,53 @@ if (window.location.href === targetCW3) {
 
     function copyMessageToNewChat(chatMessage) {
       const chatTextSpan = chatMessage.querySelector("td > .chat_text");
-      let chatTextHTML = chatTextSpan.innerHTML;
+      const messageSpan = chatTextSpan.querySelector("span");
+      const messageText = messageSpan ? messageSpan.innerHTML : "";
+      const nickElement = chatTextSpan.querySelector(".nick");
+      const nickName = nickElement ? nickElement.textContent.trim() : "";
       const chatTextClasses = chatTextSpan.className;
+      const nickStyle = nickElement ? nickElement.getAttribute("style") : "";
       let nameFound = false;
-    
+
+      let processedText = messageText;
+
       if (settings.namesForNotification) {
         const names = settings.namesForNotification
           .trim()
           .split(/\s*,\s*/)
           .filter((name) => name);
-    
-        const textNodes = getTextNodes(chatTextSpan);
-    
-        textNodes.forEach((node) => {
-          let updatedText = node.textContent;
-    
-          names.forEach((name) => {
-            const regex = new RegExp(`(^|\\s|[.,!?])(${name})(?=$|\\s|[.,!?])`, 'gi');
-            updatedText = updatedText.replace(regex, (match, p1, p2) => {
-              nameFound = true;
-              return `${p1}<span class="myname">${p2}</span>`;
-            });
+
+        names.forEach((name) => {
+          const regex = new RegExp(
+            `(^|\\s|[.,!?])(${name})(?=$|\\s|[.,!?])`,
+            "gi"
+          );
+          processedText = processedText.replace(regex, (match, p1, p2) => {
+            nameFound = true;
+            return `${p1}<span class="myname">${p2}</span>`;
           });
-    
-          if (updatedText !== node.textContent) {
-            const newNode = document.createElement("span");
-            newNode.innerHTML = updatedText;
-            node.parentNode.replaceChild(newNode, node);
-          }
         });
-    
-        chatTextHTML = chatTextSpan.innerHTML;
       }
-    
-      function getTextNodes(node) {
-        const textNodes = [];
-        const walk = document.createTreeWalker(
-          node,
-          NodeFilter.SHOW_TEXT,
-          null,
-          false
-        );
-        let n;
-        while ((n = walk.nextNode())) {
-          textNodes.push(n);
-        }
-        return textNodes;
-      }
-    
-      if (chatTextSpan.querySelector(".myname")) {
+
+      if (!nameFound && messageSpan && messageSpan.querySelector(".myname")) {
         nameFound = true;
       }
-    
+
       if (nameFound) {
         soundManager.playSound(
           settings.myNameNotificationSound,
           settings.notificationMyNameVolume
         );
       }
-    
+
       const profileLink = chatMessage.querySelector('a[href^="/cat"]').href;
       const catIdMatch = profileLink.match(/\/cat(\d+)/);
       const catId = catIdMatch ? catIdMatch[1] : ". . .";
-    
+
       const newChatMessageHTML = `
         <hr>
         <div id="msg">
-          <div class="${chatTextClasses}">${chatTextHTML} [<i>${catId}</i>]</div>
+          <div class="${chatTextClasses}">${processedText} - <b class="nick" style="${nickStyle}">${nickName}</b> [<i>${catId}</i>]</div>
           <div>
             <a href="${profileLink}" title="Перейти в профиль" target="_blank" rel="noopener noreferrer">➝</a>&nbsp;|&nbsp;
             <a href="#" title="Пожаловаться на нарушение ОПИ" class="msg_report">X</a>
@@ -4345,6 +4479,113 @@ if (window.location.href === targetCW3) {
     document.head.appendChild(edgeTrimBlocksStyle);
   }
   // ====================================================================================================================
+  //   . . . ПЕРЕТАСКИВАНИЕ ПАНЕЛИ БОЕВОГО РЕЖИМА . . .
+  // ====================================================================================================================
+  if (settings.draggingFightPanel) {
+    const dragDiv = document.createElement("div");
+    dragDiv.style.cursor = "move";
+    dragDiv.style.display = "inline-block";
+
+    const dragImage = document.createElement("img");
+    dragImage.src =
+      "https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/drag-move.png";
+    dragImage.style.width = "24px";
+    dragImage.style.height = "24px";
+    dragImage.style.pointerEvents = "none";
+    dragDiv.appendChild(dragImage);
+
+    const fightPanel = document.getElementById("fightPanel");
+    const firstImage = fightPanel.querySelector("img");
+    fightPanel.insertBefore(dragDiv, firstImage);
+
+    let mouseX = 0;
+    let mouseY = 0;
+    let panelX = 0;
+    let panelY = 0;
+    let isDragging = false;
+
+    function saveFightPanelPosition(x, y) {
+      localStorage.setItem("fightPanelPosition", JSON.stringify({ x, y }));
+    }
+
+    function loadFightPanelPosition() {
+      const savedPosition = localStorage.getItem("fightPanelPosition");
+      if (savedPosition) {
+        const position = JSON.parse(savedPosition);
+        panelX = position.x;
+        panelY = position.y;
+      }
+    }
+
+    function setFightPanelPosition(x, y) {
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      const panelWidth = fightPanel.offsetWidth;
+      const panelHeight = fightPanel.offsetHeight;
+
+      const maxX = windowWidth - panelWidth;
+      x = Math.max(0, Math.min(x, maxX));
+
+      const maxY = windowHeight - panelHeight;
+      y = Math.max(0, Math.min(y, maxY));
+
+      fightPanel.style.left = `${x}px`;
+      fightPanel.style.top = `${y}px`;
+
+      saveFightPanelPosition(x, y);
+    }
+
+    dragDiv.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      isDragging = true;
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      loadFightPanelPosition();
+
+      document.body.style.userSelect = "none";
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (isDragging) {
+        e.preventDefault();
+
+        const dx = e.clientX - mouseX;
+        const dy = e.clientY - mouseY;
+
+        setFightPanelPosition(panelX + dx, panelY + dy);
+      }
+    });
+
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+
+      document.body.style.userSelect = "auto";
+    });
+
+    loadFightPanelPosition();
+    setFightPanelPosition(panelX, panelY);
+  }
+  // ====================================================================================================================
+  //   . . . ИЗМЕНЯЕМАЯ ВЫСОТА ПАНЕЛИ БОЕВОГО РЕЖИМА . . .
+  // ====================================================================================================================
+    if (settings.FightPanelAdjustableHeight) {
+      const uwuFightLog = document.createElement("style");
+      uwuFightLog.innerHTML = `
+      #fightPanel {
+        height: auto;
+      }
+
+      #fightLog {
+        resize: vertical;
+      }   
+      `;
+      document.head.appendChild(uwuFightLog);
+
+      const fightLog = document.getElementById('fightLog');
+      fightLog.style.height = settings.FightPanelHeight + 'px';
+    }
+  // ====================================================================================================================
   //   . . . ВСЕГДА ДЕНЬ В ИГРОВОЙ . . .
   // ====================================================================================================================
   // Вот бы всё писалось так кратко и легко...........
@@ -4378,7 +4619,9 @@ if (window.location.href === targetCW3) {
     const skyDiv = document.createElement("div");
     skyDiv.id = "skyDuplicate";
 
-    const globalContainerElement = document.getElementById("uwu-global-container");
+    const globalContainerElement = document.getElementById(
+      "uwu-global-container"
+    );
     globalContainerElement.appendChild(skyDiv);
 
     const skyStyle = document.createElement("style");
@@ -4541,8 +4784,8 @@ if (window.location.href === targetCW3) {
   // либо я скоро психану и буду парсить данные ещё и с https://catwar.su/time
 
   // Очень холодно
-  // Холодно
-  // Прохладно #3B6C9B;
+  // Холодно #76A2C0;
+  // Прохладно #3B6C9B; #4C7BA6;
   // Тепло #FCBD8E; #F8A37A;
   // Жарковато #F79973; #F6946F; #F58F6B; #F28060; #F17A5C; #EF6B50;
   // Жарко #ED6149; #EB5741; #EB523D; #E73D2E; #E6382A;
@@ -4751,7 +4994,7 @@ if (window.location.href === targetCW3) {
   const { pixelSnowflakes } = generatePixelSnow();
 
   // ====================================================================================================================
-  //   . . . РЕЖИМ НИЗКОЙ ПРОИЗВОДИТЕЛЬНОСТИ . . . 
+  //   . . . РЕЖИМ НИЗКОЙ ПРОИЗВОДИТЕЛЬНОСТИ . . .
   // ====================================================================================================================
   // Может быть уже даже готовка к динамичному количеству частиц.
   var rainNumParticles = 10;
