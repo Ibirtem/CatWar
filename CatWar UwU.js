@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.17.0-06.24
+// @version      v1.18.0-06.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -35,6 +35,9 @@ let settings = {
   weatherDrops: false,
   commentsAvatars: false,
   draggingFightPanel: false,
+  describeHuntingSmell: false,
+  huntingVirtualJoystick: false,
+  sizeHuntingVirtualJoystick: "150",
   newChat: false,
   newChatInput: false,
   notificationPM: false,
@@ -72,12 +75,13 @@ let settings = {
   settingAccentColor1: "",
   settingAccentColor2: "",
   settingAccentColor3: "",
+  GMbetaTest: false,
 };
 
-// Типо начальные параметры.
+// Типо начальные таргетные ссылки.
 const targetSettings = /^https:\/\/catwar\.su\/settings/;
 const targetCW3 = "https://catwar.su/cw3/";
-// А представьте главам и шишкам дать возможность регулировать погоду у всех остальных для проведения всяких интерактивных ивентов...
+const targetCW3Hunt = "https://catwar.su/cw3/jagd";
 // ====================================================================================================================
 //   . . . HTML ПАНЕЛЬ НАСТРОЕК . . .
 // ====================================================================================================================
@@ -229,7 +233,7 @@ const uwusettings = `
     <div>
       <p>Ставит на страницу фон из предоставленной ссылки.</p>
       <input type="checkbox" id="background-user" data-setting="backgroundUser" />
-      <label for="background-user-enabled">Свой фон страницы.</label>
+      <label for="background-user-enabled">Свой фон страницы:</label>
       <input type="text" id="SettingImageURLField" placeholder="Вставьте URL" data-setting="backgroundUserImageURL" />
       <button id="SettingSaveButton1">Сохранить</button>
     </div>
@@ -375,10 +379,10 @@ const uwusettings = `
     </div>
 
     <div id="myNameNotificationSoundContainer">
-    <div class="custom-select" id="myNameNotificationSound">
-      <div class="select-selected">Выберите звук</div>
-      <div class="select-items">
-        <!-- Опции будут добавлены сюда -->
+      <div class="custom-select" id="myNameNotificationSound">
+        <div class="select-selected">Выберите звук</div>
+        <div class="select-items">
+          <!-- Опции будут добавлены сюда -->
       </div>
     </div>
   
@@ -435,7 +439,30 @@ const uwusettings = `
 
     <div>
       <input type="text" id="FightPanelHeightField" placeholder=". . ." data-setting="FightPanelHeight" />
-      <label>px - Начальная высота панели</label>
+      <label>px; - Начальная высота панели</label>
+    </div>
+  
+  <hr>
+  <h2>Охота</h2>
+
+    <div>
+      <p>Дописывает на запахе, во время охоты, приближаетесь вы или отдаляетесь от цели, а так же включает таймер.</p>
+      <input type="checkbox" id="describe-Hunting-Smell" data-setting="describeHuntingSmell" />
+      <label for="describe-Hunting-Smell">Подсказки на запахе</label>
+    </div>
+
+  <hr>
+  <h2>Джойстики</h2>
+
+    <div>
+      <p>Отображает Виртуальную сенсорную Джойстиковую кнопку для мобильных устройств во время охоты для более удобного управления.</p>
+      <input type="checkbox" id="hunting-Virtual-Joystick" data-setting="huntingVirtualJoystick" />
+      <label for="hunting-Virtual-Joystick">Виртуальный джойстик для охоты</label>
+    </div>
+
+    <div>
+      <input type="text" id="sizeHuntingVirtualJoystickField" placeholder=". . ." data-setting="sizeHuntingVirtualJoystick" />
+      <label>px; - Размер Джойстика. Стандартный размер - 150 px;</label>
     </div>
 
   <hr>
@@ -568,6 +595,17 @@ const uwusettings = `
       <label for="extended-Hints">Расширенные подсказки</label>
     </div>
 
+    <div>
+      <p>⚠️Как пользователь, вы должны осознавать возможные риски и проблемы как с некоторым функционалом, так и с возможной приватностью⚠️</p>
+      <input type="checkbox" id="GM-beta-Test" data-setting="GMbetaTest" />
+      <label for="GM-beta-Test">Стать тестировщиком функционала для Гейм-Мастеров.</label>
+      <p>Что тут будет? Пока не ясно, могу лишь наобещать:</p>
+      <p>- Показывать тревоги и уведомление от вашего племени/клана (Под большим сомнением)</p>
+      <p>- Игровые режимы/комнаты (Очень хочется опробовать вернуть пошаговую боёвку, но в стиле Балдуры или Дивинити с передвижением и прочими плюхами)</p>
+      <p>- Интерактив между котами и улучшение проводимости ивентов. Примером, Звуковые эмоции, или что-то в этом дух.</p>
+      <p>- И ещё больше интерактива с Природными Эффектами при взаимодействии с локациями.</p>
+    </div>
+
   <hr>
     <p>Онлайн сборник стилей/модов/скриптов, которые не попали в основной функционал Скрипта/Мода UwU. Может и будет пополняться.</p>
   <hr>
@@ -588,25 +626,22 @@ const uwusettings = `
 const newsPanel = `
 <div id="news-panel">
   <button id="news-button">
-    v1.17.0 - 🍂 Больше настроек уведомлений и возможность перетаскивать панель БР! А ещё...
+    v1.18.0 - ❄️ Джойстик и подсказки на запах в охоте! А ещё...
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
     <p>
-      — Пока что без редактирования звука под конкретные действия, но всё же! Зато панель БР теперь сохраняет свои позиции, вуху! И можно растягивать!
-      А ещё в Моды/Скрипты завезена возможность скрывать Расширенные подсказки и описания, если они вам мешаются и вы умненький.
+      — 🦐МегаУльтраСуперКрутаяФункция в Надстройках! Должна была быть рабочей, но так как пока ещё в глубокой
+      разработке, решил не медлить и хотя бы узнать работоспособность джойстика на общем поле.
     </p>
     <hr>
     <h3>Внешний вид</h3>
-    <p>— Изменён предложенный сайт для HEX цветов и выдана ему возможность быть кликабельной.</p>
-    <p>— Вернул потерявшиеся полосочки разделения категорий в Настройках. Вуху!</p>
-    <p>— Моды/Скрипты переименованны в "Надстройки", так как это отражает действительность теперь чуть лучше.</p>
+    <p>— Мелкие, но бесконечные, правки текстов.</p>
     <hr>
     <h3>Изменения кода</h3>
-    <p>— Какой раз пытаюсь починить и реворкнуть "Современный Чат". Ну хоть сейчас-то всё будет хорошо, да?</p>
-    <p>— Чуть не сломал из-за этого "Подписывание громкости уведомления".</p>
+    <p>— много писал нового. а вот теперь её и нет ихихихих</p>
     <hr>
-    <p>Дата выпуска: 11.06.24</p>
+    <p>Дата выпуска: 13.06.24</p>
   </div>
 </div>
 `;
@@ -3368,7 +3403,6 @@ if (window.location.href === targetCW3) {
     }
 
     // ===================== ПЕРЕТАСКИВАНИЕ =====================
-
     const climbingMainPanel = document.getElementById("uwu-climbingMainPanel");
     const climbingPanelButton = document.getElementById(
       "uwu-climbingPanelButton"
@@ -3492,7 +3526,6 @@ if (window.location.href === targetCW3) {
       setPosition(currentX, currentY, climbingMainPanel);
     }
     window.addEventListener("load", checkAndResetPanelPosition);
-    // =====================  =====================
 
     const uwuClimbingPanel = document.createElement("style");
     uwuClimbingPanel.innerHTML = `
@@ -4569,9 +4602,9 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   //   . . . ИЗМЕНЯЕМАЯ ВЫСОТА ПАНЕЛИ БОЕВОГО РЕЖИМА . . .
   // ====================================================================================================================
-    if (settings.FightPanelAdjustableHeight) {
-      const uwuFightLog = document.createElement("style");
-      uwuFightLog.innerHTML = `
+  if (settings.FightPanelAdjustableHeight) {
+    const uwuFightLog = document.createElement("style");
+    uwuFightLog.innerHTML = `
       #fightPanel {
         height: auto;
       }
@@ -4580,11 +4613,11 @@ if (window.location.href === targetCW3) {
         resize: vertical;
       }   
       `;
-      document.head.appendChild(uwuFightLog);
+    document.head.appendChild(uwuFightLog);
 
-      const fightLog = document.getElementById('fightLog');
-      fightLog.style.height = settings.FightPanelHeight + 'px';
-    }
+    const fightLog = document.getElementById("fightLog");
+    fightLog.style.height = settings.FightPanelHeight + "px";
+  }
   // ====================================================================================================================
   //   . . . ВСЕГДА ДЕНЬ В ИГРОВОЙ . . .
   // ====================================================================================================================
@@ -5633,6 +5666,297 @@ if (window.location.href === targetCW3) {
     }
   }
   // ====================================================================================================================
+  //   . . . РЕЖИМ ГЕЙМ-МАСТЕРА . . .
+  // ====================================================================================================================
+  if (settings.GMbetaTest) {
+    // Тут что-то было, но куда-то пропало.
+  }
+  // ====================================================================================================================
+} // Конец грандиозного, но и начало чево то нового... Зогдачно......
+// ====================================================================================================================
+// 🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨
+// ====================================================================================================================
+//   . . . ТАРГЕТИНГ ОКНА ОХОТЫ И ПОДГОТОВКА КОНТЕЙНЕРОВ . . . 
+// ====================================================================================================================
+if (window.location.href === targetCW3Hunt) {
+  amogusSus();
+  const containerElement = document.querySelector("body");
+  const globalContainerElement = document.createElement("div");
+  globalContainerElement.id = "uwu-global-container";
+  containerElement.appendChild(globalContainerElement);
+// ====================================================================================================================
+//   . . . ПОДПИСЫВАТЬ ЗАПАХ . . . 
+// ====================================================================================================================
+if (settings.describeHuntingSmell) {
+  const smellElement = document.getElementById('smell');
+  let smellText = null;
+  let smellTimer = null;
+  let intervalId = null;
+  let previousRed = null;
+  let seconds = 0;
+  
+  function updateHintText(currentRed) {
+    if (currentRed === 0) {
+      smellText.textContent = 'Потерян';
+    } else if (previousRed !== null) {
+      if (currentRed > previousRed) {
+        smellText.textContent = 'Ближе';
+      } else if (currentRed < previousRed) {
+        smellText.textContent = 'Дальше';
+      }
+    } else {
+      smellText.textContent = ' ';
+    }
+    previousRed = currentRed;
+  }
+  
+  function updateTimer() {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    smellTimer.textContent = `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+    seconds++;
+  }
+  
+  function handleSmellChange() {
+    const style = window.getComputedStyle(smellElement);
+    const currentColor = style.backgroundColor;
+  
+    if (currentColor !== 'rgba(0, 0, 0, 0)' && currentColor !== 'transparent') {
+      if (!smellText) {
+        smellText = document.createElement('div');
+        smellText.id = 'smellText';
+        smellTimer = document.createElement('div');
+        smellTimer.id = 'smellTimer';
+        document.body.appendChild(smellText);
+        document.body.appendChild(smellTimer);
+  
+        intervalId = setInterval(updateTimer, 1000);
+      }
+  
+      const currentRed = parseInt(currentColor.slice(currentColor.indexOf("(") + 1, currentColor.indexOf(",")));
+      updateHintText(currentRed);
+    }
+  }
+  
+  new MutationObserver(handleSmellChange).observe(smellElement, { attributes: true, attributeFilter: ['style'] });
+  
+  const describeHuntingSmell = document.createElement("style");
+  describeHuntingSmell.innerHTML = `
+  #smellText {
+    font-size: 20px;
+    background: white;
+    color: black;
+    text-align: center;
+    width: 100px;
+    position: absolute;
+    z-index: 3;
+    bottom: 60px;
+  }
+  
+  #smellTimer {
+    font-size: 18px;
+    background: white;
+    color: black;
+    text-align: center;
+    width: 100px;
+    position: absolute;
+    z-index: 3;
+    bottom: 40px; 
+  }
+  `;
+  document.head.appendChild(describeHuntingSmell);
+}
+// ====================================================================================================================
+//   . . . ВИРТУАЛЬНЫЙ ДЖОЙСТИК . . . 
+// ====================================================================================================================
+// Работаем с сайтовым обработчиком нажатий: "//e.catwar.su/js/key.js?268881668"
+  if (settings.huntingVirtualJoystick) {
+    function createJoystick() {
+      const joystickHTML = `
+    <div id="joystick-container">
+      <div id="joystick-base">
+        <div id="joystick-head"></div>
+      </div>
+    </div>
+  `;
+
+      const uwuContainer = document.getElementById("uwu-global-container");
+      uwuContainer.insertAdjacentHTML("beforeend", joystickHTML);
+
+      const css = `
+      #nav_buttons_wrapper {
+        display: none;
+      }
+
+    #joystick-container {
+      pointer-events: auto;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: ${settings.sizeHuntingVirtualJoystick}px; 
+      height: ${settings.sizeHuntingVirtualJoystick}px;
+      z-index: 10; 
+    }
+
+    #joystick-base {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background-color: rgba(128, 128, 128, 0.5);
+      position: relative;
+    }
+
+    #joystick-head {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: ${settings.sizeHuntingVirtualJoystick / 2}px;
+      height: ${settings.sizeHuntingVirtualJoystick / 2}px;
+      border-radius: 50%;
+      background-color: #808080;
+      touch-action: none; 
+    }
+  `;
+      const style = document.createElement("style");
+      style.innerHTML = css;
+      document.head.appendChild(style);
+
+      const joystickContainer = document.getElementById("joystick-container");
+      const joystickHead = document.getElementById("joystick-head");
+      const baseRadius = joystickContainer.offsetWidth / 2;
+      let activeTouchId = null;
+
+      function handleTouchStart(event) {
+        if (activeTouchId === null) {
+          const touch = event.touches[0];
+          activeTouchId = touch.identifier;
+          updateJoystickPosition(touch.clientX, touch.clientY);
+        }
+      }
+
+      function handleTouchMove(event) {
+        event.preventDefault();
+        for (let i = 0; i < event.touches.length; i++) {
+          const touch = event.touches[i];
+          if (touch.identifier === activeTouchId) {
+            updateJoystickPosition(touch.clientX, touch.clientY);
+            break;
+          }
+        }
+      }
+
+      function handleTouchEnd(event) {
+        if (event.touches.length === 0) {
+          activeTouchId = null;
+          resetJoystick();
+        }
+      }
+
+      function updateJoystickPosition(x, y) {
+        const containerRect = joystickContainer.getBoundingClientRect();
+        const deltaX = x - (containerRect.left + baseRadius);
+        const deltaY = y - (containerRect.top + baseRadius);
+        const angle = Math.atan2(deltaY, deltaX);
+        const distance = Math.min(Math.hypot(deltaX, deltaY), baseRadius * 0.8);
+
+        joystickHead.style.left = `${
+          baseRadius + distance * Math.cos(angle)
+        }px`;
+        joystickHead.style.top = `${baseRadius + distance * Math.sin(angle)}px`;
+
+        const threshold = 0.3;
+        const directions = {
+          w: false,
+          a: false,
+          s: false,
+          d: false,
+          q: false,
+          e: false,
+          z: false,
+          x: false,
+        };
+
+        if (distance > baseRadius * threshold) {
+          if (angle >= -Math.PI * 0.125 && angle < Math.PI * 0.125) {
+            directions.d = true;
+          } else if (angle >= Math.PI * 0.125 && angle < Math.PI * 0.375) {
+            directions.x = true; 
+          } else if (angle >= Math.PI * 0.375 && angle < Math.PI * 0.625) {
+            directions.s = true;
+          } else if (angle >= Math.PI * 0.625 && angle < Math.PI * 0.875) {
+            directions.z = true;
+          } else if (angle >= Math.PI * 0.875 || angle < -Math.PI * 0.875) {
+            directions.a = true; 
+          } else if (angle >= -Math.PI * 0.875 && angle < -Math.PI * 0.625) {
+            directions.q = true;
+          } else if (angle >= -Math.PI * 0.625 && angle < -Math.PI * 0.375) {
+            directions.w = true; 
+          } else if (angle >= -Math.PI * 0.375 && angle < -Math.PI * 0.125) {
+            directions.e = true; 
+          }
+        }
+
+        for (const key in directions) {
+          if (directions[key] !== keys[key]) {
+            if (directions[key]) {
+              simulateKeyPress(key);
+            } else {
+              simulateKeyRelease(key);
+            }
+            keys[key] = directions[key];
+          }
+        }
+
+        keys = directions;
+      }
+
+      function resetJoystick() {
+        joystickHead.style.left = "50%";
+        joystickHead.style.top = "50%";
+      }
+
+      let keys = {};
+
+      function simulateKeyPress(key) {
+        const keyCode = Key.dict[key];
+        if (keyCode) {
+          // Создаем объект-заглушку для события,
+          // так как Key.keydown ожидает объект события
+          const mockEvent = {
+            keyCode: keyCode,
+            ctrlKey: false,
+            shiftKey: false,
+            altKey: false,
+            preventDefault: () => {}, // Пустая функция, чтобы не было ошибок
+          };
+          Key.keydown(mockEvent);
+        }
+      }
+
+      function simulateKeyRelease(key) {
+        const keyCode = Key.dict[key];
+        if (keyCode) {
+          const mockEvent = {
+            keyCode: keyCode,
+            ctrlKey: false,
+            shiftKey: false,
+            altKey: false,
+            preventDefault: () => {},
+          };
+          Key.keyup(mockEvent);
+        }
+      }
+
+      joystickContainer.addEventListener("touchstart", handleTouchStart);
+      joystickContainer.addEventListener("touchmove", handleTouchMove);
+      joystickContainer.addEventListener("touchend", handleTouchEnd);
+      joystickContainer.addEventListener("touchcancel", handleTouchEnd);
+    }
+
+    createJoystick();
+  }
+// ====================================================================================================================
 }
 // ====================================================================================================================
 function amogusSus() {
