@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.18.0-06.24
+// @version      v1.19.0-06.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,51 +20,63 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-// Мне нравится как тут всё false... Уже не всё, вхазахв
+const current_uwu_version = "1.19.0";
+// ✨🦐✨🦐✨
 let settings = {
-  extendedHints: true,
+
   weatherEnabled: false,
+  weatherDrops: false,
   lowPerformanceMode: false,
-  extendedSettings: false,
   minecraftStyle: false,
   alwaysDay: false,
+  manualWeatherPanel: false,
   skyInHeader: false,
+  auroraPos: "1",
+
   backgroundRepeat: false,
   backgroundUser: false,
+  backgroundUserImageURL: "",
   userTheme: false,
-  weatherDrops: false,
   commentsAvatars: false,
-  draggingFightPanel: false,
-  describeHuntingSmell: false,
-  huntingVirtualJoystick: false,
-  sizeHuntingVirtualJoystick: "150",
+  
+  chatHeight: "275",
   newChat: false,
   newChatInput: false,
+  namesForNotification: "",
+
   notificationPM: false,
   notificationActionEnd: false,
   notificationInMouth: false,
   notificationInFightMode: false,
+
   cellsBorders: false,
   cellsBordersThickness: "1",
   cellsNumbers: false,
   displayParametersPercentages: false,
   compactMouth: false,
   showMoreCatInfo: false,
+
+  draggingFightPanel: false,
   FightPanelAdjustableHeight: false,
+  FightPanelHeight: "70",
+
+  describeHuntingSmell: false,
+  huntingVirtualJoystick: false,
+  sizeHuntingVirtualJoystick: "150",
+
   climbingPanel: false,
   climbingNotificationsNumbers: false,
   climbingRefreshNotification: false,
   climbingRefreshNotificationSound: "notificationSound1",
   climbingRefreshNotificationVolume: "5",
+
   myNameNotificationSound: "notificationSound2",
   notificationMyNameVolume: "5",
-  namesForNotification: "",
+
   userQuickLinks: "",
-  auroraPos: "1",
-  FightPanelHeight: "70",
-  chatHeight: "275",
   historyHeight: "215",
-  backgroundUserImageURL: "",
+
+  // Цвета игровой
   settingBackgroundColor: "",
   settingBlocksColor: "",
   settingChatColor: "",
@@ -75,7 +87,31 @@ let settings = {
   settingAccentColor1: "",
   settingAccentColor2: "",
   settingAccentColor3: "",
+
+  parametersColors: {
+    dream: ["#008000", "#008000", "#ff0000", "#ff0000"],
+    hunger: ["#008000", "#008000", "#ff0000", "#ff0000"],
+    thirst: ["#008000", "#008000", "#ff0000", "#ff0000"],
+    need: ["#008000", "#008000", "#ff0000", "#ff0000"],
+    health: ["#008000", "#008000", "#ff0000", "#ff0000"],
+    clean: ["#008000", "#008000", "#ff0000", "#ff0000"],
+    smell: ["#008000", "#008000", "#cccccc", "#cccccc"],
+    dig: ["#008000", "#008000", "#cccccc", "#cccccc"],
+    swim: ["#008000", "#008000", "#cccccc", "#cccccc"],
+    might: ["#008000", "#008000", "#cccccc", "#cccccc"],
+    tree: ["#008000", "#008000", "#cccccc", "#cccccc"],
+    observ: ["#008000", "#008000", "#cccccc", "#cccccc"],
+  },
+  parametersBackgroundImage: false,
+  parametersUserBackgroundImage: false,
+  parametersUserBackgroundImageURL: "",
+
+  extendedSettingsPanel: false,
+  showUpdateNotification: true,
+  showSplashScreens: false,
+  extendedHints: true,
   GMbetaTest: false,
+
 };
 
 // Типо начальные таргетные ссылки.
@@ -150,14 +186,6 @@ const uwusettings = `
     </div>
 
     <div>
-      <p>
-        Отображает кнопку Расширенных настроек в Игровой для тестирования природных эффектов. Выключает натуральную генерацию погоды.
-      </p>
-      <input type="checkbox" id="extended-settings" data-setting="extendedSettings" />
-      <label for="extended-settings">Расширенные настройки</label>
-    </div>
-
-    <div>
       <p>Может немного повлиять на производительность из-за возрастания количества частиц на экране.</p>
       <input type="checkbox" id="weather-drops" data-setting="weatherDrops" />
       <label for="weather-drops">Эффекты приземления частиц</label>
@@ -173,6 +201,12 @@ const uwusettings = `
       <p>Поле Игровой всегда яркое.</p>
       <input type="checkbox" id="always-day" data-setting="alwaysDay" />
       <label for="always-day">Всегда день</label>
+    </div>
+
+    <div>
+      <p>Отображает панель Ручного управления погодой в ⚙️Панели Расширенных Настройках Игровой. Выключает натуральную генерацию погоды.</p>
+      <input type="checkbox" id="manual-Weather-Panel" data-setting="manualWeatherPanel" />
+      <label for="manual-Weather-Panel">Ручное управление погоды</label>
     </div>
 
     <hr>
@@ -333,11 +367,6 @@ const uwusettings = `
         </ul>
       </div>
     </div>
-
-    <p>!!! Не добавляйте что-то в колонку вместе с блоком "Информация". Из-за особенности реализации, пока что сложно
-      автоматизировать распределение блоков адекватно.
-      А так же не забудьте распределить все блоки по желанным местам, иначе в Игровой не распределённые блоки будут
-      летать !!!</p>
     <button id="SettingSaveButton4">Сохранить</button>
 
     <div>
@@ -418,6 +447,128 @@ const uwusettings = `
       <label for="display-Parameters-Percentages">Отображать проценты Параметров</label>
     </div>
 
+    <div>
+      <p>Заменяет стандатные цвета на выбранные ваши, с поддержкой градиента.</p>
+      <input type="checkbox" id="user-Parameters-Theme" data-setting="userParametersTheme" />
+      <label for="user-Parameters-Theme">Использовать свои цвета</label>
+    </div>
+
+<div id="parameters-color-settings" class="parameters-color-settings">
+  <table class="parameters-color-table">
+    <thead>
+      <tr>
+        <th class="parameters-color-table__header">Параметр</th>
+        <th class="parameters-color-table__header">От</th>
+        <th class="parameters-color-table__header">До</th>
+        <th class="parameters-color-table__header">От</th>
+        <th class="parameters-color-table__header">До</th>
+      </tr>
+    </thead>
+    <tbody id="color-settings-body" class="parameters-color-table__body">
+      <tr>
+        <td class="parameters-color-table__cell">Сон</td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="dream" data-color-type="bar-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="dream" data-color-type="bar-to"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="dream" data-color-type="bg-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="dream" data-color-type="bg-to"></td>
+      </tr>
+      <tr>
+        <td class="parameters-color-table__cell">Голод</td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="hunger" data-color-type="bar-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="hunger" data-color-type="bar-to"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="hunger" data-color-type="bg-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="hunger" data-color-type="bg-to"></td>
+      </tr>
+      <tr>
+        <td class="parameters-color-table__cell">Жажда</td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="thirst" data-color-type="bar-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="thirst" data-color-type="bar-to"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="thirst" data-color-type="bg-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="thirst" data-color-type="bg-to"></td>
+      </tr>
+      <tr>
+        <td class="parameters-color-table__cell">Нужда</td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="need" data-color-type="bar-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="need" data-color-type="bar-to"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="need" data-color-type="bg-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="need" data-color-type="bg-to"></td>
+      </tr>
+      <tr>
+        <td class="parameters-color-table__cell">Здоровье</td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="health" data-color-type="bar-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="health" data-color-type="bar-to"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="health" data-color-type="bg-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="health" data-color-type="bg-to"></td>
+      </tr>
+      <tr>
+        <td class="parameters-color-table__cell">Чистота</td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="clean" data-color-type="bar-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="clean" data-color-type="bar-to"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="clean" data-color-type="bg-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="clean" data-color-type="bg-to"></td>
+      </tr>
+      <tr>
+        <th class="parameters-color-table__cell">Навыки</th>
+      </tr>
+      <tr>
+        <td class="parameters-color-table__cell">Запах</td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="smell" data-color-type="bar-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="smell" data-color-type="bar-to"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="smell" data-color-type="bg-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="smell" data-color-type="bg-to"></td>
+      </tr>
+      <tr>
+        <td class="parameters-color-table__cell">Копание</td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="dig" data-color-type="bar-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="dig" data-color-type="bar-to"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="dig" data-color-type="bg-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="dig" data-color-type="bg-to"></td>
+      </tr>
+      <tr>
+        <td class="parameters-color-table__cell">Плавание</td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="swim" data-color-type="bar-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="swim" data-color-type="bar-to"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="swim" data-color-type="bg-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="swim" data-color-type="bg-to"></td>
+      </tr>
+      <tr>
+        <td class="parameters-color-table__cell">БУ</td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="might" data-color-type="bar-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="might" data-color-type="bar-to"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="might" data-color-type="bg-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="might" data-color-type="bg-to"></td>
+      </tr>
+      <tr>
+        <td class="parameters-color-table__cell">Лазание</td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="tree" data-color-type="bar-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="tree" data-color-type="bar-to"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="tree" data-color-type="bg-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="tree" data-color-type="bg-to"></td>
+      </tr>
+      <tr>
+        <td class="parameters-color-table__cell">Зоркость</td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="observ" data-color-type="bar-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="observ" data-color-type="bar-to"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="observ" data-color-type="bg-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="observ" data-color-type="bg-to"></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <div>
+      <p>Накладывает сверху изображение с узорами.</p>
+      <input type="checkbox" id="parameters-Background-Image" data-setting="parametersBackgroundImage" />
+      <label for="parameters-Background-Image">Узоры</label>
+    </div>
+
+    <div>
+      <p>Накладывает сверху уже ваше изображение.</p>
+      <input type="checkbox" id="parameters-User-Background-Image" data-setting="parametersUserBackgroundImage" />
+      <label for="parameters-User-Background-Image">Свои узоры:</label>
+      <input type="text" id="parametersUserBackgroundImageField" placeholder="Вставьте URL" data-setting="parametersUserBackgroundImageURL" />
+      <button id="SettingSaveButton1">Сохранить</button>
+    </div>
 
   </div>
 
@@ -588,15 +739,36 @@ const uwusettings = `
   </div>
 
   <div id="modules-panel">
-    
+
+    <h2>Главное</h2>
+    <div>
+      <p>Постоянное отображание Панели Расширенных Настроек в Игровой. Сама по себе пустая.</p>
+      <input type="checkbox" id="extended-settings-Panel" data-setting="extendedSettingsPanel" />
+      <label for="extended-settings-Panel">⚙️Панель Расширенных Настроек</label>
+    </div>
+
+    <div>
+      <p>Отображает уведомление в ⚙️Панели Расширенных настроек в Игровой.</p>
+      <input type="checkbox" id="show-Update-Notification" data-setting="showUpdateNotification" />
+      <label for="show-Update-Notification">Уведомлять об обновлении Скрипта/Мода UwU</label>
+    </div>
+
+    <div>
+      <p>⚙️Панели Расширенных Настроек не будет так скучно с рандомными фразами.</p>
+      <input type="checkbox" id="show-Splash-Screens" data-setting="showSplashScreens" />
+      <label for="show-Splash-Screens">Показывать Splash надписи.</label>
+    </div>
+
     <div>
       <p>Скрывать или отображать расширенные подсказки к настройкам. Привет, я та самая расширенная подсказка. Делает Настройки CatWar UwU очень компактным на вид.</p>
       <input type="checkbox" id="extended-Hints" data-setting="extendedHints" />
       <label for="extended-Hints">Расширенные подсказки</label>
     </div>
 
+    <hr>
+    <h2>Гейм-Мастер</h2>
     <div>
-      <p>⚠️Как пользователь, вы должны осознавать возможные риски и проблемы как с некоторым функционалом, так и с возможной приватностью⚠️</p>
+      <p>⚠️Как пользователь, вы должны осознавать возможные риски и проблемы как с некоторым функционалом, так и с приватностью⚠️</p>
       <input type="checkbox" id="GM-beta-Test" data-setting="GMbetaTest" />
       <label for="GM-beta-Test">Стать тестировщиком функционала для Гейм-Мастеров.</label>
       <p>Что тут будет? Пока не ясно, могу лишь наобещать:</p>
@@ -607,6 +779,7 @@ const uwusettings = `
     </div>
 
   <hr>
+    <h2>Сборник стилей</h2>
     <p>Онлайн сборник стилей/модов/скриптов, которые не попали в основной функционал Скрипта/Мода UwU. Может и будет пополняться.</p>
   <hr>
     <div id="module-info">
@@ -614,6 +787,16 @@ const uwusettings = `
 
     <input type="text" id="private-module-input" placeholder=" . . . " />
     <button id="SettingSaveButton3">Сохранить</button> 
+
+  <hr>
+    <h2>Импорт/Экспорт</h2>
+
+    <div>
+      <p>Импорт/Экспорт всех настроек (Пока без расставленных блоков Компактной Игровой и Сборника Стилей).</p>
+      <input type="text" id="exportSettings" placeholder="Экспорт"/>
+      <input type="text" id="importSettings" placeholder="Импорт"/>
+      <button id="importSettingsButton">Вставить</button>
+    </div>
 
   </div>
 
@@ -626,22 +809,36 @@ const uwusettings = `
 const newsPanel = `
 <div id="news-panel">
   <button id="news-button">
-    v1.18.0 - ❄️ Джойстик и подсказки на запах в охоте! А ещё...
+    v${current_uwu_version} - ❄️ Оформление Параметров и Навыков! Уведомления обновлений! Импорт/Экспорт! И много реворков!
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
     <p>
-      — 🦐МегаУльтраСуперКрутаяФункция в Надстройках! Должна была быть рабочей, но так как пока ещё в глубокой
-      разработке, решил не медлить и хотя бы узнать работоспособность джойстика на общем поле.
+      — Реворкнута работа Компактной Игровой. Теперь пользователю не надо так сильно мучаться с расстановками и думать почему что-то опять не сработало. 
     </p>
+    <p>— Так же теперь Панель Расширенных настроек можно держать всегда включённой и не беспокоиться об выключении генерации природных эффектов.
+      Основная цель этого разделения - изначально в этой панели должно было быть много полезного, от быстрых изменений дизайна Игровой, до "админских" штук.
+      Например, через него вы уже можете узнать, что Скрипт/Мод UwU обновился. </p>
+    <p>— Splash скрины как в Майне. Зачем? Не знаю. Я с таким вопросом над всем скриптом сижу.</p>
+    <p>— ого импорт и експорт класс супер вау капесссссссссссссс</p>
     <hr>
     <h3>Внешний вид</h3>
-    <p>— Мелкие, но бесконечные, правки текстов.</p>
+    <p>— Где-то когда-то что-то определённо дописывал и переписывал.</p>
+    <p>— Удалено текстовое предупреждение об кривой работе "Компактной игровой" из-за ненадобности.</p>
     <hr>
     <h3>Изменения кода</h3>
-    <p>— много писал нового. а вот теперь её и нет ихихихих</p>
+    <p>— Нажатие на имя кота так же переносит ещё и фокус на строчку ввода. Теперь можете писать сразу.</p>
+    <p>— Всё потихоньку пополняю библиотеку диапазона цветов температуры. Во смешно будет, если КекВар в один день решит цвета поменять.</p>
+    <p>— Мелкая сортировка изначальных сохранений в удобные для восприятия кучки.</p>
+    <p>— Обобщил и упростил работу с сохранениями.</p>
+    <p>— Так же рассортировал код работающий с Настройками в более понятные блоки.</p>
+    <p>— Разделение Расширенных настроек от Ручного управления погоды. Теперь это две независимые функции (Почти).</p>
+    <p>— Улучшен код работы Джойстика для охоты. Теперь персонаж лучше отзываться на изменения движения.</p>
+    <p>— Упрощён код работы с развёрткой стиля Компактной игровой. Удалено предопределение высоты блоков.</p>
+    <p>— Немного упрощена работа кода с расстановкой блоков Компактной игровой.</p>
+    <p>— Я запрещаю пользователю ср... Ставить что-то с блоком "Информация".</p>
     <hr>
-    <p>Дата выпуска: 13.06.24</p>
+    <p>Дата выпуска: 23.06.24</p>
   </div>
 </div>
 `;
@@ -649,66 +846,72 @@ const newsPanel = `
 //   . . . HTML ПАНЕЛЬ РАСШИРЕННЫХ НАСТРОЕК . . .
 // ====================================================================================================================
 const extendedSettingsButton = `
-<div>
+<div id="uwu-extended-settings">
   <button type="button" id="extended-settings-button">
     <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png" alt="Иконка"
       width="36" height="36">
   </button>
 
   <div id="extended-settings-container">
-    <div id="extended-settings-panel">
-      <p>Изменения, сделанные в этой панели, носят временный характер и не сохраняются.</p>
-      <h3>Переключить погоду</h3>
-      <input type="range" min="1" max="3" value="1" class="slider" id="manualWeather" list="WeatherStep">
-      <datalist id="WeatherStep">
-        <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/sunny.png" width="36" height="36" option
-          value="1"></option>
-        <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/rain_cloud.png" width="36" height="36"
-          option value="2"></option>
-        <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/snow_cloud.png" width="36" height="36"
-          option value="3"></option>
-      </datalist>
-      <div id="temperature-container">
-        <p id="temperature"
-          title="На это умножается скорость частиц и делится их размер. В будущем будет возможность сохранять и изменять это значение под свой вкус.">
-          [?] Текущий модификатор: ...уточнение...</p>
-      </div>
+    <div id="splash-screen-panel"></div>
 
-      <h3>Северное Сияние</h3>
-      <div class="button-container-1">
-        <button type="button" id="manualAurora_Off">
-          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96.png"
-            alt="Иконка" width="48" height="48">
-        </button>
-        <button type="button" id="manualAurora_B">
-          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96_blue.png"
-            alt="Иконка" width="48" height="48">
-        </button>
-        <button type="button" id="manualAurora_G">
-          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96_green.png"
-            alt="Иконка" width="48" height="48">
-        </button>
-      </div>
-
-      <h3>Светлячки</h3>
-      <div class="button-container-2">
-        <button type="button" id="manualFirefly_On">
-          <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/firefly.png" alt="Иконка" width="48"
-            height="48" title="Включает/Выключает">
-        </button>
-      </div>
-
-    </div>
-    <div id="aurora-settings-panel">
-      <p>Изменения, сделанные в этой панели, сохранятся!</p>
-      <h5>Здесь будет возможность переместить Северное Сияние в реальном времени, исключать локации из генерации погоды,
-        либо запрещать
-        определённой погоде существовать на выбранной локации. Но это всё пока что лишь мечта...</h5>
-    </div>
   </div>
 </div>
 `;
+// ====================================================================================================================
+//   . . . HTML БЛОК РУЧНОГО УПРАВЛЕНИЯ ПОГОДЫ . . .
+// ====================================================================================================================
+const manualWeatherPanel = `
+<div id="manual-weather-panel">
+<p>Изменения, сделанные в этой панели, носят временный характер и не сохраняются.</p>
+<h3>Переключить погоду</h3>
+<input type="range" min="1" max="3" value="1" class="slider" id="manualWeather" list="WeatherStep">
+<datalist id="WeatherStep">
+  <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/sunny.png" width="36" height="36" option
+    value="1"></option>
+  <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/rain_cloud.png" width="36" height="36"
+    option value="2"></option>
+  <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/snow_cloud.png" width="36" height="36"
+    option value="3"></option>
+</datalist>
+<div id="temperature-container">
+  <p id="temperature"
+    title="На это умножается скорость частиц и делится их размер. В будущем будет возможность сохранять и изменять это значение под свой вкус.">
+    [?] Текущий модификатор: ...уточнение...</p>
+</div>
 
+<h3>Северное Сияние</h3>
+<div class="button-container-1">
+  <button type="button" id="manualAurora_Off">
+    <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96.png"
+      alt="Иконка" width="48" height="48">
+  </button>
+  <button type="button" id="manualAurora_B">
+    <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96_blue.png"
+      alt="Иконка" width="48" height="48">
+  </button>
+  <button type="button" id="manualAurora_G">
+    <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96_green.png"
+      alt="Иконка" width="48" height="48">
+  </button>
+</div>
+
+<h3>Светлячки</h3>
+<div class="button-container-2">
+  <button type="button" id="manualFirefly_On">
+    <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/firefly.png" alt="Иконка" width="48"
+      height="48" title="Включает/Выключает">
+  </button>
+</div>
+
+</div>
+<div id="aurora-settings-panel">
+<p>Изменения, сделанные в этой панели, сохранятся!</p>
+<h5>Здесь будет возможность переместить Северное Сияние в реальном времени, исключать локации из генерации погоды,
+  либо запрещать
+  определённой погоде существовать на выбранной локации. Но это всё пока что лишь мечта...</h5>
+</div>
+`;
 // ====================================================================================================================
 //   . . . ГЛАВНЫЕ CSS СТИЛИ . . .
 // ====================================================================================================================
@@ -806,6 +1009,16 @@ let css = `
   margin-left: 0px;
 }
 
+#uwusettings .parameters-color-table,
+#uwusettings .parameters-color-table tr,
+#uwusettings .parameters-color-table td {
+  border: 1px #232323 solid;
+}
+
+#uwusettings .parameters-color-table {
+  margin-top: 8px;
+}
+
 .rounded-image {
   background-repeat: repeat;
   background-attachment: fixed;
@@ -848,7 +1061,8 @@ let css = `
 #SettingSaveButton1,
 #SettingSaveButton2,
 #SettingSaveButton3,
-#SettingSaveButton4 {
+#SettingSaveButton4,
+#importSettingsButton {
   background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 8px 15px;
@@ -862,7 +1076,8 @@ let css = `
 #SettingSaveButton1:hover,
 #SettingSaveButton2:hover,
 #SettingSaveButton3:hover,
-#SettingSaveButton4:hover {
+#SettingSaveButton4:hover,
+#importSettingsButton:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
@@ -1080,7 +1295,7 @@ let css = `
   margin-top: 20px;
 }
 
-#extended-settings-panel,
+#manual-weather-panel,
 #news,
 #news-button {
   width: 100%;
@@ -1379,10 +1594,59 @@ let css = `
   display: flex;
   align-items: center;
 }
+
+.update-notification {
+  background-color: #78c8ff69;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.new-update::before {
+  content: "•";
+  color: #78c8ff;
+  font-size: 4em;
+  position: absolute;
+  top: -20px;
+  right: -5px;
+}
+
+.random-phrase-block {
+  margin-bottom: 10px;
+  width: 100%;
+  border-radius: 10px;
+
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  box-sizing: border-box;
+  padding: 5px;
+}
 `;
 GM_addStyle(css);
 // ====================================================================================================================
-//  . . . ПАНЕЛЬ НАСТРОЕК . . .
+//  . . . СОХРАНЕНИЯ И ЗАГРУЗКА НАСТРОЕК . . .
+// ====================================================================================================================
+function saveSettings() {
+  try {
+    localStorage.setItem("uwu-settings", JSON.stringify(settings));
+    // console.log("Настройки сохранены:", settings);
+  } catch (error) {
+    console.error("Не удалось сохранить настройки:", error);
+  }
+}
+
+function loadSettings() {
+  const storedSettings = localStorage.getItem("uwu-settings");
+  if (storedSettings && typeof storedSettings === "string") {
+    const loadedSettings = JSON.parse(storedSettings);
+    settings = { ...settings, ...loadedSettings };
+  } else {
+    console.log("Нет сохраненных настроек");
+  }
+}
+// ====================================================================================================================
+//  . . . ВНЕШНИЙ ВИД ПАНЕЛИ НАСТРОЕК . . .
 // ====================================================================================================================
 function createSettingsBlock(blockId, content) {
   const siteTable = document.querySelector("#site_table");
@@ -1402,27 +1666,15 @@ function createSettingsBlock(blockId, content) {
     : siteTable;
   settingsContainer.appendChild(settingsElement);
 }
-
+// ====================================================================================================================
+//  . . . РАБОТА ПАНЕЛИ НАСТРОЕК . . .
+// ====================================================================================================================
 if (targetSettings.test(window.location.href)) {
   createSettingsBlock("uwu-settings", uwusettings);
 
-  function loadSettings() {
-    const storedSettings = localStorage.getItem("uwu-settings");
-    if (storedSettings && typeof storedSettings === "string") {
-      const loadedSettings = JSON.parse(storedSettings);
-      settings = { ...settings, ...loadedSettings };
-    } else {
-      console.log("Нет сохраненных настроек");
-    }
-  }
-
-  function saveSettings() {
-    try {
-      localStorage.setItem("uwu-settings", JSON.stringify(settings));
-      // console.log("Настройки сохранены:", settings);
-    } catch (error) {
-      console.error("Не удалось сохранить настройки:", error);
-    }
+  const uwuSettingsElement = document.getElementById("uwusettings");
+  if (uwuSettingsElement) {
+    uwuSettingsElement.insertAdjacentHTML("beforeend", newsPanel);
   }
 
   loadSettings();
@@ -1448,9 +1700,62 @@ if (targetSettings.test(window.location.href)) {
       }
     });
 
-  // ===================== СПИСОК ВЗАИМОИСКЛЮЧАЮЩСЯ ЧЕКБОКСОВ =====================
-  const exclusiveCheckboxGroups = [["backgroundRepeat", "backgroundUser"]];
-  // ===================== ================================== =====================
+  document
+    .querySelectorAll('#parameters-color-settings input[type="color"]')
+    .forEach((element) => {
+      element.addEventListener("change", () => {
+        const paramId = element.dataset.param;
+        const colorType = element.dataset.colorType;
+        const colorValue = element.value;
+
+        if (!settings.parametersColors[paramId]) {
+          settings.parametersColors[paramId] = [];
+        }
+        const colorIndex =
+          colorType === "bar-from"
+            ? 0
+            : colorType === "bar-to"
+            ? 1
+            : colorType === "bg-from"
+            ? 2
+            : 3;
+        settings.parametersColors[paramId][colorIndex] = colorValue;
+
+        saveSettings();
+      });
+    });
+
+  function restoreColorPickers() {
+    for (const paramId in settings.parametersColors) {
+      const colors = settings.parametersColors[paramId];
+
+      const barFromInput = document.querySelector(
+        `#parameters-color-settings input[type="color"][data-param="${paramId}"][data-color-type="bar-from"]`
+      );
+      const barToInput = document.querySelector(
+        `#parameters-color-settings input[type="color"][data-param="${paramId}"][data-color-type="bar-to"]`
+      );
+      const bgFromInput = document.querySelector(
+        `#parameters-color-settings input[type="color"][data-param="${paramId}"][data-color-type="bg-from"]`
+      );
+      const bgToInput = document.querySelector(
+        `#parameters-color-settings input[type="color"][data-param="${paramId}"][data-color-type="bg-to"]`
+      );
+
+      if (barFromInput) barFromInput.value = colors[0];
+      if (barToInput) barToInput.value = colors[1];
+      if (bgFromInput) bgFromInput.value = colors[2];
+      if (bgToInput) bgToInput.value = colors[3];
+    }
+  }
+  restoreColorPickers();
+  // ====================================================================================================================
+  //  . . . ВЗАИМОИСКЛЮЧАЮЩИЕСЯ ЧЕКБОКСЫ . . .
+  // ====================================================================================================================
+  const exclusiveCheckboxGroups = [
+    ["backgroundRepeat", "backgroundUser"],
+    ["parametersBackgroundImage", "parametersUserBackgroundImage"],
+  ];
 
   document
     .querySelectorAll("#uwusettings [data-setting]")
@@ -1478,12 +1783,6 @@ if (targetSettings.test(window.location.href)) {
         saveSettings();
       });
     });
-
-  const uwuSettingsElement = document.getElementById("uwusettings");
-  if (uwuSettingsElement) {
-    uwuSettingsElement.insertAdjacentHTML("beforeend", newsPanel);
-  }
-
   // ====================================================================================================================
   //  . . . СОЗДАНИЕ ВЫПАДАЮЩИХ СПИСКОВ ПРИ ПОМОЩИ ФУНКЦИИ createCustomSelect . . .
   // ====================================================================================================================
@@ -1600,6 +1899,34 @@ if (targetSettings.test(window.location.href)) {
     });
   }
   // ====================================================================================================================
+  //  . . . ИМПОРТ / ЭКСПОРТ НАСТРОЕК . . .
+  // ====================================================================================================================
+  const importButton = document.getElementById("importSettingsButton");
+  const importSettingsInput = document.getElementById("importSettings");
+  const exportSettingsInput = document.getElementById("exportSettings");
+  
+  importButton.addEventListener("click", () => {
+    const importedSettings = importSettingsInput.value;
+  
+    try {
+      const parsedSettings = JSON.parse(importedSettings);
+      settings = { ...settings, ...parsedSettings }; 
+      localStorage.setItem("uwu-settings", JSON.stringify(settings)); 
+      console.log("Настройки импортированы:", settings);
+    } catch (error) {
+      console.error("Ошибка при импорте настроек:", error);
+    }
+    updateExportField();
+  });
+  
+  function updateExportField() {
+    const settingsToExport = JSON.stringify(settings);
+    exportSettingsInput.value = settingsToExport;
+  }
+  
+  loadSettings(); 
+  updateExportField();
+  // ====================================================================================================================
   //  . . . МАКЕТ КАСТОМИЗАЦИИ ИГРОВОЙ . . .
   // ====================================================================================================================
   const blockNames = {
@@ -1610,8 +1937,6 @@ if (targetSettings.test(window.location.href)) {
     tr_mouth: "Во рту",
     // 'tr_sky': 'Небо',
   };
-  const blockList = document.getElementById("block-list");
-  const listItems = [];
   const leftColumn = document.querySelector("#layout-customizer .column.left");
   const rightColumn = document.querySelector(
     "#layout-customizer .column.right"
@@ -1625,78 +1950,57 @@ if (targetSettings.test(window.location.href)) {
     blockName.textContent = blockNames[blockId];
     blockElement.appendChild(blockName);
 
-    const removeButton = document.createElement("button");
-    removeButton.textContent = "Удалить";
-    removeButton.classList.add("remove-button");
-    removeButton.addEventListener("click", () => {
-      blockElement.remove();
-      const listItem = listItems.find(
-        (item) => item.dataset.blockId === blockId
-      );
-      if (listItem) {
-        const moveLeftButton = listItem.querySelector(".move-left");
-        const moveRightButton = listItem.querySelector(".move-right");
-        moveLeftButton.style.display = "inline-block";
-        moveRightButton.style.display = "inline-block";
-        blockList.appendChild(listItem);
-      }
-    });
+    const controlsWrapper = document.createElement("div");
+    controlsWrapper.classList.add("controls");
 
-    blockElement.appendChild(removeButton);
+    if (blockId === "tr_info") {
+      const moveInfoButton = document.createElement("button");
+      moveInfoButton.textContent = "⏪Переместить⏩";
+      moveInfoButton.classList.add("move-info", "install-button");
+      moveInfoButton.addEventListener("click", () => {
+        swapColumns(blockElement);
+      });
+      controlsWrapper.appendChild(moveInfoButton);
+    } else {
+      const moveUpButton = document.createElement("button");
+      moveUpButton.textContent = "🔼Вверх";
+      moveUpButton.classList.add("move-up", "install-button");
+      moveUpButton.addEventListener("click", () => {
+        const previousBlock = blockElement.previousElementSibling;
+        if (previousBlock) {
+          blockElement.parentNode.insertBefore(blockElement, previousBlock);
+        }
+      });
+      controlsWrapper.appendChild(moveUpButton);
+
+      const moveDownButton = document.createElement("button");
+      moveDownButton.textContent = "🔽Вниз";
+      moveDownButton.classList.add("move-down", "install-button");
+      moveDownButton.addEventListener("click", () => {
+        const nextBlock = blockElement.nextElementSibling;
+        if (nextBlock) {
+          blockElement.parentNode.insertBefore(nextBlock, blockElement);
+        }
+      });
+      controlsWrapper.appendChild(moveDownButton);
+    }
+
+    blockElement.appendChild(controlsWrapper);
     return blockElement;
   }
 
-  function createMoveButtons(listItem, blockId) {
-    const blockWrapper = document.createElement("div");
-    blockWrapper.classList.add("block-wrapper");
-    blockWrapper.dataset.blockId = blockId;
-
-    const moveLeftButton = document.createElement("button");
-    moveLeftButton.textContent = "Слева";
-    moveLeftButton.classList.add("move-left", "install-button");
-    moveLeftButton.addEventListener("click", () => {
-      const blockElement = createBlockElement(blockId);
-      leftColumn.appendChild(blockElement);
-      moveLeftButton.style.display = "none";
-      moveRightButton.style.display = "none";
-    });
-    blockWrapper.appendChild(moveLeftButton);
-
-    const moveRightButton = document.createElement("button");
-    moveRightButton.textContent = "Справа";
-    moveRightButton.classList.add("move-right", "install-button");
-    moveRightButton.addEventListener("click", () => {
-      const blockElement = createBlockElement(blockId);
+  function swapColumns(blockElement) {
+    if (blockElement.parentNode === leftColumn) {
+      const rightColumnBlocks = Array.from(rightColumn.children);
+      rightColumn.innerHTML = "";
       rightColumn.appendChild(blockElement);
-      moveLeftButton.style.display = "none";
-      moveRightButton.style.display = "none";
-    });
-    blockWrapper.appendChild(moveRightButton);
-
-    const savedSettings = localStorage.getItem("layoutSettings");
-    if (savedSettings) {
-      const { leftBlocks, rightBlocks } = JSON.parse(savedSettings);
-      if (leftBlocks.includes(blockId) || rightBlocks.includes(blockId)) {
-        moveLeftButton.style.display = "none";
-        moveRightButton.style.display = "none";
-      }
+      rightColumnBlocks.forEach((block) => leftColumn.appendChild(block));
+    } else {
+      const leftColumnBlocks = Array.from(leftColumn.children);
+      leftColumn.innerHTML = "";
+      leftColumn.appendChild(blockElement);
+      leftColumnBlocks.forEach((block) => rightColumn.appendChild(block));
     }
-
-    listItem.appendChild(blockWrapper);
-  }
-
-  for (const blockId in blockNames) {
-    const listItem = document.createElement("li");
-    listItem.id = `block-item-${blockId}`;
-    const blockName = document.createElement("span");
-    blockName.textContent = blockNames[blockId];
-    listItem.appendChild(blockName);
-    listItem.dataset.blockId = blockId;
-
-    blockList.appendChild(listItem);
-    listItems.push(listItem);
-
-    createMoveButtons(listItem, blockId);
   }
 
   const saveButton = document.getElementById("SettingSaveButton4");
@@ -1728,35 +2032,39 @@ if (targetSettings.test(window.location.href)) {
       leftBlocks.forEach((blockId) => {
         const blockElement = createBlockElement(blockId);
         leftColumn.appendChild(blockElement);
-        const blockWrapper = document.querySelector(
-          `.block-wrapper [data-block-id="${blockId}"]`
-        );
-        if (blockWrapper) {
-          const moveLeftButton = blockWrapper.querySelector(".move-left");
-          const moveRightButton = blockWrapper.querySelector(".move-right");
-          moveLeftButton.style.display = "none";
-          moveRightButton.style.display = "none";
-        }
       });
 
       rightBlocks.forEach((blockId) => {
         const blockElement = createBlockElement(blockId);
         rightColumn.appendChild(blockElement);
-        const blockWrapper = document.querySelector(
-          `.block-wrapper [data-block-id="${blockId}"]`
-        );
-        if (blockWrapper) {
-          const moveLeftButton = blockWrapper.querySelector(".move-left");
-          const moveRightButton = blockWrapper.querySelector(".move-right");
-          moveLeftButton.style.display = "none";
-          moveRightButton.style.display = "none";
-        }
       });
+    } else {
+      // Настройки по умолчанию
+      const defaultLeftBlocks = ["tr_info"];
+      const defaultRightBlocks = [
+        "tr_tos",
+        "tr_chat",
+        "tr_actions",
+        "tr_mouth",
+      ];
+
+      defaultLeftBlocks.forEach((blockId) => {
+        leftColumn.appendChild(createBlockElement(blockId));
+      });
+
+      defaultRightBlocks.forEach((blockId) => {
+        rightColumn.appendChild(createBlockElement(blockId));
+      });
+
+      const layoutSettings = {
+        leftBlocks: defaultLeftBlocks,
+        rightBlocks: defaultRightBlocks,
+      };
+      localStorage.setItem("layoutSettings", JSON.stringify(layoutSettings));
     }
   }
 
   window.addEventListener("load", loadLayoutSettings);
-
   // ====================================================================================================================
   //  . . . РЕДАКТОР ВКЛАДОК И ТАБЛИЦ МИННОГО ПОЛЯ . . .
   // ====================================================================================================================
@@ -2351,20 +2659,6 @@ window.addEventListener("load", activateModules);
 // ====================================================================================================================
 //   . . . ЗАГРУЗКА НАСТРОЕК . . .
 // ====================================================================================================================
-function loadSettings() {
-  const storedSettings = localStorage.getItem("uwu-settings");
-  if (storedSettings) {
-    const loadedSettings = JSON.parse(storedSettings);
-    for (const key in loadedSettings) {
-      if (loadedSettings.hasOwnProperty(key)) {
-        settings[key] = loadedSettings[key];
-      }
-    }
-  } else {
-    console.log("Нет сохраненных настроек");
-  }
-}
-
 loadSettings();
 // ====================================================================================================================
 //   . . . АВАТАРЫ В КОММЕНТАРИЯХ . . .
@@ -2532,22 +2826,142 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   //  . . . РАСШИРЕННЫЕ НАСТРОЙКИ . . .
   // ====================================================================================================================
-  if (settings.extendedSettings) {
-    const extendedSettingsButtonElement = document.createElement("div");
-    extendedSettingsButtonElement.innerHTML = extendedSettingsButton;
-    globalContainerElement.appendChild(extendedSettingsButtonElement);
+  const extendedSettingsButtonElement = document.createElement("div");
+  extendedSettingsButtonElement.innerHTML = extendedSettingsButton;
+  globalContainerElement.appendChild(extendedSettingsButtonElement);
 
+  const panel = extendedSettingsButtonElement.querySelector(
+    "#uwu-extended-settings"
+  );
+  const extendedSettingsContainer = extendedSettingsButtonElement.querySelector(
+    "#extended-settings-container"
+  );
+  const button = extendedSettingsButtonElement.querySelector(
+    "#extended-settings-button"
+  );
+
+  extendedSettingsContainer.style.display = "none";
+
+  const shouldShowPanel = () => {
+    return (
+      settings.extendedSettingsPanel ||
+      settings.showSplashScreens ||
+      settings.showUpdateNotification ||
+      settings.manualWeatherPanel
+    );
+  };
+
+  if (shouldShowPanel()) {
+    panel.style.display = "block";
+  } else {
+    panel.style.display = "none";
+  }
+
+  button.addEventListener("click", () => {
+    extendedSettingsContainer.style.display =
+      extendedSettingsContainer.style.display === "none" ? "block" : "none";
+
+    button.classList.remove("new-update");
+  });
+  // ====================================================================================================================
+  //  . . . СПЛЕШ СКРИН . . .
+  // ====================================================================================================================
+  if (settings.showSplashScreens) {
+    const randomPhraseBlock = document.createElement("div");
+    const splashPanel = extendedSettingsButtonElement.querySelector(
+      "#splash-screen-panel"
+    );
+    randomPhraseBlock.classList.add("random-phrase-block");
+    splashPanel.appendChild(randomPhraseBlock);
+
+    function loadRandomPhrase(url) {
+      fetch(url)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Ошибка загрузки: ${response.status}`);
+          }
+          return response.text();
+        })
+        .then((text) => {
+          const phrases = text.split("\n").filter((line) => line.trim() !== "");
+          const randomIndex = Math.floor(Math.random() * phrases.length);
+          randomPhraseBlock.innerHTML = parseColorCodes(phrases[randomIndex]);
+        })
+        .catch((error) => {
+          console.error("Ошибка при загрузке случайной фразы:", error);
+          randomPhraseBlock.textContent = "Не удалось загрузить фразу :(";
+        });
+    }
+
+    function parseColorCodes(text) {
+      const colorMap = {
+        "&0": "</span>", // - Сброс -
+        "&1": "<span style='color: blue;'>", // Синий
+        "&2": "<span style='color: green;'>", // Зеленый
+        "&3": "<span style='color: aqua;'>", // Бирюзовый
+        "&4": "<span style='color: red;'>", // Красный
+        "&5": "<span style='color: #dc00dc;'>", // Фиолетовый
+        "&6": "<span style='color: gold;'>", // Золотой
+        "&7": "<span style='color: pink;'>", // Розовый
+        "&8": "<span style='color: white;'>", // Белый
+        "&9": "<span style='color: black;'>", // Черный
+      };
+
+      // Добавляем жирный шрифт в начале
+      text = "<b>" + text;
+
+      for (const code in colorMap) {
+        text = text.replace(new RegExp(code, "g"), colorMap[code]);
+      }
+
+      return text;
+    }
+
+    window.addEventListener("load", () => {
+      loadRandomPhrase(
+        "https://raw.githubusercontent.com/Ibirtem/CatWar/main/texts/text.txt"
+      );
+    });
+  }
+  // ====================================================================================================================
+  //  . . . УВЕДОМЛЕНИЕ ОБ ОБНОВЛЕНИИ . . .
+  // ====================================================================================================================
+  function showUpdateNotification(oldVersion) {
+    const panel = document.getElementById("extended-settings-container");
+    const notificationBlock = document.createElement("div");
+    notificationBlock.classList.add("update-notification");
+    notificationBlock.innerHTML = `
+          <p>Скрипт/Мод UwU был обновлен с версии v${
+            oldVersion || "неизвестной"
+          } до версии v${current_uwu_version}!</p>
+          <p>Можете посетить <a href="https://catwar.su/settings" target="_blank">Настройки</a> для ознакомления с изменениями.</p>
+        `;
+    panel.appendChild(notificationBlock);
+    const button = extendedSettingsButtonElement.querySelector("button");
+    button.classList.add("new-update");
+  }
+
+  window.addEventListener("load", () => {
+    const savedVersion = localStorage.getItem("uwu-version");
+    if (savedVersion !== current_uwu_version) {
+      localStorage.setItem("uwu-version", current_uwu_version);
+    }
+    if (
+      settings.showUpdateNotification &&
+      savedVersion !== current_uwu_version
+    ) {
+      showUpdateNotification(savedVersion);
+    }
+  });
+
+  // ====================================================================================================================
+  //  . . . РУЧНОЕ УПРАВЛЕНИЕ ПОГОДОЙ . . .
+  // ====================================================================================================================
+  if (settings.manualWeatherPanel) {
     const panel = extendedSettingsButtonElement.querySelector(
       "#extended-settings-container"
     );
-    panel.style.display = "none";
-
-    extendedSettingsButtonElement
-      .querySelector("button")
-      .addEventListener("click", () => {
-        panel.style.display =
-          panel.style.display === "block" ? "none" : "block";
-      });
+    panel.innerHTML += manualWeatherPanel;
 
     const manualAuroraOffButton = document.getElementById("manualAurora_Off");
     const manualAuroraBButton = document.getElementById("manualAurora_B");
@@ -2573,7 +2987,6 @@ if (window.location.href === targetCW3) {
       toggleFireflies();
     });
   }
-
   // ====================================================================================================================
   //  . . . ДЕЙСТВИЯ ПРИ НАВОДКЕ НА .cat . . .
   // ====================================================================================================================
@@ -3764,6 +4177,51 @@ if (window.location.href === targetCW3) {
     updateBackgroundImage(backgroundDiv, settings.backgroundUserImageURL);
     globalContainerElement.appendChild(backgroundDiv);
   }
+
+  // ====================================================================================================================
+  //   . . . ПОЛЬЗОВАТЕЛЬСКИЕ ЦВЕТА НАВЫКОВ И ПАРАМЕТРОВ . . .
+  // ====================================================================================================================
+  if (settings.userParametersTheme) {
+    const defaultBackgroundImageUrl =
+      "https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/parametersBackgroundImageURL.png";
+
+    function applyParameterColors() {
+      let cssStyles = "";
+      for (const paramId in settings.parametersColors) {
+        const colors = settings.parametersColors[paramId];
+
+        let backgroundImageURL = defaultBackgroundImageUrl;
+        if (settings.parametersUserBackgroundImage) {
+          backgroundImageURL = settings.parametersUserBackgroundImageURL;
+        }
+
+        let firstCellBackground = `linear-gradient(to right, ${colors[0]}, ${colors[1]})`;
+        if (
+          settings.parametersBackgroundImage ||
+          settings.parametersUserBackgroundImage
+        ) {
+          firstCellBackground = `url(${backgroundImageURL}), ${firstCellBackground}`;
+        }
+
+        let lastCellBackground = `linear-gradient(to right, ${colors[2]}, ${colors[3]})`;
+        if (
+          settings.parametersBackgroundImage ||
+          settings.parametersUserBackgroundImage
+        ) {
+          lastCellBackground = `url(${backgroundImageURL}), ${lastCellBackground}`;
+        }
+
+        cssStyles += `#${paramId}_table .parameter td:first-child { background: ${firstCellBackground}; }\n`;
+        cssStyles += `#${paramId}_table .parameter td:last-child { background: ${lastCellBackground}; }\n`;
+      }
+
+      const styleTag = document.createElement("style");
+      styleTag.id = "custom-parameter-styles";
+      styleTag.innerHTML = cssStyles;
+      document.head.appendChild(styleTag);
+    }
+    applyParameterColors();
+  }
   // ====================================================================================================================
   //   . . . ПОЛЬЗОВАТЕЛЬСКИЕ ТЕМЫ / ЦВЕТА . . .
   // ====================================================================================================================
@@ -3881,8 +4339,7 @@ if (window.location.href === targetCW3) {
         tbody.style.gridTemplateColumns = "1fr auto 1fr";
         tbody.style.gridTemplateRows = generateGridRowStyles(
           leftBlocks,
-          rightBlocks,
-          predefinedHeights
+          rightBlocks
         );
 
         blocks.forEach((block) => {
@@ -3893,44 +4350,18 @@ if (window.location.href === targetCW3) {
       }
     }
 
-    function generateGridRowStyles(leftBlocks, rightBlocks, predefinedHeights) {
+    function generateGridRowStyles(leftBlocks, rightBlocks) {
       const numRows = Math.max(leftBlocks.length, rightBlocks.length);
       let rowStyles = [];
 
       for (let i = 0; i < numRows; i++) {
-        const leftBlockId = leftBlocks[i];
-        const rightBlockId = rightBlocks[i];
-
         let rowHeight = "auto";
-
-        if (leftBlockId && predefinedHeights[leftBlockId]) {
-          rowHeight = predefinedHeights[leftBlockId];
-        }
-        if (rightBlockId && predefinedHeights[rightBlockId]) {
-          const rightHeight = predefinedHeights[rightBlockId];
-          // Если обе стороны имеют предопределенные высоты, выбираем минимальную
-          if (rowHeight !== "auto") {
-            rowHeight =
-              Math.min(parseInt(rowHeight), parseInt(rightHeight)) + "px";
-          } else {
-            rowHeight = rightHeight;
-          }
-        }
-
         rowStyles.push(rowHeight);
       }
 
       const rowStylesString = rowStyles.join(" ");
-      // console.log(rowStylesString);
       return rowStylesString;
     }
-
-    // Предопределенные высоты для блоков
-    const predefinedHeights = {
-      tr_tos: "30px",
-      // Больше блоков сюда стоп а зачем
-      // TODO - Переделать всю эту проклятую систему во что-то адекватное.
-    };
 
     function generateGridTemplate(leftBlocks, rightBlocks) {
       const numRows = Math.max(leftBlocks.length, rightBlocks.length);
@@ -4248,6 +4679,8 @@ if (window.location.href === targetCW3) {
     observer.observe(historyBlock, config);
   }
   // ====================================================================================================================
+  // мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу мяу
+  // ====================================================================================================================
   //   . . . СОВРЕМЕННЫЙ (НОВЫЙ) ЧАТ . . .
   // ====================================================================================================================
   // я на этом инвалиде потерял все нервы кетвар желаю тебе счастья удачи и всего хорошего 😌😌😌😌😌😌😌😌😌😌
@@ -4266,6 +4699,7 @@ if (window.location.href === targetCW3) {
 
       if (nickElement) {
         textArea.value += nickElement.textContent;
+        textArea.focus();
       }
     }
 
@@ -4705,7 +5139,7 @@ if (window.location.href === targetCW3) {
   // ахахаха глянье на этих незнающих
   var weatherModifier = 1;
 
-  if (settings.extendedSettings) {
+  if (settings.manualWeatherPanel) {
     const manualWeatherSlider = document.getElementById("manualWeather");
 
     manualWeatherSlider.addEventListener("change", () => {
@@ -4816,9 +5250,9 @@ if (window.location.href === targetCW3) {
   // Это мне даст в будущем возможность более плавно и красиво настраивать цвета. Наверно. Может быть.
   // либо я скоро психану и буду парсить данные ещё и с https://catwar.su/time
 
-  // Очень холодно
-  // Холодно #76A2C0;
-  // Прохладно #3B6C9B; #4C7BA6;
+  // Очень холодно #94BDD2;
+  // Холодно #7FAAC5; #76A2C0; #6A96B8; #6593B6; #618FB3;
+  // Прохладно #3B6C9B; #4C7BA6; #5887AE; #5D8BB0;
   // Тепло #FCBD8E; #F8A37A;
   // Жарковато #F79973; #F6946F; #F58F6B; #F28060; #F17A5C; #EF6B50;
   // Жарко #ED6149; #EB5741; #EB523D; #E73D2E; #E6382A;
@@ -4931,7 +5365,7 @@ if (window.location.href === targetCW3) {
 
   // ====================================================================================================================
   // TODO - Опробовать снова ивентЛисенеры.
-  if (!settings.extendedSettings) {
+  if (!settings.manualWeatherPanel) {
     setInterval(() => {
       getSkyType();
       getTime();
@@ -5267,7 +5701,7 @@ if (window.location.href === targetCW3) {
 
     requestAnimationFrame(animateWeather);
   }
-  if (settings.weatherEnabled || settings.extendedSettings) {
+  if (settings.weatherEnabled || settings.manualWeatherPanel) {
     animateWeather();
   }
   // ====================================================================================================================
@@ -5334,7 +5768,7 @@ if (window.location.href === targetCW3) {
   }
 
   function toggleAurora() {
-    if (!settings.extendedSettings) {
+    if (!settings.manualWeatherPanel) {
       if (
         currentWeather === "northernLights" ||
         (currentWeather === "clear" &&
@@ -5359,7 +5793,7 @@ if (window.location.href === targetCW3) {
 
   setInterval(() => {
     toggleAurora();
-    if (!settings.extendedSettings) {
+    if (!settings.manualWeatherPanel) {
       generateFirefliesNaturally();
     }
   }, 2000);
@@ -5413,7 +5847,7 @@ if (window.location.href === targetCW3) {
   }
 
   function toggleFireflies() {
-    if (settings.extendedSettings) {
+    if (settings.manualWeatherPanel) {
       if (fireflies.length === 0) {
         for (let i = 0; i < desiredNumberOfFireflies; i++) {
           fireflies.push(generateFirefly());
@@ -5483,7 +5917,7 @@ if (window.location.href === targetCW3) {
     requestAnimationFrame(animateFireflies);
   }
 
-  if (settings.weatherEnabled || settings.extendedSettings) {
+  if (settings.weatherEnabled || settings.manualWeatherPanel) {
     animateFireflies();
   }
   // ====================================================================================================================
@@ -5495,7 +5929,7 @@ if (window.location.href === targetCW3) {
   const pixelSplashes = [];
 
   switch (true) {
-    case settings.extendedSettings && !settings.weatherDrops:
+    case settings.manualWeatherPanel && !settings.weatherDrops:
     case settings.weatherEnabled && !settings.weatherDrops:
       setInterval(() => {
         checkElements(raindrops, weatherContainer);
@@ -5505,7 +5939,7 @@ if (window.location.href === targetCW3) {
       }, 120);
       break;
 
-    case settings.extendedSettings && settings.weatherDrops:
+    case settings.manualWeatherPanel && settings.weatherDrops:
     case settings.weatherEnabled && settings.weatherDrops:
       animateLanding();
       break;
@@ -5666,17 +6100,17 @@ if (window.location.href === targetCW3) {
     }
   }
   // ====================================================================================================================
-  //   . . . РЕЖИМ ГЕЙМ-МАСТЕРА . . .
+  //   . . . РЕЖИМ ГЕЙМ-МАСТЕРА . . . АВТОРИЗАЦИЯ . . .
   // ====================================================================================================================
   if (settings.GMbetaTest) {
-    // Тут что-то было, но куда-то пропало.
+    // Тут снова что-то было, но оно ускользнуло от вас...
   }
   // ====================================================================================================================
 } // Конец грандиозного, но и начало чево то нового... Зогдачно......
 // ====================================================================================================================
 // 🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨
 // ====================================================================================================================
-//   . . . ТАРГЕТИНГ ОКНА ОХОТЫ И ПОДГОТОВКА КОНТЕЙНЕРОВ . . . 
+//   . . . ТАРГЕТИНГ ОКНА ОХОТЫ И ПОДГОТОВКА КОНТЕЙНЕРОВ . . .
 // ====================================================================================================================
 if (window.location.href === targetCW3Hunt) {
   amogusSus();
@@ -5684,64 +6118,77 @@ if (window.location.href === targetCW3Hunt) {
   const globalContainerElement = document.createElement("div");
   globalContainerElement.id = "uwu-global-container";
   containerElement.appendChild(globalContainerElement);
-// ====================================================================================================================
-//   . . . ПОДПИСЫВАТЬ ЗАПАХ . . . 
-// ====================================================================================================================
-if (settings.describeHuntingSmell) {
-  const smellElement = document.getElementById('smell');
-  let smellText = null;
-  let smellTimer = null;
-  let intervalId = null;
-  let previousRed = null;
-  let seconds = 0;
-  
-  function updateHintText(currentRed) {
-    if (currentRed === 0) {
-      smellText.textContent = 'Потерян';
-    } else if (previousRed !== null) {
-      if (currentRed > previousRed) {
-        smellText.textContent = 'Ближе';
-      } else if (currentRed < previousRed) {
-        smellText.textContent = 'Дальше';
+  // ====================================================================================================================
+  //   . . . ПОДПИСЫВАТЬ ЗАПАХ . . .
+  // ====================================================================================================================
+  if (settings.describeHuntingSmell) {
+    const smellElement = document.getElementById("smell");
+    let smellText = null;
+    let smellTimer = null;
+    let intervalId = null;
+    let previousRed = null;
+    let seconds = 0;
+
+    function updateHintText(currentRed) {
+      if (currentRed === 0) {
+        smellText.textContent = "Потерян";
+      } else if (previousRed !== null) {
+        if (currentRed > previousRed) {
+          smellText.textContent = "Ближе";
+        } else if (currentRed < previousRed) {
+          smellText.textContent = "Дальше";
+        }
+      } else {
+        smellText.textContent = " ";
       }
-    } else {
-      smellText.textContent = ' ';
+      previousRed = currentRed;
     }
-    previousRed = currentRed;
-  }
-  
-  function updateTimer() {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    smellTimer.textContent = `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
-    seconds++;
-  }
-  
-  function handleSmellChange() {
-    const style = window.getComputedStyle(smellElement);
-    const currentColor = style.backgroundColor;
-  
-    if (currentColor !== 'rgba(0, 0, 0, 0)' && currentColor !== 'transparent') {
-      if (!smellText) {
-        smellText = document.createElement('div');
-        smellText.id = 'smellText';
-        smellTimer = document.createElement('div');
-        smellTimer.id = 'smellTimer';
-        document.body.appendChild(smellText);
-        document.body.appendChild(smellTimer);
-  
-        intervalId = setInterval(updateTimer, 1000);
+
+    function updateTimer() {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      smellTimer.textContent = `${String(minutes).padStart(2, "0")}:${String(
+        remainingSeconds
+      ).padStart(2, "0")}`;
+      seconds++;
+    }
+
+    function handleSmellChange() {
+      const style = window.getComputedStyle(smellElement);
+      const currentColor = style.backgroundColor;
+
+      if (
+        currentColor !== "rgba(0, 0, 0, 0)" &&
+        currentColor !== "transparent"
+      ) {
+        if (!smellText) {
+          smellText = document.createElement("div");
+          smellText.id = "smellText";
+          smellTimer = document.createElement("div");
+          smellTimer.id = "smellTimer";
+          document.body.appendChild(smellText);
+          document.body.appendChild(smellTimer);
+
+          intervalId = setInterval(updateTimer, 1000);
+        }
+
+        const currentRed = parseInt(
+          currentColor.slice(
+            currentColor.indexOf("(") + 1,
+            currentColor.indexOf(",")
+          )
+        );
+        updateHintText(currentRed);
       }
-  
-      const currentRed = parseInt(currentColor.slice(currentColor.indexOf("(") + 1, currentColor.indexOf(",")));
-      updateHintText(currentRed);
     }
-  }
-  
-  new MutationObserver(handleSmellChange).observe(smellElement, { attributes: true, attributeFilter: ['style'] });
-  
-  const describeHuntingSmell = document.createElement("style");
-  describeHuntingSmell.innerHTML = `
+
+    new MutationObserver(handleSmellChange).observe(smellElement, {
+      attributes: true,
+      attributeFilter: ["style"],
+    });
+
+    const describeHuntingSmell = document.createElement("style");
+    describeHuntingSmell.innerHTML = `
   #smellText {
     font-size: 20px;
     background: white;
@@ -5764,69 +6211,70 @@ if (settings.describeHuntingSmell) {
     bottom: 40px; 
   }
   `;
-  document.head.appendChild(describeHuntingSmell);
-}
-// ====================================================================================================================
-//   . . . ВИРТУАЛЬНЫЙ ДЖОЙСТИК . . . 
-// ====================================================================================================================
-// Работаем с сайтовым обработчиком нажатий: "//e.catwar.su/js/key.js?268881668"
+    document.head.appendChild(describeHuntingSmell);
+  }
+  // ====================================================================================================================
+  //   . . . ВИРТУАЛЬНЫЙ ДЖОЙСТИК . . .
+  // ====================================================================================================================
+  // Работаем с сайтовым обработчиком нажатий: "//e.catwar.su/js/key.js?268881668"
   if (settings.huntingVirtualJoystick) {
     function createJoystick() {
       const joystickHTML = `
-    <div id="joystick-container">
-      <div id="joystick-base">
-        <div id="joystick-head"></div>
-      </div>
-    </div>
-  `;
-
+        <div id="joystick-container">
+          <div id="joystick-base">
+            <div id="joystick-head"></div>
+          </div>
+        </div>
+      `;
+  
       const uwuContainer = document.getElementById("uwu-global-container");
       uwuContainer.insertAdjacentHTML("beforeend", joystickHTML);
-
+  
       const css = `
-      #nav_buttons_wrapper {
-        display: none;
-      }
-
-    #joystick-container {
-      pointer-events: auto;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: ${settings.sizeHuntingVirtualJoystick}px; 
-      height: ${settings.sizeHuntingVirtualJoystick}px;
-      z-index: 10; 
-    }
-
-    #joystick-base {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background-color: rgba(128, 128, 128, 0.5);
-      position: relative;
-    }
-
-    #joystick-head {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: ${settings.sizeHuntingVirtualJoystick / 2}px;
-      height: ${settings.sizeHuntingVirtualJoystick / 2}px;
-      border-radius: 50%;
-      background-color: #808080;
-      touch-action: none; 
-    }
-  `;
+        #nav_buttons_wrapper {
+          display: none;
+        }
+  
+        #joystick-container {
+          pointer-events: auto;
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          width: ${settings.sizeHuntingVirtualJoystick}px; 
+          height: ${settings.sizeHuntingVirtualJoystick}px;
+          z-index: 10; 
+        }
+  
+        #joystick-base {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          background-color: rgba(128, 128, 128, 0.5);
+          position: relative;
+        }
+  
+        #joystick-head {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: ${settings.sizeHuntingVirtualJoystick / 2}px;
+          height: ${settings.sizeHuntingVirtualJoystick / 2}px;
+          border-radius: 50%;
+          background-color: #808080;
+          touch-action: none; 
+        }
+      `;
       const style = document.createElement("style");
       style.innerHTML = css;
       document.head.appendChild(style);
-
+  
       const joystickContainer = document.getElementById("joystick-container");
       const joystickHead = document.getElementById("joystick-head");
       const baseRadius = joystickContainer.offsetWidth / 2;
       let activeTouchId = null;
-
+      let keys = {};
+  
       function handleTouchStart(event) {
         if (activeTouchId === null) {
           const touch = event.touches[0];
@@ -5834,7 +6282,7 @@ if (settings.describeHuntingSmell) {
           updateJoystickPosition(touch.clientX, touch.clientY);
         }
       }
-
+  
       function handleTouchMove(event) {
         event.preventDefault();
         for (let i = 0; i < event.touches.length; i++) {
@@ -5845,118 +6293,130 @@ if (settings.describeHuntingSmell) {
           }
         }
       }
-
+  
       function handleTouchEnd(event) {
-        if (event.touches.length === 0) {
-          activeTouchId = null;
-          resetJoystick();
-        }
+        activeTouchId = null;
+        resetJoystick();
+        releaseAllKeys();
       }
-
+  
       function updateJoystickPosition(x, y) {
         const containerRect = joystickContainer.getBoundingClientRect();
         const deltaX = x - (containerRect.left + baseRadius);
         const deltaY = y - (containerRect.top + baseRadius);
         const angle = Math.atan2(deltaY, deltaX);
         const distance = Math.min(Math.hypot(deltaX, deltaY), baseRadius * 0.8);
-
-        joystickHead.style.left = `${
-          baseRadius + distance * Math.cos(angle)
-        }px`;
+  
+        joystickHead.style.left = `${baseRadius + distance * Math.cos(angle)}px`;
         joystickHead.style.top = `${baseRadius + distance * Math.sin(angle)}px`;
-
+  
         const threshold = 0.3;
-        const directions = {
-          w: false,
-          a: false,
-          s: false,
-          d: false,
-          q: false,
-          e: false,
-          z: false,
-          x: false,
+        const newDirections = {
+          w: false, a: false, s: false, d: false,
+          q: false, e: false, z: false, x: false,
         };
 
+        simulateKeyRelease('w');
+        simulateKeyRelease('a');
+        simulateKeyRelease('s');
+        simulateKeyRelease('d');
+        simulateKeyRelease('q');
+        simulateKeyRelease('e');
+        simulateKeyRelease('z');
+        simulateKeyRelease('x');
+  
         if (distance > baseRadius * threshold) {
           if (angle >= -Math.PI * 0.125 && angle < Math.PI * 0.125) {
-            directions.d = true;
+            newDirections.d = true;
           } else if (angle >= Math.PI * 0.125 && angle < Math.PI * 0.375) {
-            directions.x = true; 
+            newDirections.x = true;
           } else if (angle >= Math.PI * 0.375 && angle < Math.PI * 0.625) {
-            directions.s = true;
+            newDirections.s = true;
           } else if (angle >= Math.PI * 0.625 && angle < Math.PI * 0.875) {
-            directions.z = true;
+            newDirections.z = true;
           } else if (angle >= Math.PI * 0.875 || angle < -Math.PI * 0.875) {
-            directions.a = true; 
+            newDirections.a = true;
           } else if (angle >= -Math.PI * 0.875 && angle < -Math.PI * 0.625) {
-            directions.q = true;
+            newDirections.q = true;
           } else if (angle >= -Math.PI * 0.625 && angle < -Math.PI * 0.375) {
-            directions.w = true; 
+            newDirections.w = true;
           } else if (angle >= -Math.PI * 0.375 && angle < -Math.PI * 0.125) {
-            directions.e = true; 
+            newDirections.e = true;
           }
         }
-
-        for (const key in directions) {
-          if (directions[key] !== keys[key]) {
-            if (directions[key]) {
+  
+        for (const key in newDirections) {
+          if (newDirections[key] !== keys[key]) {
+            if (newDirections[key]) {
               simulateKeyPress(key);
             } else {
               simulateKeyRelease(key);
             }
-            keys[key] = directions[key];
+            keys[key] = newDirections[key];
           }
         }
-
-        keys = directions;
       }
-
+  
       function resetJoystick() {
         joystickHead.style.left = "50%";
         joystickHead.style.top = "50%";
       }
-
-      let keys = {};
-
+  
+      function releaseAllKeys() {
+        for (const key in keys) {
+          if (keys[key]) {
+            simulateKeyRelease(key);
+            keys[key] = false;
+          }
+        }
+      }
+  
       function simulateKeyPress(key) {
         const keyCode = Key.dict[key];
-        if (keyCode) {
-          // Создаем объект-заглушку для события,
-          // так как Key.keydown ожидает объект события
-          const mockEvent = {
-            keyCode: keyCode,
-            ctrlKey: false,
-            shiftKey: false,
-            altKey: false,
-            preventDefault: () => {}, // Пустая функция, чтобы не было ошибок
-          };
+        if (keyCode && !Key.keys.includes(keyCode)) {
+          Key.push(keyCode);
+          const mockEvent = createMockEvent(keyCode);
           Key.keydown(mockEvent);
         }
       }
-
+  
       function simulateKeyRelease(key) {
         const keyCode = Key.dict[key];
         if (keyCode) {
-          const mockEvent = {
-            keyCode: keyCode,
-            ctrlKey: false,
-            shiftKey: false,
-            altKey: false,
-            preventDefault: () => {},
-          };
+          const mockEvent = createMockEvent(keyCode);
           Key.keyup(mockEvent);
+          const index = Key.keys.indexOf(keyCode);
+          if (index > -1) {
+            Key.keys.splice(index, 1);
+          }
         }
       }
-
+  
+      function createMockEvent(keyCode) {
+        return {
+          keyCode: keyCode,
+          ctrlKey: false,
+          shiftKey: false,
+          altKey: false,
+          preventDefault: () => {},
+          repeat: false
+        };
+      }
+  
       joystickContainer.addEventListener("touchstart", handleTouchStart);
       joystickContainer.addEventListener("touchmove", handleTouchMove);
       joystickContainer.addEventListener("touchend", handleTouchEnd);
       joystickContainer.addEventListener("touchcancel", handleTouchEnd);
+  
+      window.addEventListener('blur', function() {
+        releaseAllKeys();
+        resetJoystick();
+      });
     }
-
+  
     createJoystick();
   }
-// ====================================================================================================================
+  // ====================================================================================================================
 }
 // ====================================================================================================================
 function amogusSus() {
