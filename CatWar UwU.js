@@ -107,7 +107,7 @@ let settings = {
   parametersUserBackgroundImageURL: "",
 
   extendedSettingsPanel: false,
-  showUpdateNotification: true,
+  showUpdateNotification: false,
   showSplashScreens: false,
   extendedHints: true,
   GMbetaTest: false,
