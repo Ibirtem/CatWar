@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.19.0-06.24
+// @version      v1.20.0-07.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.19.0";
+const current_uwu_version = "1.20.0";
 // ✨🦐✨🦐✨
 let settings = {
 
@@ -36,6 +36,8 @@ let settings = {
   backgroundRepeat: false,
   backgroundUser: false,
   backgroundUserImageURL: "",
+  gameFieldBackgroundUser: false,
+  gameFieldBackgroundUserImageURL: "",
   userTheme: false,
   commentsAvatars: false,
   
@@ -59,6 +61,14 @@ let settings = {
   draggingFightPanel: false,
   FightPanelAdjustableHeight: false,
   FightPanelHeight: "70",
+  FightTeams: false,
+  FightTeamsColors: {
+    team1: ["#41cd70", "#cd4141"],
+    team2: ["#c968ff", "#cd4141"],
+    team3: ["#44bcff", "#cd4141"],
+    team4: ["#FFFF00", "#cd4141"]
+  },
+  FightTeamsPanelHight: "100",
 
   describeHuntingSmell: false,
   huntingVirtualJoystick: false,
@@ -95,12 +105,15 @@ let settings = {
     need: ["#008000", "#008000", "#ff0000", "#ff0000"],
     health: ["#008000", "#008000", "#ff0000", "#ff0000"],
     clean: ["#008000", "#008000", "#ff0000", "#ff0000"],
+
     smell: ["#008000", "#008000", "#cccccc", "#cccccc"],
     dig: ["#008000", "#008000", "#cccccc", "#cccccc"],
     swim: ["#008000", "#008000", "#cccccc", "#cccccc"],
     might: ["#008000", "#008000", "#cccccc", "#cccccc"],
     tree: ["#008000", "#008000", "#cccccc", "#cccccc"],
     observ: ["#008000", "#008000", "#cccccc", "#cccccc"],
+
+    other: ["#008000", "#008000", "#cccccc", "#cccccc"],
   },
   parametersBackgroundImage: false,
   parametersUserBackgroundImage: false,
@@ -111,7 +124,6 @@ let settings = {
   showSplashScreens: false,
   extendedHints: true,
   GMbetaTest: false,
-
 };
 
 // Типо начальные таргетные ссылки.
@@ -232,6 +244,14 @@ const uwusettings = `
   <div id="theme-panel">
 
   <h2>Поле Игровой</h2>
+
+  <div>
+    <p> Заменяет все фоны игровых локаций на выбранный вами фон. Помните, что для правильного отображения нужно изображение 1000х1000 px.</p>
+    <input type="checkbox" id="game-Field-background-User" data-setting="gameFieldBackgroundUser" />
+    <label for="game-Field-background-User-enabled">Статичный фон локации:</label>
+    <input type="text" id="gameFieldSettingImageURLField" placeholder="Вставьте URL" data-setting="gameFieldBackgroundUserImageURL" />
+    <button id="SettingSaveButton1">Сохранить</button>
+  </div>
 
   <div>
     <p>Отрисовывает границы клеток Игрового поля.</p>
@@ -457,7 +477,7 @@ const uwusettings = `
   <table class="parameters-color-table">
     <thead>
       <tr>
-        <th class="parameters-color-table__header">Параметр</th>
+        <th class="parameters-color-table__header">Градиент</th>
         <th class="parameters-color-table__header">От</th>
         <th class="parameters-color-table__header">До</th>
         <th class="parameters-color-table__header">От</th>
@@ -465,6 +485,9 @@ const uwusettings = `
       </tr>
     </thead>
     <tbody id="color-settings-body" class="parameters-color-table__body">
+      <tr>
+        <th class="parameters-color-table__cell" colspan="5">Параметры</th>
+      </tr>
       <tr>
         <td class="parameters-color-table__cell">Сон</td>
         <td class="parameters-color-table__cell"><input type="color" data-param="dream" data-color-type="bar-from"></td>
@@ -508,7 +531,7 @@ const uwusettings = `
         <td class="parameters-color-table__cell"><input type="color" data-param="clean" data-color-type="bg-to"></td>
       </tr>
       <tr>
-        <th class="parameters-color-table__cell">Навыки</th>
+        <th class="parameters-color-table__cell" colspan="5">Навыки</th>
       </tr>
       <tr>
         <td class="parameters-color-table__cell">Запах</td>
@@ -552,6 +575,16 @@ const uwusettings = `
         <td class="parameters-color-table__cell"><input type="color" data-param="observ" data-color-type="bg-from"></td>
         <td class="parameters-color-table__cell"><input type="color" data-param="observ" data-color-type="bg-to"></td>
       </tr>
+      <tr>
+        <th class="parameters-color-table__cell" colspan="5">Уникальные навыки</th>
+      </tr>
+      <tr>
+        <td class="parameters-color-table__cell"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="other" data-color-type="bar-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="other" data-color-type="bar-to"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="other" data-color-type="bg-from"></td>
+        <td class="parameters-color-table__cell"><input type="color" data-param="other" data-color-type="bg-to"></td>
+      </tr>
     </tbody>
   </table>
 </div>
@@ -586,12 +619,49 @@ const uwusettings = `
       <p>Возможность растягивать высоту панели и её начальная высота.</p>
       <input type="checkbox" id="Fight-Panel-Adjustable-Height" data-setting="FightPanelAdjustableHeight" />
       <label for="Fight-Panel-Adjustable-Height">Настраиваемая высота панели</label>
-    </div>
-
-    <div>
       <input type="text" id="FightPanelHeightField" placeholder=". . ." data-setting="FightPanelHeight" />
       <label>px; - Начальная высота панели</label>
     </div>
+
+    <div>
+      <p>Возможность перекрашивать и создавать команды в Панели Боевого Режима.</p>
+      <input type="checkbox" id="Fight-Teams" data-setting="FightTeams" />
+      <label for="Fight-Teams">Команды в Боевом Режиме</label>
+      <input type="text" id="FightTeamsPanelHightField" placeholder=". . ." data-setting="FightTeamsPanelHight" />
+      <label>px; - Начальная высота панели Командного Боя</label>
+    </div>
+
+<table id="colorSettingsTable">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Энергия</th>
+      <th>Снесено</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Команда 1</td>
+      <td><input type="color" data-team="1" data-part="green" value="#41cd70"></td>
+      <td><input type="color" data-team="1" data-part="red" value="#cd4141"></td>
+    </tr>
+    <tr>
+      <td>Команда 2</td>
+      <td><input type="color" data-team="2" data-part="green" value="#c968ff"></td>
+      <td><input type="color" data-team="2" data-part="red" value="#cd4141"></td>
+    </tr>
+    <tr>
+      <td>Команда 3</td>
+      <td><input type="color" data-team="3" data-part="green" value="#44bcff"></td>
+      <td><input type="color" data-team="3" data-part="red" value="#cd4141"></td>
+    </tr>
+    <tr>
+      <td>Команда 4</td>
+      <td><input type="color" data-team="4" data-part="green" value="#FFFF00"></td>
+      <td><input type="color" data-team="4" data-part="red" value="#cd4141"></td>
+    </tr>
+  </tbody>
+</table>
   
   <hr>
   <h2>Охота</h2>
@@ -609,9 +679,6 @@ const uwusettings = `
       <p>Отображает Виртуальную сенсорную Джойстиковую кнопку для мобильных устройств во время охоты для более удобного управления.</p>
       <input type="checkbox" id="hunting-Virtual-Joystick" data-setting="huntingVirtualJoystick" />
       <label for="hunting-Virtual-Joystick">Виртуальный джойстик для охоты</label>
-    </div>
-
-    <div>
       <input type="text" id="sizeHuntingVirtualJoystickField" placeholder=". . ." data-setting="sizeHuntingVirtualJoystick" />
       <label>px; - Размер Джойстика. Стандартный размер - 150 px;</label>
     </div>
@@ -809,36 +876,33 @@ const uwusettings = `
 const newsPanel = `
 <div id="news-panel">
   <button id="news-button">
-    v${current_uwu_version} - ❄️ Оформление Параметров и Навыков! Уведомления обновлений! Импорт/Экспорт! И много реворков!
+    v${current_uwu_version} - 🌸 Свой статичный фон на локации, командные цвета для боёв и снова правки!
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
     <p>
-      — Реворкнута работа Компактной Игровой. Теперь пользователю не надо так сильно мучаться с расстановками и думать почему что-то опять не сработало. 
+      — Ну эм эм ну! Теперь вы можете выбрать цвета для оставшихся уникальных навыков, таких как ЦУ, Могущество и прочие! 
+      Если быть точнее, это работает как "стандартный" цвет для навыков, если для этого навыка не выставлен какой-либо ещё цвет.
     </p>
-    <p>— Так же теперь Панель Расширенных настроек можно держать всегда включённой и не беспокоиться об выключении генерации природных эффектов.
-      Основная цель этого разделения - изначально в этой панели должно было быть много полезного, от быстрых изменений дизайна Игровой, до "админских" штук.
-      Например, через него вы уже можете узнать, что Скрипт/Мод UwU обновился. </p>
-    <p>— Splash скрины как в Майне. Зачем? Не знаю. Я с таким вопросом над всем скриптом сижу.</p>
-    <p>— ого импорт и експорт класс супер вау капесссссссссссссс</p>
     <hr>
     <h3>Внешний вид</h3>
-    <p>— Где-то когда-то что-то определённо дописывал и переписывал.</p>
-    <p>— Удалено текстовое предупреждение об кривой работе "Компактной игровой" из-за ненадобности.</p>
+    <p>— Небольшой редизайн покраса Навыков и Параметров.</p>
+    <p>— Кнопка минного поля теперь тёмных оттенков, что позволяет ей не теряться на ярких дизайнах и фонах.</p>
+    <p>— Маленькая укомплектовка вида настроек. Поднял строчки ввода размеров в строчки включения самой функции. Да и выглядит чуть опрятнее и понятнее.</p>
     <hr>
     <h3>Изменения кода</h3>
-    <p>— Нажатие на имя кота так же переносит ещё и фокус на строчку ввода. Теперь можете писать сразу.</p>
-    <p>— Всё потихоньку пополняю библиотеку диапазона цветов температуры. Во смешно будет, если КекВар в один день решит цвета поменять.</p>
-    <p>— Мелкая сортировка изначальных сохранений в удобные для восприятия кучки.</p>
-    <p>— Обобщил и упростил работу с сохранениями.</p>
-    <p>— Так же рассортировал код работающий с Настройками в более понятные блоки.</p>
-    <p>— Разделение Расширенных настроек от Ручного управления погоды. Теперь это две независимые функции (Почти).</p>
-    <p>— Улучшен код работы Джойстика для охоты. Теперь персонаж лучше отзываться на изменения движения.</p>
-    <p>— Упрощён код работы с развёрткой стиля Компактной игровой. Удалено предопределение высоты блоков.</p>
-    <p>— Немного упрощена работа кода с расстановкой блоков Компактной игровой.</p>
-    <p>— Я запрещаю пользователю ср... Ставить что-то с блоком "Информация".</p>
+    <p>— Теперь Уведомление об обновлении скрипта изначально выключенно (Было встроенно хотфиксом в 1.19.0).</p>
+    <p>— Переделано и упрощено определение Температуры Игровой в массив известных цветов.</p>
+    <p>— Типо правка, возможность выставлять цвета "уникальных" навыков. Пока не поточненько, пока не выясну легально ли "раскрывать" остальные навыки. Хотя мне больше нравится нынешнее решение.</p>
+    <p>— Переименовка констант вставки стилей (Я всё равно продолжил всё называть криво).</p>
+    <p>— Вроде бы, надеюсь правильно, работает жалоба на игроков в чате.</p>
+    <p>— Оптимизация производительности чата при помощи делегированных кликов.</p>
+    <p>— Создана функция setupMutationObserver для упрощённой удобной динамической установки наблюдателей. Я отказываюсь использовать библиотеки когда я могу всё запилить сам.</p>
+    <p>— Из-за новой установки наблюдателей Проценты параметров теперь не будут теряться...</p>
+    <p>— ...И улучшен отклик изменений погодных эффектов и явлений.</p>
+    <p>— Чота где-то удалил.</p>
     <hr>
-    <p>Дата выпуска: 23.06.24</p>
+    <p>Дата выпуска: 01.07.24</p>
   </div>
 </div>
 `;
@@ -913,11 +977,10 @@ const manualWeatherPanel = `
 </div>
 `;
 // ====================================================================================================================
-//   . . . ГЛАВНЫЕ CSS СТИЛИ . . .
+//   . . . ГЛАВНЫЙ CSS СТИЛЬ . . .
 // ====================================================================================================================
-// Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд
 // TODO - Унифицировать шрифты, цвета текстов, прозрачность, закруглённость штучек ну кароче всё как надо чтобы не сделать в итоге лабиринт.
-let css = `
+const css_uwu_main = `
 #uwusettings {
   font-family: "Montserrat", sans-serif;
   margin: 0 auto;
@@ -1015,7 +1078,14 @@ let css = `
   border: 1px #232323 solid;
 }
 
-#uwusettings .parameters-color-table {
+#colorSettingsTable,
+#colorSettingsTable tr,
+#colorSettingsTable td {
+  border: 1px #232323 solid;
+}
+
+#uwusettings .parameters-color-table,
+#colorSettingsTable {
   margin-top: 8px;
 }
 
@@ -1623,7 +1693,16 @@ let css = `
   padding: 5px;
 }
 `;
-GM_addStyle(css);
+document.head.insertAdjacentHTML('beforeend', `<style id="css_uwu_main">${css_uwu_main}</style>`);
+
+// ====================================================================================================================
+//   . . . ПРОЗРАЧНЫЙ CSS СТИЛЬ . . .
+// ====================================================================================================================
+// Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд
+const css_uwu_glass = `
+
+`; 
+document.head.insertAdjacentHTML('beforeend', `<style id="css_uwu_glass">${css_uwu_glass}</style>`);
 // ====================================================================================================================
 //  . . . СОХРАНЕНИЯ И ЗАГРУЗКА НАСТРОЕК . . .
 // ====================================================================================================================
@@ -1644,6 +1723,32 @@ function loadSettings() {
   } else {
     console.log("Нет сохраненных настроек");
   }
+}
+// ====================================================================================================================
+//   . . . ДИНАМИЧНЫЙ ОБОЗРЕВАТЕЛЬ . . .
+// ====================================================================================================================
+// TODO - Не забыть, что у меня существует теперь это.
+function debounce(func, wait) {
+  let timeout;
+  return function(...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
+
+async function setupMutationObserver(selector, callback, options = { attributes: true, attributeFilter: ["style"] }, maxAttempts = 8, delay = 500) {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const element = document.querySelector(selector);
+    if (element) {
+      const observer = new MutationObserver(debounce(callback, 200));
+      observer.observe(element, options);
+      // console.log(`Наблюдатель установлен для элемента с селектором "${selector}".`);
+      callback();
+      return;
+    }
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+  console.warn(`Элемент с селектором "${selector}" не найден после ${maxAttempts} попыток.`);
 }
 // ====================================================================================================================
 //  . . . ВНЕШНИЙ ВИД ПАНЕЛИ НАСТРОЕК . . .
@@ -1749,6 +1854,34 @@ if (targetSettings.test(window.location.href)) {
     }
   }
   restoreColorPickers();
+
+  document
+    .querySelectorAll('#colorSettingsTable input[type="color"]')
+    .forEach((element) => {
+      element.addEventListener("change", () => {
+        const team = `team${element.dataset.team}`;
+        const part = element.dataset.part === "green" ? 0 : 1;
+        const colorValue = element.value;
+        settings.FightTeamsColors[team][part] = colorValue;
+        saveSettings();
+      });
+    });
+
+  function restoreColorTeamsPickers() {
+    document
+      .querySelectorAll('#colorSettingsTable input[type="color"]')
+      .forEach((element) => {
+        element.addEventListener("change", () => {
+          const team = `team${element.dataset.team}`;
+          const part = element.dataset.part === "green" ? 0 : 1;
+          const colorValue = element.value;
+          settings.FightTeamsColors[team][part] = colorValue;
+          saveSettings();
+        });
+      });
+  }
+
+  restoreColorTeamsPickers();
   // ====================================================================================================================
   //  . . . ВЗАИМОИСКЛЮЧАЮЩИЕСЯ ЧЕКБОКСЫ . . .
   // ====================================================================================================================
@@ -1848,7 +1981,7 @@ if (targetSettings.test(window.location.href)) {
     testButton.textContent = "Тест звука";
     testButton.addEventListener("click", () => {
       const selectedSoundId = settings[settingsKeyForSound];
-      const volume = settings[settingsKeyForVolume] || 5; // Используется 50% по умолчанию если я каким-то боком забыл выставить значение Дефолтом
+      const volume = settings[settingsKeyForVolume] || 5;
       if (selectedSoundId) {
         soundManager.playSound(selectedSoundId, volume);
       } else {
@@ -1904,27 +2037,27 @@ if (targetSettings.test(window.location.href)) {
   const importButton = document.getElementById("importSettingsButton");
   const importSettingsInput = document.getElementById("importSettings");
   const exportSettingsInput = document.getElementById("exportSettings");
-  
+
   importButton.addEventListener("click", () => {
     const importedSettings = importSettingsInput.value;
-  
+
     try {
       const parsedSettings = JSON.parse(importedSettings);
-      settings = { ...settings, ...parsedSettings }; 
-      localStorage.setItem("uwu-settings", JSON.stringify(settings)); 
+      settings = { ...settings, ...parsedSettings };
+      localStorage.setItem("uwu-settings", JSON.stringify(settings));
       console.log("Настройки импортированы:", settings);
     } catch (error) {
       console.error("Ошибка при импорте настроек:", error);
     }
     updateExportField();
   });
-  
+
   function updateExportField() {
     const settingsToExport = JSON.stringify(settings);
     exportSettingsInput.value = settingsToExport;
   }
-  
-  loadSettings(); 
+
+  loadSettings();
   updateExportField();
   // ====================================================================================================================
   //  . . . МАКЕТ КАСТОМИЗАЦИИ ИГРОВОЙ . . .
@@ -2039,7 +2172,6 @@ if (targetSettings.test(window.location.href)) {
         rightColumn.appendChild(blockElement);
       });
     } else {
-      // Настройки по умолчанию
       const defaultLeftBlocks = ["tr_info"];
       const defaultRightBlocks = [
         "tr_tos",
@@ -2620,7 +2752,7 @@ function getModuleNameFromUrl(url) {
 
 function activateModule(data, moduleName, description, version) {
   if (moduleName.endsWith(".css")) {
-    GM_addStyle(data);
+    GM_addStyle(data); // TODO - убрать на ванильную JS
   } else if (moduleName.endsWith(".js")) {
     try {
       new Function(data);
@@ -2907,7 +3039,6 @@ if (window.location.href === targetCW3) {
         "&9": "<span style='color: black;'>", // Черный
       };
 
-      // Добавляем жирный шрифт в начале
       text = "<b>" + text;
 
       for (const code in colorMap) {
@@ -3238,7 +3369,8 @@ if (window.location.href === targetCW3) {
 
     catInfoElement.appendChild(closeInfoContainer);
 
-    const customStyle = `
+    const css_catDefects = document.createElement("style");
+    css_catDefects.innerHTML = `
     .cat-info {
     pointer-events: auto;
     position: fixed;
@@ -3269,21 +3401,33 @@ if (window.location.href === targetCW3) {
     }
 `;
 
-    GM_addStyle(customStyle);
+    document.head.appendChild(css_catDefects);
 
     globalContainer.appendChild(catInfoElement);
+  }
+  // ====================================================================================================================
+  //  . . . СОБСТВЕННЫЙ ФОН ЛОКАЦИИ ИГРОВОЙ . . .
+  // ====================================================================================================================
+  if (settings.gameFieldBackgroundUser) {
+    const css_gameField = document.createElement("style");
+    css_gameField.textContent = `
+      #cages_div {
+          background-image: url(${settings.gameFieldBackgroundUserImageURL}) !important;
+      }
+  `;
+    document.head.appendChild(css_gameField);
   }
   // ====================================================================================================================
   //  . . . ГРАНИЦЫ ЯЧЕЕК . . . cellsNumbers
   // ====================================================================================================================
   if (settings.cellsBorders) {
-    const cellsBorders = document.createElement("style");
-    cellsBorders.innerHTML = `
+    const css_cellsBorders = document.createElement("style");
+    css_cellsBorders.innerHTML = `
     .cage {
       box-shadow: inset 0 0 0 0.${settings.cellsBordersThickness}px #ffffff;
     }
    `;
-    document.head.appendChild(cellsBorders);
+    document.head.appendChild(css_cellsBorders);
   }
   // ====================================================================================================================
   //  . . . НУМЕРАЦИЯ ЯЧЕЕК . . .
@@ -3326,71 +3470,66 @@ if (window.location.href === targetCW3) {
       opacity: 0.8,
     });
   }
-  // ====================================================================================================================
-  //   . . . ПРОЦЕНТЫ ПАРАМЕТРОВ . . .
-  // ====================================================================================================================
-  if (settings.displayParametersPercentages) {
-    const parameterTableIds = [
-      "dream_table",
-      "hunger_table",
-      "thirst_table",
-      "need_table",
-      "health_table",
-      "clean_table",
-    ];
+// ====================================================================================================================
+//   . . . ПРОЦЕНТЫ ПАРАМЕТРОВ . . .
+// ====================================================================================================================
+if (settings.displayParametersPercentages) {
+  const parameterTableIds = [
+    "dream_table",
+    "hunger_table",
+    "thirst_table",
+    "need_table",
+    "health_table",
+    "clean_table",
+  ];
 
-    function updateParameterPercentages(tableId) {
-      const table = document.getElementById(tableId);
-      if (table) {
-        const row = table.querySelector("tbody tr");
-        const greenBar = row.querySelector(
-          "td[style*='background-color: green;']"
-        );
-        const redBar = row.querySelector("td[style*='background-color: red;']");
-        const greenBarWidth = parseInt(greenBar.style.width, 10);
-        const redBarWidth = parseInt(redBar.style.width, 10);
-        const totalWidth = greenBarWidth + redBarWidth;
-        let percentage = (greenBarWidth / totalWidth) * 100;
-        percentage =
-          percentage % 1 !== 0 ? percentage.toFixed(2) : Math.round(percentage);
-
-        let percentageCell = row.querySelector(".percentage-cell");
-        if (!percentageCell) {
-          percentageCell = document.createElement("td");
-          percentageCell.classList.add("percentage-cell");
-          row.appendChild(percentageCell);
-        }
-        percentageCell.textContent = `${percentage}%`;
+  function updateParameterPercentages(tableId) {
+    const table = document.getElementById(tableId);
+    if (table) {
+      const row = table.querySelector("tbody tr");
+      if (!row) {
+        console.warn(`Строка не найдена в таблице с ID "${tableId}".`);
+        return;
       }
-    }
-
-    function observeBarChanges(tableId) {
-      const table = document.getElementById(tableId);
-      if (table) {
-        const row = table.querySelector("tbody tr");
-        const greenBar = row.querySelector(
-          "td[style*='background-color: green;']"
-        );
-        const redBar = row.querySelector("td[style*='background-color: red;']");
-
-        const observer = new MutationObserver(() => {
-          updateParameterPercentages(tableId);
-        });
-
-        const config = { attributes: true, attributeFilter: ["style"] };
-
-        observer.observe(greenBar, config);
-        observer.observe(redBar, config);
+      const greenBar = row.querySelector("td[style*='background-color: green;']");
+      const redBar = row.querySelector("td[style*='background-color: red;']");
+      if (!greenBar || !redBar) {
+        console.warn(`Бары не найдены в строке таблицы с ID "${tableId}".`);
+        return;
       }
-    }
+      const greenBarWidth = parseInt(greenBar.style.width, 10);
+      const redBarWidth = parseInt(redBar.style.width, 10);
+      const totalWidth = greenBarWidth + redBarWidth;
+      let percentage = (greenBarWidth / totalWidth) * 100;
+      percentage = percentage % 1 !== 0 ? percentage.toFixed(2) : Math.round(percentage);
 
-    window.addEventListener("load", () => {
-      parameterTableIds.forEach((tableId) => {
-        updateParameterPercentages(tableId);
-        observeBarChanges(tableId);
-      });
-    });
+      let percentageCell = row.querySelector(".percentage-cell");
+      if (!percentageCell) {
+        percentageCell = document.createElement("td");
+        percentageCell.classList.add("percentage-cell");
+        row.appendChild(percentageCell);
+      }
+      percentageCell.textContent = `${percentage}%`;
+    } else {
+      console.warn(`Таблица с ID "${tableId}" не найдена.`);
+    }
   }
+
+  async function setupTableObservers() {
+    for (const tableId of parameterTableIds) {
+      const tableSelector = `#${tableId}`;
+      const rowSelector = `${tableSelector} tbody tr`;
+      const greenBarSelector = `${rowSelector} td[style*='background-color: green;']`;
+      const redBarSelector = `${rowSelector} td[style*='background-color: red;']`;
+
+      await setupMutationObserver(tableSelector, () => updateParameterPercentages(tableId));
+      await setupMutationObserver(greenBarSelector, () => updateParameterPercentages(tableId));
+      await setupMutationObserver(redBarSelector, () => updateParameterPercentages(tableId));
+    }
+  }
+
+  window.addEventListener("load", setupTableObservers);
+}
   // ====================================================================================================================
   //   . . . ЧИСЛОВАЯ ГРОМКОСТЬ УВЕДОМЛЕНИЙ . . .
   // ====================================================================================================================
@@ -3964,7 +4103,7 @@ if (window.location.href === targetCW3) {
 
     #uwu-climbingPanelButton {
       cursor: grab;
-      background-color: #ffffff08;
+      background-color: #00000026;
       border-radius: 10px;
       border: 1px solid #ffffff1a;
     }
@@ -4187,7 +4326,18 @@ if (window.location.href === targetCW3) {
 
     function applyParameterColors() {
       let cssStyles = "";
+
+      const otherColors = settings.parametersColors.other;
+
+      let otherFirstCellBackground = `linear-gradient(to right, ${otherColors[0]}, ${otherColors[1]})`;
+      let otherLastCellBackground = `linear-gradient(to right, ${otherColors[2]}, ${otherColors[3]})`;
+
+      cssStyles += `#parameters_block .parameter td:first-child { background: ${otherFirstCellBackground}; }\n`;
+      cssStyles += `#parameters_block .parameter td:last-child { background: ${otherLastCellBackground}; }\n`;
+
       for (const paramId in settings.parametersColors) {
+        if (paramId === "other") continue;
+
         const colors = settings.parametersColors[paramId];
 
         let backgroundImageURL = defaultBackgroundImageUrl;
@@ -4220,6 +4370,7 @@ if (window.location.href === targetCW3) {
       styleTag.innerHTML = cssStyles;
       document.head.appendChild(styleTag);
     }
+
     applyParameterColors();
   }
   // ====================================================================================================================
@@ -4685,32 +4836,43 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   // я на этом инвалиде потерял все нервы кетвар желаю тебе счастья удачи и всего хорошего 😌😌😌😌😌😌😌😌😌😌
   // И ДО СИХ ПОР ТЕРЯЮ ААААА
-  // TODO - как-то пределать шоле
+  // TODO - как-то пределать шоле 
   if (settings.newChat) {
     const newChatContainer = document.createElement("div");
     newChatContainer.id = "uwu_chat_msg";
     const chatForm = document.getElementById("chat_form");
     chatForm.parentNode.insertBefore(newChatContainer, chatForm.nextSibling);
-
-    newChatContainer.addEventListener("click", handleNickClick);
-    function handleNickClick(event) {
-      const textArea = document.getElementById("text");
-      const nickElement = event.target.closest(".nick");
-
+  
+    newChatContainer.addEventListener("click", function(event) {
+      const target = event.target;
+  
+      const nickElement = target.closest(".nick");
       if (nickElement) {
+        const textArea = document.getElementById("text");
         textArea.value += nickElement.textContent;
         textArea.focus();
+        return;
       }
-    }
-
+  
+      const reportButton = target.closest(".msg_report");
+      if (reportButton) {
+        const dataId = reportButton.getAttribute('data-id');
+        const originalReportLink = document.querySelector(`#chat_msg .msg_report[data-id="${dataId}"]`);
+        if (originalReportLink) {
+          originalReportLink.click();
+        }
+        return;
+      }
+    });
+  
     const chatElement = document.getElementById("chat_msg");
     if (chatElement) {
       const observer = new MutationObserver(handleNewChatMessage);
       observer.observe(chatElement, { childList: true, subtree: true });
     }
-
+  
     let addedSpanCount = 0;
-
+  
     function handleNewChatMessage(mutations) {
       const addedNodes = Array.from(mutations)
         .flatMap((mutation) => Array.from(mutation.addedNodes))
@@ -4718,23 +4880,23 @@ if (window.location.href === targetCW3) {
           (node) =>
             node.nodeName === "SPAN" && node.querySelector("td > .chat_text")
         );
-
+  
       addedSpanCount += addedNodes.length;
       processChatMessages(addedSpanCount);
       addedSpanCount = 0;
     }
-
+  
     function processChatMessages(messageCount) {
       const chatMessages = document.querySelectorAll("#chat_msg > span");
       const messagesArray = Array.from(chatMessages);
       const messagesToProcess = messagesArray.slice(0, messageCount);
       messagesToProcess.reverse();
-
+  
       messagesToProcess.forEach((message) => {
         copyMessageToNewChat(message);
       });
     }
-
+  
     function copyMessageToNewChat(chatMessage) {
       const chatTextSpan = chatMessage.querySelector("td > .chat_text");
       const messageSpan = chatTextSpan.querySelector("span");
@@ -4744,15 +4906,15 @@ if (window.location.href === targetCW3) {
       const chatTextClasses = chatTextSpan.className;
       const nickStyle = nickElement ? nickElement.getAttribute("style") : "";
       let nameFound = false;
-
+  
       let processedText = messageText;
-
+  
       if (settings.namesForNotification) {
         const names = settings.namesForNotification
           .trim()
           .split(/\s*,\s*/)
           .filter((name) => name);
-
+  
         names.forEach((name) => {
           const regex = new RegExp(
             `(^|\\s|[.,!?])(${name})(?=$|\\s|[.,!?])`,
@@ -4764,35 +4926,38 @@ if (window.location.href === targetCW3) {
           });
         });
       }
-
+  
       if (!nameFound && messageSpan && messageSpan.querySelector(".myname")) {
         nameFound = true;
       }
-
+  
       if (nameFound) {
         soundManager.playSound(
           settings.myNameNotificationSound,
           settings.notificationMyNameVolume
         );
       }
-
+  
       const profileLink = chatMessage.querySelector('a[href^="/cat"]').href;
       const catIdMatch = profileLink.match(/\/cat(\d+)/);
       const catId = catIdMatch ? catIdMatch[1] : ". . .";
-
+  
+      const reportLink = chatMessage.querySelector('.msg_report');
+      const dataId = reportLink ? reportLink.getAttribute('data-id') : '';
+  
       const newChatMessageHTML = `
         <hr>
         <div id="msg">
           <div class="${chatTextClasses}">${processedText} - <b class="nick" style="${nickStyle}">${nickName}</b> [<i>${catId}</i>]</div>
           <div>
             <a href="${profileLink}" title="Перейти в профиль" target="_blank" rel="noopener noreferrer">➝</a>&nbsp;|&nbsp;
-            <a href="#" title="Пожаловаться на нарушение ОПИ" class="msg_report">X</a>
+            <a href="#" title="Пожаловаться на нарушение ОПИ" class="msg_report" data-id="${dataId}">X</a>
           </div>
         </div>
       `;
       newChatContainer.insertAdjacentHTML("afterbegin", newChatMessageHTML);
     }
-
+  
     const uwuChatMsg = document.createElement("style");
     uwuChatMsg.innerHTML = `
         #uwu_chat_msg {
@@ -4809,7 +4974,7 @@ if (window.location.href === targetCW3) {
           display: flex;
           justify-content: space-between;
         }
-   `;
+     `;
     document.head.appendChild(uwuChatMsg);
   }
   // ====================================================================================================================
@@ -4944,6 +5109,69 @@ if (window.location.href === targetCW3) {
     }
     `;
     document.head.appendChild(edgeTrimBlocksStyle);
+  }
+  // ====================================================================================================================
+  //  . . . КОМАНДЫ В БОЕВОМ РЕЖИМЕ . . .
+  // ====================================================================================================================
+  if (settings.FightTeams) {
+    const colors = settings.FightTeamsColors;
+  
+    function createTeamTable() {
+      const fightPanel = document.getElementById("fightPanel");
+      const tableHTML = `
+        <div id="uwu-team-settings" style="height: ${settings.FightTeamsPanelHight || auto}px; overflow-y: scroll; resize: vertical;">
+          <table id="uwu-team-settings-table "style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr>
+                <th style="border: 1px solid #000; padding: 5px;">Имя</th>
+                <th style="border: 1px solid #000; padding: 5px;">Команда</th>
+              </tr>
+            </thead>
+            <tbody id="teamTableBody"></tbody>
+          </table>
+        </div>
+        <button id="updateTableButton" style="width: 100%;">Обновить таблицу</button>
+      `;
+      fightPanel.insertAdjacentHTML("beforeend", tableHTML);
+      document.getElementById("updateTableButton").onclick = () => updateTeamTable();
+    }
+  
+    function updateTeamTable() {
+      const tbody = document.getElementById("teamTableBody");
+      tbody.innerHTML = "";
+      const cages = document.querySelectorAll("#cages .cage");
+  
+      cages.forEach((cage) => {
+        const catName = cage.querySelector(".cat_tooltip a")?.textContent;
+        const arrow = cage.querySelector(".arrow.arrow-paws");
+  
+        if (catName && arrow) {
+          const arrowId = arrow.id;
+          const buttonsHTML = Object.keys(colors).map(
+            (team) => {
+              return `
+                <button 
+                  style="background-color: ${colors[team][0]}; width: 21%; height: 16px;"
+                  onclick="document.getElementById('${arrowId}').querySelector('.arrow_green').style.backgroundColor = '${colors[team][0]}';
+                           document.getElementById('${arrowId}').querySelector('.arrow_red').style.backgroundColor = '${colors[team][1]}';"
+                ></button>
+              `;
+            }
+          ).join("");
+  
+          const rowHTML = `
+            <tr>
+              <td style="border: 1px solid #000; padding: 5px;">${catName}</td>
+              <td style="border: 1px solid #000; padding: 5px;">
+                ${buttonsHTML}
+              </td>
+            </tr>
+          `;
+          tbody.insertAdjacentHTML("beforeend", rowHTML);
+        }
+      });
+    }
+    createTeamTable();
   }
   // ====================================================================================================================
   //   . . . ПЕРЕТАСКИВАНИЕ ПАНЕЛИ БОЕВОГО РЕЖИМА . . .
@@ -5218,6 +5446,7 @@ if (window.location.href === targetCW3) {
       } else {
         currentHour = "night";
       }
+      // console.log("Текущий час:", hourNumber);
     }
   }
 
@@ -5242,20 +5471,9 @@ if (window.location.href === targetCW3) {
           currentSeason = "autumn";
           break;
       }
+    // console.log("Текущий сезон:", currentSeason);
     }
-    // console.log(currentSeason);
   }
-
-  // TODO - мне всё же очень больно видеть конвертации цветов и рейнджы какие та противные, всё же проще и лучше будет создать массив из известных температур.
-  // Это мне даст в будущем возможность более плавно и красиво настраивать цвета. Наверно. Может быть.
-  // либо я скоро психану и буду парсить данные ещё и с https://catwar.su/time
-
-  // Очень холодно #94BDD2;
-  // Холодно #7FAAC5; #76A2C0; #6A96B8; #6593B6; #618FB3;
-  // Прохладно #3B6C9B; #4C7BA6; #5887AE; #5D8BB0;
-  // Тепло #FCBD8E; #F8A37A;
-  // Жарковато #F79973; #F6946F; #F58F6B; #F28060; #F17A5C; #EF6B50;
-  // Жарко #ED6149; #EB5741; #EB523D; #E73D2E; #E6382A;
 
   function getTemperature() {
     const temperatureElement = document.querySelector("#tos");
@@ -5268,19 +5486,49 @@ if (window.location.href === targetCW3) {
       const foundBackground = backgroundValue[1];
 
       const temperatureRanges = [
-        { start: 200, end: 202, temperature: -3, description: "Очень холодно" },
-        { start: 203, end: 206.5, temperature: -2, description: "Холодно" },
-        { start: 206.6, end: 210, temperature: -1, description: "Прохладно" },
-        { start: 21, end: 31, temperature: 1, description: "Тепло" },
-        { start: 10, end: 18, temperature: 2, description: "Жарковато" },
-        { start: 1, end: 9, temperature: 3, description: "Жарко" },
+        {
+          description: "Очень холодно",
+          temperature: -3,
+          colors: ["#94BDD2"],
+        },
+        {
+          description: "Холодно",
+          temperature: -2,
+          colors: ["#7FAAC5", "#76A2C0", "#6A96B8", "#6593B6", "#618FB3"],
+        },
+        {
+          description: "Прохладно",
+          temperature: -1,
+          colors: ["#3B6C9B", "#4C7BA6", "#5887AE", "#5D8BB0"],
+        },
+        {
+          description: "Тепло",
+          temperature: 1,
+          colors: ["#FCBD8E", "#F8A37A"],
+        },
+        {
+          description: "Жарковато",
+          temperature: 2,
+          colors: [
+            "#F79973",
+            "#F6946F",
+            "#F58F6B",
+            "#F28060",
+            "#F17A5C",
+            "#EF6B50",
+          ],
+        },
+        {
+          description: "Жарко",
+          temperature: 3,
+          colors: ["#ED6149", "#EB5741", "#EB523D", "#E73D2E", "#E6382A"],
+        },
       ];
 
-      const backgroundColor = hexToHSL(foundBackground);
       let foundTemperature = null;
 
       for (const range of temperatureRanges) {
-        if (isHueInRange(backgroundColor.h, range.start, range.end)) {
+        if (range.colors.includes(foundBackground)) {
           foundTemperature = range;
           break;
         }
@@ -5293,6 +5541,7 @@ if (window.location.href === targetCW3) {
         currentTemperature = 1;
         temperatureDescription =
           "Неизвестная температура. Разработчик скорее всего уже в курсе и в скором времени выпустит правку.";
+        console.warn("Неизвестная температура.");
       }
 
       switch (currentTemperature) {
@@ -5312,67 +5561,37 @@ if (window.location.href === targetCW3) {
           weatherModifier = 1;
       }
 
+      // console.log("Температура:", currentTemperature);
+
       const temperatureDisplayElement = document.getElementById("temperature");
       if (temperatureDisplayElement) {
         temperatureDisplayElement.innerHTML = `[?] Текущий модификатор: ${weatherModifier} (${temperatureDescription})`;
       }
     } else {
-      console.log("...я потерял бекграунд...");
+      console.log("...я потерял бекграунд температуры🌡️...");
     }
   }
-
-  // Чуть ли не маленькая личная библиотека по цветоконвертации, представляете? а зочем............
-  function hexToHSL(hex) {
-    const r = parseInt(hex.slice(1, 3), 16) / 255;
-    const g = parseInt(hex.slice(3, 5), 16) / 255;
-    const b = parseInt(hex.slice(5, 7), 16) / 255;
-
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    let h,
-      s,
-      l = (max + min) / 2;
-
-    if (max === min) {
-      h = s = 0; // Ахроматический цвет
-    } else {
-      const d = max - min;
-      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-      switch (max) {
-        case r:
-          h = (g - b) / d + (g < b ? 6 : 0);
-          break;
-        case g:
-          h = (b - r) / d + 2;
-          break;
-        case b:
-          h = (r - g) / d + 4;
-          break;
-      }
-      h /= 6;
-    }
-
-    return { h: h * 360, s: s * 100, l: l * 100 };
-  }
-
-  function isHueInRange(hue, start, end) {
-    if (start > end) {
-      return hue >= start || hue < end;
-    } else {
-      return hue >= start && hue < end;
-    }
-  }
-
   // ====================================================================================================================
-  // TODO - Опробовать снова ивентЛисенеры.
   if (!settings.manualWeatherPanel) {
-    setInterval(() => {
-      getSkyType();
-      getTime();
-      getSeason();
-    }, 4000);
+    setupMutationObserver("#sky", getSkyType);
+
+    setupMutationObserver("#hour", getTime, {
+      attributes: true,
+      attributeFilter: ["src"],
+      subtree: true
+    });
+
+    setupMutationObserver("img[src*='symbole/season']", getSeason, {
+      attributes: true,
+      attributeFilter: ["src"]
+    });
+
   }
-  setInterval(getTemperature, 4000);
+
+  setupMutationObserver("#tos", getTemperature, {
+    attributes: true,
+    subtree: true
+  });
   // ====================================================================================================================
   //   . . . ПОДГОТОВКА КОНТЕЙНЕРОВ / ИЗОБРАЖЕНИЙ . . . 🖼️
   // ====================================================================================================================
@@ -6103,7 +6322,7 @@ if (window.location.href === targetCW3) {
   //   . . . РЕЖИМ ГЕЙМ-МАСТЕРА . . . АВТОРИЗАЦИЯ . . .
   // ====================================================================================================================
   if (settings.GMbetaTest) {
-    // Тут снова что-то было, но оно ускользнуло от вас...
+    // Епупе а когда? 
   }
   // ====================================================================================================================
 } // Конец грандиозного, но и начало чево то нового... Зогдачно......
@@ -6125,7 +6344,6 @@ if (window.location.href === targetCW3Hunt) {
     const smellElement = document.getElementById("smell");
     let smellText = null;
     let smellTimer = null;
-    let intervalId = null;
     let previousRed = null;
     let seconds = 0;
 
