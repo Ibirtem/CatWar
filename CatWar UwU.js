@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.20.0-07.24
+// @version      v1.21.0-07.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,9 +20,9 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.20.0";
+const current_uwu_version = "1.21.0";
 // ✨🦐✨🦐✨
-let settings = {
+const uwuDefaultSettings = {
 
   weatherEnabled: false,
   weatherDrops: false,
@@ -59,6 +59,7 @@ let settings = {
   showMoreCatInfo: false,
 
   draggingFightPanel: false,
+  compactFightLog: false,
   FightPanelAdjustableHeight: false,
   FightPanelHeight: "70",
   FightTeams: false,
@@ -616,6 +617,12 @@ const uwusettings = `
     </div>
 
     <div>
+      <p>Сокращает и прописывает количество повторяющихся ударов.</p>
+      <input type="checkbox" id="compact-Fight-Log" data-setting="compactFightLog" />
+      <label for="compact-Fight-Log">Компактный боевой лог</label>
+    </div>
+
+    <div>
       <p>Возможность растягивать высоту панели и её начальная высота.</p>
       <input type="checkbox" id="Fight-Panel-Adjustable-Height" data-setting="FightPanelAdjustableHeight" />
       <label for="Fight-Panel-Adjustable-Height">Настраиваемая высота панели</label>
@@ -859,10 +866,15 @@ const uwusettings = `
     <h2>Импорт/Экспорт</h2>
 
     <div>
-      <p>Импорт/Экспорт всех настроек (Пока без расставленных блоков Компактной Игровой и Сборника Стилей).</p>
+      <p>Импорт/Экспорт всех настроек (Пока без расставленных блоков Компактной Игровой, Сборника Стилей и Минного поля).</p>
       <input type="text" id="exportSettings" placeholder="Экспорт"/>
       <input type="text" id="importSettings" placeholder="Импорт"/>
       <button id="importSettingsButton">Вставить</button>
+    </div>
+
+    <div>
+      <p>Исправляет некоторые проблемы с сохранениями и делает их опрятными. Это не Сброс, а именно подчистка от лишнего. Может и скорее всего будет иногда что-то вам снимать из сохранений.</p>
+      <button id="resetAllSaves" class="uwu-button">Исправление сохранений</button>
     </div>
 
   </div>
@@ -876,33 +888,27 @@ const uwusettings = `
 const newsPanel = `
 <div id="news-panel">
   <button id="news-button">
-    v${current_uwu_version} - 🌸 Свой статичный фон на локации, командные цвета для боёв и снова правки!
+    v${current_uwu_version} - 🌸 Компактный лог боёв! 
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
     <p>
-      — Ну эм эм ну! Теперь вы можете выбрать цвета для оставшихся уникальных навыков, таких как ЦУ, Могущество и прочие! 
-      Если быть точнее, это работает как "стандартный" цвет для навыков, если для этого навыка не выставлен какой-либо ещё цвет.
+      — А так же добавил "Подчистку сохранений" в Надстройках, если во время обновления Скрипта/Мода UwU что-то навернулось.
     </p>
     <hr>
     <h3>Внешний вид</h3>
-    <p>— Небольшой редизайн покраса Навыков и Параметров.</p>
-    <p>— Кнопка минного поля теперь тёмных оттенков, что позволяет ей не теряться на ярких дизайнах и фонах.</p>
-    <p>— Маленькая укомплектовка вида настроек. Поднял строчки ввода размеров в строчки включения самой функции. Да и выглядит чуть опрятнее и понятнее.</p>
+    <p>— 🪨</p>
     <hr>
     <h3>Изменения кода</h3>
-    <p>— Теперь Уведомление об обновлении скрипта изначально выключенно (Было встроенно хотфиксом в 1.19.0).</p>
-    <p>— Переделано и упрощено определение Температуры Игровой в массив известных цветов.</p>
-    <p>— Типо правка, возможность выставлять цвета "уникальных" навыков. Пока не поточненько, пока не выясну легально ли "раскрывать" остальные навыки. Хотя мне больше нравится нынешнее решение.</p>
-    <p>— Переименовка констант вставки стилей (Я всё равно продолжил всё называть криво).</p>
-    <p>— Вроде бы, надеюсь правильно, работает жалоба на игроков в чате.</p>
-    <p>— Оптимизация производительности чата при помощи делегированных кликов.</p>
-    <p>— Создана функция setupMutationObserver для упрощённой удобной динамической установки наблюдателей. Я отказываюсь использовать библиотеки когда я могу всё запилить сам.</p>
-    <p>— Из-за новой установки наблюдателей Проценты параметров теперь не будут теряться...</p>
-    <p>— ...И улучшен отклик изменений погодных эффектов и явлений.</p>
-    <p>— Чота где-то удалил.</p>
+    <p>— "Небо в небе" переведена на новый setupMutationObserver.</p>
+    <p>— Как и "Фон страницы из локации".</p>
+    <p>— Что ускорило их отзывчивость на изменения.</p>
+    <p>— Создал setupSingleCallback, если надо будет что-то установить на ещё не появившейся элемент.</p>
+    <p>— Я опять что-то изменил и забыл что именно.</p>
+    <p>— Чуть переделал работу сохранений и перенёс дефолтные настройки с let на const, чтобы можно было пользоваться "Подчисткой сохранений" более спокойно.</p>
+    <p>— Встроенный хотфикс патч исправление поломанного сохранения в 1.20.0</p>
     <hr>
-    <p>Дата выпуска: 01.07.24</p>
+    <p>Дата выпуска: 03.07.24</p>
   </div>
 </div>
 `;
@@ -1132,7 +1138,8 @@ const css_uwu_main = `
 #SettingSaveButton2,
 #SettingSaveButton3,
 #SettingSaveButton4,
-#importSettingsButton {
+#importSettingsButton,
+.uwu-button {
   background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 8px 15px;
@@ -1147,7 +1154,8 @@ const css_uwu_main = `
 #SettingSaveButton2:hover,
 #SettingSaveButton3:hover,
 #SettingSaveButton4:hover,
-#importSettingsButton:hover {
+#importSettingsButton:hover
+.uwu-button:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
@@ -1692,6 +1700,11 @@ const css_uwu_main = `
   box-sizing: border-box;
   padding: 5px;
 }
+
+#uwu-Compacted-Fight-Log {
+  resize: vertical;
+  overflow-y: scroll;
+} 
 `;
 document.head.insertAdjacentHTML('beforeend', `<style id="css_uwu_main">${css_uwu_main}</style>`);
 
@@ -1706,6 +1719,8 @@ document.head.insertAdjacentHTML('beforeend', `<style id="css_uwu_glass">${css_u
 // ====================================================================================================================
 //  . . . СОХРАНЕНИЯ И ЗАГРУЗКА НАСТРОЕК . . .
 // ====================================================================================================================
+let settings
+
 function saveSettings() {
   try {
     localStorage.setItem("uwu-settings", JSON.stringify(settings));
@@ -1713,21 +1728,21 @@ function saveSettings() {
   } catch (error) {
     console.error("Не удалось сохранить настройки:", error);
   }
-}
+} 
 
 function loadSettings() {
   const storedSettings = localStorage.getItem("uwu-settings");
   if (storedSettings && typeof storedSettings === "string") {
     const loadedSettings = JSON.parse(storedSettings);
-    settings = { ...settings, ...loadedSettings };
+    settings = { ...uwuDefaultSettings, ...loadedSettings };
   } else {
+    settings = { ...uwuDefaultSettings };
     console.log("Нет сохраненных настроек");
   }
 }
 // ====================================================================================================================
-//   . . . ДИНАМИЧНЫЙ ОБОЗРЕВАТЕЛЬ . . .
+//   . . . ДИНАМИЧНЫЕ ОБОЗРЕВАТЕЛИ . . .
 // ====================================================================================================================
-// TODO - Не забыть, что у меня существует теперь это.
 function debounce(func, wait) {
   let timeout;
   return function(...args) {
@@ -1736,11 +1751,12 @@ function debounce(func, wait) {
   };
 }
 
-async function setupMutationObserver(selector, callback, options = { attributes: true, attributeFilter: ["style"] }, maxAttempts = 8, delay = 500) {
+// Когда нужно вставить прослушку на какой-то элемент, который ещё не успел появиться.
+async function setupMutationObserver(selector, callback, options = { attributes: true, attributeFilter: ["style"] }, maxAttempts = 8, delay = 500, debounceTime = 100) {
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const element = document.querySelector(selector);
     if (element) {
-      const observer = new MutationObserver(debounce(callback, 200));
+      const observer = new MutationObserver(debounce(callback, debounceTime));
       observer.observe(element, options);
       // console.log(`Наблюдатель установлен для элемента с селектором "${selector}".`);
       callback();
@@ -1750,6 +1766,62 @@ async function setupMutationObserver(selector, callback, options = { attributes:
   }
   console.warn(`Элемент с селектором "${selector}" не найден после ${maxAttempts} попыток.`);
 }
+
+// Когда нужно вставить что-то в какой-то элемент, который ещё не успел появиться.
+async function setupSingleCallback(selector, callback, maxAttempts = 8, delay = 500) {
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const element = document.querySelector(selector);
+    if (element) {
+      callback();
+      return;
+    }
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+  console.warn(`Элемент с селектором "${selector}" не найден после ${maxAttempts} попыток.`);
+}
+// ====================================================================================================================
+//  . . . ПАТЧ ИСПРАВЛЕНИЕ 1.20.Х - 1.21.Х . . .
+// ====================================================================================================================
+// ПОТОМ УДАЛИТЬ
+function patchParametersColors() {
+  console.log("Применяем исправление сохранений 1.20.Х - 1.21.Х");
+  const storedSettings = localStorage.getItem("uwu-settings");
+  if (storedSettings && typeof storedSettings === "string") {
+    const loadedSettings = JSON.parse(storedSettings);
+
+    const removedKeys = [];
+    const addedKeys = [];
+
+    if (loadedSettings.parametersColors) {
+      for (const key in loadedSettings.parametersColors) {
+        if (!(key in uwuDefaultSettings.parametersColors)) {
+          removedKeys.push(key);
+          delete loadedSettings.parametersColors[key];
+        }
+      }
+
+      for (const key in uwuDefaultSettings.parametersColors) {
+        if (!(key in loadedSettings.parametersColors)) {
+          addedKeys.push(key);
+          loadedSettings.parametersColors[key] = uwuDefaultSettings.parametersColors[key];
+        }
+      }
+    } else {
+      loadedSettings.parametersColors = { ...uwuDefaultSettings.parametersColors };
+      addedKeys.push("parametersColors");
+    }
+
+    localStorage.setItem("uwu-settings", JSON.stringify(loadedSettings));
+    console.log("Настройки для parametersColors подчищены и сохранены.");
+    console.log("Удаленные ключи:", removedKeys);
+    console.log("Добавленные ключи:", addedKeys);
+  } else {
+    localStorage.setItem("uwu-settings", JSON.stringify(uwuDefaultSettings));
+    console.log("Настройки для parametersColors подчищены и сохранены.");
+  }
+}
+
+patchParametersColors();
 // ====================================================================================================================
 //  . . . ВНЕШНИЙ ВИД ПАНЕЛИ НАСТРОЕК . . .
 // ====================================================================================================================
@@ -1805,6 +1877,9 @@ if (targetSettings.test(window.location.href)) {
       }
     });
 
+  // ====================================================================================================================
+  //  . . . РАБОТА ЦВЕТОВ НАВЫКОВ И ПАРАМЕТРОВ . . .
+  // ====================================================================================================================
   document
     .querySelectorAll('#parameters-color-settings input[type="color"]')
     .forEach((element) => {
@@ -1855,6 +1930,9 @@ if (targetSettings.test(window.location.href)) {
   }
   restoreColorPickers();
 
+  // ====================================================================================================================
+  //  . . . ЦВЕТА КОМАНДНЫХ БОЁВ . . .
+  // ====================================================================================================================
   document
     .querySelectorAll('#colorSettingsTable input[type="color"]')
     .forEach((element) => {
@@ -1882,6 +1960,69 @@ if (targetSettings.test(window.location.href)) {
   }
 
   restoreColorTeamsPickers();
+
+  // ====================================================================================================================
+  //  . . . СБРОС НАСТРОЕК . . .
+  // ====================================================================================================================
+  function resetAllSaves() {
+    let settings = { ...uwuDefaultSettings };
+    const storedSettings = localStorage.getItem("uwu-settings");
+    if (storedSettings && typeof storedSettings === "string") {
+      const loadedSettings = JSON.parse(storedSettings);
+
+      const removedKeys = [];
+      const addedKeys = [];
+
+      for (const key in loadedSettings) {
+        if (!(key in uwuDefaultSettings)) {
+          removedKeys.push(key);
+          delete loadedSettings[key];
+        } else if (
+          typeof uwuDefaultSettings[key] === "object" &&
+          !Array.isArray(uwuDefaultSettings[key])
+        ) {
+          for (const nestedKey in loadedSettings[key]) {
+            if (!(nestedKey in uwuDefaultSettings[key])) {
+              removedKeys.push(`${key}.${nestedKey}`);
+              delete loadedSettings[key][nestedKey];
+            }
+          }
+        }
+      }
+
+      for (const key in uwuDefaultSettings) {
+        if (!(key in loadedSettings)) {
+          addedKeys.push(key);
+          loadedSettings[key] = uwuDefaultSettings[key];
+        } else if (
+          typeof uwuDefaultSettings[key] === "object" &&
+          !Array.isArray(uwuDefaultSettings[key])
+        ) {
+          for (const nestedKey in uwuDefaultSettings[key]) {
+            if (!(nestedKey in loadedSettings[key])) {
+              addedKeys.push(`${key}.${nestedKey}`);
+              loadedSettings[key][nestedKey] =
+                uwuDefaultSettings[key][nestedKey];
+            }
+          }
+        }
+      }
+
+      settings = { ...uwuDefaultSettings, ...loadedSettings };
+
+      localStorage.setItem("uwu-settings", JSON.stringify(settings));
+      console.log("Настройки подчищены и сохранены.");
+      console.log("Удаленные ключи:", removedKeys);
+      console.log("Добавленные ключи:", addedKeys);
+    } else {
+      localStorage.setItem("uwu-settings", JSON.stringify(settings));
+      console.log("Настройки подчищены и сохранены.");
+    }
+  }
+
+  document
+    .getElementById("resetAllSaves")
+    .addEventListener("click", resetAllSaves);
   // ====================================================================================================================
   //  . . . ВЗАИМОИСКЛЮЧАЮЩИЕСЯ ЧЕКБОКСЫ . . .
   // ====================================================================================================================
@@ -3470,66 +3611,75 @@ if (window.location.href === targetCW3) {
       opacity: 0.8,
     });
   }
-// ====================================================================================================================
-//   . . . ПРОЦЕНТЫ ПАРАМЕТРОВ . . .
-// ====================================================================================================================
-if (settings.displayParametersPercentages) {
-  const parameterTableIds = [
-    "dream_table",
-    "hunger_table",
-    "thirst_table",
-    "need_table",
-    "health_table",
-    "clean_table",
-  ];
+  // ====================================================================================================================
+  //   . . . ПРОЦЕНТЫ ПАРАМЕТРОВ . . .
+  // ====================================================================================================================
+  if (settings.displayParametersPercentages) {
+    const parameterTableIds = [
+      "dream_table",
+      "hunger_table",
+      "thirst_table",
+      "need_table",
+      "health_table",
+      "clean_table",
+    ];
 
-  function updateParameterPercentages(tableId) {
-    const table = document.getElementById(tableId);
-    if (table) {
-      const row = table.querySelector("tbody tr");
-      if (!row) {
-        console.warn(`Строка не найдена в таблице с ID "${tableId}".`);
-        return;
-      }
-      const greenBar = row.querySelector("td[style*='background-color: green;']");
-      const redBar = row.querySelector("td[style*='background-color: red;']");
-      if (!greenBar || !redBar) {
-        console.warn(`Бары не найдены в строке таблицы с ID "${tableId}".`);
-        return;
-      }
-      const greenBarWidth = parseInt(greenBar.style.width, 10);
-      const redBarWidth = parseInt(redBar.style.width, 10);
-      const totalWidth = greenBarWidth + redBarWidth;
-      let percentage = (greenBarWidth / totalWidth) * 100;
-      percentage = percentage % 1 !== 0 ? percentage.toFixed(2) : Math.round(percentage);
+    function updateParameterPercentages(tableId) {
+      const table = document.getElementById(tableId);
+      if (table) {
+        const row = table.querySelector("tbody tr");
+        if (!row) {
+          console.warn(`Строка не найдена в таблице с ID "${tableId}".`);
+          return;
+        }
+        const greenBar = row.querySelector(
+          "td[style*='background-color: green;']"
+        );
+        const redBar = row.querySelector("td[style*='background-color: red;']");
+        if (!greenBar || !redBar) {
+          console.warn(`Бары не найдены в строке таблицы с ID "${tableId}".`);
+          return;
+        }
+        const greenBarWidth = parseInt(greenBar.style.width, 10);
+        const redBarWidth = parseInt(redBar.style.width, 10);
+        const totalWidth = greenBarWidth + redBarWidth;
+        let percentage = (greenBarWidth / totalWidth) * 100;
+        percentage =
+          percentage % 1 !== 0 ? percentage.toFixed(2) : Math.round(percentage);
 
-      let percentageCell = row.querySelector(".percentage-cell");
-      if (!percentageCell) {
-        percentageCell = document.createElement("td");
-        percentageCell.classList.add("percentage-cell");
-        row.appendChild(percentageCell);
+        let percentageCell = row.querySelector(".percentage-cell");
+        if (!percentageCell) {
+          percentageCell = document.createElement("td");
+          percentageCell.classList.add("percentage-cell");
+          row.appendChild(percentageCell);
+        }
+        percentageCell.textContent = `${percentage}%`;
+      } else {
+        console.warn(`Таблица с ID "${tableId}" не найдена.`);
       }
-      percentageCell.textContent = `${percentage}%`;
-    } else {
-      console.warn(`Таблица с ID "${tableId}" не найдена.`);
     }
-  }
 
-  async function setupTableObservers() {
-    for (const tableId of parameterTableIds) {
-      const tableSelector = `#${tableId}`;
-      const rowSelector = `${tableSelector} tbody tr`;
-      const greenBarSelector = `${rowSelector} td[style*='background-color: green;']`;
-      const redBarSelector = `${rowSelector} td[style*='background-color: red;']`;
+    async function setupTableObservers() {
+      for (const tableId of parameterTableIds) {
+        const tableSelector = `#${tableId}`;
+        const rowSelector = `${tableSelector} tbody tr`;
+        const greenBarSelector = `${rowSelector} td[style*='background-color: green;']`;
+        const redBarSelector = `${rowSelector} td[style*='background-color: red;']`;
 
-      await setupMutationObserver(tableSelector, () => updateParameterPercentages(tableId));
-      await setupMutationObserver(greenBarSelector, () => updateParameterPercentages(tableId));
-      await setupMutationObserver(redBarSelector, () => updateParameterPercentages(tableId));
+        await setupMutationObserver(tableSelector, () =>
+          updateParameterPercentages(tableId)
+        );
+        await setupMutationObserver(greenBarSelector, () =>
+          updateParameterPercentages(tableId)
+        );
+        await setupMutationObserver(redBarSelector, () =>
+          updateParameterPercentages(tableId)
+        );
+      }
     }
-  }
 
-  window.addEventListener("load", setupTableObservers);
-}
+    window.addEventListener("load", setupTableObservers);
+  }
   // ====================================================================================================================
   //   . . . ЧИСЛОВАЯ ГРОМКОСТЬ УВЕДОМЛЕНИЙ . . .
   // ====================================================================================================================
@@ -4285,25 +4435,20 @@ if (settings.displayParametersPercentages) {
     updateBackgroundImage(backgroundDiv, backgroundImageUrl);
     globalContainerElement.appendChild(backgroundDiv);
 
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (
-          mutation.type === "attributes" &&
-          mutation.attributeName === "style"
-        ) {
-          const backgroundImageStyle =
-            window.getComputedStyle(cagesDiv).backgroundImage;
-          const url = backgroundImageStyle.match(/url\("?(.+?)"?\)/);
-          const backgroundImageUrl = url ? url[1] : null;
-          updateBackgroundImage(backgroundDiv, backgroundImageUrl);
-        }
-      });
-    });
-
-    observer.observe(cagesDiv, {
-      attributes: true,
-      attributeFilter: ["style"],
-    });
+    setupMutationObserver(
+      "#cages_div",
+      () => {
+        const backgroundImageStyle =
+          window.getComputedStyle(cagesDiv).backgroundImage;
+        const url = backgroundImageStyle.match(/url\("?(.+?)"?\)/);
+        const backgroundImageUrl = url ? url[1] : null;
+        updateBackgroundImage(backgroundDiv, backgroundImageUrl);
+      },
+      { attributes: true, attributeFilter: ["style"] },
+      8,
+      500,
+      10
+    );
   }
 
   if (settings.backgroundUser) {
@@ -4316,7 +4461,6 @@ if (settings.displayParametersPercentages) {
     updateBackgroundImage(backgroundDiv, settings.backgroundUserImageURL);
     globalContainerElement.appendChild(backgroundDiv);
   }
-
   // ====================================================================================================================
   //   . . . ПОЛЬЗОВАТЕЛЬСКИЕ ЦВЕТА НАВЫКОВ И ПАРАМЕТРОВ . . .
   // ====================================================================================================================
@@ -4836,16 +4980,16 @@ if (settings.displayParametersPercentages) {
   // ====================================================================================================================
   // я на этом инвалиде потерял все нервы кетвар желаю тебе счастья удачи и всего хорошего 😌😌😌😌😌😌😌😌😌😌
   // И ДО СИХ ПОР ТЕРЯЮ ААААА
-  // TODO - как-то пределать шоле 
+  // TODO - как-то пределать шоле
   if (settings.newChat) {
     const newChatContainer = document.createElement("div");
     newChatContainer.id = "uwu_chat_msg";
     const chatForm = document.getElementById("chat_form");
     chatForm.parentNode.insertBefore(newChatContainer, chatForm.nextSibling);
-  
-    newChatContainer.addEventListener("click", function(event) {
+
+    newChatContainer.addEventListener("click", function (event) {
       const target = event.target;
-  
+
       const nickElement = target.closest(".nick");
       if (nickElement) {
         const textArea = document.getElementById("text");
@@ -4853,26 +4997,28 @@ if (settings.displayParametersPercentages) {
         textArea.focus();
         return;
       }
-  
+
       const reportButton = target.closest(".msg_report");
       if (reportButton) {
-        const dataId = reportButton.getAttribute('data-id');
-        const originalReportLink = document.querySelector(`#chat_msg .msg_report[data-id="${dataId}"]`);
+        const dataId = reportButton.getAttribute("data-id");
+        const originalReportLink = document.querySelector(
+          `#chat_msg .msg_report[data-id="${dataId}"]`
+        );
         if (originalReportLink) {
           originalReportLink.click();
         }
         return;
       }
     });
-  
+
     const chatElement = document.getElementById("chat_msg");
     if (chatElement) {
       const observer = new MutationObserver(handleNewChatMessage);
       observer.observe(chatElement, { childList: true, subtree: true });
     }
-  
+
     let addedSpanCount = 0;
-  
+
     function handleNewChatMessage(mutations) {
       const addedNodes = Array.from(mutations)
         .flatMap((mutation) => Array.from(mutation.addedNodes))
@@ -4880,23 +5026,23 @@ if (settings.displayParametersPercentages) {
           (node) =>
             node.nodeName === "SPAN" && node.querySelector("td > .chat_text")
         );
-  
+
       addedSpanCount += addedNodes.length;
       processChatMessages(addedSpanCount);
       addedSpanCount = 0;
     }
-  
+
     function processChatMessages(messageCount) {
       const chatMessages = document.querySelectorAll("#chat_msg > span");
       const messagesArray = Array.from(chatMessages);
       const messagesToProcess = messagesArray.slice(0, messageCount);
       messagesToProcess.reverse();
-  
+
       messagesToProcess.forEach((message) => {
         copyMessageToNewChat(message);
       });
     }
-  
+
     function copyMessageToNewChat(chatMessage) {
       const chatTextSpan = chatMessage.querySelector("td > .chat_text");
       const messageSpan = chatTextSpan.querySelector("span");
@@ -4906,15 +5052,15 @@ if (settings.displayParametersPercentages) {
       const chatTextClasses = chatTextSpan.className;
       const nickStyle = nickElement ? nickElement.getAttribute("style") : "";
       let nameFound = false;
-  
+
       let processedText = messageText;
-  
+
       if (settings.namesForNotification) {
         const names = settings.namesForNotification
           .trim()
           .split(/\s*,\s*/)
           .filter((name) => name);
-  
+
         names.forEach((name) => {
           const regex = new RegExp(
             `(^|\\s|[.,!?])(${name})(?=$|\\s|[.,!?])`,
@@ -4926,25 +5072,25 @@ if (settings.displayParametersPercentages) {
           });
         });
       }
-  
+
       if (!nameFound && messageSpan && messageSpan.querySelector(".myname")) {
         nameFound = true;
       }
-  
+
       if (nameFound) {
         soundManager.playSound(
           settings.myNameNotificationSound,
           settings.notificationMyNameVolume
         );
       }
-  
+
       const profileLink = chatMessage.querySelector('a[href^="/cat"]').href;
       const catIdMatch = profileLink.match(/\/cat(\d+)/);
       const catId = catIdMatch ? catIdMatch[1] : ". . .";
-  
-      const reportLink = chatMessage.querySelector('.msg_report');
-      const dataId = reportLink ? reportLink.getAttribute('data-id') : '';
-  
+
+      const reportLink = chatMessage.querySelector(".msg_report");
+      const dataId = reportLink ? reportLink.getAttribute("data-id") : "";
+
       const newChatMessageHTML = `
         <hr>
         <div id="msg">
@@ -4957,7 +5103,7 @@ if (settings.displayParametersPercentages) {
       `;
       newChatContainer.insertAdjacentHTML("afterbegin", newChatMessageHTML);
     }
-  
+
     const uwuChatMsg = document.createElement("style");
     uwuChatMsg.innerHTML = `
         #uwu_chat_msg {
@@ -5115,11 +5261,13 @@ if (settings.displayParametersPercentages) {
   // ====================================================================================================================
   if (settings.FightTeams) {
     const colors = settings.FightTeamsColors;
-  
+
     function createTeamTable() {
       const fightPanel = document.getElementById("fightPanel");
       const tableHTML = `
-        <div id="uwu-team-settings" style="height: ${settings.FightTeamsPanelHight || auto}px; overflow-y: scroll; resize: vertical;">
+        <div id="uwu-team-settings" style="height: ${
+          settings.FightTeamsPanelHight || auto
+        }px; overflow-y: scroll; resize: vertical;">
           <table id="uwu-team-settings-table "style="width: 100%; border-collapse: collapse;">
             <thead>
               <tr>
@@ -5133,22 +5281,23 @@ if (settings.displayParametersPercentages) {
         <button id="updateTableButton" style="width: 100%;">Обновить таблицу</button>
       `;
       fightPanel.insertAdjacentHTML("beforeend", tableHTML);
-      document.getElementById("updateTableButton").onclick = () => updateTeamTable();
+      document.getElementById("updateTableButton").onclick = () =>
+        updateTeamTable();
     }
-  
+
     function updateTeamTable() {
       const tbody = document.getElementById("teamTableBody");
       tbody.innerHTML = "";
       const cages = document.querySelectorAll("#cages .cage");
-  
+
       cages.forEach((cage) => {
         const catName = cage.querySelector(".cat_tooltip a")?.textContent;
         const arrow = cage.querySelector(".arrow.arrow-paws");
-  
+
         if (catName && arrow) {
           const arrowId = arrow.id;
-          const buttonsHTML = Object.keys(colors).map(
-            (team) => {
+          const buttonsHTML = Object.keys(colors)
+            .map((team) => {
               return `
                 <button 
                   style="background-color: ${colors[team][0]}; width: 21%; height: 16px;"
@@ -5156,9 +5305,9 @@ if (settings.displayParametersPercentages) {
                            document.getElementById('${arrowId}').querySelector('.arrow_red').style.backgroundColor = '${colors[team][1]}';"
                 ></button>
               `;
-            }
-          ).join("");
-  
+            })
+            .join("");
+
           const rowHTML = `
             <tr>
               <td style="border: 1px solid #000; padding: 5px;">${catName}</td>
@@ -5262,6 +5411,78 @@ if (settings.displayParametersPercentages) {
     setFightPanelPosition(panelX, panelY);
   }
   // ====================================================================================================================
+  //   . . . СОКРАЩЕНИЕ ЛОГА БОЕВОГО РЕЖИМА . . .
+  // ====================================================================================================================
+  // емааааа ужасное решение
+  // TODO - исправить переделать уничтожить пересобрать заамогусить чё за фигню я сделал
+  if (settings.compactFightLog) {
+    function compactFightLog() {
+      const fightLog = document.getElementById("fightLog");
+      fightLog.style.display = "none";
+  
+      let compactedFightLog = document.getElementById("uwu-Compacted-Fight-Log");
+      if (!compactedFightLog) {
+        compactedFightLog = document.createElement("div");
+        compactedFightLog.id = "uwu-Compacted-Fight-Log";
+        compactedFightLog.style.height = settings.FightPanelHeight + "px";
+        fightLog.parentNode.insertBefore(compactedFightLog, fightLog);
+      }
+  
+      const logEntries = Array.from(fightLog.childNodes).filter(
+        (entry) => entry.tagName === "SPAN"
+      );
+  
+      if (logEntries.length > 0) {
+        const firstEntry = logEntries[0];
+        const text = firstEntry.textContent.trim();
+        const match = text.match(/^(.*) x(\d+)$/);
+        const originalText = match ? match[1] : text;
+        const count = match ? parseInt(match[2], 10) : 1;
+  
+        const latestEntry = compactedFightLog.firstElementChild;
+  
+        if (latestEntry) {
+          const latestTextSpan = latestEntry.querySelector(".text");
+          
+          if (latestTextSpan && latestTextSpan.textContent.trim() === originalText) {
+            const countLabel = latestEntry.querySelector(".count");
+            const existingCount = parseInt(countLabel.textContent.match(/x(\d+)$/)[1], 10);
+            countLabel.textContent = ` x${existingCount + count}`;
+          } else {
+            const newEntryHTML = createEntryHTML(firstEntry.className, originalText, count);
+            compactedFightLog.insertAdjacentHTML('afterbegin', newEntryHTML);
+          }
+        } else {
+          const newEntryHTML = createEntryHTML(firstEntry.className, originalText, count);
+          compactedFightLog.insertAdjacentHTML('afterbegin', newEntryHTML);
+        }
+  
+        fightLog.removeChild(firstEntry);
+      }
+    }
+  
+    function createEntryHTML(className, originalText, count) {
+      return `
+        <div class="${className}">
+          <span class="text">${originalText}</span>
+          <label class="count"> x${count}</label>
+        </div>
+      `;
+    }
+  
+    setupMutationObserver(
+      "#fightLog",
+      compactFightLog,
+      {
+        attributes: true,
+        childList: true,
+      },
+      8,
+      500,
+      10
+    );
+  }
+  // ====================================================================================================================
   //   . . . ИЗМЕНЯЕМАЯ ВЫСОТА ПАНЕЛИ БОЕВОГО РЕЖИМА . . .
   // ====================================================================================================================
   if (settings.FightPanelAdjustableHeight) {
@@ -5271,8 +5492,9 @@ if (settings.displayParametersPercentages) {
         height: auto;
       }
 
-      #fightLog {
+      #fightLog, #uwu-Compacted-Fight-Log {
         resize: vertical;
+        overflow-y: scroll;
       }   
       `;
     document.head.appendChild(uwuFightLog);
@@ -5321,28 +5543,28 @@ if (settings.displayParametersPercentages) {
 
     const skyStyle = document.createElement("style");
     skyStyle.innerHTML = `
-    #skyDuplicate {
-      height: 15%;
-      width: 100%;
-      mask-image: linear-gradient(to bottom, 
-        rgba(0, 0, 0, 1), 
-        rgba(0, 0, 0, 0.40) 50%,
-        rgba(0, 0, 0, 0)
-      );
-      top: 0;
-      left: 0;
-      z-index: -1;
-      position: absolute;
-      background-size: cover;
-    }
+      #skyDuplicate {
+        height: 15%;
+        width: 100%;
+        mask-image: linear-gradient(to bottom, 
+          rgba(0, 0, 0, 1), 
+          rgba(0, 0, 0, 0.40) 50%,
+          rgba(0, 0, 0, 0)
+        );
+        top: 0;
+        left: 0;
+        z-index: -1;
+        position: absolute;
+        background-size: cover;
+      }
     `;
     document.head.appendChild(skyStyle);
 
     const originalSkyStyle = document.createElement("style");
     originalSkyStyle.innerHTML = `
-    #tr_sky {
-      display: none;
-    }
+      #tr_sky {
+        display: none;
+      }
     `;
     document.head.appendChild(originalSkyStyle);
 
@@ -5354,7 +5576,15 @@ if (settings.displayParametersPercentages) {
     }
 
     updateSkyImage();
-    setInterval(updateSkyImage, 2000);
+
+    setupMutationObserver(
+      "#sky",
+      updateSkyImage,
+      { attributes: true, attributeFilter: ["style"] },
+      8,
+      500,
+      10
+    );
   }
   // ====================================================================================================================
   //   . . . ОПРЕДЕЛЕНИЕ ПОГОДЫ В ИГРОВОЙ . . . 🛠️
@@ -5471,7 +5701,7 @@ if (settings.displayParametersPercentages) {
           currentSeason = "autumn";
           break;
       }
-    // console.log("Текущий сезон:", currentSeason);
+      // console.log("Текущий сезон:", currentSeason);
     }
   }
 
@@ -5499,7 +5729,7 @@ if (settings.displayParametersPercentages) {
         {
           description: "Прохладно",
           temperature: -1,
-          colors: ["#3B6C9B", "#4C7BA6", "#5887AE", "#5D8BB0"],
+          colors: ["#3B6C9B", "#4C7BA6", "#5887AE", "#5D8BB0", "#4777A3;"],
         },
         {
           description: "Тепло",
@@ -5541,7 +5771,7 @@ if (settings.displayParametersPercentages) {
         currentTemperature = 1;
         temperatureDescription =
           "Неизвестная температура. Разработчик скорее всего уже в курсе и в скором времени выпустит правку.";
-        console.warn("Неизвестная температура.");
+        console.warn("Неизвестная температура:", foundTemperature);
       }
 
       switch (currentTemperature) {
@@ -5578,19 +5808,18 @@ if (settings.displayParametersPercentages) {
     setupMutationObserver("#hour", getTime, {
       attributes: true,
       attributeFilter: ["src"],
-      subtree: true
+      subtree: true,
     });
 
     setupMutationObserver("img[src*='symbole/season']", getSeason, {
       attributes: true,
-      attributeFilter: ["src"]
+      attributeFilter: ["src"],
     });
-
   }
 
   setupMutationObserver("#tos", getTemperature, {
     attributes: true,
-    subtree: true
+    subtree: true,
   });
   // ====================================================================================================================
   //   . . . ПОДГОТОВКА КОНТЕЙНЕРОВ / ИЗОБРАЖЕНИЙ . . . 🖼️
@@ -6322,7 +6551,7 @@ if (settings.displayParametersPercentages) {
   //   . . . РЕЖИМ ГЕЙМ-МАСТЕРА . . . АВТОРИЗАЦИЯ . . .
   // ====================================================================================================================
   if (settings.GMbetaTest) {
-    // Епупе а когда? 
+    // Епупе а когда?
   }
   // ====================================================================================================================
 } // Конец грандиозного, но и начало чево то нового... Зогдачно......
