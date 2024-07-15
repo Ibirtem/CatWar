@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.21.0-07.24
+// @version      v1.22.0-07.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,9 +20,11 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.21.0";
+const current_uwu_version = "1.22.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
+
+  uwuSettingsTextColor: "2",
 
   weatherEnabled: false,
   weatherDrops: false,
@@ -57,19 +59,20 @@ const uwuDefaultSettings = {
   displayParametersPercentages: false,
   compactMouth: false,
   showMoreCatInfo: false,
+  showParametersDetails: false,
 
   draggingFightPanel: false,
   compactFightLog: false,
-  FightPanelAdjustableHeight: false,
-  FightPanelHeight: "70",
-  FightTeams: false,
-  FightTeamsColors: {
+  fightPanelAdjustableHeight: false,
+  fightPanelHeight: "70",
+  fightTeams: false,
+  fightTeamsColors: {
     team1: ["#41cd70", "#cd4141"],
     team2: ["#c968ff", "#cd4141"],
     team3: ["#44bcff", "#cd4141"],
     team4: ["#FFFF00", "#cd4141"]
   },
-  FightTeamsPanelHight: "100",
+  fightTeamsPanelHight: "100",
 
   describeHuntingSmell: false,
   huntingVirtualJoystick: false,
@@ -120,6 +123,9 @@ const uwuDefaultSettings = {
   parametersUserBackgroundImage: false,
   parametersUserBackgroundImageURL: "",
 
+  restoreBlogCreation: false,
+  moreBBCodes: false,
+
   extendedSettingsPanel: false,
   showUpdateNotification: false,
   showSplashScreens: false,
@@ -131,18 +137,29 @@ const uwuDefaultSettings = {
 const targetSettings = /^https:\/\/catwar\.su\/settings/;
 const targetCW3 = "https://catwar.su/cw3/";
 const targetCW3Hunt = "https://catwar.su/cw3/jagd";
+const targetBlogsCreation = /^https:\/\/catwar\.su\/blogs\?creation/;
 // ====================================================================================================================
 //   . . . HTML ПАНЕЛЬ НАСТРОЕК . . .
 // ====================================================================================================================
 const uwusettings = `
 <div id="uwusettings">
-  <h1>Настройки CatWar UwU</h1>
 
-  <div id="ref-vk" title="ВК Группа по Скрипту/Моду.">
-    <a href="https://vk.com/catwar_uwu" target="_blank" rel="noopener noreferrer">
-      <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/VK_logo.png" alt="Иконка" width="36"
-        height="36">
-    </a>
+  <div class="main-settings-container">
+    <div id="uwu-Settings-Text-Color">
+      <input type="range" id="manualUwUSettingsTextColor" list="uwu-Settings-Text-Color-Step" min="1" max="3" value="2" class="uwu-range-slider" data-setting="uwuSettingsTextColor">
+      <datalist id="uwu-Settings-Text-Color-Step" class="uwu-range-step">
+      <option value="1" style="color: #f1f1f1; font: caption;">Аа</option>
+      <option value="2" style="font: caption;">Аа</option>
+      <option value="3" style="color: black; font: caption;">Аа</option>
+      </datalist>
+    </div>
+
+      <h1>Настройки CatWar UwU</h1>
+    <div class="link-container" title="ВК Группа по Скрипту/Моду.">
+      <a href="https://vk.com/catwar_uwu" target="_blank" rel="noopener noreferrer">
+        <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/VK_logo.png" alt="Иконка" width="36" height="36">
+      </a>
+    </div>
   </div>
 
   <hr>
@@ -306,57 +323,57 @@ const uwusettings = `
     <label for="user-theme-enabled">Использовать свои цвета</label>
     <div id="color-picker">
       <div id="color-picker-input">
-        <input type="text" id="SettingBackgroundColorField" placeholder="Вставьте HEX код"
-          data-setting="settingBackgroundColor" />
+        <input type="text" id="backgroundColorField" placeholder="Вставьте HEX код"
+          data-color="backgroundColor" />
         <label>Цвет фона</label>
       </div>
       <div id="color-picker-input">
-        <input type="text" id="SettingBlocksColorField" placeholder="Вставьте HEX код"
-          data-setting="settingBlocksColor" />
+        <input type="text" id="blocksColorField" placeholder="Вставьте HEX код"
+          data-color="blocksColor" />
         <label>Основной цвет блоков</label>
       </div>
       <div id="color-picker-input">
-        <input type="text" id="SettingChatColorField" placeholder="Вставьте HEX код" data-setting="settingChatColor" />
+        <input type="text" id="chatColorField" placeholder="Вставьте HEX код" data-color="chatColor" />
         <label>Основной цвет чата</label>
       </div>
       <div id="color-picker-input">
-        <input type="text" id="SettingTextColorField" placeholder="Вставьте HEX код" data-setting="settingTextColor" />
+        <input type="text" id="SettingTextColorField" placeholder="Вставьте HEX код" data-color="textColor" />
         <label>Цвет текста</label>
       </div>
       <div id="color-picker-input">
-        <input type="text" id="SettingLinkColorField" placeholder="Вставьте HEX код" data-setting="settingLinkColor" />
+        <input type="text" id="colorField" placeholder="Вставьте HEX код" data-color="linkColor" />
         <label>Цвет ссылок</label>
       </div>
       <div id="color-picker-input">
-        <input type="text" id="SettingСatTooltipBackgroundField" placeholder="Вставьте HEX код"
-          data-setting="settingСatTooltipBackground" />
+        <input type="text" id="catTooltipBackgroundField" placeholder="Вставьте HEX код"
+          data-color="catTooltipBackground" />
         <label>Цвет фона подсказки "О Коте"</label>
       </div>
       <div id="color-picker-input">
         <input type="text" id="settingFightPanelBackgroundField" placeholder="Вставьте HEX код"
-          data-setting="settingFightPanelBackground" />
+          data-color="fightPanelBackground" />
         <label>Цвет панели Боевого режима</label>
       </div>
       <div id="color-picker-input">
-        <input type="text" id="SettingAccentColorField1" placeholder="Вставьте HEX код"
-          data-setting="settingAccentColor1" />
+        <input type="text" id="accentColorField1" placeholder="Вставьте HEX код"
+          data-color="accentColor1" />
         <label
           title="В основном всякие кнопки, слайдеры и строки ввода + цвет букв упоминания вас в Чате. Старайтесь пока делать просто оттенки чёрного цвета.">[?]
           Акценты 1</label>
       </div>
       <div id="color-picker-input">
-        <input type="text" id="SettingAccentColorField2" placeholder="Вставьте HEX код"
-          data-setting="settingAccentColor2" />
+        <input type="text" id="accentColorField2" placeholder="Вставьте HEX код"
+          data-color="accentColor2" />
         <label title="Линии в чате и некоторых других частях, кружочек слайдера громкости.">[?] Акценты 2</label>
       </div>
       <div id="color-picker-input">
-        <input type="text" id="SettingAccentColorField3" placeholder="Вставьте HEX код"
-          data-setting="settingAccentColor3" />
+        <input type="text" id="accentColorField3" placeholder="Вставьте HEX код"
+          data-color="accentColor3" />
         <label title="Цвет уведомлений. Например ЛС и вашего имени в Чате">[?] Акценты 3</label>
       </div>
 
       <div style="flex: 0 0 100%">
-        <button id="SettingSaveButton2">Сохранить</button>
+        <button id="saveThemeButton" class="uwu-button">Сохранить</button>
         <p>
           Отличный сайт для выбора цветов с поддержкой прозрачности:
           <a href="https://get-color.ru/transparent/" target="_blank">https://get-color.ru/transparent/</a>
@@ -478,113 +495,113 @@ const uwusettings = `
   <table class="parameters-color-table">
     <thead>
       <tr>
-        <th class="parameters-color-table__header">Градиент</th>
-        <th class="parameters-color-table__header">От</th>
-        <th class="parameters-color-table__header">До</th>
-        <th class="parameters-color-table__header">От</th>
-        <th class="parameters-color-table__header">До</th>
+        <th class="parameters-color-table--header">Градиент</th>
+        <th class="parameters-color-table--header">От</th>
+        <th class="parameters-color-table--header">До</th>
+        <th class="parameters-color-table--header">От</th>
+        <th class="parameters-color-table--header">До</th>
       </tr>
     </thead>
-    <tbody id="color-settings-body" class="parameters-color-table__body">
+    <tbody id="color-settings-body" class="parameters-color-table--body">
       <tr>
-        <th class="parameters-color-table__cell" colspan="5">Параметры</th>
+        <th class="parameters-color-table--cell" colspan="5">Параметры</th>
       </tr>
       <tr>
-        <td class="parameters-color-table__cell">Сон</td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="dream" data-color-type="bar-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="dream" data-color-type="bar-to"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="dream" data-color-type="bg-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="dream" data-color-type="bg-to"></td>
+        <td class="parameters-color-table--cell">Сон</td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="dream" data-color-type="bar-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="dream" data-color-type="bar-to"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="dream" data-color-type="bg-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="dream" data-color-type="bg-to"></td>
       </tr>
       <tr>
-        <td class="parameters-color-table__cell">Голод</td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="hunger" data-color-type="bar-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="hunger" data-color-type="bar-to"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="hunger" data-color-type="bg-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="hunger" data-color-type="bg-to"></td>
+        <td class="parameters-color-table--cell">Голод</td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="hunger" data-color-type="bar-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="hunger" data-color-type="bar-to"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="hunger" data-color-type="bg-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="hunger" data-color-type="bg-to"></td>
       </tr>
       <tr>
-        <td class="parameters-color-table__cell">Жажда</td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="thirst" data-color-type="bar-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="thirst" data-color-type="bar-to"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="thirst" data-color-type="bg-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="thirst" data-color-type="bg-to"></td>
+        <td class="parameters-color-table--cell">Жажда</td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="thirst" data-color-type="bar-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="thirst" data-color-type="bar-to"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="thirst" data-color-type="bg-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="thirst" data-color-type="bg-to"></td>
       </tr>
       <tr>
-        <td class="parameters-color-table__cell">Нужда</td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="need" data-color-type="bar-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="need" data-color-type="bar-to"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="need" data-color-type="bg-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="need" data-color-type="bg-to"></td>
+        <td class="parameters-color-table--cell">Нужда</td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="need" data-color-type="bar-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="need" data-color-type="bar-to"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="need" data-color-type="bg-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="need" data-color-type="bg-to"></td>
       </tr>
       <tr>
-        <td class="parameters-color-table__cell">Здоровье</td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="health" data-color-type="bar-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="health" data-color-type="bar-to"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="health" data-color-type="bg-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="health" data-color-type="bg-to"></td>
+        <td class="parameters-color-table--cell">Здоровье</td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="health" data-color-type="bar-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="health" data-color-type="bar-to"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="health" data-color-type="bg-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="health" data-color-type="bg-to"></td>
       </tr>
       <tr>
-        <td class="parameters-color-table__cell">Чистота</td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="clean" data-color-type="bar-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="clean" data-color-type="bar-to"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="clean" data-color-type="bg-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="clean" data-color-type="bg-to"></td>
+        <td class="parameters-color-table--cell">Чистота</td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="clean" data-color-type="bar-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="clean" data-color-type="bar-to"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="clean" data-color-type="bg-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="clean" data-color-type="bg-to"></td>
       </tr>
       <tr>
-        <th class="parameters-color-table__cell" colspan="5">Навыки</th>
+        <th class="parameters-color-table--cell" colspan="5">Навыки</th>
       </tr>
       <tr>
-        <td class="parameters-color-table__cell">Запах</td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="smell" data-color-type="bar-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="smell" data-color-type="bar-to"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="smell" data-color-type="bg-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="smell" data-color-type="bg-to"></td>
+        <td class="parameters-color-table--cell">Запах</td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="smell" data-color-type="bar-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="smell" data-color-type="bar-to"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="smell" data-color-type="bg-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="smell" data-color-type="bg-to"></td>
       </tr>
       <tr>
-        <td class="parameters-color-table__cell">Копание</td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="dig" data-color-type="bar-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="dig" data-color-type="bar-to"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="dig" data-color-type="bg-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="dig" data-color-type="bg-to"></td>
+        <td class="parameters-color-table--cell">Копание</td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="dig" data-color-type="bar-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="dig" data-color-type="bar-to"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="dig" data-color-type="bg-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="dig" data-color-type="bg-to"></td>
       </tr>
       <tr>
-        <td class="parameters-color-table__cell">Плавание</td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="swim" data-color-type="bar-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="swim" data-color-type="bar-to"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="swim" data-color-type="bg-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="swim" data-color-type="bg-to"></td>
+        <td class="parameters-color-table--cell">Плавание</td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="swim" data-color-type="bar-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="swim" data-color-type="bar-to"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="swim" data-color-type="bg-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="swim" data-color-type="bg-to"></td>
       </tr>
       <tr>
-        <td class="parameters-color-table__cell">БУ</td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="might" data-color-type="bar-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="might" data-color-type="bar-to"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="might" data-color-type="bg-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="might" data-color-type="bg-to"></td>
+        <td class="parameters-color-table--cell">БУ</td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="might" data-color-type="bar-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="might" data-color-type="bar-to"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="might" data-color-type="bg-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="might" data-color-type="bg-to"></td>
       </tr>
       <tr>
-        <td class="parameters-color-table__cell">Лазание</td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="tree" data-color-type="bar-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="tree" data-color-type="bar-to"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="tree" data-color-type="bg-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="tree" data-color-type="bg-to"></td>
+        <td class="parameters-color-table--cell">Лазание</td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="tree" data-color-type="bar-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="tree" data-color-type="bar-to"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="tree" data-color-type="bg-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="tree" data-color-type="bg-to"></td>
       </tr>
       <tr>
-        <td class="parameters-color-table__cell">Зоркость</td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="observ" data-color-type="bar-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="observ" data-color-type="bar-to"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="observ" data-color-type="bg-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="observ" data-color-type="bg-to"></td>
+        <td class="parameters-color-table--cell">Зоркость</td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="observ" data-color-type="bar-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="observ" data-color-type="bar-to"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="observ" data-color-type="bg-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="observ" data-color-type="bg-to"></td>
       </tr>
       <tr>
-        <th class="parameters-color-table__cell" colspan="5">Уникальные навыки</th>
+        <th class="parameters-color-table--cell" colspan="5">Уникальные навыки</th>
       </tr>
       <tr>
-        <td class="parameters-color-table__cell"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="other" data-color-type="bar-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="other" data-color-type="bar-to"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="other" data-color-type="bg-from"></td>
-        <td class="parameters-color-table__cell"><input type="color" data-param="other" data-color-type="bg-to"></td>
+        <td class="parameters-color-table--cell"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="other" data-color-type="bar-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="other" data-color-type="bar-to"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="other" data-color-type="bg-from"></td>
+        <td class="parameters-color-table--cell"><input type="color" data-param="other" data-color-type="bg-to"></td>
       </tr>
     </tbody>
   </table>
@@ -624,17 +641,17 @@ const uwusettings = `
 
     <div>
       <p>Возможность растягивать высоту панели и её начальная высота.</p>
-      <input type="checkbox" id="Fight-Panel-Adjustable-Height" data-setting="FightPanelAdjustableHeight" />
-      <label for="Fight-Panel-Adjustable-Height">Настраиваемая высота панели</label>
-      <input type="text" id="FightPanelHeightField" placeholder=". . ." data-setting="FightPanelHeight" />
+      <input type="checkbox" id="fight-Panel-Adjustable-Height" data-setting="fightPanelAdjustableHeight" />
+      <label for="fight-Panel-Adjustable-Height">Настраиваемая высота панели</label>
+      <input type="text" id="fightPanelHeightField" placeholder=". . ." data-setting="fightPanelHeight" />
       <label>px; - Начальная высота панели</label>
     </div>
 
     <div>
       <p>Возможность перекрашивать и создавать команды в Панели Боевого Режима.</p>
-      <input type="checkbox" id="Fight-Teams" data-setting="FightTeams" />
-      <label for="Fight-Teams">Команды в Боевом Режиме</label>
-      <input type="text" id="FightTeamsPanelHightField" placeholder=". . ." data-setting="FightTeamsPanelHight" />
+      <input type="checkbox" id="Fight-Teams" data-setting="fightTeams" />
+      <label for="fight-Teams">Команды в Боевом Режиме</label>
+      <input type="text" id="fightTeamsPanelHightField" placeholder=". . ." data-setting="fightTeamsPanelHight" />
       <label>px; - Начальная высота панели Командного Боя</label>
     </div>
 
@@ -703,6 +720,12 @@ const uwusettings = `
       <p>Сокращает и прописывает количество повторяющихся предметов в "О коте".</p>
       <input type="checkbox" id="compact-Mouth" data-setting="compactMouth" />
       <label for="compact-Mouth">Компактные инвентари</label>
+    </div>
+
+    <div>
+      <p>Добавляет над собственными параметрами кнопку "Подробнее" для просмотра большей полезной информации.</p>
+      <input type="checkbox" id="show-Parameter-Details" data-setting="showParametersDetails" />
+      <label for="show-Parameter-Details">Подробные параметры</label>
     </div>
 
     <hr>
@@ -810,6 +833,21 @@ const uwusettings = `
       <label for="notification-In-Fight-Mode">Ввели в боевую стойку через Т+2 или Т+3</label>
     </div>
 
+    <hr>
+    <h2>Общение</h2>
+
+    <div>
+      <p>Автоматически сохраняет и восстанавливает редактируемый текст блога. Теперь вы не потеряете его случайно.</p>
+      <input type="checkbox" id="restore-Blog-Creation" data-setting="restoreBlogCreation" />
+      <label for="restore-Blog-Creation">Восстановление содержимого Блога</label>
+    </div>
+
+    <div>
+      <p>Говорит само за себя.</p>
+      <input type="checkbox" id="more-BB-Codes" data-setting="moreBBCodes" />
+      <label for="more-BB-Codes">Дополнительные BB-Коды</label>
+    </div>
+
   </div>
 
   <div id="modules-panel">
@@ -874,7 +912,12 @@ const uwusettings = `
 
     <div>
       <p>Исправляет некоторые проблемы с сохранениями и делает их опрятными. Это не Сброс, а именно подчистка от лишнего. Может и скорее всего будет иногда что-то вам снимать из сохранений.</p>
-      <button id="resetAllSaves" class="uwu-button">Исправление сохранений</button>
+      <button id="repairAllSaves" class="uwu-button">Исправление сохранений</button>
+    </div>
+    
+    <div>
+      <p>Удаляет все настройки. В очень редких случаях может помочь при проблемных проблемах.</p>
+      <button id="resetAllSaves" class="uwu-button remove-button">Сброс сохранений</button>
     </div>
 
   </div>
@@ -883,32 +926,42 @@ const uwusettings = `
 </div>
 `;
 // ====================================================================================================================
-//   . . . HTML БЛОК НОВОСТЕЙ . . .
+//   . . . HTML БЛОК НОВОСТЕЙ . . . 
 // ====================================================================================================================
 const newsPanel = `
 <div id="news-panel">
   <button id="news-button">
-    v${current_uwu_version} - 🌸 Компактный лог боёв! 
+    v${current_uwu_version} - 🌿 Подробные параметры, Сохранение текста в создании блога и BB-Коды! Крупная переработка хранилища и ещё очень много чего!
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
-    <p>
-      — А так же добавил "Подчистку сохранений" в Надстройках, если во время обновления Скрипта/Мода UwU что-то навернулось.
-    </p>
+    <p> — Появилась кнопка "Сброса настроек". Если у вас совсем неординарные проблемы, опробуйте.</p>
+    <p> — Добавлена возможность выставлять себе цвет текста UwU Настроек. Изначально шрифт "адаптивный", цвета берутся из вашего выбранного дизайна CatWar'а. 
+      Но если цвет текста сливается со шрифтом, то можете наконец-то поменять его, выбрав нужный ползунком в левом верхнем уголке настроек. Теперь вам не нужно лезть куда-то там в Надстройки неизвестно куда за белыми шрифтами!</p>
+    <p> — А ещё Вы представляете? 🎄🎄🎄 Скоро рождество. Ваще??????? Рождество!!! чуваки скоро рождество!!!!!! совсем скоро!!!! вуху!!!!! 🎄🎄🎄🎄🎄🎄не могу повереть так скоро🎄🎄🎄🎄🎄🎄🎄
+      Жестьььььььььь ☃️☃️☃️☃️❄️❄️❄️🎄🎄🎄🎄 Вуху ребят рождество!!!!!!! </p>
     <hr>
     <h3>Внешний вид</h3>
-    <p>— 🪨</p>
+    <p>— 🎄🎄🎄🎄🎄🎄🎄</p>
+    <p>— Компактный редизайн теперь автоматически выставляет Душевых котов в линию с остальными "Быстрыми ссылками".</p>
+    <p>— Таблица Командных Боёв теперь появляется только при нажатии на кнопку "Обновить таблицу".</p>
     <hr>
     <h3>Изменения кода</h3>
-    <p>— "Небо в небе" переведена на новый setupMutationObserver.</p>
-    <p>— Как и "Фон страницы из локации".</p>
-    <p>— Что ускорило их отзывчивость на изменения.</p>
-    <p>— Создал setupSingleCallback, если надо будет что-то установить на ещё не появившейся элемент.</p>
-    <p>— Я опять что-то изменил и забыл что именно.</p>
-    <p>— Чуть переделал работу сохранений и перенёс дефолтные настройки с let на const, чтобы можно было пользоваться "Подчисткой сохранений" более спокойно.</p>
-    <p>— Встроенный хотфикс патч исправление поломанного сохранения в 1.20.0</p>
+    <p>— Удалён пластырь-патч чинящий слёт Компактной Игровой из-за недадобности. Кто вдруг не получил патч и всё ещё имеет проблему ВрОдЕ бЫ "неработающей компактной игровой", используйте "Исправление сохранений" во вкладке "Надстройки".</p>
+    <p>— Контейнер для информаций "О коте" теперь создаётся отдельной функцией.</p>
+    <p>— Подправил отображение в консоли отсутствующих температур.</p>
+    <p>— Чуть привёл в порядок название настроек Боевых Команд. Простите заранее за слетевшие настройки... лучше раньше, чем никогда...</p>
+    <p>— Сделал патч-перевод всех локальных ключей в настройках под единый стандарт "uwu_название". Попали под это (вроде): 
+    Глобальные настройки, Версия скрипта/мода, Расположение блоков Компактной Игровой, Расположение Панели Минного поля, Статус модулей, Приватные модули (лол которые нигде не юзаются), Сами Минные поля, Позиция Боевой Панели.</p>
+    <p>— Стандартизации нижних подчёркиваний и чёрточек в коде.</p>
+    <p>— Переработан код работы со Вкладками и Таблицами Минного поля.</p>
+    <p>— Добавлено автозаполнение сохранения Вкладок и Таблиц, если вы первый раз запустили скрипт.</p>
+    <p>— Переработан код составления самих Минных полей.</p>
+    <p>— Совсем незначительно переоформлен код вставки Аватаров в комментарии.</p>
+    <p>— Ещё один Патч-перевод локальных ключей цветовых тем в новый удобные ключи хранилища.</p>
+    <p>— А так же очень крупная переработка работы "Тем и цветов Игровой".</p>
     <hr>
-    <p>Дата выпуска: 03.07.24</p>
+    <p>Дата выпуска: 15.07.24</p>
   </div>
 </div>
 `;
@@ -952,15 +1005,15 @@ const manualWeatherPanel = `
 
 <h3>Северное Сияние</h3>
 <div class="button-container-1">
-  <button type="button" id="manualAurora_Off">
+  <button type="button" id="manualAurora-Off">
     <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96.png"
       alt="Иконка" width="48" height="48">
   </button>
-  <button type="button" id="manualAurora_B">
+  <button type="button" id="manualAurora-B">
     <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96_blue.png"
       alt="Иконка" width="48" height="48">
   </button>
-  <button type="button" id="manualAurora_G">
+  <button type="button" id="manualAurora-G">
     <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96_green.png"
       alt="Иконка" width="48" height="48">
   </button>
@@ -968,7 +1021,7 @@ const manualWeatherPanel = `
 
 <h3>Светлячки</h3>
 <div class="button-container-2">
-  <button type="button" id="manualFirefly_On">
+  <button type="button" id="manualFirefly-On">
     <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/firefly.png" alt="Иконка" width="48"
       height="48" title="Включает/Выключает">
   </button>
@@ -995,6 +1048,13 @@ const css_uwu_main = `
   border-radius: 20px;
   padding: 15px;
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.main-settings-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 #uwusettings h1,
@@ -1099,12 +1159,6 @@ const css_uwu_main = `
   background-repeat: repeat;
   background-attachment: fixed;
   border-radius: 20px;
-}
-
-#ref-vk {
-  top: 25px;
-  right: 25px;
-  position: absolute;
 }
 
 #button-container-1 {
@@ -1431,7 +1485,8 @@ const css_uwu_main = `
 #aurora-pos,
 #notification-MyName-Volume,
 #climbing-Refresh-Notification-Volume,
-#cells-Borders-Thickness {
+#cells-Borders-Thickness,
+.uwu-range-slider {
   width: 100%;
   cursor: pointer;
   -webkit-appearance: none;
@@ -1446,7 +1501,8 @@ const css_uwu_main = `
 #aurora-pos::-webkit-slider-thumb,
 #notification-MyName-Volume::-webkit-slider-thumb,
 #climbing-Refresh-Notification-Volume::-webkit-slider-thumb,
-#cells-Borders-Thickness::-webkit-slider-thumb  {
+#cells-Borders-Thickness::-webkit-slider-thumb,
+.uwu-range-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 20px;
@@ -1457,13 +1513,21 @@ const css_uwu_main = `
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
+}
+
+#manualWeather::-webkit-slider-thumb,
+#aurora-pos::-webkit-slider-thumb,
+#notification-MyName-Volume::-webkit-slider-thumb,
+#climbing-Refresh-Notification-Volume::-webkit-slider-thumb,
+#cells-Borders-Thickness::-webkit-slider-thumb {
   transform: translateY(-35%);
 }
 
 #WeatherStep,
 #auroraStep,
 #volumeStep,
-#ThicknessStep {
+#ThicknessStep,
+.uwu-range-step {
   margin-top: 10px;
   display: flex;
   justify-content: space-between;
@@ -1512,11 +1576,11 @@ const css_uwu_main = `
   width: 100%;
 }
 
-#manualAurora_Off,
-#manualAurora_B,
-#manualAurora_G,
-#manualFirefly_Off,
-#manualFirefly_On {
+#manualAurora-Off,
+#manualAurora-B,
+#manualAurora-G,
+#manualFirefly-Off,
+#manualFirefly-On {
   width: 60px;
   height: 60px;
   cursor: pointer;
@@ -1527,11 +1591,11 @@ const css_uwu_main = `
 }
 
 #extended-settings-button:hover,
-#manualAurora_Off:hover,
-#manualAurora_B:hover,
-#manualAurora_G:hover,
-#manualFirefly_Off:hover,
-#manualFirefly_On:hover{
+#manualAurora-Off:hover,
+#manualAurora-B:hover,
+#manualAurora-G:hover,
+#manualFirefly-Off:hover,
+#manualFirefly-On:hover{
   background-color: rgba(255, 255, 255, 0.15);
 }
 
@@ -1704,9 +1768,9 @@ const css_uwu_main = `
 #uwu-Compacted-Fight-Log {
   resize: vertical;
   overflow-y: scroll;
-} 
+}
 `;
-document.head.insertAdjacentHTML('beforeend', `<style id="css_uwu_main">${css_uwu_main}</style>`);
+document.head.insertAdjacentHTML('beforeend', `<style id="css-uwu-main">${css_uwu_main}</style>`);
 
 // ====================================================================================================================
 //   . . . ПРОЗРАЧНЫЙ CSS СТИЛЬ . . .
@@ -1715,7 +1779,42 @@ document.head.insertAdjacentHTML('beforeend', `<style id="css_uwu_main">${css_uw
 const css_uwu_glass = `
 
 `; 
-document.head.insertAdjacentHTML('beforeend', `<style id="css_uwu_glass">${css_uwu_glass}</style>`);
+document.head.insertAdjacentHTML('beforeend', `<style id="css-uwu-glass">${css_uwu_glass}</style>`);
+// ====================================================================================================================
+//   . . . МИГРАЦИЯ СТАРЫХ НАСТРОЕК В НОВЫЕ КЛЮЧИ . . .
+// ====================================================================================================================
+const saveMappings = {
+  'uwu-settings': 'uwu_settings',
+  'uwu-version': 'uwu_version',
+  'layoutSettings': 'uwu_layoutSettings',
+  'climbingPanelState': 'uwu_climbingPanelState',
+  'moduleStates': 'uwu_moduleStates',
+  'fightPanelPosition': 'uwu_fightPanelPosition',
+  'climbingPanelPosition': 'uwu_climbingPanelPosition',
+  'privateModules': 'uwu_privateModules',
+};
+
+function migrateSaves(mappings) {
+  for (const [originalKey, newKey] of Object.entries(mappings)) {
+    if (!localStorage.getItem(newKey)) {
+      const originalValue = localStorage.getItem(originalKey);
+      if (originalValue !== null) {
+        try {
+          // Попытка парсинга данных
+          const parsedValue = JSON.parse(originalValue);
+          localStorage.setItem(newKey, JSON.stringify(parsedValue));
+          console.log(`Копировано ${originalKey} в ${newKey}`);
+        } catch (error) {
+          // Если парсинг не удался, просто копируем значение как есть
+          localStorage.setItem(newKey, originalValue);
+          console.log(`Копировано ${originalKey} в ${newKey} как чистое значение`);
+        }
+      }
+    }
+  }
+}
+
+migrateSaves(saveMappings);
 // ====================================================================================================================
 //  . . . СОХРАНЕНИЯ И ЗАГРУЗКА НАСТРОЕК . . .
 // ====================================================================================================================
@@ -1723,7 +1822,7 @@ let settings
 
 function saveSettings() {
   try {
-    localStorage.setItem("uwu-settings", JSON.stringify(settings));
+    localStorage.setItem("uwu_settings", JSON.stringify(settings));
     // console.log("Настройки сохранены:", settings);
   } catch (error) {
     console.error("Не удалось сохранить настройки:", error);
@@ -1731,7 +1830,7 @@ function saveSettings() {
 } 
 
 function loadSettings() {
-  const storedSettings = localStorage.getItem("uwu-settings");
+  const storedSettings = localStorage.getItem("uwu_settings");
   if (storedSettings && typeof storedSettings === "string") {
     const loadedSettings = JSON.parse(storedSettings);
     settings = { ...uwuDefaultSettings, ...loadedSettings };
@@ -1739,6 +1838,57 @@ function loadSettings() {
     settings = { ...uwuDefaultSettings };
     console.log("Нет сохраненных настроек");
   }
+}
+// ====================================================================================================================
+//  . . . СОХРАНЕНИЯ И ЗАГРУЗКА ЦВЕТОВЫХ ТЕМ . . .
+// ====================================================================================================================
+function migrateColorThemes() {
+  const storedSettings = localStorage.getItem("uwu_settings");
+  if (storedSettings && typeof storedSettings === "string") {
+    const oldSettings = JSON.parse(storedSettings);
+    const userTheme = {
+      colors: { 
+        backgroundColor: oldSettings.settingBackgroundColor,
+        blocksColor: oldSettings.settingBlocksColor,
+        chatColor: oldSettings.settingChatColor,
+        textColor: oldSettings.settingTextColor,
+        catTooltipBackground: oldSettings.settingСatTooltipBackground,
+        fightPanelBackground: oldSettings.settingFightPanelBackground,
+        linkColor: oldSettings.settingLinkColor,
+        accentColor1: oldSettings.settingAccentColor1,
+        accentColor2: oldSettings.settingAccentColor2,
+        accentColor3: oldSettings.settingAccentColor3,
+      },
+    };
+
+    const newThemes = {
+      "Моя Тема": userTheme,
+      // "Темная Тема": { colors: { ... } },
+      // "Светлая Тема": { colors: { ... } },
+    };
+
+    localStorage.setItem("uwu_colorThemes", JSON.stringify(newThemes));
+    console.log("Цветовые темы перенесены в новое хранилище");
+  }
+}
+migrateColorThemes();
+//
+function loadColorThemes() {
+  const storedThemes = localStorage.getItem("uwu_colorThemes");
+  let colorThemes = {};
+  if (storedThemes && typeof storedThemes === "string") {
+    colorThemes = JSON.parse(storedThemes);
+  } else {
+    colorThemes = {
+      "Стандартная Тема": { 
+        colors: {
+          backgroundColor: "white", 
+          blocksColor: "lightgray", 
+        }
+      },
+    };
+  }
+  return colorThemes;
 }
 // ====================================================================================================================
 //   . . . ДИНАМИЧНЫЕ ОБОЗРЕВАТЕЛИ . . .
@@ -1779,49 +1929,6 @@ async function setupSingleCallback(selector, callback, maxAttempts = 8, delay = 
   }
   console.warn(`Элемент с селектором "${selector}" не найден после ${maxAttempts} попыток.`);
 }
-// ====================================================================================================================
-//  . . . ПАТЧ ИСПРАВЛЕНИЕ 1.20.Х - 1.21.Х . . .
-// ====================================================================================================================
-// ПОТОМ УДАЛИТЬ
-function patchParametersColors() {
-  console.log("Применяем исправление сохранений 1.20.Х - 1.21.Х");
-  const storedSettings = localStorage.getItem("uwu-settings");
-  if (storedSettings && typeof storedSettings === "string") {
-    const loadedSettings = JSON.parse(storedSettings);
-
-    const removedKeys = [];
-    const addedKeys = [];
-
-    if (loadedSettings.parametersColors) {
-      for (const key in loadedSettings.parametersColors) {
-        if (!(key in uwuDefaultSettings.parametersColors)) {
-          removedKeys.push(key);
-          delete loadedSettings.parametersColors[key];
-        }
-      }
-
-      for (const key in uwuDefaultSettings.parametersColors) {
-        if (!(key in loadedSettings.parametersColors)) {
-          addedKeys.push(key);
-          loadedSettings.parametersColors[key] = uwuDefaultSettings.parametersColors[key];
-        }
-      }
-    } else {
-      loadedSettings.parametersColors = { ...uwuDefaultSettings.parametersColors };
-      addedKeys.push("parametersColors");
-    }
-
-    localStorage.setItem("uwu-settings", JSON.stringify(loadedSettings));
-    console.log("Настройки для parametersColors подчищены и сохранены.");
-    console.log("Удаленные ключи:", removedKeys);
-    console.log("Добавленные ключи:", addedKeys);
-  } else {
-    localStorage.setItem("uwu-settings", JSON.stringify(uwuDefaultSettings));
-    console.log("Настройки для parametersColors подчищены и сохранены.");
-  }
-}
-
-patchParametersColors();
 // ====================================================================================================================
 //  . . . ВНЕШНИЙ ВИД ПАНЕЛИ НАСТРОЕК . . .
 // ====================================================================================================================
@@ -1877,6 +1984,94 @@ if (targetSettings.test(window.location.href)) {
       }
     });
 
+  // ====================================================================================================================
+  //  . . . ЦВЕТ ТЕКСТА НАСТРОЕК . . .
+  // ====================================================================================================================
+  const bodyColor = getComputedStyle(document.body).color;
+
+  const option2 = document.querySelector(
+    '#uwu-Settings-Text-Color-Step option[value="2"]'
+  );
+  option2.style.color = bodyColor;
+
+  function setupTextColorListener() {
+    const manualUwUSettingsTextColor = document.getElementById(
+      "manualUwUSettingsTextColor"
+    );
+    const uwusettings = document.getElementById("uwusettings");
+
+    if (manualUwUSettingsTextColor && uwusettings) {
+      function setTextColor(value) {
+        switch (value) {
+          case 1:
+            uwusettings.style.color = "#f1f1f1";
+            break;
+          case 2:
+            uwusettings.style.color = "";
+            break;
+          case 3:
+            uwusettings.style.color = "black";
+            break;
+          default:
+            uwusettings.style.color = "";
+            break;
+        }
+      }
+
+      setTextColor(parseInt(manualUwUSettingsTextColor.value));
+
+      manualUwUSettingsTextColor.addEventListener("change", function () {
+        setTextColor(parseInt(manualUwUSettingsTextColor.value));
+      });
+    }
+  }
+
+  setupTextColorListener();
+  // ====================================================================================================================
+  //  . . . ТЕМЫ И ЦВЕТА ИГРОВОЙ . . .
+  // ====================================================================================================================
+  let currentTheme = "Моя Тема";
+  const colorThemes = loadColorThemes();
+
+  const colorInputs = document.querySelectorAll(
+    "#color-picker input[type='text']"
+  );
+  const saveThemeButton = document.getElementById("saveThemeButton");
+
+  function loadThemeToInputs() {
+    const theme = colorThemes[currentTheme]?.colors;
+    if (theme) {
+      colorInputs.forEach((input) => {
+        const colorKey = input.dataset.color;
+        input.value = theme[colorKey] || "";
+      });
+    }
+  }
+
+  function saveThemeFromInputs() {
+    const theme = colorThemes[currentTheme] || { colors: {} };
+    colorInputs.forEach((input) => {
+      const colorKey = input.dataset.color;
+      theme.colors[colorKey] = input.value;
+    });
+    colorThemes[currentTheme] = theme;
+    localStorage.setItem("uwu_colorThemes", JSON.stringify(colorThemes));
+  }
+
+  saveThemeButton.addEventListener("click", () => {
+    saveThemeFromInputs();
+    applyTheme(currentTheme, colorThemes);
+    console.log(`Тема "${currentTheme}" сохранена!`);
+  });
+
+  colorInputs.forEach((input) => {
+    input.addEventListener("input", () => {
+      saveThemeFromInputs();
+      applyTheme(currentTheme);
+    });
+  });
+
+  loadThemeToInputs(currentTheme);
   // ====================================================================================================================
   //  . . . РАБОТА ЦВЕТОВ НАВЫКОВ И ПАРАМЕТРОВ . . .
   // ====================================================================================================================
@@ -1940,7 +2135,7 @@ if (targetSettings.test(window.location.href)) {
         const team = `team${element.dataset.team}`;
         const part = element.dataset.part === "green" ? 0 : 1;
         const colorValue = element.value;
-        settings.FightTeamsColors[team][part] = colorValue;
+        settings.fightTeamsColors[team][part] = colorValue;
         saveSettings();
       });
     });
@@ -1953,7 +2148,7 @@ if (targetSettings.test(window.location.href)) {
           const team = `team${element.dataset.team}`;
           const part = element.dataset.part === "green" ? 0 : 1;
           const colorValue = element.value;
-          settings.FightTeamsColors[team][part] = colorValue;
+          settings.fightTeamsColors[team][part] = colorValue;
           saveSettings();
         });
       });
@@ -1962,11 +2157,11 @@ if (targetSettings.test(window.location.href)) {
   restoreColorTeamsPickers();
 
   // ====================================================================================================================
-  //  . . . СБРОС НАСТРОЕК . . .
+  //  . . . ПОЧИНКА ГЛАВНЫХ НАСТРОЕК . . .
   // ====================================================================================================================
-  function resetAllSaves() {
+  function repairAllSaves() {
     let settings = { ...uwuDefaultSettings };
-    const storedSettings = localStorage.getItem("uwu-settings");
+    const storedSettings = localStorage.getItem("uwu_settings");
     if (storedSettings && typeof storedSettings === "string") {
       const loadedSettings = JSON.parse(storedSettings);
 
@@ -2010,13 +2205,46 @@ if (targetSettings.test(window.location.href)) {
 
       settings = { ...uwuDefaultSettings, ...loadedSettings };
 
-      localStorage.setItem("uwu-settings", JSON.stringify(settings));
+      localStorage.setItem("uwu_settings", JSON.stringify(settings));
       console.log("Настройки подчищены и сохранены.");
       console.log("Удаленные ключи:", removedKeys);
       console.log("Добавленные ключи:", addedKeys);
     } else {
-      localStorage.setItem("uwu-settings", JSON.stringify(settings));
+      localStorage.setItem("uwu_settings", JSON.stringify(settings));
       console.log("Настройки подчищены и сохранены.");
+    }
+  }
+
+  document
+    .getElementById("repairAllSaves")
+    .addEventListener("click", repairAllSaves);
+  // ====================================================================================================================
+  //   . . . СБРОС НАСТРОЕК . . .
+  // ====================================================================================================================
+  const settingsKeys = [
+    "uwu_settings",
+    "uwu_version",
+    "uwu_layoutSettings",
+    "uwu_climbingPanelState",
+    "uwu_moduleStates",
+    "uwu_fightPanelPosition",
+    "uwu_climbingPanelPosition",
+    "uwu_privateModules",
+    "uwu_colorThemes",
+  ];
+
+  function resetAllSaves() {
+    const confirmReset = confirm(
+      "Точно сбросить все UwU Настройки? Это удалить даже ваши карты Минных полей, темы и многое другое!"
+    );
+    if (confirmReset) {
+      settingsKeys.forEach((key) => {
+        localStorage.removeItem(key);
+        console.log(`Удалено ${key}`);
+      });
+      console.log("Все настройки сброшены");
+    } else {
+      console.log("Сброс настроек отменен");
     }
   }
 
@@ -2185,7 +2413,7 @@ if (targetSettings.test(window.location.href)) {
     try {
       const parsedSettings = JSON.parse(importedSettings);
       settings = { ...settings, ...parsedSettings };
-      localStorage.setItem("uwu-settings", JSON.stringify(settings));
+      localStorage.setItem("uwu_settings", JSON.stringify(settings));
       console.log("Настройки импортированы:", settings);
     } catch (error) {
       console.error("Ошибка при импорте настроек:", error);
@@ -2292,11 +2520,11 @@ if (targetSettings.test(window.location.href)) {
       rightBlocks,
     };
 
-    localStorage.setItem("layoutSettings", JSON.stringify(layoutSettings));
+    localStorage.setItem("uwu_layoutSettings", JSON.stringify(layoutSettings));
   });
 
   function loadLayoutSettings() {
-    const savedSettings = localStorage.getItem("layoutSettings");
+    const savedSettings = localStorage.getItem("uwu_layoutSettings");
     if (savedSettings) {
       const { leftBlocks, rightBlocks } = JSON.parse(savedSettings);
 
@@ -2333,7 +2561,10 @@ if (targetSettings.test(window.location.href)) {
         leftBlocks: defaultLeftBlocks,
         rightBlocks: defaultRightBlocks,
       };
-      localStorage.setItem("layoutSettings", JSON.stringify(layoutSettings));
+      localStorage.setItem(
+        "uwu_layoutSettings",
+        JSON.stringify(layoutSettings)
+      );
     }
   }
 
@@ -2354,8 +2585,7 @@ if (targetSettings.test(window.location.href)) {
       };
 
       this.tabs.push(newTab);
-      this.renderTabs();
-      renderTablesInSettings();
+      this.render();
       this.switchTab(this.tabs.length - 1);
     },
 
@@ -2365,7 +2595,7 @@ if (targetSettings.test(window.location.href)) {
       const currentTab = this.tabs[this.currentTabIndex];
       currentTab.tables.push({ name: tableName });
       this.saveState();
-      renderTablesInSettings();
+      this.render();
     },
 
     removeTable(tableIndex) {
@@ -2378,7 +2608,8 @@ if (targetSettings.test(window.location.href)) {
             currentTab.currentTableId - 1
           );
         }
-        renderTablesInSettings();
+        this.saveState();
+        this.render();
       }
     },
 
@@ -2387,34 +2618,31 @@ if (targetSettings.test(window.location.href)) {
       if (index === this.currentTabIndex) {
         this.currentTabIndex = Math.max(0, this.currentTabIndex - 1);
       }
-      this.renderTabs();
-      renderTablesInSettings();
+      this.saveState();
+      this.render();
     },
 
     switchTab(index) {
       this.currentTabIndex = index;
-      renderTablesInSettings();
-
-      const tabButtons = document.querySelectorAll(".tab-button");
-      tabButtons.forEach((button, i) => {
-        if (i === this.currentTabIndex) {
-          button.classList.add("active");
-        } else {
-          button.classList.remove("active");
-        }
-      });
+      this.render();
     },
 
     switchTable(tableIndex) {
       const currentTab = this.tabs[this.currentTabIndex];
       if (currentTab) {
         currentTab.currentTableId = tableIndex;
-        renderTablesInSettings();
+        this.saveState();
+        this.render();
       }
     },
 
     saveState() {
-      localStorage.setItem("climbingPanelState", JSON.stringify(this));
+      localStorage.setItem("uwu_climbingPanelState", JSON.stringify(this));
+    },
+
+    render() {
+      this.renderTabs();
+      this.renderTables();
     },
 
     renderTabs() {
@@ -2449,124 +2677,78 @@ if (targetSettings.test(window.location.href)) {
       const addTabButton = document.createElement("button");
       addTabButton.textContent = "+";
       addTabButton.classList.add("add-button");
-      addTabButton.addEventListener("click", () =>
-        this.createTab(`Вкладка ${this.tabs.length + 1}`)
-      );
+      addTabButton.addEventListener("click", () => {
+        const tabName = prompt("Введите имя вкладки:");
+        if (tabName) {
+          this.createTab(tabName);
+        }
+      });
       tabRow.appendChild(addTabButton);
+    },
+
+    renderTables() {
+      const tableRow = document.getElementById("uwu-buttonRow2-settings");
+      tableRow.innerHTML = "";
+
+      const currentTab = this.tabs[this.currentTabIndex];
+
+      if (currentTab) {
+        currentTab.tables.forEach((table, index) => {
+          const tableButton = document.createElement("button");
+          tableButton.textContent = table.name;
+          tableButton.classList.add("table-button");
+
+          tableButton.addEventListener("click", () => this.switchTable(index));
+
+          const removeButton = document.createElement("button");
+          removeButton.textContent = "X";
+          removeButton.classList.add("remove-button");
+
+          removeButton.addEventListener("click", () => this.removeTable(index));
+
+          const tableContainer = document.createElement("div");
+          tableContainer.classList.add("table-container");
+          tableContainer.appendChild(tableButton);
+          tableContainer.appendChild(removeButton);
+
+          tableRow.appendChild(tableContainer);
+        });
+
+        const addTableButton = document.createElement("button");
+        addTableButton.textContent = "+";
+        addTableButton.classList.add("add-button");
+
+        addTableButton.addEventListener("click", () => {
+          const tableName = prompt("Введите имя поля:");
+          if (tableName) {
+            this.createTable(tableName);
+          }
+        });
+
+        tableRow.appendChild(addTableButton);
+      }
     },
   };
 
-  const savedState = localStorage.getItem("climbingPanelState");
-  if (savedState) {
+  const savedState = localStorage.getItem("uwu_climbingPanelState");
+  if (!savedState) {
+    tabManager.createTab("Вкладка 1");
+    for (let i = 0; i < 5; i++) {
+      tabManager.createTable(`Поле ${i + 1}`);
+    }
+
+    tabManager.createTab("Вкладка 2");
+    for (let i = 0; i < 5; i++) {
+      tabManager.createTable(`Поле ${i + 1}`);
+    }
+
+    tabManager.saveState();
+  } else {
     const state = JSON.parse(savedState);
     Object.assign(tabManager, state);
   }
 
-  function renderTabsInSettings() {
-    const tabRow = document.getElementById("uwu-buttonRow1-settings");
-    tabRow.innerHTML = "";
-
-    tabManager.tabs.forEach((tab, index) => {
-      const tabButton = document.createElement("button");
-      tabButton.textContent = tab.name;
-      tabButton.classList.add("tab-button");
-
-      if (index === tabManager.currentTabIndex) {
-        tabButton.classList.add("active");
-      }
-
-      tabButton.addEventListener("click", () => {
-        tabManager.switchTab(index);
-        renderTablesInSettings();
-      });
-
-      const removeButton = document.createElement("button");
-      removeButton.textContent = "X";
-      removeButton.classList.add("remove-button");
-
-      removeButton.addEventListener("click", () => {
-        tabManager.removeTab(index);
-        renderTabsInSettings();
-        renderTablesInSettings();
-        tabManager.saveState();
-      });
-
-      const tabContainer = document.createElement("div");
-      tabContainer.classList.add("tab-container");
-      tabContainer.appendChild(tabButton);
-      tabContainer.appendChild(removeButton);
-
-      tabRow.appendChild(tabContainer);
-    });
-    const addTabButton = document.createElement("button");
-    addTabButton.textContent = "+";
-    addTabButton.classList.add("add-button");
-    addTabButton.addEventListener("click", () => {
-      const tabName = prompt("Введите имя вкладки:");
-      if (tabName) {
-        tabManager.createTab(tabName);
-        renderTabsInSettings();
-        tabManager.saveState();
-      }
-    });
-    tabRow.appendChild(addTabButton);
-  }
-
-  function renderTablesInSettings() {
-    const tableRow = document.getElementById("uwu-buttonRow2-settings");
-    tableRow.innerHTML = "";
-
-    const currentTab = tabManager.tabs[tabManager.currentTabIndex];
-
-    if (tabManager.tabs.length > 0 && currentTab) {
-      currentTab.tables.forEach((table, index) => {
-        const tableButton = document.createElement("button");
-        tableButton.textContent = table.name;
-        tableButton.classList.add("table-button");
-
-        tableButton.addEventListener("click", () => {
-          tabManager.switchTable(index);
-        });
-
-        tableButton.dataset.tableindex = index;
-
-        const removeButton = document.createElement("button");
-        removeButton.textContent = "X";
-        removeButton.classList.add("remove-button");
-
-        removeButton.addEventListener("click", () => {
-          tabManager.removeTable(index);
-          renderTablesInSettings();
-          tabManager.saveState();
-        });
-
-        const tableContainer = document.createElement("div");
-        tableContainer.classList.add("table-container");
-        tableContainer.appendChild(tableButton);
-        tableContainer.appendChild(removeButton);
-
-        tableRow.appendChild(tableContainer);
-      });
-
-      const addTableButton = document.createElement("button");
-      addTableButton.textContent = "+";
-      addTableButton.classList.add("add-button");
-
-      addTableButton.addEventListener("click", () => {
-        const tableName = prompt("Введите имя поля:");
-        if (tableName) {
-          tabManager.createTable(tableName);
-          renderTablesInSettings();
-          tabManager.saveState();
-        }
-      });
-
-      tableRow.appendChild(addTableButton);
-    }
-  }
-
-  renderTabsInSettings();
-  renderTablesInSettings();
+  tabManager.render();
 }
 // ====================================================================================================================
 //  . . . ВКЛАДКИ ГЛАВНЫХ НАСТРОЕК . . .
@@ -2621,7 +2803,7 @@ const defaultModules = [
 const privateModules = {};
 
 function loadModuleStates() {
-  const storedModuleStates = localStorage.getItem("moduleStates");
+  const storedModuleStates = localStorage.getItem("uwu_moduleStates");
   if (storedModuleStates) {
     const loadedModuleStates = JSON.parse(storedModuleStates);
     Object.assign(moduleStates, loadedModuleStates);
@@ -2631,7 +2813,7 @@ function loadModuleStates() {
     }
   }
 
-  const storedPrivateModules = localStorage.getItem("privateModules");
+  const storedPrivateModules = localStorage.getItem("uwu_privateModules");
   if (storedPrivateModules) {
     Object.assign(privateModules, JSON.parse(storedPrivateModules));
   }
@@ -2793,7 +2975,7 @@ function createModuleContainer(
 
     checkbox.addEventListener("change", () => {
       moduleStates[moduleName] = checkbox.checked;
-      localStorage.setItem("moduleStates", JSON.stringify(moduleStates));
+      localStorage.setItem("uwu_moduleStates", JSON.stringify(moduleStates));
 
       if (checkbox.checked) {
         loadModule(moduleName, description, version);
@@ -2826,7 +3008,7 @@ async function loadModule(moduleName, description, version) {
         activateModule(data, moduleName, description, version);
 
         moduleStates[moduleName] = true;
-        localStorage.setItem("moduleStates", JSON.stringify(moduleStates));
+        localStorage.setItem("uwu_moduleStates", JSON.stringify(moduleStates));
 
         createModuleContainer(moduleName, description, version, false);
 
@@ -2856,7 +3038,7 @@ async function loadPrivateModule(privateModuleUrl) {
         const moduleName = getModuleNameFromUrl(privateModuleUrl);
         const moduleInfo = { description: "Приватный модуль", version: "Н/Д" };
         privateModules[moduleName] = moduleInfo;
-        localStorage.setItem("privateModules", JSON.stringify(privateModules));
+        localStorage.setItem("uwu_privateModules", JSON.stringify(privateModules));
         const moduleContainer = createModuleContainer(
           moduleName,
           moduleInfo.description,
@@ -2907,11 +3089,11 @@ function activateModule(data, moduleName, description, version) {
 function unloadModule(moduleName) {
   localStorage.removeItem(moduleName);
   delete moduleStates[moduleName];
-  localStorage.setItem("moduleStates", JSON.stringify(moduleStates));
+  localStorage.setItem("uwu_moduleStates", JSON.stringify(moduleStates));
 
   if (privateModules[moduleName]) {
     delete privateModules[moduleName];
-    localStorage.setItem("privateModules", JSON.stringify(privateModules));
+    localStorage.setItem("uwu_privateModules", JSON.stringify(privateModules));
   }
 
   loadModuleStates();
@@ -2938,6 +3120,19 @@ loadSettings();
 // ====================================================================================================================
 if (window.location.href !== targetCW3) {
   if (settings.commentsAvatars) {
+    const styleElement = document.createElement("style");
+    styleElement.textContent = `
+      .avatar-img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        float: left;
+        margin: 5px;
+        border: black solid 1px;
+      }
+    `;
+    document.head.appendChild(styleElement);
+
     const checkForComments = setInterval(() => {
       const comments = document.querySelectorAll(".view-comment");
       if (comments.length > 0) {
@@ -2951,14 +3146,8 @@ if (window.location.href !== targetCW3) {
               .match(/\/cat(\d+)/)?.[1];
             if (catId) {
               const avatarImg = document.createElement("img");
-
               avatarImg.alt = "Аватар пользователя";
-              avatarImg.style.width = "100px";
-              avatarImg.style.height = "100px";
-              avatarImg.style.objectFit = "cover";
-              avatarImg.style.float = "left";
-              avatarImg.style.margin = "5px";
-              avatarImg.style.border = "black solid 1px";
+              avatarImg.classList.add("avatar-img");
 
               loadAvatar(catId, (avatarUrl) => {
                 if (avatarUrl) {
@@ -3214,9 +3403,9 @@ if (window.location.href === targetCW3) {
   }
 
   window.addEventListener("load", () => {
-    const savedVersion = localStorage.getItem("uwu-version");
+    const savedVersion = localStorage.getItem("uwu_version");
     if (savedVersion !== current_uwu_version) {
-      localStorage.setItem("uwu-version", current_uwu_version);
+      localStorage.setItem("uwu_version", current_uwu_version);
     }
     if (
       settings.showUpdateNotification &&
@@ -3235,11 +3424,11 @@ if (window.location.href === targetCW3) {
     );
     panel.innerHTML += manualWeatherPanel;
 
-    const manualAuroraOffButton = document.getElementById("manualAurora_Off");
-    const manualAuroraBButton = document.getElementById("manualAurora_B");
-    const manualAuroraGButton = document.getElementById("manualAurora_G");
+    const manualAuroraOffButton = document.getElementById("manualAurora-Off");
+    const manualAuroraBButton = document.getElementById("manualAurora-B");
+    const manualAuroraGButton = document.getElementById("manualAurora-G");
 
-    const fireflyOnButton = document.getElementById("manualFirefly_On");
+    const fireflyOnButton = document.getElementById("manualFirefly-On");
 
     manualAuroraOffButton.addEventListener("click", () => {
       for (const auroraElement of auroras) {
@@ -3349,6 +3538,73 @@ if (window.location.href === targetCW3) {
     }
   }
   // ====================================================================================================================
+  //  . . . ИНФОРМАЦИОННЫЙ КОНТЕЙНЕР . . .
+  // ====================================================================================================================
+  let globalContainer = document.getElementById("uwu-global-container");
+  if (!globalContainer) {
+    globalContainer = document.createElement("div");
+    globalContainer.id = "uwu-global-container";
+    globalContainer.style.display = "none";
+    document.body.appendChild(globalContainer);
+  }
+
+  function createCatInfoContainer() {
+    const catInfoElement = document.createElement("div");
+    catInfoElement.classList.add("cat-info");
+
+    const contentContainer = document.createElement("div");
+    contentContainer.classList.add("content-container");
+    catInfoElement.appendChild(contentContainer);
+
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "Закрыть";
+    closeButton.classList.add("close-info");
+    closeButton.addEventListener("click", () => {
+      globalContainer.removeChild(catInfoElement);
+    });
+    catInfoElement.appendChild(closeButton);
+
+    const css_catDefects = document.createElement("style");
+    css_catDefects.innerHTML = `
+      .cat-info {
+        pointer-events: auto;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px #00000033;
+        z-index: 5;
+        width: 300px;
+        text-align: center;
+        display: block;
+        background-color: white;
+        color: black;
+      }
+    
+      .close-info-container {
+        text-align: right;
+      }
+    
+      .close-info {
+        cursor: pointer;
+      }
+    
+      .more-info-container {
+        cursor: pointer;
+      }
+
+      .parameter-details-container {
+        text-align: left;
+      }
+    `;
+
+    document.head.appendChild(css_catDefects);
+
+    return { catInfoElement, contentContainer };
+  }
+  // ====================================================================================================================
   //  . . . БОЛЬШЕ ИНФОРМАЦИИ В "О КОТЕ" . . .
   // ====================================================================================================================
   const defectsInfo = {
@@ -3408,14 +3664,6 @@ if (window.location.href === targetCW3) {
     },
   };
 
-  let globalContainer = document.getElementById("uwu-global-container");
-  if (!globalContainer) {
-    globalContainer = document.createElement("div");
-    globalContainer.id = "uwu-global-container";
-    globalContainer.style.display = "none";
-    document.body.appendChild(globalContainer);
-  }
-
   function showCatInfo(cat) {
     const catName = cat.querySelector(".cat_tooltip a").textContent;
     const catSize = cat.querySelector(".d .first").style.backgroundSize;
@@ -3449,35 +3697,14 @@ if (window.location.href === targetCW3) {
       })
       .filter(Boolean);
 
-    const globalContainer = document.getElementById("uwu-global-container");
-    let catInfoElement = globalContainer.querySelector(".cat-info");
-
-    if (catInfoElement) {
-      globalContainer.removeChild(catInfoElement);
-    }
-
-    catInfoElement = document.createElement("div");
-    catInfoElement.classList.add("cat-info");
-
-    const closeInfoContainer = document.createElement("div");
-    closeInfoContainer.classList.add("close-info-container");
-
-    const closeButton = document.createElement("button");
-    closeButton.textContent = "Закрыть";
-    closeButton.classList.add("close-info");
-
-    const closeButtonHandler = () => {
-      globalContainer.removeChild(catInfoElement);
-    };
-    closeButton.addEventListener("click", closeButtonHandler);
-    closeInfoContainer.appendChild(closeButton);
-
     const catId = cat
       .querySelector(".cat_tooltip a")
       .getAttribute("href")
       .slice(4);
 
-    catInfoElement.innerHTML = `
+    let { catInfoElement, contentContainer } = createCatInfoContainer();
+
+    contentContainer.innerHTML = `
       <h2>${catName}</h2>
       <p><strong>ID</strong>: ${catId}</p>
       <p><strong>Размер</strong>: ${catSize}</p>
@@ -3503,46 +3730,10 @@ if (window.location.href === targetCW3) {
           defectsContainer.appendChild(defectLine);
         }
       });
-      catInfoElement.appendChild(defectsContainer);
+      contentContainer.appendChild(defectsContainer);
     } else {
-      catInfoElement.innerHTML += "<p><strong>Здоровый</strong></p>";
+      contentContainer.innerHTML += "<p><strong>Здоровый</strong></p>";
     }
-
-    catInfoElement.appendChild(closeInfoContainer);
-
-    const css_catDefects = document.createElement("style");
-    css_catDefects.innerHTML = `
-    .cat-info {
-    pointer-events: auto;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px #00000033;
-    z-index: 5;
-    width: 300px;
-    text-align: center;
-    display: block;
-    background-color: white;
-    color: black;
-    }
-
-    .close-info-container {
-    text-align: right;
-    }
-
-    .close-info {
-    cursor: pointer;
-    }
-
-    .more-info-container {
-    cursor: pointer;
-    }
-`;
-
-    document.head.appendChild(css_catDefects);
 
     globalContainer.appendChild(catInfoElement);
   }
@@ -3681,6 +3872,103 @@ if (window.location.href === targetCW3) {
     window.addEventListener("load", setupTableObservers);
   }
   // ====================================================================================================================
+  //   . . . ПОДРОБНЕЕ О ПАРАМЕТРАХ (И НАВЫКОВ?) . . .
+  // ====================================================================================================================
+  function createMoreInfoButton() {
+    const parametersBlock = document.getElementById("parameters_block");
+  
+    const moreInfoLink = document.createElement("a");
+    moreInfoLink.href = "#";
+    moreInfoLink.textContent = "Подробнее";
+    moreInfoLink.classList.add("more-info-link");
+    moreInfoLink.addEventListener("click", (event) => {
+      event.preventDefault();
+      showParameterDetails();
+    });
+  
+    parametersBlock.parentNode.insertBefore(moreInfoLink, parametersBlock);
+  }
+  
+  function showParameterDetails() {
+    const parameters = [
+      { id: "dream_table", name: "Сонливость", timePerPixel: 20, formula: null },
+      { id: "hunger_table", name: "Голод", timePerPixel: null, formula: (red) => Math.ceil((red / 150) * 9) * 15 },
+      { id: "thirst_table", name: "Жажда", timePerPixel: 60, formula: null },
+      { id: "need_table", name: "Нужда", timePerPixel: 30, formula: null },
+      { id: "health_table", name: "Здоровье", timePerPixel: null, formula: null },
+      { id: "clean_table", name: "Чистота", timePerPixel: null, formula: (red) => {
+        red = (red % 3) ? red : red - 0.5;
+        return (red - 1) / 1.5 * 100 + 100;
+      }},
+    ];
+  
+    let { catInfoElement, contentContainer } = createCatInfoContainer();
+    contentContainer.classList.add("parameter-details-container");
+  
+    parameters.forEach(({ id, name, timePerPixel, formula }) => {
+      const table = document.getElementById(id);
+      if (table) {
+        const row = table.querySelector("tbody tr");
+        if (!row) {
+          console.warn(`Строка не найдена в таблице с ID "${id}".`);
+          return;
+        }
+        const greenBar = row.querySelector("td[style*='background-color: green;']");
+        const redBar = row.querySelector("td[style*='background-color: red;']");
+        if (!greenBar || !redBar) {
+          console.warn(`Бары не найдены в строке таблицы с ID "${id}".`);
+          return;
+        }
+        const greenBarWidth = parseInt(greenBar.style.width, 10);
+        const redBarWidth = parseInt(redBar.style.width, 10);
+        const totalWidth = greenBarWidth + redBarWidth;
+        let percentage = (greenBarWidth / totalWidth) * 100;
+        percentage = percentage % 1 !== 0 ? percentage.toFixed(2) : Math.round(percentage);
+  
+        let timeInfo = "";
+        let totalTimeSeconds;
+        if (formula) {
+          totalTimeSeconds = formula(redBarWidth);
+        } else if (timePerPixel !== null) {
+          totalTimeSeconds = redBarWidth * timePerPixel;
+        }
+  
+        if (totalTimeSeconds !== undefined) {
+          const hours = Math.floor(totalTimeSeconds / 3600);
+          const minutes = Math.floor((totalTimeSeconds % 3600) / 60);
+          const seconds = totalTimeSeconds % 60;
+          if (hours > 0) {
+            timeInfo = ` (> ${hours} ч ${minutes} мин)`;
+          } else if (minutes > 0) {
+            timeInfo = ` (${minutes} мин ${seconds} сек)`;
+          } else {
+            timeInfo = ` (${seconds} сек)`;
+          }
+        }
+  
+        const detailLine = document.createElement("p");
+        detailLine.innerHTML = `<strong>${name}:</strong> <span style="color: #00cc00;">${greenBarWidth}px</span> / <span style="color: red;">${redBarWidth}px</span> - ${percentage}%`;
+        detailLine.style.marginBottom = "0";
+        contentContainer.appendChild(detailLine);
+  
+        if (timeInfo) {
+          const detailLineTime = document.createElement("p");
+          detailLineTime.innerHTML = `≈${timeInfo}`;
+          detailLineTime.style.marginTop = "0";
+          contentContainer.appendChild(detailLineTime);
+        }
+      } else {
+        console.warn(`Таблица с ID "${id}" не найдена.`);
+      }
+    });
+  
+    globalContainer.appendChild(catInfoElement);
+  }
+  
+  if (settings.showParametersDetails) {
+    setupSingleCallback("#parameters_block", createMoreInfoButton);
+  }
+  // ====================================================================================================================
   //   . . . ЧИСЛОВАЯ ГРОМКОСТЬ УВЕДОМЛЕНИЙ . . .
   // ====================================================================================================================
   if (settings.climbingNotificationsNumbers) {
@@ -3758,7 +4046,7 @@ if (window.location.href === targetCW3) {
       cell.textContent = value || "";
       cell.style.backgroundColor = backgroundColor || "";
     }
-
+  
     function transferColors() {
       const transferCheckbox = document.getElementById("uwu-transferCheckbox");
       if (transferCheckbox.checked) {
@@ -3768,28 +4056,31 @@ if (window.location.href === targetCW3) {
         const cagesCells = Array.from(
           document.querySelectorAll("#cages tbody td.cage")
         );
-
+  
         climbingPanelCells.forEach((cell, i) => {
-          cagesCells[i].style.backgroundColor =
-            getComputedStyle(cell).backgroundColor;
+          if (cagesCells[i]) {
+            cagesCells[i].style.backgroundColor =
+              getComputedStyle(cell).backgroundColor;
+          }
         });
       }
     }
-
+  
     function clearColors() {
       const cagesCells = document.querySelectorAll("#cages tbody td.cage");
       cagesCells.forEach((cell) => {
         cell.style.backgroundColor = "";
       });
     }
-
+  
     let lastClickedCell;
-
+  
     function handleCellClick(event) {
       const cell = event.target.closest("td");
       if (cell && cell.closest("#uwu-climbingPanel")) {
         if (lastClickedCell === cell) {
           updateCell(cell, "");
+          saveTableData(tabManager.currentTableId);
           transferColors();
           lastClickedCell = null;
         } else {
@@ -3797,12 +4088,11 @@ if (window.location.href === targetCW3) {
         }
       }
     }
-
+  
     function handleKeyDown(event) {
       const keyPressed = event.key;
       const activeElement = document.activeElement;
-
-      // TODO - Кастомайз цветов
+  
       if (
         activeElement &&
         activeElement.tagName === "TD" &&
@@ -3816,57 +4106,44 @@ if (window.location.href === targetCW3) {
           updateCell(activeElement, "", "#ffffff87");
         }
         saveTableData(tabManager.currentTableId);
+        transferColors();
       }
     }
-
+  
     function handleTransferCheckboxChange(event) {
       event.target.checked ? transferColors() : clearColors();
     }
-
+  
     const uwuClimbingPanelContainer = `
-    <div id="uwu-climbingMainPanel">
-    <div id="uwu-climbingPanelButton">
-      <h2>Минное поле</h2>
-    </div>
-    <div id="uwu-climbingPanelContainer">
-      <h3>Вкладка</h3>
-      <div id="uwu-buttonRow1"></div>
-      <hr>
-      <h3>Локация</h3>
-      <div id="uwu-buttonRow2"></div>
-      <div id="uwu-functionButtonsContainer">
-        <input type="checkbox" id="uwu-transferCheckbox">
-        <label for="uwu-transferCheckbox">Перенос на Игровое поле</label>
+      <div id="uwu-climbingMainPanel">
+        <div id="uwu-climbingPanelButton">
+          <h2>Минное поле</h2>
+        </div>
+        <div id="uwu-climbingPanelContainer">
+          <h3>Вкладка</h3>
+          <div id="uwu-buttonRow1"></div>
+          <hr>
+          <h3>Локация</h3>
+          <div id="uwu-buttonRow2"></div>
+          <div id="uwu-functionButtonsContainer">
+            <input type="checkbox" id="uwu-transferCheckbox">
+            <label for="uwu-transferCheckbox">Перенос на Игровое поле</label>
+          </div>
+          <div id="uwu-tableContainer"></div>
+        </div>
       </div>
-      <div id="uwu-tableContainer"></div>
-    </div>
-  </div>
-  </div>
-  `;
-
+    `;
+  
     function createClimbingPanel() {
       const globalContainer = document.getElementById("uwu-global-container");
-      globalContainer.insertAdjacentHTML(
-        "beforeend",
-        uwuClimbingPanelContainer
-      );
-
+      globalContainer.insertAdjacentHTML("beforeend", uwuClimbingPanelContainer);
+  
       const transferCheckbox = document.getElementById("uwu-transferCheckbox");
-
+  
       document.addEventListener("keydown", handleKeyDown);
       transferCheckbox.addEventListener("change", handleTransferCheckboxChange);
-      document.addEventListener("keydown", (event) => {
-        const keyPressed = event.key;
-        if (
-          (keyPressed >= "0" && keyPressed <= "7") ||
-          keyPressed === "-" ||
-          keyPressed === "="
-        ) {
-          transferColors();
-        }
-      });
     }
-
+  
     function saveTableData(tableIndex) {
       const climbingPanel = document.getElementById("uwu-climbingPanel");
       if (climbingPanel) {
@@ -3879,20 +4156,19 @@ if (window.location.href === targetCW3) {
         tabManager.saveState();
       }
     }
-
+  
     function clearTable() {
       const climbingPanel = document.getElementById("uwu-climbingPanel");
       if (climbingPanel) {
         const cells = Array.from(climbingPanel.querySelectorAll("td"));
         cells.forEach((cell) => {
           if (
-            getComputedStyle(cell).backgroundColor !==
-            "rgba(255, 255, 255, 0.53)"
+            getComputedStyle(cell).backgroundColor !== "rgba(255, 255, 255, 0.53)"
           ) {
             updateCell(cell, "", "");
           }
         });
-
+  
         const currentTab = tabManager.tabs[tabManager.currentTabIndex];
         currentTab.tables[tabManager.currentTableId] = {
           name: currentTab.tables[tabManager.currentTableId].name,
@@ -3902,127 +4178,109 @@ if (window.location.href === targetCW3) {
       }
       transferColors();
     }
-
+  
     const tabManager = {
       tabs: [],
       currentTabIndex: 0,
       currentTableId: 0,
-
+  
       createTab(name) {
         const newTab = {
           name: name,
           tables: [],
         };
-
+  
         this.tabs.push(newTab);
-        this.renderTabs();
-        this.renderTables();
+        this.render();
         this.switchTab(this.tabs.length - 1);
       },
-
+  
       switchTab(index) {
         this.currentTabIndex = index;
-        this.renderTables();
-
         const currentTab = this.tabs[this.currentTabIndex];
-
         if (currentTab && currentTab.tables.length > 0) {
           this.currentTableId = 0;
-          this.switchTable(this.currentTableId);
         } else {
           this.currentTableId = null;
         }
-
-        const tabButtons = document.querySelectorAll(".tab-button");
-        tabButtons.forEach((button, i) => {
-          if (i === this.currentTabIndex) {
-            button.classList.add("active");
-          } else {
-            button.classList.remove("active");
-          }
-        });
-        transferColors();
+        this.render();
       },
-
+  
       switchTable(tableIndex) {
         this.currentTableId = tableIndex;
-        this.renderTable(tableIndex);
-
-        const tableButtons = document.querySelectorAll(".table-button");
-        tableButtons.forEach((button) => {
-          const buttonIndex = parseInt(button.dataset.tableindex);
-          if (buttonIndex === this.currentTableId) {
-            button.classList.add("active");
-          } else {
-            button.classList.remove("active");
-          }
-        });
-        transferColors();
+        this.render();
       },
-
+  
       saveState() {
-        localStorage.setItem("climbingPanelState", JSON.stringify(this));
+        localStorage.setItem("uwu_climbingPanelState", JSON.stringify(this));
       },
-
+  
+      render() {
+        this.renderTabs();
+        this.renderTables();
+        if (this.currentTableId !== null) {
+          this.renderTable(this.currentTableId);
+        }
+      },
+  
       renderTabs() {
         const tabRow = document.getElementById("uwu-buttonRow1");
         tabRow.innerHTML = "";
-
+  
         this.tabs.forEach((tab, index) => {
           const tabButton = document.createElement("button");
           tabButton.textContent = tab.name;
           tabButton.classList.add("tab-button");
-
+  
           if (index === this.currentTabIndex) {
             tabButton.classList.add("active");
           }
-
+  
           tabButton.addEventListener("click", () => this.switchTab(index));
-
+  
           const tabContainer = document.createElement("div");
           tabContainer.classList.add("tab-container");
           tabContainer.appendChild(tabButton);
-
+  
           tabRow.appendChild(tabContainer);
         });
       },
-
+  
       renderTables() {
         const tableRow = document.getElementById("uwu-buttonRow2");
         tableRow.innerHTML = "";
-
+  
         const currentTab = this.tabs[this.currentTabIndex];
         if (currentTab) {
-          Object.keys(currentTab.tables).forEach((tableIndex, index) => {
-            const table = currentTab.tables[tableIndex];
-            let tableName = table.name || `Локация ${index + 1}`;
-
+          currentTab.tables.forEach((table, index) => {
             const tableButton = document.createElement("button");
-            tableButton.textContent = tableName;
+            tableButton.textContent = table.name || `Локация ${index + 1}`;
             tableButton.classList.add("table-button");
-
-            tableButton.addEventListener("click", () => {
-              tabManager.switchTable(parseInt(tableIndex));
-            });
-
-            tableButton.dataset.tableindex = tableIndex;
-
+  
+            if (index === this.currentTableId) {
+              tableButton.classList.add("active");
+            }
+  
+            tableButton.addEventListener("click", () => this.switchTable(index));
+  
+            tableButton.dataset.tableindex = index;
+  
             const tableContainer = document.createElement("div");
             tableContainer.classList.add("table-container");
             tableContainer.appendChild(tableButton);
-
+  
             tableRow.appendChild(tableContainer);
           });
         }
       },
-
+  
       renderTable(tableIndex) {
         const tableContainer = document.getElementById("uwu-tableContainer");
         tableContainer.innerHTML = "";
-
+  
         const climbingPanel = document.createElement("table");
         climbingPanel.id = "uwu-climbingPanel";
-
+  
         for (let i = 0; i < 6; i++) {
           const row = document.createElement("tr");
           for (let j = 0; j < 10; j++) {
@@ -4033,10 +4291,10 @@ if (window.location.href === targetCW3) {
           }
           climbingPanel.appendChild(row);
         }
-
+  
         const currentTab = this.tabs[this.currentTabIndex];
         const tableData = currentTab.tables[tableIndex]?.data;
-
+  
         if (tableData) {
           for (let i = 0; i < tableData.length; i++) {
             for (let j = 0; j < tableData[i].length; j++) {
@@ -4048,16 +4306,7 @@ if (window.location.href === targetCW3) {
           }
         }
         tableContainer.appendChild(climbingPanel);
-
-        climbingPanel.addEventListener("click", () => {
-          const tableData = currentTab.tables[tableIndex];
-          currentTab.tables[tableIndex] = {
-            name: tableData.name,
-            data: getTableData(climbingPanel.id),
-          };
-          tabManager.saveState();
-        });
-
+  
         const clearButton = document.createElement("button");
         clearButton.textContent = "Очистить всё поле/таблицу";
         clearButton.id = "button-clear-table";
@@ -4065,12 +4314,13 @@ if (window.location.href === targetCW3) {
         tableContainer.appendChild(clearButton);
       },
     };
-
-    const savedState = localStorage.getItem("climbingPanelState");
+  
+    const savedState = localStorage.getItem("uwu_climbingPanelState");
     if (savedState) {
       const state = JSON.parse(savedState);
       Object.assign(tabManager, state);
-
+      tabManager.currentTabIndex = 0;
+    
       const currentTab = tabManager.tabs[tabManager.currentTabIndex];
       if (currentTab && currentTab.tables.length > 0) {
         if (tabManager.currentTableId >= currentTab.tables.length) {
@@ -4081,14 +4331,13 @@ if (window.location.href === targetCW3) {
       }
     }
     createClimbingPanel();
-
-    tabManager.renderTabs();
-    tabManager.renderTables();
-
+    
+    tabManager.render();
+  
     function getTableData(tableId) {
       const table = document.getElementById(tableId);
       const tableData = [];
-
+  
       for (let i = 0; i < table.rows.length; i++) {
         const rowData = [];
         for (let j = 0; j < table.rows[i].cells.length; j++) {
@@ -4100,7 +4349,7 @@ if (window.location.href === targetCW3) {
         }
         tableData.push(rowData);
       }
-
+  
       return tableData;
     }
 
@@ -4124,7 +4373,7 @@ if (window.location.href === targetCW3) {
     function dragStart(e) {
       e.preventDefault();
       const savedPanelPosition = JSON.parse(
-        localStorage.getItem("climbingPanelPosition")
+        localStorage.getItem("uwu_climbingPanelPosition")
       );
       initialX =
         e.clientX -
@@ -4193,7 +4442,7 @@ if (window.location.href === targetCW3) {
     function saveClimbingPanelPosition(x, y) {
       const panelPosition = { x, y };
       localStorage.setItem(
-        "climbingPanelPosition",
+        "uwu_climbingPanelPosition",
         JSON.stringify(panelPosition)
       );
     }
@@ -4205,7 +4454,7 @@ if (window.location.href === targetCW3) {
       const panelHeight = climbingMainPanel.offsetHeight;
 
       const savedPanelPosition = JSON.parse(
-        localStorage.getItem("climbingPanelPosition")
+        localStorage.getItem("uwu_climbingPanelPosition")
       );
 
       if (savedPanelPosition) {
@@ -4519,12 +4768,18 @@ if (window.location.href === targetCW3) {
   }
   // ====================================================================================================================
   //   . . . ПОЛЬЗОВАТЕЛЬСКИЕ ТЕМЫ / ЦВЕТА . . .
-  // ====================================================================================================================
-  if (settings.userTheme) {
+  // ====================================================================================================================  
+let currentTheme = "Моя Тема";
+const colorThemes = loadColorThemes();
+
+function applyTheme(themeName) {
+  const theme = colorThemes[themeName]?.colors;
+
+  if (theme) {
     const newStyle = document.createElement("style");
     newStyle.innerHTML = `
       body {
-        background: ${settings.settingBackgroundColor};
+        background: ${theme.backgroundColor || ""};
       }
 
       #cages_overflow {
@@ -4532,7 +4787,7 @@ if (window.location.href === targetCW3) {
       } 
 
       #tr_actions > td, #tr_mouth > td, #location, .small {
-        background-color: ${settings.settingBlocksColor};
+        background-color: ${theme.blocksColor};
       }
 
       #main_table, #tr_mouth, #tr_actions, #info_main {
@@ -4541,37 +4796,37 @@ if (window.location.href === targetCW3) {
       }
     
       #tr_chat {
-        background-color: ${settings.settingChatColor};
+        background-color: ${theme.chatColor};
       }
     
       body, input, select, .ui-slider-handle {
-        color: ${settings.settingTextColor};
+        color: ${theme.textColor};
       }
     
       input, select, .ui-slider-horizontal {
-        background-color: ${settings.settingAccentColor1};
-        background: ${settings.settingAccentColor1};
-        border: solid 1px ${settings.settingAccentColor2};
+        background-color: ${theme.accentColor1};
+        background: ${theme.accentColor1};
+        border: solid 1px ${theme.accentColor2};
       }
 
       .ui-widget-content .ui-state-default {
-        background: ${settings.settingAccentColor2};
-        border: solid 1px ${settings.settingAccentColor2};
+        background: ${theme.accentColor2};
+        border: solid 1px ${theme.accentColor2};
       } 
 
       hr {
-        border: solid 1px ${settings.settingAccentColor2};
+        border: solid 1px ${theme.accentColor2};
       }
 
       .myname {
-        color: ${settings.settingAccentColor1};
-        background: ${settings.settingAccentColor3};
+        color: ${theme.accentColor1};
+        background: ${theme.accentColor3};
       }
 
       span.cat_tooltip {
-        background: ${settings.settingСatTooltipBackground} !important;
-        color: ${settings.settingTextColor} !important;
-        border: 2px solid ${settings.settingAccentColor2} !important;
+        background: ${theme.catTooltipBackground} !important;
+        color: ${theme.textColor} !important;
+        border: 2px solid ${theme.accentColor2} !important;
       } 
 
       span.cat_tooltip > span.online {
@@ -4579,43 +4834,60 @@ if (window.location.href === targetCW3) {
       }
       
       .cat:hover .cat_tooltip a, .other_cats_list > a { 
-        color: ${settings.settingLinkColor}; 
+        color: ${theme.linkColor}; 
       }
 
       .move_name {
-        color: ${settings.settingTextColor};
-        background-color: ${settings.settingBlocksColor} !important;
+        color: ${theme.textColor};
+        background-color: ${theme.blocksColor} !important;
       }
     
       a, a:hover {
-        color: ${settings.settingLinkColor};
+        color: ${theme.linkColor};
       }
 
       #fightPanel {
-        background-color: ${settings.settingFightPanelBackground};
+        background-color: ${theme.fightPanelBackground};
       }
 
       .hotkey {
-        background-color: ${settings.settingAccentColor1};
+        background-color: ${theme.accentColor1};
       }
 
       #newchat, #newls {
-        color: ${settings.settingAccentColor3};
+        color: ${theme.accentColor3};
       }
 
     .cat-info {
-      background-color: ${settings.settingСatTooltipBackground} !important;
-      color: ${settings.settingTextColor} !important;
+      background-color: ${theme.catTooltipBackground} !important;
+      color: ${theme.textColor} !important;
       }
     `;
     document.head.appendChild(newStyle);
   }
+}
+
+if (settings.userTheme) {
+  applyTheme(currentTheme); 
+}
   // ====================================================================================================================
   //   . . . РЕДИЗАЙН ИГРОВОЙ . . .
   // ====================================================================================================================
   if (settings.customLayout) {
+
+    function prependOtherCatsListContent() {
+      var otherCatsList = document.querySelector('.other_cats_list');
+      var small = document.querySelector('.small');
+    
+      if (otherCatsList && small) {
+        var content = otherCatsList.innerHTML;
+        small.innerHTML = content + " || " + small.innerHTML;
+      }
+    }
+    setupSingleCallback(".other_cats_list", prependOtherCatsListContent);
+
     function applyLayoutSettings() {
-      const savedSettings = localStorage.getItem("layoutSettings");
+      const savedSettings = localStorage.getItem("uwu_layoutSettings");
       if (savedSettings) {
         const { leftBlocks, rightBlocks } = JSON.parse(savedSettings);
 
@@ -4819,6 +5091,10 @@ if (window.location.href === targetCW3) {
 
   #newchat, #newls {
     background-color: transparent;
+  }
+
+  .other_cats_list {
+    display: none;
   }
   `;
     document.head.appendChild(fixStyle);
@@ -5259,16 +5535,26 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   //  . . . КОМАНДЫ В БОЕВОМ РЕЖИМЕ . . .
   // ====================================================================================================================
-  if (settings.FightTeams) {
-    const colors = settings.FightTeamsColors;
+  if (settings.fightTeams) {
+    const colors = settings.fightTeamsColors;
+
+    const fightPanel = document.getElementById("fightPanel");
+    const buttonHTML = '<button id="updateTableButton" style="width: 100%;">Обновить команды</button>';
+    fightPanel.insertAdjacentHTML("beforeend", buttonHTML);
+
+    document.getElementById("updateTableButton").onclick = () => {
+      if (!document.getElementById("uwu-team-settings")) {
+        createTeamTable();
+      }
+      updateTeamTable();
+    };
 
     function createTeamTable() {
-      const fightPanel = document.getElementById("fightPanel");
       const tableHTML = `
         <div id="uwu-team-settings" style="height: ${
-          settings.FightTeamsPanelHight || auto
+          settings.fightTeamsPanelHight || "auto"
         }px; overflow-y: scroll; resize: vertical;">
-          <table id="uwu-team-settings-table "style="width: 100%; border-collapse: collapse;">
+          <table id="uwu-team-settings-table" style="width: 100%; border-collapse: collapse;">
             <thead>
               <tr>
                 <th style="border: 1px solid #000; padding: 5px;">Имя</th>
@@ -5278,11 +5564,10 @@ if (window.location.href === targetCW3) {
             <tbody id="teamTableBody"></tbody>
           </table>
         </div>
-        <button id="updateTableButton" style="width: 100%;">Обновить таблицу</button>
       `;
-      fightPanel.insertAdjacentHTML("beforeend", tableHTML);
-      document.getElementById("updateTableButton").onclick = () =>
-        updateTeamTable();
+      // Вставляем таблицу перед кнопкой
+      const updateButton = document.getElementById("updateTableButton");
+      updateButton.insertAdjacentHTML("beforebegin", tableHTML); 
     }
 
     function updateTeamTable() {
@@ -5320,7 +5605,6 @@ if (window.location.href === targetCW3) {
         }
       });
     }
-    createTeamTable();
   }
   // ====================================================================================================================
   //   . . . ПЕРЕТАСКИВАНИЕ ПАНЕЛИ БОЕВОГО РЕЖИМА . . .
@@ -5349,11 +5633,11 @@ if (window.location.href === targetCW3) {
     let isDragging = false;
 
     function saveFightPanelPosition(x, y) {
-      localStorage.setItem("fightPanelPosition", JSON.stringify({ x, y }));
+      localStorage.setItem("uwu_fightPanelPosition", JSON.stringify({ x, y }));
     }
 
     function loadFightPanelPosition() {
-      const savedPosition = localStorage.getItem("fightPanelPosition");
+      const savedPosition = localStorage.getItem("uwu_fightPanelPosition");
       if (savedPosition) {
         const position = JSON.parse(savedPosition);
         panelX = position.x;
@@ -5419,48 +5703,64 @@ if (window.location.href === targetCW3) {
     function compactFightLog() {
       const fightLog = document.getElementById("fightLog");
       fightLog.style.display = "none";
-  
-      let compactedFightLog = document.getElementById("uwu-Compacted-Fight-Log");
+
+      let compactedFightLog = document.getElementById(
+        "uwu-Compacted-Fight-Log"
+      );
       if (!compactedFightLog) {
         compactedFightLog = document.createElement("div");
         compactedFightLog.id = "uwu-Compacted-Fight-Log";
         compactedFightLog.style.height = settings.FightPanelHeight + "px";
         fightLog.parentNode.insertBefore(compactedFightLog, fightLog);
       }
-  
+
       const logEntries = Array.from(fightLog.childNodes).filter(
         (entry) => entry.tagName === "SPAN"
       );
-  
+
       if (logEntries.length > 0) {
         const firstEntry = logEntries[0];
         const text = firstEntry.textContent.trim();
         const match = text.match(/^(.*) x(\d+)$/);
         const originalText = match ? match[1] : text;
         const count = match ? parseInt(match[2], 10) : 1;
-  
+
         const latestEntry = compactedFightLog.firstElementChild;
-  
+
         if (latestEntry) {
           const latestTextSpan = latestEntry.querySelector(".text");
-          
-          if (latestTextSpan && latestTextSpan.textContent.trim() === originalText) {
+
+          if (
+            latestTextSpan &&
+            latestTextSpan.textContent.trim() === originalText
+          ) {
             const countLabel = latestEntry.querySelector(".count");
-            const existingCount = parseInt(countLabel.textContent.match(/x(\d+)$/)[1], 10);
+            const existingCount = parseInt(
+              countLabel.textContent.match(/x(\d+)$/)[1],
+              10
+            );
             countLabel.textContent = ` x${existingCount + count}`;
           } else {
-            const newEntryHTML = createEntryHTML(firstEntry.className, originalText, count);
-            compactedFightLog.insertAdjacentHTML('afterbegin', newEntryHTML);
+            const newEntryHTML = createEntryHTML(
+              firstEntry.className,
+              originalText,
+              count
+            );
+            compactedFightLog.insertAdjacentHTML("afterbegin", newEntryHTML);
           }
         } else {
-          const newEntryHTML = createEntryHTML(firstEntry.className, originalText, count);
-          compactedFightLog.insertAdjacentHTML('afterbegin', newEntryHTML);
+          const newEntryHTML = createEntryHTML(
+            firstEntry.className,
+            originalText,
+            count
+          );
+          compactedFightLog.insertAdjacentHTML("afterbegin", newEntryHTML);
         }
-  
+
         fightLog.removeChild(firstEntry);
       }
     }
-  
+
     function createEntryHTML(className, originalText, count) {
       return `
         <div class="${className}">
@@ -5469,7 +5769,7 @@ if (window.location.href === targetCW3) {
         </div>
       `;
     }
-  
+
     setupMutationObserver(
       "#fightLog",
       compactFightLog,
@@ -5729,7 +6029,14 @@ if (window.location.href === targetCW3) {
         {
           description: "Прохладно",
           temperature: -1,
-          colors: ["#3B6C9B", "#4C7BA6", "#5887AE", "#5D8BB0", "#4777A3;"],
+          colors: [
+            "#3B6C9B",
+            "#4C7BA6",
+            "#5887AE",
+            "#5D8BB0",
+            "#4777A3",
+            "#366899",
+          ],
         },
         {
           description: "Тепло",
@@ -5744,6 +6051,7 @@ if (window.location.href === targetCW3) {
             "#F6946F",
             "#F58F6B",
             "#F28060",
+            "#F38563",
             "#F17A5C",
             "#EF6B50",
           ],
@@ -5751,11 +6059,16 @@ if (window.location.href === targetCW3) {
         {
           description: "Жарко",
           temperature: 3,
-          colors: ["#ED6149", "#EB5741", "#EB523D", "#E73D2E", "#E6382A"],
+          colors: ["#EE664D", "#ED6149", "#EB5741",  "#EB523D", "#E73D2E", "#E6382A"],
+        },
+        {
+          description: "Засуха",
+          temperature: 4,
+          colors: ["#DF0A08", "#E3241B", "#E4291F"],
         },
       ];
 
-      let foundTemperature = null;
+      let foundTemperature = null; 
 
       for (const range of temperatureRanges) {
         if (range.colors.includes(foundBackground)) {
@@ -5771,7 +6084,7 @@ if (window.location.href === targetCW3) {
         currentTemperature = 1;
         temperatureDescription =
           "Неизвестная температура. Разработчик скорее всего уже в курсе и в скором времени выпустит правку.";
-        console.warn("Неизвестная температура:", foundTemperature);
+        console.warn("Неизвестная температура:", foundBackground);
       }
 
       switch (currentTemperature) {
@@ -5798,7 +6111,7 @@ if (window.location.href === targetCW3) {
         temperatureDisplayElement.innerHTML = `[?] Текущий модификатор: ${weatherModifier} (${temperatureDescription})`;
       }
     } else {
-      console.log("...я потерял бекграунд температуры🌡️...");
+      console.log("...я временно потерял бекграунд температуры🌡️...");
     }
   }
   // ====================================================================================================================
@@ -6886,4 +7199,82 @@ function amogusSus() {
   console.log("⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⢹⣿⡆⠀⠀⠀⠀⣸⣿⠇⠀⠀⠀ ");
   console.log("⠀⠀⠀⠀⠀⠀⠀⢿⣿⣦⣄⣀⣠⣴⣿⣿⠁⠀⠈⠻⣿⣿⣿⣿⡿⠏⠀⠀⠀⠀ ");
   console.log("⠀⠀⠀⠀⠀⠀⠀⠈⠛⠻⠿⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀");
+}
+// ====================================================================================================================
+//   . . . ТАРГЕТИНГ БЛОГОВОЙ СТРАНИЦЫ . . .
+// ====================================================================================================================
+if (targetBlogsCreation.test(window.location.href)) {
+  // ====================================================================================================================
+  //   . . . ВОССТАНОВЛЕНИЕ БЛОГОВОГО ТЕКСТА . . .
+  // ====================================================================================================================
+  if (settings.restoreBlogCreation) {
+    const textarea = document.getElementById("creation-text");
+
+    function saveTextToStorage(text) {
+      localStorage.setItem("uwu_blogCreation", text);
+    }
+
+    function restoreTextFromStorage() {
+      const savedText = localStorage.getItem("uwu_blogCreation");
+      if (savedText && !textarea.value) {
+        textarea.value = savedText;
+      }
+    }
+
+    textarea.addEventListener("input", () => {
+      saveTextToStorage(textarea.value);
+    });
+
+    window.addEventListener("beforeunload", () => {
+      saveTextToStorage(textarea.value);
+    });
+
+    restoreTextFromStorage();
+  }
+
+}
+
+// ====================================================================================================================
+//   . . . КНОПКИ BB-КОДОВ . . .
+// ====================================================================================================================
+if (settings.moreBBCodes) {
+  function addBBCodeButtons() {
+    const bbCodeContainers = document.querySelectorAll(".bbcode");
+    if (!bbCodeContainers.length) return;
+
+    const commonButtonsHTML = `
+    <button class="bbcode" title="Абзац" data-code="p">p</button>
+    <button class="bbcode" title="Перенос" data-code="br" data-parameter="0">br</button>
+    <button class="bbcode" title="Таблица" data-code="table">table</button>
+    <button class="bbcode" title="Строка таблицы" data-code="tr">tr</button>
+    <button class="bbcode" title="Ячейка таблицы" data-code="td">td</button>
+    <button class="bbcode" title="Нумерованный список" data-code="ol">ol</button>
+    <button class="bbcode" title="Маркированный список" data-code="ul">ul</button>
+    <button class="bbcode" title="Строка списка" data-code="li">li</button>
+  `;
+
+    const overblockButtonHTML = `
+    <button class="bbcode" title="Раскрывающийся блок" data-code="overblock" data-parameter="1" data-text="Введите название раскрывающегося блока (то же, что и у заголовка, который раскрывает этот блок):">overblock</button>
+  `;
+
+    bbCodeContainers.forEach((bbCode) => {
+      const container = bbCode.parentElement;
+      if (!container) return;
+
+      const existingPButton = container.querySelector('.bbcode[data-code="p"]');
+      if (!existingPButton) {
+        container.insertAdjacentHTML("beforeend", commonButtonsHTML);
+      }
+
+      const blockElement = container.querySelector('[data-code="block"]');
+      if (
+        blockElement &&
+        !container.querySelector('.bbcode[data-code="overblock"]')
+      ) {
+        blockElement.insertAdjacentHTML("afterend", overblockButtonHTML);
+      }
+    });
+  }
+
+  addBBCodeButtons();
 }
