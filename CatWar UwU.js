@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.22.0";
+const current_uwu_version = "1.22.1";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
 
@@ -960,8 +960,12 @@ const newsPanel = `
     <p>— Совсем незначительно переоформлен код вставки Аватаров в комментарии.</p>
     <p>— Ещё один Патч-перевод локальных ключей цветовых тем в новый удобные ключи хранилища.</p>
     <p>— А так же очень крупная переработка работы "Тем и цветов Игровой".</p>
+    <p>—— Fix-Обнова 16.07.24 ⬇️</p>
+    <p>—— + Исправлено, что кнопка сохранить Свои цвета пыталась вызвать ещё и применение темы, что вызывало ошибки.</p>
+    <p>—— + Исправлено, что миграция цветов постоянно перезаписывала новые цвета.</p>
+    <p>—— + Исправлено, что копирование Душевых котов в линию ломало уведомления и пол вашего шерстяного.</p>
     <hr>
-    <p>Дата выпуска: 15.07.24</p>
+    <p>Дата выпуска: 15(16).07.24</p>
   </div>
 </div>
 `;
@@ -1843,32 +1847,35 @@ function loadSettings() {
 //  . . . СОХРАНЕНИЯ И ЗАГРУЗКА ЦВЕТОВЫХ ТЕМ . . .
 // ====================================================================================================================
 function migrateColorThemes() {
-  const storedSettings = localStorage.getItem("uwu_settings");
-  if (storedSettings && typeof storedSettings === "string") {
-    const oldSettings = JSON.parse(storedSettings);
-    const userTheme = {
-      colors: { 
-        backgroundColor: oldSettings.settingBackgroundColor,
-        blocksColor: oldSettings.settingBlocksColor,
-        chatColor: oldSettings.settingChatColor,
-        textColor: oldSettings.settingTextColor,
-        catTooltipBackground: oldSettings.settingСatTooltipBackground,
-        fightPanelBackground: oldSettings.settingFightPanelBackground,
-        linkColor: oldSettings.settingLinkColor,
-        accentColor1: oldSettings.settingAccentColor1,
-        accentColor2: oldSettings.settingAccentColor2,
-        accentColor3: oldSettings.settingAccentColor3,
-      },
-    };
+  const storedThemes = localStorage.getItem("uwu_colorThemes");
+  if (!storedThemes) {
+    const storedSettings = localStorage.getItem("uwu_settings");
+    if (storedSettings && typeof storedSettings === "string") {
+      const oldSettings = JSON.parse(storedSettings);
+      const userTheme = {
+        colors: { 
+          backgroundColor: oldSettings.settingBackgroundColor,
+          blocksColor: oldSettings.settingBlocksColor,
+          chatColor: oldSettings.settingChatColor,
+          textColor: oldSettings.settingTextColor,
+          catTooltipBackground: oldSettings.settingСatTooltipBackground,
+          fightPanelBackground: oldSettings.settingFightPanelBackground,
+          linkColor: oldSettings.settingLinkColor,
+          accentColor1: oldSettings.settingAccentColor1,
+          accentColor2: oldSettings.settingAccentColor2,
+          accentColor3: oldSettings.settingAccentColor3,
+        },
+      };
 
-    const newThemes = {
-      "Моя Тема": userTheme,
-      // "Темная Тема": { colors: { ... } },
-      // "Светлая Тема": { colors: { ... } },
-    };
+      const newThemes = {
+        "Моя Тема": userTheme,
+        // "Темная Тема": { colors: { ... } },
+        // "Светлая Тема": { colors: { ... } },
+      };
 
-    localStorage.setItem("uwu_colorThemes", JSON.stringify(newThemes));
-    console.log("Цветовые темы перенесены в новое хранилище");
+      localStorage.setItem("uwu_colorThemes", JSON.stringify(newThemes));
+      console.log("Цветовые темы перенесены в новое хранилище");
+    }
   }
 }
 migrateColorThemes();
@@ -2060,14 +2067,12 @@ if (targetSettings.test(window.location.href)) {
 
   saveThemeButton.addEventListener("click", () => {
     saveThemeFromInputs();
-    applyTheme(currentTheme, colorThemes);
     console.log(`Тема "${currentTheme}" сохранена!`);
   });
 
   colorInputs.forEach((input) => {
     input.addEventListener("input", () => {
       saveThemeFromInputs();
-      applyTheme(currentTheme);
     });
   });
 
@@ -4874,17 +4879,19 @@ if (settings.userTheme) {
   //   . . . РЕДИЗАЙН ИГРОВОЙ . . .
   // ====================================================================================================================
   if (settings.customLayout) {
-
-    function prependOtherCatsListContent() {
-      var otherCatsList = document.querySelector('.other_cats_list');
-      var small = document.querySelector('.small');
     
+    // ==================================================================
+    function prependOtherCatsListContent() {
+      var otherCatsList = document.querySelector(".other_cats_list");
+      var small = document.querySelector(".small");
+
       if (otherCatsList && small) {
         var content = otherCatsList.innerHTML;
-        small.innerHTML = content + " || " + small.innerHTML;
+        small.insertAdjacentHTML("afterbegin", content + " || ");
       }
     }
     setupSingleCallback(".other_cats_list", prependOtherCatsListContent);
+    // ==================================================================
 
     function applyLayoutSettings() {
       const savedSettings = localStorage.getItem("uwu_layoutSettings");
@@ -6064,7 +6071,7 @@ if (settings.userTheme) {
         {
           description: "Засуха",
           temperature: 4,
-          colors: ["#DF0A08", "#E3241B", "#E4291F"],
+          colors: ["#DF0A08", "#E3241B", "#E4291F", "#E52E22"],
         },
       ];
 
