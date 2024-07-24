@@ -7,8 +7,8 @@
 // @supportURL   https://catwar.su/cat1477928
 // @homepageURL  https://openuserjs.org/scripts/Ibirtem/CatWar_UwU
 // @match        http*://*.catwar.su/*
-// @updateURL    https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.js
-// @downloadURL  https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.js
+// @updateURL    https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU%20Test%20File.js
+// @downloadURL  https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU%20Test%20File.js
 // @grant        GM_addStyle
 // @license      MIT
 // @iconURL      https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png
