@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.22.1-07.24
+// @version      v1.23.0-07.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,10 +20,9 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.22.1";
+const current_uwu_version = "1.23.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
-
   uwuSettingsTextColor: "2",
 
   weatherEnabled: false,
@@ -41,8 +40,9 @@ const uwuDefaultSettings = {
   gameFieldBackgroundUser: false,
   gameFieldBackgroundUserImageURL: "",
   userTheme: false,
+  showOtherCatsList: "2",
   commentsAvatars: false,
-  
+
   chatHeight: "275",
   newChat: false,
   newChatInput: false,
@@ -70,7 +70,7 @@ const uwuDefaultSettings = {
     team1: ["#41cd70", "#cd4141"],
     team2: ["#c968ff", "#cd4141"],
     team3: ["#44bcff", "#cd4141"],
-    team4: ["#FFFF00", "#cd4141"]
+    team4: ["#FFFF00", "#cd4141"],
   },
   fightTeamsPanelHight: "100",
 
@@ -89,18 +89,6 @@ const uwuDefaultSettings = {
 
   userQuickLinks: "",
   historyHeight: "215",
-
-  // Цвета игровой
-  settingBackgroundColor: "",
-  settingBlocksColor: "",
-  settingChatColor: "",
-  settingTextColor: "",
-  settingСatTooltipBackground: "",
-  settingFightPanelBackground: "",
-  settingLinkColor: "",
-  settingAccentColor1: "",
-  settingAccentColor2: "",
-  settingAccentColor3: "",
 
   parametersColors: {
     dream: ["#008000", "#008000", "#ff0000", "#ff0000"],
@@ -242,7 +230,7 @@ const uwusettings = `
     <hr>
     <p>Расположение Северного Сияния</p>
     <div id="auroraPanel">
-      <input type="range" min="1" max="2" value="1" class="slider" id="aurora-pos" list="auroraStep"
+      <input type="range" min="1" max="2" value="1" class="uwu-range-slider" id="aurora-pos" list="auroraStep"
         data-setting="auroraPos">
       <datalist id="auroraStep">
         <option value="1">Верх</option>
@@ -268,7 +256,7 @@ const uwusettings = `
     <input type="checkbox" id="game-Field-background-User" data-setting="gameFieldBackgroundUser" />
     <label for="game-Field-background-User-enabled">Статичный фон локации:</label>
     <input type="text" id="gameFieldSettingImageURLField" placeholder="Вставьте URL" data-setting="gameFieldBackgroundUserImageURL" />
-    <button id="SettingSaveButton1">Сохранить</button>
+    <button id="SettingSaveButton1" class="uwu-button">Сохранить</button>
   </div>
 
   <div>
@@ -278,8 +266,7 @@ const uwusettings = `
   </div>
   <p>Толщина/Яркость границ</p>
   <div id="step-slider">
-    <input type="range" min="1" max="9" value="1" class="slider" id="cells-Borders-Thickness" list="ThicknessStep"
-     data-setting="cellsBordersThickness">
+    <input type="range" min="1" max="9" value="1" id="cells-Borders-Thickness" class="uwu-range-slider" list="ThicknessStep" data-setting="cellsBordersThickness">
     <datalist id="ThicknessStep">
      <option value="1">0.1</option>
      <option value="5">0.5</option>
@@ -307,7 +294,7 @@ const uwusettings = `
       <input type="checkbox" id="background-user" data-setting="backgroundUser" />
       <label for="background-user-enabled">Свой фон страницы:</label>
       <input type="text" id="SettingImageURLField" placeholder="Вставьте URL" data-setting="backgroundUserImageURL" />
-      <button id="SettingSaveButton1">Сохранить</button>
+      <button id="SettingSaveButton1" class="uwu-button">Сохранить</button>
     </div>
 
     <hr>
@@ -405,7 +392,7 @@ const uwusettings = `
         </ul>
       </div>
     </div>
-    <button id="SettingSaveButton4">Сохранить</button>
+    <button id="SettingSaveButton4" class="uwu-button">Сохранить</button>
 
     <div>
       <input type="text" id="chat-height" placeholder="Вставьте значение" data-setting="chatHeight" />
@@ -415,6 +402,14 @@ const uwusettings = `
     <div>
       <input type="text" id="history-height" placeholder="Вставьте значение" data-setting="historyHeight" />
       <label for="history-height">px; Высота Истории</label>
+    </div>
+
+    <label>Отображать Душевых котов:</label>
+    <div class="custom-select" id="showOtherCatsList">
+      <div class="select-selected">Выберите стиль отображения Душевых котов</div>
+      <div class="select-items">
+        <!-- Опции будут добавлены сюда -->
+      </div>
     </div>
 
     <div>
@@ -455,7 +450,7 @@ const uwusettings = `
   
     <div id="notification-volume">
     <p>Громкость</p>
-      <input type="range" min="1" max="10" value="5" class="slider" id="notification-MyName-Volume" list="volumeStep"
+      <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notification-MyName-Volume" list="volumeStep"
         data-setting="notificationMyNameVolume">
       <datalist id="volumeStep">
         <option value="1">10%</option>
@@ -480,15 +475,15 @@ const uwusettings = `
     <h2>Параметры и навыки</h2>
     
     <div>
-      <p>Показывает процент Параметра рядом с собой.</p>
+      <p>Параметр наглядно отображает рядом с собой свой процент.</p>
       <input type="checkbox" id="display-Parameters-Percentages" data-setting="displayParametersPercentages" />
       <label for="display-Parameters-Percentages">Отображать проценты Параметров</label>
     </div>
 
     <div>
-      <p>Заменяет стандатные цвета на выбранные ваши, с поддержкой градиента.</p>
+      <p>Заменяет стандартное оформление Параметров и Навыков на ваш.</p>
       <input type="checkbox" id="user-Parameters-Theme" data-setting="userParametersTheme" />
-      <label for="user-Parameters-Theme">Использовать свои цвета</label>
+      <label for="user-Parameters-Theme">Использовать своё оформление</label>
     </div>
 
 <div id="parameters-color-settings" class="parameters-color-settings">
@@ -608,17 +603,17 @@ const uwusettings = `
 </div>
 
     <div>
-      <p>Накладывает сверху изображение с узорами.</p>
+      <p>Накладывает поверх цветов изображение с узорами.</p>
       <input type="checkbox" id="parameters-Background-Image" data-setting="parametersBackgroundImage" />
       <label for="parameters-Background-Image">Узоры</label>
     </div>
 
     <div>
-      <p>Накладывает сверху уже ваше изображение.</p>
+      <p>Накладывает поверх уже ваше изображение.</p>
       <input type="checkbox" id="parameters-User-Background-Image" data-setting="parametersUserBackgroundImage" />
       <label for="parameters-User-Background-Image">Свои узоры:</label>
       <input type="text" id="parametersUserBackgroundImageField" placeholder="Вставьте URL" data-setting="parametersUserBackgroundImageURL" />
-      <button id="SettingSaveButton1">Сохранить</button>
+      <button id="SettingSaveButton1" class="uwu-button">Сохранить</button>
     </div>
 
   </div>
@@ -732,9 +727,9 @@ const uwusettings = `
     <h2>Минное поле</h2>
 
     <div>
-    <p>Включает окно для расчерчивания минного поля в Игровой.
-    Выбранная ячейка готова принять в себя значение с клавиатуры от "0" до "7", "минус" ( - ) равняется красной клетке, а знак "равно" ( = ) ставит более яркую клетку, например для переходов,
-    которая не будет очищаться при "Очистить всё поле/таблицу". Два раза прожмите на ячейку, чтобы очистить её значение.</p>
+    <p>ЛКМ - выбрать клетку. С клавиатуры мины ставятся от "0" до "7". Знак "минус" ( - ) равняется красной клетке, а "равно" ( = ) ставит более яркую клетку, например для переходов,
+    которая не будет очищаться при "Очистить всё поле/таблицу". Два раза ЛКМ на ячейку, чтобы очистить её значение.</p>
+      <p>Включает окно для расчерчивания минного поля в Игровой.</p>
       <input type="checkbox" id="climbing-panel" data-setting="climbingPanel" />
       <label for="climbing-panel">Минное поле</label>
       <p>Здесь вы можете добавить/удалить Вкладки для хранения Таблиц и количество самих таблиц в выбранной вкладке.
@@ -746,7 +741,7 @@ const uwusettings = `
     </div>
 
     <div>
-      <p>Дописывает в чате громкость уведомления числом (В основном, когда с вами взаимодействуют боты, а в случае с лазалками - количество опасных клеток вокруг вас)</p>
+      <p>Дописывает в чате громкость уведомлений числом. В случае с лазательными локациями - количество опасных клеток вокруг вас.</p>
       <input type="checkbox" id="climbing-Notifications-Numbers" data-setting="climbingNotificationsNumbers" />
       <label for="climbing-Notifications-Numbers">Подписывать громкость уведомления</label>
     </div>
@@ -767,7 +762,7 @@ const uwusettings = `
   
     <div id="notification-volume">
     <p>Громкость</p>
-      <input type="range" min="1" max="10" value="5" class="slider" id="climbing-Refresh-Notification-Volume" list="volumeStep"
+      <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="climbing-Refresh-Notification-Volume" list="volumeStep"
         data-setting="climbingRefreshNotificationVolume">
       <datalist id="volumeStep">
         <option value="1">10%</option>
@@ -892,13 +887,11 @@ const uwusettings = `
 
   <hr>
     <h2>Сборник стилей</h2>
-    <p>Онлайн сборник стилей/модов/скриптов, которые не попали в основной функционал Скрипта/Мода UwU. Может и будет пополняться.</p>
+    <p>Онлайн сборник стилей от Разработчика.</p>
   <hr>
     <div id="module-info">
+      <!-- Сюда модули -->
     </div>
-
-    <input type="text" id="private-module-input" placeholder=" . . . " />
-    <button id="SettingSaveButton3">Сохранить</button> 
 
   <hr>
     <h2>Импорт/Экспорт</h2>
@@ -907,12 +900,7 @@ const uwusettings = `
       <p>Импорт/Экспорт всех настроек (Пока без расставленных блоков Компактной Игровой, Сборника Стилей и Минного поля).</p>
       <input type="text" id="exportSettings" placeholder="Экспорт"/>
       <input type="text" id="importSettings" placeholder="Импорт"/>
-      <button id="importSettingsButton">Вставить</button>
-    </div>
-
-    <div>
-      <p>Исправляет некоторые проблемы с сохранениями и делает их опрятными. Это не Сброс, а именно подчистка от лишнего. Может и скорее всего будет иногда что-то вам снимать из сохранений.</p>
-      <button id="repairAllSaves" class="uwu-button">Исправление сохранений</button>
+      <button id="importSettingsButton" class="uwu-button">Вставить</button>
     </div>
     
     <div>
@@ -926,46 +914,39 @@ const uwusettings = `
 </div>
 `;
 // ====================================================================================================================
-//   . . . HTML БЛОК НОВОСТЕЙ . . . 
+//   . . . HTML БЛОК НОВОСТЕЙ . . .
 // ====================================================================================================================
 const newsPanel = `
 <div id="news-panel">
   <button id="news-button">
-    v${current_uwu_version} - 🌿 Подробные параметры, Сохранение текста в создании блога и BB-Коды! Крупная переработка хранилища и ещё очень много чего!
+    v${current_uwu_version} - 🍂 Стили отображения Душевых котов, улучшение Редактора Минных полей И общие улучшения кода!
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
-    <p> — Появилась кнопка "Сброса настроек". Если у вас совсем неординарные проблемы, опробуйте.</p>
-    <p> — Добавлена возможность выставлять себе цвет текста UwU Настроек. Изначально шрифт "адаптивный", цвета берутся из вашего выбранного дизайна CatWar'а. 
-      Но если цвет текста сливается со шрифтом, то можете наконец-то поменять его, выбрав нужный ползунком в левом верхнем уголке настроек. Теперь вам не нужно лезть куда-то там в Надстройки неизвестно куда за белыми шрифтами!</p>
-    <p> — А ещё Вы представляете? 🎄🎄🎄 Скоро рождество. Ваще??????? Рождество!!! чуваки скоро рождество!!!!!! совсем скоро!!!! вуху!!!!! 🎄🎄🎄🎄🎄🎄не могу повереть так скоро🎄🎄🎄🎄🎄🎄🎄
-      Жестьььььььььь ☃️☃️☃️☃️❄️❄️❄️🎄🎄🎄🎄 Вуху ребят рождество!!!!!!! </p>
+    <p>— Редактор Минных полей теперь сохраняет и восстанавливает свои состояния открытия/закрытия, выбранной вкладки с полем и переносилось ли на поле!🦐🍤🦐🍤🦐🍤🦐🍤🦐</p>
     <hr>
     <h3>Внешний вид</h3>
-    <p>— 🎄🎄🎄🎄🎄🎄🎄</p>
-    <p>— Компактный редизайн теперь автоматически выставляет Душевых котов в линию с остальными "Быстрыми ссылками".</p>
-    <p>— Таблица Командных Боёв теперь появляется только при нажатии на кнопку "Обновить таблицу".</p>
+    <p>— Чуть-чуть переписано описание подсказок в настройках "Параметров и навыков" для большей ясности.</p>
+    <p>— Слайдер смены цвета текста UwU Настроек теперь не убегает.</p>
+    <p>— Так же немного переоформленно описание управления Минного поля.</p>
     <hr>
     <h3>Изменения кода</h3>
-    <p>— Удалён пластырь-патч чинящий слёт Компактной Игровой из-за недадобности. Кто вдруг не получил патч и всё ещё имеет проблему ВрОдЕ бЫ "неработающей компактной игровой", используйте "Исправление сохранений" во вкладке "Надстройки".</p>
-    <p>— Контейнер для информаций "О коте" теперь создаётся отдельной функцией.</p>
-    <p>— Подправил отображение в консоли отсутствующих температур.</p>
-    <p>— Чуть привёл в порядок название настроек Боевых Команд. Простите заранее за слетевшие настройки... лучше раньше, чем никогда...</p>
-    <p>— Сделал патч-перевод всех локальных ключей в настройках под единый стандарт "uwu_название". Попали под это (вроде): 
-    Глобальные настройки, Версия скрипта/мода, Расположение блоков Компактной Игровой, Расположение Панели Минного поля, Статус модулей, Приватные модули (лол которые нигде не юзаются), Сами Минные поля, Позиция Боевой Панели.</p>
-    <p>— Стандартизации нижних подчёркиваний и чёрточек в коде.</p>
-    <p>— Переработан код работы со Вкладками и Таблицами Минного поля.</p>
-    <p>— Добавлено автозаполнение сохранения Вкладок и Таблиц, если вы первый раз запустили скрипт.</p>
-    <p>— Переработан код составления самих Минных полей.</p>
-    <p>— Совсем незначительно переоформлен код вставки Аватаров в комментарии.</p>
-    <p>— Ещё один Патч-перевод локальных ключей цветовых тем в новый удобные ключи хранилища.</p>
-    <p>— А так же очень крупная переработка работы "Тем и цветов Игровой".</p>
-    <p>—— Fix-Обнова 16.07.24 ⬇️</p>
-    <p>—— + Исправлено, что кнопка сохранить Свои цвета пыталась вызвать ещё и применение темы, что вызывало ошибки.</p>
-    <p>—— + Исправлено, что миграция цветов постоянно перезаписывала новые цвета.</p>
-    <p>—— + Исправлено, что копирование Душевых котов в линию ломало уведомления и пол вашего шерстяного.</p>
+    <p>— Удалена патч-миграция настроек для существующих пользователей в новые виды сохранений и ключей.</p>
+    <p>— Удалена патч-миграция "Своих цветов" в новые виды сохранений и ключей.</p>
+    <p>— Удалена возможность "Починки настроек" из-за ненадобности на деле.</p>
+    <p>— Переработана функция applyParameterColors, отвечающая за стиль Параметров и Навыков.</p>
+    <p>— Упрощение модулей Сборника Стилей - убрана поддержка модулей по ссылке.</p>
+    <p>— Упрощаем и улучшаем CSS стили:</p>
+    <p>—— Стандартные кнопки переведены на class="uwu-button"</p>
+    <p>—— Круглые кнопки переведены на class="uwu-button-round"</p> 
+    <p>—— Слайдеры переведены на class="uwu-range-slider"</p>
+    <p>—— Чуть упрощена функция addBBCodeButtons</p>
+    <p>—— Потихоньку делим CSS на две части - стандарт/основа и Glass Стиль. В будущем упростит кастомизацию всего UwU скрипта/мода.</p>
+    <p>— Некоторые var изменены на другие типы переменных.</p>
+    <p>— Основной цвет блоков теперь снова применяется и на Инфо-блок.</p>
+    <p>— Мучительно переработан код работы Редактора Минных полей и добавлена очередная патч-миграция уже существующих минных полей в новые значения.</p>
     <hr>
-    <p>Дата выпуска: 15(16).07.24</p>
+    <p>Дата выпуска: 25.07.24</p>
   </div>
 </div>
 `;
@@ -992,7 +973,7 @@ const manualWeatherPanel = `
 <div id="manual-weather-panel">
 <p>Изменения, сделанные в этой панели, носят временный характер и не сохраняются.</p>
 <h3>Переключить погоду</h3>
-<input type="range" min="1" max="3" value="1" class="slider" id="manualWeather" list="WeatherStep">
+<input type="range" min="1" max="3" value="1" class="uwu-range-slider" id="manualWeather" list="WeatherStep">
 <datalist id="WeatherStep">
   <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/sunny.png" width="36" height="36" option
     value="1"></option>
@@ -1009,15 +990,15 @@ const manualWeatherPanel = `
 
 <h3>Северное Сияние</h3>
 <div class="button-container-1">
-  <button type="button" id="manualAurora-Off">
+  <button type="button" id="manualAurora-Off" class="uwu-button-round">
     <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96.png"
       alt="Иконка" width="48" height="48">
   </button>
-  <button type="button" id="manualAurora-B">
+  <button type="button" id="manualAurora-B" class="uwu-button-round">
     <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96_blue.png"
       alt="Иконка" width="48" height="48">
   </button>
-  <button type="button" id="manualAurora-G">
+  <button type="button" id="manualAurora-G" class="uwu-button-round">
     <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/icons8-nothern-lights-96_green.png"
       alt="Иконка" width="48" height="48">
   </button>
@@ -1025,7 +1006,7 @@ const manualWeatherPanel = `
 
 <h3>Светлячки</h3>
 <div class="button-container-2">
-  <button type="button" id="manualFirefly-On">
+  <button type="button" id="manualFirefly-On" class="uwu-button-round">
     <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/firefly.png" alt="Иконка" width="48"
       height="48" title="Включает/Выключает">
   </button>
@@ -1190,31 +1171,6 @@ const css_uwu_main = `
 #button-container button.active h2 {
   color: #ffffff;
   transition: color 0.4s ease;
-}
-
-#SettingSaveButton1,
-#SettingSaveButton2,
-#SettingSaveButton3,
-#SettingSaveButton4,
-#importSettingsButton,
-.uwu-button {
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 8px 15px;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin: 5px;
-  margin-left: 0px;
-}
-
-#SettingSaveButton1:hover,
-#SettingSaveButton2:hover,
-#SettingSaveButton3:hover,
-#SettingSaveButton4:hover,
-#importSettingsButton:hover
-.uwu-button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
 }
 
 #modules-panel {
@@ -1485,48 +1441,6 @@ const css_uwu_main = `
   box-sizing: border-box;
 }
 
-#manualWeather,
-#aurora-pos,
-#notification-MyName-Volume,
-#climbing-Refresh-Notification-Volume,
-#cells-Borders-Thickness,
-.uwu-range-slider {
-  width: 100%;
-  cursor: pointer;
-  -webkit-appearance: none;
-  background-color: rgba(255, 255, 255, 0.06) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  border-radius: 10px;
-  height: 10px;
-  outline: none;
-}
-
-#manualWeather::-webkit-slider-thumb,
-#aurora-pos::-webkit-slider-thumb,
-#notification-MyName-Volume::-webkit-slider-thumb,
-#climbing-Refresh-Notification-Volume::-webkit-slider-thumb,
-#cells-Borders-Thickness::-webkit-slider-thumb,
-.uwu-range-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  cursor: pointer;
-}
-
-#manualWeather::-webkit-slider-thumb,
-#aurora-pos::-webkit-slider-thumb,
-#notification-MyName-Volume::-webkit-slider-thumb,
-#climbing-Refresh-Notification-Volume::-webkit-slider-thumb,
-#cells-Borders-Thickness::-webkit-slider-thumb {
-  transform: translateY(-35%);
-}
-
 #WeatherStep,
 #auroraStep,
 #volumeStep,
@@ -1580,11 +1494,7 @@ const css_uwu_main = `
   width: 100%;
 }
 
-#manualAurora-Off,
-#manualAurora-B,
-#manualAurora-G,
-#manualFirefly-Off,
-#manualFirefly-On {
+.uwu-button-round {
   width: 60px;
   height: 60px;
   cursor: pointer;
@@ -1595,11 +1505,7 @@ const css_uwu_main = `
 }
 
 #extended-settings-button:hover,
-#manualAurora-Off:hover,
-#manualAurora-B:hover,
-#manualAurora-G:hover,
-#manualFirefly-Off:hover,
-#manualFirefly-On:hover{
+.uwu-button-round:hover {
   background-color: rgba(255, 255, 255, 0.15);
 }
 
@@ -1774,55 +1680,67 @@ const css_uwu_main = `
   overflow-y: scroll;
 }
 `;
-document.head.insertAdjacentHTML('beforeend', `<style id="css-uwu-main">${css_uwu_main}</style>`);
+document.head.insertAdjacentHTML(
+  "beforeend",
+  `<style id="css-uwu-main">${css_uwu_main}</style>`
+);
 
 // ====================================================================================================================
 //   . . . ПРОЗРАЧНЫЙ CSS СТИЛЬ . . .
 // ====================================================================================================================
 // Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд
 const css_uwu_glass = `
-
-`; 
-document.head.insertAdjacentHTML('beforeend', `<style id="css-uwu-glass">${css_uwu_glass}</style>`);
-// ====================================================================================================================
-//   . . . МИГРАЦИЯ СТАРЫХ НАСТРОЕК В НОВЫЕ КЛЮЧИ . . .
-// ====================================================================================================================
-const saveMappings = {
-  'uwu-settings': 'uwu_settings',
-  'uwu-version': 'uwu_version',
-  'layoutSettings': 'uwu_layoutSettings',
-  'climbingPanelState': 'uwu_climbingPanelState',
-  'moduleStates': 'uwu_moduleStates',
-  'fightPanelPosition': 'uwu_fightPanelPosition',
-  'climbingPanelPosition': 'uwu_climbingPanelPosition',
-  'privateModules': 'uwu_privateModules',
-};
-
-function migrateSaves(mappings) {
-  for (const [originalKey, newKey] of Object.entries(mappings)) {
-    if (!localStorage.getItem(newKey)) {
-      const originalValue = localStorage.getItem(originalKey);
-      if (originalValue !== null) {
-        try {
-          // Попытка парсинга данных
-          const parsedValue = JSON.parse(originalValue);
-          localStorage.setItem(newKey, JSON.stringify(parsedValue));
-          console.log(`Копировано ${originalKey} в ${newKey}`);
-        } catch (error) {
-          // Если парсинг не удался, просто копируем значение как есть
-          localStorage.setItem(newKey, originalValue);
-          console.log(`Копировано ${originalKey} в ${newKey} как чистое значение`);
-        }
-      }
-    }
-  }
+.uwu-button {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 5px;
+  margin-left: 0px;
 }
 
-migrateSaves(saveMappings);
+.uwu-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.uwu-range-slider {
+  width: 100%;
+  cursor: pointer;
+  -webkit-appearance: none;
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 10px;
+  height: 10px;
+  outline: none;
+}
+
+.uwu-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+
+.uwu-range-slider::-webkit-slider-thumb {
+  transform: translateY(-35%);
+}
+`;
+document.head.insertAdjacentHTML(
+  "beforeend",
+  `<style id="css-uwu-glass">${css_uwu_glass}</style>`
+);
 // ====================================================================================================================
 //  . . . СОХРАНЕНИЯ И ЗАГРУЗКА НАСТРОЕК . . .
 // ====================================================================================================================
-let settings
+let settings;
 
 function saveSettings() {
   try {
@@ -1831,7 +1749,7 @@ function saveSettings() {
   } catch (error) {
     console.error("Не удалось сохранить настройки:", error);
   }
-} 
+}
 
 function loadSettings() {
   const storedSettings = localStorage.getItem("uwu_settings");
@@ -1846,54 +1764,11 @@ function loadSettings() {
 // ====================================================================================================================
 //  . . . СОХРАНЕНИЯ И ЗАГРУЗКА ЦВЕТОВЫХ ТЕМ . . .
 // ====================================================================================================================
-function migrateColorThemes() {
-  const storedThemes = localStorage.getItem("uwu_colorThemes");
-  if (!storedThemes) {
-    const storedSettings = localStorage.getItem("uwu_settings");
-    if (storedSettings && typeof storedSettings === "string") {
-      const oldSettings = JSON.parse(storedSettings);
-      const userTheme = {
-        colors: { 
-          backgroundColor: oldSettings.settingBackgroundColor,
-          blocksColor: oldSettings.settingBlocksColor,
-          chatColor: oldSettings.settingChatColor,
-          textColor: oldSettings.settingTextColor,
-          catTooltipBackground: oldSettings.settingСatTooltipBackground,
-          fightPanelBackground: oldSettings.settingFightPanelBackground,
-          linkColor: oldSettings.settingLinkColor,
-          accentColor1: oldSettings.settingAccentColor1,
-          accentColor2: oldSettings.settingAccentColor2,
-          accentColor3: oldSettings.settingAccentColor3,
-        },
-      };
-
-      const newThemes = {
-        "Моя Тема": userTheme,
-        // "Темная Тема": { colors: { ... } },
-        // "Светлая Тема": { colors: { ... } },
-      };
-
-      localStorage.setItem("uwu_colorThemes", JSON.stringify(newThemes));
-      console.log("Цветовые темы перенесены в новое хранилище");
-    }
-  }
-}
-migrateColorThemes();
-//
 function loadColorThemes() {
   const storedThemes = localStorage.getItem("uwu_colorThemes");
   let colorThemes = {};
   if (storedThemes && typeof storedThemes === "string") {
     colorThemes = JSON.parse(storedThemes);
-  } else {
-    colorThemes = {
-      "Стандартная Тема": { 
-        colors: {
-          backgroundColor: "white", 
-          blocksColor: "lightgray", 
-        }
-      },
-    };
   }
   return colorThemes;
 }
@@ -1902,14 +1777,21 @@ function loadColorThemes() {
 // ====================================================================================================================
 function debounce(func, wait) {
   let timeout;
-  return function(...args) {
+  return function (...args) {
     clearTimeout(timeout);
     timeout = setTimeout(() => func.apply(this, args), wait);
   };
 }
 
 // Когда нужно вставить прослушку на какой-то элемент, который ещё не успел появиться.
-async function setupMutationObserver(selector, callback, options = { attributes: true, attributeFilter: ["style"] }, maxAttempts = 8, delay = 500, debounceTime = 100) {
+async function setupMutationObserver(
+  selector,
+  callback,
+  options = { attributes: true, attributeFilter: ["style"] },
+  maxAttempts = 8,
+  delay = 500,
+  debounceTime = 100,
+) {
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const element = document.querySelector(selector);
     if (element) {
@@ -1919,22 +1801,31 @@ async function setupMutationObserver(selector, callback, options = { attributes:
       callback();
       return;
     }
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise((resolve) => setTimeout(resolve, delay));
   }
-  console.warn(`Элемент с селектором "${selector}" не найден после ${maxAttempts} попыток.`);
+  console.warn(
+    `Элемент с селектором "${selector}" не найден после ${maxAttempts} попыток.`
+  );
 }
 
 // Когда нужно вставить что-то в какой-то элемент, который ещё не успел появиться.
-async function setupSingleCallback(selector, callback, maxAttempts = 8, delay = 500) {
+async function setupSingleCallback(
+  selector,
+  callback,
+  maxAttempts = 8,
+  delay = 500,
+) {
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const element = document.querySelector(selector);
     if (element) {
       callback();
       return;
     }
-    await new Promise(resolve => setTimeout(resolve, delay));
+    await new Promise((resolve) => setTimeout(resolve, delay));
   }
-  console.warn(`Элемент с селектором "${selector}" не найден после ${maxAttempts} попыток.`);
+  console.warn(
+    `Элемент с селектором "${selector}" не найден после ${maxAttempts} попыток.`
+  );
 }
 // ====================================================================================================================
 //  . . . ВНЕШНИЙ ВИД ПАНЕЛИ НАСТРОЕК . . .
@@ -2129,7 +2020,6 @@ if (targetSettings.test(window.location.href)) {
     }
   }
   restoreColorPickers();
-
   // ====================================================================================================================
   //  . . . ЦВЕТА КОМАНДНЫХ БОЁВ . . .
   // ====================================================================================================================
@@ -2160,69 +2050,6 @@ if (targetSettings.test(window.location.href)) {
   }
 
   restoreColorTeamsPickers();
-
-  // ====================================================================================================================
-  //  . . . ПОЧИНКА ГЛАВНЫХ НАСТРОЕК . . .
-  // ====================================================================================================================
-  function repairAllSaves() {
-    let settings = { ...uwuDefaultSettings };
-    const storedSettings = localStorage.getItem("uwu_settings");
-    if (storedSettings && typeof storedSettings === "string") {
-      const loadedSettings = JSON.parse(storedSettings);
-
-      const removedKeys = [];
-      const addedKeys = [];
-
-      for (const key in loadedSettings) {
-        if (!(key in uwuDefaultSettings)) {
-          removedKeys.push(key);
-          delete loadedSettings[key];
-        } else if (
-          typeof uwuDefaultSettings[key] === "object" &&
-          !Array.isArray(uwuDefaultSettings[key])
-        ) {
-          for (const nestedKey in loadedSettings[key]) {
-            if (!(nestedKey in uwuDefaultSettings[key])) {
-              removedKeys.push(`${key}.${nestedKey}`);
-              delete loadedSettings[key][nestedKey];
-            }
-          }
-        }
-      }
-
-      for (const key in uwuDefaultSettings) {
-        if (!(key in loadedSettings)) {
-          addedKeys.push(key);
-          loadedSettings[key] = uwuDefaultSettings[key];
-        } else if (
-          typeof uwuDefaultSettings[key] === "object" &&
-          !Array.isArray(uwuDefaultSettings[key])
-        ) {
-          for (const nestedKey in uwuDefaultSettings[key]) {
-            if (!(nestedKey in loadedSettings[key])) {
-              addedKeys.push(`${key}.${nestedKey}`);
-              loadedSettings[key][nestedKey] =
-                uwuDefaultSettings[key][nestedKey];
-            }
-          }
-        }
-      }
-
-      settings = { ...uwuDefaultSettings, ...loadedSettings };
-
-      localStorage.setItem("uwu_settings", JSON.stringify(settings));
-      console.log("Настройки подчищены и сохранены.");
-      console.log("Удаленные ключи:", removedKeys);
-      console.log("Добавленные ключи:", addedKeys);
-    } else {
-      localStorage.setItem("uwu_settings", JSON.stringify(settings));
-      console.log("Настройки подчищены и сохранены.");
-    }
-  }
-
-  document
-    .getElementById("repairAllSaves")
-    .addEventListener("click", repairAllSaves);
   // ====================================================================================================================
   //   . . . СБРОС НАСТРОЕК . . .
   // ====================================================================================================================
@@ -2233,7 +2060,7 @@ if (targetSettings.test(window.location.href)) {
     "uwu_climbingPanelState",
     "uwu_moduleStates",
     "uwu_fightPanelPosition",
-    "uwu_climbingPanelPosition",
+    "uwu_climbingPanelStatus",
     "uwu_privateModules",
     "uwu_colorThemes",
   ];
@@ -2293,6 +2120,7 @@ if (targetSettings.test(window.location.href)) {
   // ====================================================================================================================
   //  . . . СОЗДАНИЕ ВЫПАДАЮЩИХ СПИСКОВ ПРИ ПОМОЩИ ФУНКЦИИ createCustomSelect . . .
   // ====================================================================================================================
+  loadSettings();
   // Звуки звуки звуки, вуху.
   const notificationSounds = [
     { name: "Звук 1", id: "notificationSound1" },
@@ -2300,7 +2128,6 @@ if (targetSettings.test(window.location.href)) {
     { name: "Звук 3", id: "notificationSound3" },
   ];
 
-  loadSettings();
   if (settings["myNameNotificationSound"]) {
     const selectedOption = notificationSounds.find(
       (option) => option.id === settings["myNameNotificationSound"]
@@ -2310,7 +2137,6 @@ if (targetSettings.test(window.location.href)) {
       .querySelector(".select-selected").textContent = selectedOption.name;
   }
 
-  loadSettings();
   if (settings["climbingRefreshNotificationSound"]) {
     const selectedOption = notificationSounds.find(
       (option) => option.id === settings["climbingRefreshNotificationSound"]
@@ -2322,7 +2148,26 @@ if (targetSettings.test(window.location.href)) {
 
   createCustomSelect("climbingRefreshNotificationSound", notificationSounds);
   createCustomSelect("myNameNotificationSound", notificationSounds);
+  // ==============================================================================
+  const howShowOtherCatsList = [
+    { name: "Не отображать", id: "1" },
+    { name: "Компактно", id: "2" },
+    { name: "Целиком", id: "3" },
+  ];
 
+  if (settings["showOtherCatsList"]) {
+    const selectedOption = howShowOtherCatsList.find(
+      (option) => option.id === settings["showOtherCatsList"]
+    );
+    document
+      .getElementById("showOtherCatsList")
+      .querySelector(".select-selected").textContent = selectedOption.name;
+  }
+
+  createCustomSelect("showOtherCatsList", howShowOtherCatsList);
+  // ====================================================================================================================
+  //  . . . КНОПКА НОВОСТЕЙ . . .
+  // ====================================================================================================================
   window.addEventListener("load", () => {
     const newsButton = document.getElementById("news-button");
     const newsList = document.getElementById("news-list");
@@ -2839,8 +2684,6 @@ async function loadModuleListOnSettings() {
     const modules = moduleList.split("\n").filter((line) => line.trim() !== "");
 
     const moduleInfoContainer = document.getElementById("module-info");
-    const privateModuleInput = document.getElementById("private-module-input");
-    const saveButton = document.getElementById("SettingSaveButton3");
 
     if (!moduleInfoContainer) {
       console.error("Контейнер модулей не найден!");
@@ -2879,14 +2722,6 @@ async function loadModuleListOnSettings() {
         loadModule(moduleName, description, version);
       }
     }
-
-    saveButton.addEventListener("click", () => {
-      const privateModuleUrl = privateModuleInput.value.trim();
-      if (privateModuleUrl) {
-        loadPrivateModule(privateModuleUrl);
-        privateModuleInput.value = "";
-      }
-    });
   } catch (error) {
     console.error("Ошибка при загрузке списка модулей:", error);
   }
@@ -2984,8 +2819,6 @@ function createModuleContainer(
 
       if (checkbox.checked) {
         loadModule(moduleName, description, version);
-      } else {
-        deactivateModule(moduleName);
       }
     });
 
@@ -3029,53 +2862,6 @@ async function loadModule(moduleName, description, version) {
       console.error("Ошибка при загрузке модуля:", error);
     }
   }
-}
-
-async function loadPrivateModule(privateModuleUrl) {
-  try {
-    const isValidUrl = privateModuleUrl.startsWith(
-      "https://raw.githubusercontent.com/"
-    );
-    if (isValidUrl) {
-      const response = await fetch(privateModuleUrl);
-      if (response.ok) {
-        const data = await response.text();
-        const moduleName = getModuleNameFromUrl(privateModuleUrl);
-        const moduleInfo = { description: "Приватный модуль", version: "Н/Д" };
-        privateModules[moduleName] = moduleInfo;
-        localStorage.setItem("uwu_privateModules", JSON.stringify(privateModules));
-        const moduleContainer = createModuleContainer(
-          moduleName,
-          moduleInfo.description,
-          moduleInfo.version
-        );
-        const moduleInfoContainer = document.getElementById("module-info");
-        moduleInfoContainer.appendChild(moduleContainer);
-        activateModule(
-          data,
-          moduleName,
-          moduleInfo.description,
-          moduleInfo.version
-        );
-      } else {
-        console.error(
-          `Ошибка при загрузке приватного модуля: ${response.status} ${response.statusText}`
-        );
-      }
-    } else {
-      console.error(
-        'Неверный формат ссылки. Ссылка должна начинаться с "https://raw.githubusercontent.com/"'
-      );
-    }
-  } catch (error) {
-    console.error("Ошибка при загрузке приватного модуля:", error);
-  }
-}
-
-function getModuleNameFromUrl(url) {
-  const lastSlash = url.lastIndexOf("/");
-  const fileName = url.substring(lastSlash + 1);
-  return fileName;
 }
 
 function activateModule(data, moduleName, description, version) {
@@ -3267,6 +3053,7 @@ function createSoundManager() {
 const soundManager = createSoundManager();
 
 // ===================== СПИСОК ДОСТУПНЫХ ЗВУКОВ =====================
+
 soundManager.loadSound(
   "notificationSound1",
   "https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_1.ogg"
@@ -3279,7 +3066,6 @@ soundManager.loadSound(
   "notificationSound3",
   "https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_3.ogg"
 );
-// =====================  =====================
 
 // ====================================================================================================================
 //  . . . ЗАГРУЗКА КОДА В ИГРОВОЙ . . .
@@ -3881,7 +3667,7 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   function createMoreInfoButton() {
     const parametersBlock = document.getElementById("parameters_block");
-  
+
     const moreInfoLink = document.createElement("a");
     moreInfoLink.href = "#";
     moreInfoLink.textContent = "Подробнее";
@@ -3890,26 +3676,46 @@ if (window.location.href === targetCW3) {
       event.preventDefault();
       showParameterDetails();
     });
-  
+
     parametersBlock.parentNode.insertBefore(moreInfoLink, parametersBlock);
   }
-  
+
   function showParameterDetails() {
     const parameters = [
-      { id: "dream_table", name: "Сонливость", timePerPixel: 20, formula: null },
-      { id: "hunger_table", name: "Голод", timePerPixel: null, formula: (red) => Math.ceil((red / 150) * 9) * 15 },
+      {
+        id: "dream_table",
+        name: "Сонливость",
+        timePerPixel: 20,
+        formula: null,
+      },
+      {
+        id: "hunger_table",
+        name: "Голод",
+        timePerPixel: null,
+        formula: (red) => Math.ceil((red / 150) * 9) * 15,
+      },
       { id: "thirst_table", name: "Жажда", timePerPixel: 60, formula: null },
       { id: "need_table", name: "Нужда", timePerPixel: 30, formula: null },
-      { id: "health_table", name: "Здоровье", timePerPixel: null, formula: null },
-      { id: "clean_table", name: "Чистота", timePerPixel: null, formula: (red) => {
-        red = (red % 3) ? red : red - 0.5;
-        return (red - 1) / 1.5 * 100 + 100;
-      }},
+      {
+        id: "health_table",
+        name: "Здоровье",
+        timePerPixel: null,
+        formula: null,
+      },
+      {
+        id: "clean_table",
+        name: "Чистота",
+        timePerPixel: null,
+        formula: (red) => {
+          red = red % 3 ? red : red - 0.5;
+          return ((red - 1) / 1.5) * 100 + 100;
+        },
+      },
     ];
-  
+
     let { catInfoElement, contentContainer } = createCatInfoContainer();
     contentContainer.classList.add("parameter-details-container");
-  
+
     parameters.forEach(({ id, name, timePerPixel, formula }) => {
       const table = document.getElementById(id);
       if (table) {
@@ -3918,7 +3724,9 @@ if (window.location.href === targetCW3) {
           console.warn(`Строка не найдена в таблице с ID "${id}".`);
           return;
         }
-        const greenBar = row.querySelector("td[style*='background-color: green;']");
+        const greenBar = row.querySelector(
+          "td[style*='background-color: green;']"
+        );
         const redBar = row.querySelector("td[style*='background-color: red;']");
         if (!greenBar || !redBar) {
           console.warn(`Бары не найдены в строке таблицы с ID "${id}".`);
@@ -3928,8 +3736,9 @@ if (window.location.href === targetCW3) {
         const redBarWidth = parseInt(redBar.style.width, 10);
         const totalWidth = greenBarWidth + redBarWidth;
         let percentage = (greenBarWidth / totalWidth) * 100;
-        percentage = percentage % 1 !== 0 ? percentage.toFixed(2) : Math.round(percentage);
-  
+        percentage =
+          percentage % 1 !== 0 ? percentage.toFixed(2) : Math.round(percentage);
+
         let timeInfo = "";
         let totalTimeSeconds;
         if (formula) {
@@ -3937,7 +3746,7 @@ if (window.location.href === targetCW3) {
         } else if (timePerPixel !== null) {
           totalTimeSeconds = redBarWidth * timePerPixel;
         }
-  
+
         if (totalTimeSeconds !== undefined) {
           const hours = Math.floor(totalTimeSeconds / 3600);
           const minutes = Math.floor((totalTimeSeconds % 3600) / 60);
@@ -3950,12 +3759,12 @@ if (window.location.href === targetCW3) {
             timeInfo = ` (${seconds} сек)`;
           }
         }
-  
+
         const detailLine = document.createElement("p");
         detailLine.innerHTML = `<strong>${name}:</strong> <span style="color: #00cc00;">${greenBarWidth}px</span> / <span style="color: red;">${redBarWidth}px</span> - ${percentage}%`;
         detailLine.style.marginBottom = "0";
         contentContainer.appendChild(detailLine);
-  
+
         if (timeInfo) {
           const detailLineTime = document.createElement("p");
           detailLineTime.innerHTML = `≈${timeInfo}`;
@@ -3966,10 +3775,10 @@ if (window.location.href === targetCW3) {
         console.warn(`Таблица с ID "${id}" не найдена.`);
       }
     });
-  
+
     globalContainer.appendChild(catInfoElement);
   }
-  
+
   if (settings.showParametersDetails) {
     setupSingleCallback("#parameters_block", createMoreInfoButton);
   }
@@ -4044,182 +3853,313 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   //   . . . МИННОЕ ПОЛЕ . . .
   // ====================================================================================================================
-  // Вторая по ненависти работа с кодами. Но уже к самому себе а не к сайту.........
-  // чат уже ничего не перебьёт....... наверно????????????
-  if (settings.climbingPanel) {
-    function updateCell(cell, value, backgroundColor) {
-      cell.textContent = value || "";
-      cell.style.backgroundColor = backgroundColor || "";
-    }
-  
-    function transferColors() {
-      const transferCheckbox = document.getElementById("uwu-transferCheckbox");
-      if (transferCheckbox.checked) {
-        const climbingPanelCells = Array.from(
-          document.querySelectorAll("#uwu-climbingPanel td")
-        );
-        const cagesCells = Array.from(
-          document.querySelectorAll("#cages tbody td.cage")
-        );
-  
-        climbingPanelCells.forEach((cell, i) => {
-          if (cagesCells[i]) {
-            cagesCells[i].style.backgroundColor =
-              getComputedStyle(cell).backgroundColor;
+  // ХАХАХАХАХАХХАХАХАХА
+  function migrateOldData() {
+    const savedState = localStorage.getItem("uwu_climbingPanelState");
+    if (savedState) {
+      const state = JSON.parse(savedState);
+      if (state.tabs && Array.isArray(state.tabs)) {
+        state.tabs.forEach(tab => {
+          if (tab.tables && Array.isArray(tab.tables)) {
+            tab.tables.forEach(table => {
+              if (table.data && Array.isArray(table.data)) {
+                table.data.forEach(row => {
+                  if (row && Array.isArray(row)) {
+                    row.forEach(cell => {
+                      if (cell && cell.backgroundColor !== undefined) {
+                        if (cell.backgroundColor === "rgba(91, 0, 0, 0.45)") {
+                          cell.value = "mine";
+                        } else if (cell.backgroundColor === "rgba(255, 255, 255, 0.53)") {
+                          cell.value = "transit";
+                        } else if (cell.backgroundColor === "") {
+                          delete cell.backgroundColor;
+                        }
+                        delete cell.backgroundColor;
+                      }
+                    });
+                  }
+                });
+              }
+            });
           }
         });
       }
+      localStorage.setItem("uwu_climbingPanelState", JSON.stringify(state));
+    } else {
+      console.log("Ладно");
     }
+  }
   
+  migrateOldData();
+  // Вторая по ненависти работа с кодами. Но уже к самому себе а не к сайту.........
+  // чат уже ничего не перебьёт....... наверно????????????
+  if (settings.climbingPanel) {
+    // Функция для сохранения состояния панели
+    function saveClimbingPanelStatus() {
+      const status = {
+        x: currentX,
+        y: currentY,
+        isOpen: climbingPanelContainer.classList.contains("open"),
+        isChecked: transferCheckbox.checked,
+        currentTabIndex: tabManager.currentTabIndex,
+        currentTableId: tabManager.currentTableId,
+      };
+      localStorage.setItem("uwu_climbingPanelStatus", JSON.stringify(status));
+    }
+
+    // Функция для загрузки состояния панели
+    function loadClimbingPanelStatus() {
+      const savedStatus = localStorage.getItem("uwu_climbingPanelStatus");
+    
+      if (savedStatus) {
+        const status = JSON.parse(savedStatus);
+    
+        currentX = status.x;
+        currentY = status.y;
+    
+        climbingPanelContainer.classList.toggle("open", status.isOpen);
+        transferCheckbox.checked = status.isChecked;
+    
+        tabManager.currentTabIndex = status.currentTabIndex;
+        if (
+          status.currentTableId !== null &&
+          tabManager.tabs[status.currentTabIndex].tables[status.currentTableId]
+        ) {
+          tabManager.currentTableId = status.currentTableId;
+        }
+    
+        tabManager.render();
+    
+        if (status.isChecked) {
+          transferColors();
+        }
+      } else {
+        tabManager.render();
+      }
+    
+      checkAndResetPanelPosition();
+    }
+
+    // Функция для обновления ячейки таблицы
+    function updateCell(cell, value) {
+      cell.dataset.value = value || "";
+      cell.textContent = value === "mine" || value === "transit" ? "" : value;
+      switch (value) {
+        case "mine":
+          cell.style.backgroundColor = "#5b000073";
+          break;
+        case "transit":
+          cell.style.backgroundColor = "#ffffff87";
+          break;
+        default:
+          cell.style.backgroundColor = "";
+      }
+    }
+
+    // Функция для переноса цветов на другое поле
+    function transferColors() {
+      const transferCheckbox = document.getElementById("uwu-transferCheckbox");
+      if (!transferCheckbox.checked) return;
+
+      const climbingPanelCells = Array.from(
+        document.querySelectorAll("#uwu-climbingPanel td")
+      );
+      const cagesCells = Array.from(
+        document.querySelectorAll("#cages tbody td.cage")
+      );
+
+      climbingPanelCells.forEach((cell, i) => {
+        if (cagesCells[i]) {
+          cagesCells[i].style.backgroundColor =
+            getComputedStyle(cell).backgroundColor;
+        }
+      });
+    }
+
+    // Функция для очистки цветов ячеек
     function clearColors() {
       const cagesCells = document.querySelectorAll("#cages tbody td.cage");
       cagesCells.forEach((cell) => {
         cell.style.backgroundColor = "";
       });
     }
-  
-    let lastClickedCell;
-  
+
+    let lastClickedCell = null;
+
+    // Обработчик клика по ячейке
     function handleCellClick(event) {
       const cell = event.target.closest("td");
-      if (cell && cell.closest("#uwu-climbingPanel")) {
-        if (lastClickedCell === cell) {
-          updateCell(cell, "");
-          saveTableData(tabManager.currentTableId);
-          transferColors();
-          lastClickedCell = null;
-        } else {
-          lastClickedCell = cell;
-        }
+      if (!cell || !cell.closest("#uwu-climbingPanel")) return;
+
+      if (lastClickedCell === cell) {
+        updateCell(cell, "");
+        saveTableData(tabManager.currentTableId);
+        transferColors();
+        lastClickedCell = null;
+      } else {
+        lastClickedCell = cell;
       }
     }
-  
+
+    // Обработчик нажатия клавиши
     function handleKeyDown(event) {
       const keyPressed = event.key;
       const activeElement = document.activeElement;
-  
+
       if (
         activeElement &&
         activeElement.tagName === "TD" &&
         activeElement.closest("#uwu-climbingPanel")
       ) {
-        if (keyPressed >= "0" && keyPressed <= "7") {
-          updateCell(activeElement, keyPressed, "");
-        } else if (keyPressed === "-") {
-          updateCell(activeElement, "", "#5b000073");
-        } else if (keyPressed === "=") {
-          updateCell(activeElement, "", "#ffffff87");
+        switch (keyPressed) {
+          case "0":
+          case "1":
+          case "2":
+          case "3":
+          case "4":
+          case "5":
+          case "6":
+          case "7":
+            updateCell(activeElement, keyPressed);
+            break;
+          case "-":
+            updateCell(activeElement, "mine");
+            break;
+          case "=":
+            updateCell(activeElement, "transit");
+            break;
+          default:
+            return;
         }
+
         saveTableData(tabManager.currentTableId);
         transferColors();
       }
     }
-  
+
+    // Обработчик изменения состояния чекбокса переноса
     function handleTransferCheckboxChange(event) {
       event.target.checked ? transferColors() : clearColors();
     }
-  
+
+    // HTML-шаблон панели
     const uwuClimbingPanelContainer = `
-      <div id="uwu-climbingMainPanel">
-        <div id="uwu-climbingPanelButton">
-          <h2>Минное поле</h2>
-        </div>
-        <div id="uwu-climbingPanelContainer">
-          <h3>Вкладка</h3>
-          <div id="uwu-buttonRow1"></div>
-          <hr>
-          <h3>Локация</h3>
-          <div id="uwu-buttonRow2"></div>
-          <div id="uwu-functionButtonsContainer">
-            <input type="checkbox" id="uwu-transferCheckbox">
-            <label for="uwu-transferCheckbox">Перенос на Игровое поле</label>
-          </div>
-          <div id="uwu-tableContainer"></div>
-        </div>
+  <div id="uwu-climbingMainPanel">
+    <div id="uwu-climbingPanelButton">
+      <h2>Минное поле</h2>
+    </div>
+    <div id="uwu-climbingPanelContainer">
+      <h3>Вкладка</h3>
+      <div id="uwu-buttonRow1"></div>
+      <hr>
+      <h3>Локация</h3>
+      <div id="uwu-buttonRow2"></div>
+      <div id="uwu-functionButtonsContainer">
+        <input type="checkbox" id="uwu-transferCheckbox">
+        <label for="uwu-transferCheckbox">Перенос на Игровое поле</label>
       </div>
-    `;
-  
+      <div id="uwu-tableContainer"></div>
+    </div>
+  </div>
+`;
+
+    // Функция для создания панели
     function createClimbingPanel() {
       const globalContainer = document.getElementById("uwu-global-container");
-      globalContainer.insertAdjacentHTML("beforeend", uwuClimbingPanelContainer);
-  
+      globalContainer.insertAdjacentHTML(
+        "beforeend",
+        uwuClimbingPanelContainer
+      );
+
       const transferCheckbox = document.getElementById("uwu-transferCheckbox");
-  
+
       document.addEventListener("keydown", handleKeyDown);
       transferCheckbox.addEventListener("change", handleTransferCheckboxChange);
     }
-  
+
+    // Функция для сохранения данных таблицы
     function saveTableData(tableIndex) {
       const climbingPanel = document.getElementById("uwu-climbingPanel");
-      if (climbingPanel) {
-        const tableData = getTableData(climbingPanel.id);
-        const currentTab = tabManager.tabs[tabManager.currentTabIndex];
-        currentTab.tables[tableIndex] = {
-          name: currentTab.tables[tableIndex].name,
-          data: tableData,
-        };
-        tabManager.saveState();
-      }
+      if (!climbingPanel) return;
+
+      const tableData = getTableData(climbingPanel.id);
+      const currentTab = tabManager.tabs[tabManager.currentTabIndex];
+      currentTab.tables[tableIndex] = {
+        name: currentTab.tables[tableIndex].name,
+        data: tableData,
+      };
+      tabManager.saveState();
     }
-  
+
+    // Функция для очистки таблицы
     function clearTable() {
       const climbingPanel = document.getElementById("uwu-climbingPanel");
-      if (climbingPanel) {
-        const cells = Array.from(climbingPanel.querySelectorAll("td"));
-        cells.forEach((cell) => {
-          if (
-            getComputedStyle(cell).backgroundColor !== "rgba(255, 255, 255, 0.53)"
-          ) {
-            updateCell(cell, "", "");
-          }
-        });
-  
-        const currentTab = tabManager.tabs[tabManager.currentTabIndex];
-        currentTab.tables[tabManager.currentTableId] = {
-          name: currentTab.tables[tabManager.currentTableId].name,
-          data: getTableData(climbingPanel.id),
-        };
-        tabManager.saveState();
-      }
+      if (!climbingPanel) return;
+
+      const cells = Array.from(climbingPanel.querySelectorAll("td"));
+      cells.forEach((cell) => {
+        if (cell.dataset.value !== "transit") {
+          updateCell(cell, "");
+        }
+      });
+
+      const currentTab = tabManager.tabs[tabManager.currentTabIndex];
+      currentTab.tables[tabManager.currentTableId] = {
+        name: currentTab.tables[tabManager.currentTableId].name,
+        data: getTableData(climbingPanel.id),
+      };
+      tabManager.saveState();
       transferColors();
     }
-  
+
+    // Объект для управления вкладками и таблицами
     const tabManager = {
       tabs: [],
       currentTabIndex: 0,
       currentTableId: 0,
-  
+
+      // Метод для создания новой вкладки
       createTab(name) {
         const newTab = {
           name: name,
           tables: [],
         };
-  
+
         this.tabs.push(newTab);
         this.render();
         this.switchTab(this.tabs.length - 1);
       },
-  
+
+      // Метод для переключения вкладки
       switchTab(index) {
         this.currentTabIndex = index;
         const currentTab = this.tabs[this.currentTabIndex];
-        if (currentTab && currentTab.tables.length > 0) {
-          this.currentTableId = 0;
+        this.currentTableId = currentTab && currentTab.tables.length > 0 ? 0 : null;
+      
+        if (currentTab && currentTab.tables.length === 0) {
+          this.renderNoTableMessage();
         } else {
-          this.currentTableId = null;
+          this.render();
         }
-        this.render();
+      
+        transferColors();
+        saveClimbingPanelStatus();
       },
-  
+
+      // Метод для переключения таблицы
       switchTable(tableIndex) {
         this.currentTableId = tableIndex;
         this.render();
+        transferColors();
+        saveClimbingPanelStatus();
       },
-  
+
+      // Метод для сохранения состояния
       saveState() {
         localStorage.setItem("uwu_climbingPanelState", JSON.stringify(this));
       },
-  
+
+      // Метод для отрисовки интерфейса
       render() {
         this.renderTabs();
         this.renderTables();
@@ -4227,65 +4167,69 @@ if (window.location.href === targetCW3) {
           this.renderTable(this.currentTableId);
         }
       },
-  
+
+      // Метод для отрисовки вкладок
       renderTabs() {
         const tabRow = document.getElementById("uwu-buttonRow1");
         tabRow.innerHTML = "";
-  
+
         this.tabs.forEach((tab, index) => {
           const tabButton = document.createElement("button");
           tabButton.textContent = tab.name;
           tabButton.classList.add("tab-button");
-  
+
           if (index === this.currentTabIndex) {
             tabButton.classList.add("active");
           }
-  
+
           tabButton.addEventListener("click", () => this.switchTab(index));
-  
+
           const tabContainer = document.createElement("div");
           tabContainer.classList.add("tab-container");
           tabContainer.appendChild(tabButton);
-  
+
           tabRow.appendChild(tabContainer);
         });
       },
-  
+
+      // Метод для отрисовки таблиц
       renderTables() {
         const tableRow = document.getElementById("uwu-buttonRow2");
         tableRow.innerHTML = "";
-  
+
         const currentTab = this.tabs[this.currentTabIndex];
         if (currentTab) {
           currentTab.tables.forEach((table, index) => {
             const tableButton = document.createElement("button");
             tableButton.textContent = table.name || `Локация ${index + 1}`;
             tableButton.classList.add("table-button");
-  
+
             if (index === this.currentTableId) {
               tableButton.classList.add("active");
             }
-  
-            tableButton.addEventListener("click", () => this.switchTable(index));
-  
-            tableButton.dataset.tableindex = index;
-  
+
+            tableButton.addEventListener("click", () =>
+              this.switchTable(index)
+            );
+
             const tableContainer = document.createElement("div");
             tableContainer.classList.add("table-container");
             tableContainer.appendChild(tableButton);
-  
+
             tableRow.appendChild(tableContainer);
           });
         }
       },
-  
+
+      // Метод для отрисовки таблицы
       renderTable(tableIndex) {
         const tableContainer = document.getElementById("uwu-tableContainer");
         tableContainer.innerHTML = "";
-  
+
+        const currentTab = this.tabs[this.currentTabIndex];
         const climbingPanel = document.createElement("table");
         climbingPanel.id = "uwu-climbingPanel";
-  
+
         for (let i = 0; i < 6; i++) {
           const row = document.createElement("tr");
           for (let j = 0; j < 10; j++) {
@@ -4296,36 +4240,49 @@ if (window.location.href === targetCW3) {
           }
           climbingPanel.appendChild(row);
         }
-  
-        const currentTab = this.tabs[this.currentTabIndex];
+
         const tableData = currentTab.tables[tableIndex]?.data;
-  
+
         if (tableData) {
-          for (let i = 0; i < tableData.length; i++) {
-            for (let j = 0; j < tableData[i].length; j++) {
-              const cellData = tableData[i][j];
-              const cell = climbingPanel.rows[i].cells[j];
-              cell.textContent = cellData.value;
-              cell.style.backgroundColor = cellData.backgroundColor;
-            }
-          }
+          tableData.forEach((rowData, i) => {
+            rowData.forEach((cellData, j) => {
+              updateCell(climbingPanel.rows[i].cells[j], cellData.value);
+            });
+          });
         }
+
         tableContainer.appendChild(climbingPanel);
-  
+
         const clearButton = document.createElement("button");
         clearButton.textContent = "Очистить всё поле/таблицу";
         clearButton.id = "button-clear-table";
         clearButton.addEventListener("click", clearTable);
         tableContainer.appendChild(clearButton);
       },
+
+      // При отсутствии таблиц во вкладке
+      renderNoTableMessage() {
+        const tableContainer = document.getElementById("uwu-tableContainer");
+        tableContainer.innerHTML = "";
+      
+        const message = document.createElement("div");
+        message.textContent = "Добавьте поле/таблицу в настройках";
+        message.style.textAlign = "center";
+        message.style.marginTop = "20px";
+        tableContainer.appendChild(message);
+      
+        this.renderTabs();
+        this.renderTables();
+      },
     };
-  
+
+    // Загрузка сохраненного состояния
     const savedState = localStorage.getItem("uwu_climbingPanelState");
     if (savedState) {
       const state = JSON.parse(savedState);
       Object.assign(tabManager, state);
       tabManager.currentTabIndex = 0;
-    
+
       const currentTab = tabManager.tabs[tabManager.currentTabIndex];
       if (currentTab && currentTab.tables.length > 0) {
         if (tabManager.currentTableId >= currentTab.tables.length) {
@@ -4335,34 +4292,44 @@ if (window.location.href === targetCW3) {
         tabManager.currentTableId = null;
       }
     }
+
+    // Создание панели и отрисовка интерфейса
     createClimbingPanel();
-    
     tabManager.render();
-  
+
+    // Функция для получения данных таблицы
     function getTableData(tableId) {
       const table = document.getElementById(tableId);
+      if (!table) {
+        console.error(`Таблица с id ${tableId} не найдена`);
+        return [];
+      }
+    
       const tableData = [];
-  
+    
       for (let i = 0; i < table.rows.length; i++) {
         const rowData = [];
         for (let j = 0; j < table.rows[i].cells.length; j++) {
           const cell = table.rows[i].cells[j];
           rowData.push({
-            value: cell.textContent,
-            backgroundColor: cell.style.backgroundColor,
+            value: cell.dataset.value || "",
           });
         }
         tableData.push(rowData);
       }
-  
+    
       return tableData;
     }
-
     // ===================== ПЕРЕТАСКИВАНИЕ =====================
     const climbingMainPanel = document.getElementById("uwu-climbingMainPanel");
     const climbingPanelButton = document.getElementById(
       "uwu-climbingPanelButton"
     );
+    const climbingPanelContainer = document.getElementById(
+      "uwu-climbingPanelContainer"
+    );
+    const transferCheckbox = document.getElementById("uwu-transferCheckbox");
+
     let isDragging = false;
     let initialX;
     let initialY;
@@ -4370,26 +4337,17 @@ if (window.location.href === targetCW3) {
     let currentY;
     let wasDragging = false;
 
-    climbingPanelButton.addEventListener("mousedown", dragStart);
-    document.addEventListener("mouseup", dragEnd);
-    document.addEventListener("mousemove", drag);
-    climbingPanelButton.addEventListener("click", togglePanelContainer);
-
+    // Функция для начала перетаскивания
     function dragStart(e) {
       e.preventDefault();
-      const savedPanelPosition = JSON.parse(
-        localStorage.getItem("uwu_climbingPanelPosition")
+      const savedStatus = JSON.parse(
+        localStorage.getItem("uwu_climbingPanelStatus")
       );
       initialX =
         e.clientX -
-        (savedPanelPosition
-          ? savedPanelPosition.x
-          : climbingMainPanel.offsetLeft);
+        (savedStatus ? savedStatus.x : climbingMainPanel.offsetLeft);
       initialY =
-        e.clientY -
-        (savedPanelPosition
-          ? savedPanelPosition.y
-          : climbingMainPanel.offsetTop);
+        e.clientY - (savedStatus ? savedStatus.y : climbingMainPanel.offsetTop);
 
       if (e.target === climbingPanelButton) {
         isDragging = true;
@@ -4397,13 +4355,7 @@ if (window.location.href === targetCW3) {
       }
     }
 
-    function dragEnd(e) {
-      if (isDragging) {
-        saveClimbingPanelPosition(currentX, currentY);
-      }
-      isDragging = false;
-    }
-
+    // Функция для перетаскивания
     function drag(e) {
       if (isDragging) {
         e.preventDefault();
@@ -4428,43 +4380,44 @@ if (window.location.href === targetCW3) {
       }
     }
 
+    // Функция для завершения перетаскивания
+    function dragEnd(e) {
+      if (isDragging) {
+        saveClimbingPanelStatus();
+      }
+      isDragging = false;
+    }
+
+    // Функция для установки позиции элемента
     function setPosition(x, y, el) {
       el.style.left = `${x}px`;
       el.style.top = `${y}px`;
     }
 
-    const climbingPanelContainer = document.getElementById(
-      "uwu-climbingPanelContainer"
-    );
-
+    // Функция для переключения состояния панели
     function togglePanelContainer(e) {
       if (!wasDragging) {
+        // Проверяем флаг перетаскивания
         climbingPanelContainer.classList.toggle("open");
+        saveClimbingPanelStatus();
       }
       wasDragging = false;
     }
 
-    function saveClimbingPanelPosition(x, y) {
-      const panelPosition = { x, y };
-      localStorage.setItem(
-        "uwu_climbingPanelPosition",
-        JSON.stringify(panelPosition)
-      );
-    }
-
+    // Функция для проверки и сброса позиции панели
     function checkAndResetPanelPosition() {
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
       const panelWidth = climbingMainPanel.offsetWidth;
       const panelHeight = climbingMainPanel.offsetHeight;
 
-      const savedPanelPosition = JSON.parse(
-        localStorage.getItem("uwu_climbingPanelPosition")
+      const savedStatus = JSON.parse(
+        localStorage.getItem("uwu_climbingPanelStatus")
       );
 
-      if (savedPanelPosition) {
-        currentX = savedPanelPosition.x;
-        currentY = savedPanelPosition.y;
+      if (savedStatus) {
+        currentX = savedStatus.x;
+        currentY = savedStatus.y;
       } else {
         currentX = 0;
         currentY = 0;
@@ -4476,12 +4429,21 @@ if (window.location.href === targetCW3) {
       ) {
         currentX = 0;
         currentY = 0;
-        saveClimbingPanelPosition(currentX, currentY);
+        saveClimbingPanelStatus();
       }
 
+      // Устанавливаем позицию панели
       setPosition(currentX, currentY, climbingMainPanel);
     }
-    window.addEventListener("load", checkAndResetPanelPosition);
+
+    // Обработчики событий
+    climbingPanelButton.addEventListener("mousedown", dragStart);
+    document.addEventListener("mouseup", dragEnd);
+    document.addEventListener("mousemove", drag);
+    climbingPanelButton.addEventListener("click", togglePanelContainer);
+
+    // Загрузка состояния панели и отрисовка
+    window.addEventListener("load", loadClimbingPanelStatus);
 
     const uwuClimbingPanel = document.createElement("style");
     uwuClimbingPanel.innerHTML = `
@@ -4707,11 +4669,6 @@ if (window.location.href === targetCW3) {
 
   if (settings.backgroundUser) {
     const backgroundDiv = createBackgroundDiv();
-
-    // backgroundDiv.style.filter = "blur(16px)";
-    // backgroundDiv.style.backgroundBlendMode = "overlay";
-    // backgroundDiv.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
-
     updateBackgroundImage(backgroundDiv, settings.backgroundUserImageURL);
     globalContainerElement.appendChild(backgroundDiv);
   }
@@ -4726,9 +4683,8 @@ if (window.location.href === targetCW3) {
       let cssStyles = "";
 
       const otherColors = settings.parametersColors.other;
-
-      let otherFirstCellBackground = `linear-gradient(to right, ${otherColors[0]}, ${otherColors[1]})`;
-      let otherLastCellBackground = `linear-gradient(to right, ${otherColors[2]}, ${otherColors[3]})`;
+      const otherFirstCellBackground = `linear-gradient(to right, ${otherColors[0]}, ${otherColors[1]})`;
+      const otherLastCellBackground = `linear-gradient(to right, ${otherColors[2]}, ${otherColors[3]})`;
 
       cssStyles += `#parameters_block .parameter td:first-child { background: ${otherFirstCellBackground}; }\n`;
       cssStyles += `#parameters_block .parameter td:last-child { background: ${otherLastCellBackground}; }\n`;
@@ -4737,27 +4693,19 @@ if (window.location.href === targetCW3) {
         if (paramId === "other") continue;
 
         const colors = settings.parametersColors[paramId];
-
-        let backgroundImageURL = defaultBackgroundImageUrl;
-        if (settings.parametersUserBackgroundImage) {
-          backgroundImageURL = settings.parametersUserBackgroundImageURL;
-        }
-
-        let firstCellBackground = `linear-gradient(to right, ${colors[0]}, ${colors[1]})`;
-        if (
+        const backgroundImageURL = settings.parametersUserBackgroundImage
+          ? settings.parametersUserBackgroundImageURL
+          : defaultBackgroundImageUrl;
+        const firstCellBackground =
           settings.parametersBackgroundImage ||
           settings.parametersUserBackgroundImage
-        ) {
-          firstCellBackground = `url(${backgroundImageURL}), ${firstCellBackground}`;
-        }
-
-        let lastCellBackground = `linear-gradient(to right, ${colors[2]}, ${colors[3]})`;
-        if (
+            ? `url(${backgroundImageURL}), linear-gradient(to right, ${colors[0]}, ${colors[1]})`
+            : `linear-gradient(to right, ${colors[0]}, ${colors[1]})`;
+        const lastCellBackground =
           settings.parametersBackgroundImage ||
           settings.parametersUserBackgroundImage
-        ) {
-          lastCellBackground = `url(${backgroundImageURL}), ${lastCellBackground}`;
-        }
+            ? `url(${backgroundImageURL}), linear-gradient(to right, ${colors[2]}, ${colors[3]})`
+            : `linear-gradient(to right, ${colors[2]}, ${colors[3]})`;
 
         cssStyles += `#${paramId}_table .parameter td:first-child { background: ${firstCellBackground}; }\n`;
         cssStyles += `#${paramId}_table .parameter td:last-child { background: ${lastCellBackground}; }\n`;
@@ -4773,16 +4721,16 @@ if (window.location.href === targetCW3) {
   }
   // ====================================================================================================================
   //   . . . ПОЛЬЗОВАТЕЛЬСКИЕ ТЕМЫ / ЦВЕТА . . .
-  // ====================================================================================================================  
-let currentTheme = "Моя Тема";
-const colorThemes = loadColorThemes();
+  // ====================================================================================================================
+  let currentTheme = "Моя Тема";
+  const colorThemes = loadColorThemes();
 
-function applyTheme(themeName) {
-  const theme = colorThemes[themeName]?.colors;
+  function applyTheme(themeName) {
+    const theme = colorThemes[themeName]?.colors;
 
-  if (theme) {
-    const newStyle = document.createElement("style");
-    newStyle.innerHTML = `
+    if (theme) {
+      const newStyle = document.createElement("style");
+      newStyle.innerHTML = `
       body {
         background: ${theme.backgroundColor || ""};
       }
@@ -4868,28 +4816,68 @@ function applyTheme(themeName) {
       color: ${theme.textColor} !important;
       }
     `;
-    document.head.appendChild(newStyle);
+      document.head.appendChild(newStyle);
+    }
   }
-}
 
-if (settings.userTheme) {
-  applyTheme(currentTheme); 
-}
+  if (settings.userTheme) {
+    applyTheme(currentTheme);
+  }
   // ====================================================================================================================
   //   . . . РЕДИЗАЙН ИГРОВОЙ . . .
   // ====================================================================================================================
   if (settings.customLayout) {
-    
     // ==================================================================
     function prependOtherCatsListContent() {
-      var otherCatsList = document.querySelector(".other_cats_list");
-      var small = document.querySelector(".small");
+      const otherCatsList = document.querySelector(".other_cats_list");
+      const smallContainer = document.querySelector(".small");
 
-      if (otherCatsList && small) {
-        var content = otherCatsList.innerHTML;
-        small.insertAdjacentHTML("afterbegin", content + " || ");
+      if (!otherCatsList || !smallContainer) return;
+
+      const catsListContent = otherCatsList.innerHTML;
+
+      switch (settings.showOtherCatsList) {
+        case "1":
+          break;
+        case "2":
+          const clickableBlockHTML =
+            '<span style="display: inline; cursor: pointer;"><a href="#" style="display: inline; pointer-events: none;">Душевые коты</a></span>';
+          smallContainer.insertAdjacentHTML(
+            "afterbegin",
+            clickableBlockHTML + " || "
+          );
+
+          const clickableBlock = smallContainer.firstChild;
+
+          const catsListContainer = document.createElement("span");
+          catsListContainer.id = "catsListContainer";
+          catsListContainer.innerHTML = ": " + catsListContent;
+          catsListContainer.style.display = "none";
+          smallContainer.insertBefore(
+            catsListContainer,
+            smallContainer.firstChild.nextSibling
+          );
+
+          clickableBlock.addEventListener("click", (event) => {
+            event.preventDefault();
+            if (catsListContainer.style.display === "none") {
+              catsListContainer.style.display = "inline";
+            } else {
+              catsListContainer.style.display = "none";
+            }
+          });
+          break;
+        case "3":
+          smallContainer.insertAdjacentHTML(
+            "afterbegin",
+            catsListContent + " || "
+          );
+          break;
+        default:
+          break;
       }
     }
+
     setupSingleCallback(".other_cats_list", prependOtherCatsListContent);
     // ==================================================================
 
@@ -5487,10 +5475,14 @@ if (settings.userTheme) {
   //   . . . РЕДИЗАЙНЫ + + ЗАКРУГЛЕНИЕ БЛОКОВ . . .
   // ====================================================================================================================
   const sliceInfoStyle = document.createElement("style");
+
+  let themeName = "Моя Тема";
+  const theme = colorThemes[themeName]?.colors;
+
   if (settings.sliceInfoBlock) {
     sliceInfoStyle.innerHTML = `
       #info_main > tbody > tr > td {
-        background-color: ${settings.settingBlocksColor};
+        background-color: ${theme.blocksColor};
         margin-bottom: 5px;
       }
     `;
@@ -5498,7 +5490,7 @@ if (settings.userTheme) {
   } else {
     sliceInfoStyle.innerHTML = `
       #tr_info > td {
-        background-color: ${settings.settingBlocksColor};
+        background-color: ${theme.blocksColor};
       }
     `;
     document.head.appendChild(sliceInfoStyle);
@@ -5546,7 +5538,8 @@ if (settings.userTheme) {
     const colors = settings.fightTeamsColors;
 
     const fightPanel = document.getElementById("fightPanel");
-    const buttonHTML = '<button id="updateTableButton" style="width: 100%;">Обновить команды</button>';
+    const buttonHTML =
+      '<button id="updateTableButton" style="width: 100%;">Обновить команды</button>';
     fightPanel.insertAdjacentHTML("beforeend", buttonHTML);
 
     document.getElementById("updateTableButton").onclick = () => {
@@ -5574,7 +5567,7 @@ if (settings.userTheme) {
       `;
       // Вставляем таблицу перед кнопкой
       const updateButton = document.getElementById("updateTableButton");
-      updateButton.insertAdjacentHTML("beforebegin", tableHTML); 
+      updateButton.insertAdjacentHTML("beforebegin", tableHTML);
     }
 
     function updateTeamTable() {
@@ -5896,13 +5889,13 @@ if (settings.userTheme) {
   // ====================================================================================================================
   //   . . . ОПРЕДЕЛЕНИЕ ПОГОДЫ В ИГРОВОЙ . . . 🛠️
   // ====================================================================================================================
-  var currentWeather = "null";
-  var currentHour = "null";
-  var currentSeason = "null";
-  var currentTemperature = "null";
-  var temperatureDescription = "null";
+  let currentWeather = "null";
+  let currentHour = "null";
+  let currentSeason = "null";
+  let currentTemperature = "null";
+  let temperatureDescription = "null";
   // ахахаха глянье на этих незнающих
-  var weatherModifier = 1;
+  let weatherModifier = 1;
 
   if (settings.manualWeatherPanel) {
     const manualWeatherSlider = document.getElementById("manualWeather");
@@ -6048,7 +6041,7 @@ if (settings.userTheme) {
         {
           description: "Тепло",
           temperature: 1,
-          colors: ["#FCBD8E", "#F8A37A"],
+          colors: ["#FCBD8E", "#F8A37A", "#F79E77", "#FDC291"],
         },
         {
           description: "Жарковато",
@@ -6066,16 +6059,23 @@ if (settings.userTheme) {
         {
           description: "Жарко",
           temperature: 3,
-          colors: ["#EE664D", "#ED6149", "#EB5741",  "#EB523D", "#E73D2E", "#E6382A"],
+          colors: [
+            "#EE664D",
+            "#ED6149",
+            "#EB5741",
+            "#EB523D",
+            "#E73D2E",
+            "#E6382A",
+          ],
         },
         {
           description: "Засуха",
           temperature: 4,
-          colors: ["#DF0A08", "#E3241B", "#E4291F", "#E52E22"],
+          colors: ["#DF0A08", "#E3241B", "#E4291F", "#E52E22", "#E63326"],
         },
       ];
 
-      let foundTemperature = null; 
+      let foundTemperature = null;
 
       for (const range of temperatureRanges) {
         if (range.colors.includes(foundBackground)) {
@@ -6829,7 +6829,6 @@ if (settings.userTheme) {
     checkPixelSplashes();
     weatherCtx.globalAlpha = 1;
     requestAnimationFrame(animateLanding);
-    // console.log(`Количество сплешев: ${pixelSplashes.length}`)
   }
 
   function generateSplash(x, y) {
@@ -6854,6 +6853,7 @@ if (settings.userTheme) {
         splashes.splice(i, 1);
       }
     }
+    // console.log(`Количество сплешев: ${splashes.length}`)
   }
   function checkPixelSplashes() {
     for (let i = pixelSplashes.length - 1; i >= 0; i--) {
@@ -6993,10 +6993,10 @@ if (window.location.href === targetCW3Hunt) {
           </div>
         </div>
       `;
-  
+
       const uwuContainer = document.getElementById("uwu-global-container");
       uwuContainer.insertAdjacentHTML("beforeend", joystickHTML);
-  
+
       const css = `
         #nav_buttons_wrapper {
           display: none;
@@ -7035,13 +7035,13 @@ if (window.location.href === targetCW3Hunt) {
       const style = document.createElement("style");
       style.innerHTML = css;
       document.head.appendChild(style);
-  
+
       const joystickContainer = document.getElementById("joystick-container");
       const joystickHead = document.getElementById("joystick-head");
       const baseRadius = joystickContainer.offsetWidth / 2;
       let activeTouchId = null;
       let keys = {};
-  
+
       function handleTouchStart(event) {
         if (activeTouchId === null) {
           const touch = event.touches[0];
@@ -7049,7 +7049,7 @@ if (window.location.href === targetCW3Hunt) {
           updateJoystickPosition(touch.clientX, touch.clientY);
         }
       }
-  
+
       function handleTouchMove(event) {
         event.preventDefault();
         for (let i = 0; i < event.touches.length; i++) {
@@ -7060,38 +7060,46 @@ if (window.location.href === targetCW3Hunt) {
           }
         }
       }
-  
+
       function handleTouchEnd(event) {
         activeTouchId = null;
         resetJoystick();
         releaseAllKeys();
       }
-  
+
       function updateJoystickPosition(x, y) {
         const containerRect = joystickContainer.getBoundingClientRect();
         const deltaX = x - (containerRect.left + baseRadius);
         const deltaY = y - (containerRect.top + baseRadius);
         const angle = Math.atan2(deltaY, deltaX);
         const distance = Math.min(Math.hypot(deltaX, deltaY), baseRadius * 0.8);
-  
-        joystickHead.style.left = `${baseRadius + distance * Math.cos(angle)}px`;
+
+        joystickHead.style.left = `${
+          baseRadius + distance * Math.cos(angle)
+        }px`;
         joystickHead.style.top = `${baseRadius + distance * Math.sin(angle)}px`;
-  
+
         const threshold = 0.3;
         const newDirections = {
-          w: false, a: false, s: false, d: false,
-          q: false, e: false, z: false, x: false,
+          w: false,
+          a: false,
+          s: false,
+          d: false,
+          q: false,
+          e: false,
+          z: false,
+          x: false,
         };
 
-        simulateKeyRelease('w');
-        simulateKeyRelease('a');
-        simulateKeyRelease('s');
-        simulateKeyRelease('d');
-        simulateKeyRelease('q');
-        simulateKeyRelease('e');
-        simulateKeyRelease('z');
-        simulateKeyRelease('x');
-  
+        simulateKeyRelease("w");
+        simulateKeyRelease("a");
+        simulateKeyRelease("s");
+        simulateKeyRelease("d");
+        simulateKeyRelease("q");
+        simulateKeyRelease("e");
+        simulateKeyRelease("z");
+        simulateKeyRelease("x");
+
         if (distance > baseRadius * threshold) {
           if (angle >= -Math.PI * 0.125 && angle < Math.PI * 0.125) {
             newDirections.d = true;
@@ -7111,7 +7119,7 @@ if (window.location.href === targetCW3Hunt) {
             newDirections.e = true;
           }
         }
-  
+
         for (const key in newDirections) {
           if (newDirections[key] !== keys[key]) {
             if (newDirections[key]) {
@@ -7123,12 +7131,12 @@ if (window.location.href === targetCW3Hunt) {
           }
         }
       }
-  
+
       function resetJoystick() {
         joystickHead.style.left = "50%";
         joystickHead.style.top = "50%";
       }
-  
+
       function releaseAllKeys() {
         for (const key in keys) {
           if (keys[key]) {
@@ -7137,7 +7145,7 @@ if (window.location.href === targetCW3Hunt) {
           }
         }
       }
-  
+
       function simulateKeyPress(key) {
         const keyCode = Key.dict[key];
         if (keyCode && !Key.keys.includes(keyCode)) {
@@ -7146,7 +7154,7 @@ if (window.location.href === targetCW3Hunt) {
           Key.keydown(mockEvent);
         }
       }
-  
+
       function simulateKeyRelease(key) {
         const keyCode = Key.dict[key];
         if (keyCode) {
@@ -7158,7 +7166,7 @@ if (window.location.href === targetCW3Hunt) {
           }
         }
       }
-  
+
       function createMockEvent(keyCode) {
         return {
           keyCode: keyCode,
@@ -7166,21 +7174,21 @@ if (window.location.href === targetCW3Hunt) {
           shiftKey: false,
           altKey: false,
           preventDefault: () => {},
-          repeat: false
+          repeat: false,
         };
       }
-  
+
       joystickContainer.addEventListener("touchstart", handleTouchStart);
       joystickContainer.addEventListener("touchmove", handleTouchMove);
       joystickContainer.addEventListener("touchend", handleTouchEnd);
       joystickContainer.addEventListener("touchcancel", handleTouchEnd);
-  
-      window.addEventListener('blur', function() {
+
+      window.addEventListener("blur", function () {
         releaseAllKeys();
         resetJoystick();
       });
     }
-  
+
     createJoystick();
   }
   // ====================================================================================================================
@@ -7238,7 +7246,6 @@ if (targetBlogsCreation.test(window.location.href)) {
 
     restoreTextFromStorage();
   }
-
 }
 
 // ====================================================================================================================
@@ -7250,26 +7257,25 @@ if (settings.moreBBCodes) {
     if (!bbCodeContainers.length) return;
 
     const commonButtonsHTML = `
-    <button class="bbcode" title="Абзац" data-code="p">p</button>
-    <button class="bbcode" title="Перенос" data-code="br" data-parameter="0">br</button>
-    <button class="bbcode" title="Таблица" data-code="table">table</button>
-    <button class="bbcode" title="Строка таблицы" data-code="tr">tr</button>
-    <button class="bbcode" title="Ячейка таблицы" data-code="td">td</button>
-    <button class="bbcode" title="Нумерованный список" data-code="ol">ol</button>
-    <button class="bbcode" title="Маркированный список" data-code="ul">ul</button>
-    <button class="bbcode" title="Строка списка" data-code="li">li</button>
-  `;
+      <button class="bbcode" title="Абзац" data-code="p">p</button>
+      <button class="bbcode" title="Перенос" data-code="br" data-parameter="0">br</button>
+      <button class="bbcode" title="Таблица" data-code="table">table</button>
+      <button class="bbcode" title="Строка таблицы" data-code="tr">tr</button>
+      <button class="bbcode" title="Ячейка таблицы" data-code="td">td</button>
+      <button class="bbcode" title="Нумерованный список" data-code="ol">ol</button>
+      <button class="bbcode" title="Маркированный список" data-code="ul">ul</button>
+      <button class="bbcode" title="Строка списка" data-code="li">li</button>
+    `;
 
     const overblockButtonHTML = `
-    <button class="bbcode" title="Раскрывающийся блок" data-code="overblock" data-parameter="1" data-text="Введите название раскрывающегося блока (то же, что и у заголовка, который раскрывает этот блок):">overblock</button>
-  `;
+      <button class="bbcode" title="Раскрывающийся блок" data-code="overblock" data-parameter="1" data-text="Введите название раскрывающегося блока (то же, что и у заголовка, который раскрывает этот блок):">overblock</button>
+    `;
 
     bbCodeContainers.forEach((bbCode) => {
       const container = bbCode.parentElement;
       if (!container) return;
 
-      const existingPButton = container.querySelector('.bbcode[data-code="p"]');
-      if (!existingPButton) {
+      if (!container.querySelector('.bbcode[data-code="p"]')) {
         container.insertAdjacentHTML("beforeend", commonButtonsHTML);
       }
 
