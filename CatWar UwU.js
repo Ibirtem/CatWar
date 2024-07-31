@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.23.0-07.24
+// @version      v1.24.0-07.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.23.0";
+const current_uwu_version = "1.24.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   uwuSettingsTextColor: "2",
@@ -45,6 +45,7 @@ const uwuDefaultSettings = {
 
   chatHeight: "275",
   newChat: false,
+  reverseChat: false, 
   newChatInput: false,
   namesForNotification: "",
 
@@ -52,10 +53,14 @@ const uwuDefaultSettings = {
   notificationActionEnd: false,
   notificationInMouth: false,
   notificationInFightMode: false,
+  showHintWhenToSniff: false,
+  duplicateTimeInBrowserTab: false,
+
 
   cellsBorders: false,
   cellsBordersThickness: "1",
   cellsNumbers: false,
+  fastStyles: true,
   displayParametersPercentages: false,
   compactMouth: false,
   showMoreCatInfo: false,
@@ -216,9 +221,9 @@ const uwusettings = `
     </div>
 
     <div>
-      <p>Поле Игровой всегда яркое.</p>
+      <p>Убирает затемнение Игрового поля.</p>
       <input type="checkbox" id="always-day" data-setting="alwaysDay" />
-      <label for="always-day">Всегда день</label>
+      <label for="always-day">Всегда день/ярко</label>
     </div>
 
     <div>
@@ -295,6 +300,12 @@ const uwusettings = `
       <label for="background-user-enabled">Свой фон страницы:</label>
       <input type="text" id="SettingImageURLField" placeholder="Вставьте URL" data-setting="backgroundUserImageURL" />
       <button id="SettingSaveButton1" class="uwu-button">Сохранить</button>
+    </div>
+
+    <div>
+      <p>Позволяет быстро сменять стили в ⚙️Панели Расширенных настроек в Игровой.</p>
+      <input type="checkbox" id="fast-Styles" data-setting="fastStyles" />
+      <label for="fast-Styles">Быстрые стили</label>
     </div>
 
     <hr>
@@ -438,6 +449,12 @@ const uwusettings = `
       </p>
       <input type="checkbox" id="new-chat" data-setting="newChat" />
       <label for="new-chat">Современный Чат</label>
+    </div>
+
+    <div>
+      <p>Работает только с "Современным чатом". Отображет чат снизу вверх, а так же смещает окно ввода сообщения под чат.</p>
+      <input type="checkbox" id="reverse-Chat" data-setting="reverseChat" />
+      <label for="reverse-Chat">Инверсия чата</label>
     </div>
 
     <div id="myNameNotificationSoundContainer">
@@ -828,6 +845,18 @@ const uwusettings = `
       <label for="notification-In-Fight-Mode">Ввели в боевую стойку через Т+2 или Т+3</label>
     </div>
 
+    <div>
+      <p>Дублирует время действий на название браузерной вкладки.</p>
+      <input type="checkbox" id="duplicate-Time-In-Browser-Tab" data-setting="duplicateTimeInBrowserTab" />
+      <label for="duplicate-Time-In-Browser-Tab">Показывать время действия на вкладке</label>
+    </div>
+
+    <div>
+      <p>Подсказывает оставшееся время до возможности понюхать.</p>
+      <input type="checkbox" id="show-Hint-When-To-Sniff" data-setting="showHintWhenToSniff" />
+      <label for="show-Hint-When-To-Sniff">Когда нюхать?</label>
+    </div>
+
     <hr>
     <h2>Общение</h2>
 
@@ -919,34 +948,23 @@ const uwusettings = `
 const newsPanel = `
 <div id="news-panel">
   <button id="news-button">
-    v${current_uwu_version} - 🍂 Стили отображения Душевых котов, улучшение Редактора Минных полей И общие улучшения кода!
+    v${current_uwu_version} - ❄️ Инверсия Чата, Быстрые стили, Дублирование время на вкладку и когда же там нюх?!
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
-    <p>— Редактор Минных полей теперь сохраняет и восстанавливает свои состояния открытия/закрытия, выбранной вкладки с полем и переносилось ли на поле!🦐🍤🦐🍤🦐🍤🦐🍤🦐</p>
+    <p>— Дублирование времени и Нюх ищите в Уведомлениях во вкладке "Инструментарий"! Остальное в оформлении!🍤🐈Мяу-мяу-мяу-мяу.</p>
     <hr>
     <h3>Внешний вид</h3>
-    <p>— Чуть-чуть переписано описание подсказок в настройках "Параметров и навыков" для большей ясности.</p>
-    <p>— Слайдер смены цвета текста UwU Настроек теперь не убегает.</p>
-    <p>— Так же немного переоформленно описание управления Минного поля.</p>
+    <p>— Небольшой редизайн отображения информации "О коте", теперь компактнее и опрятнее.</p>
+    <p>— Уменьшен пробел между границей и блоками в Расширенных настройках.</p>
     <hr>
     <h3>Изменения кода</h3>
-    <p>— Удалена патч-миграция настроек для существующих пользователей в новые виды сохранений и ключей.</p>
-    <p>— Удалена патч-миграция "Своих цветов" в новые виды сохранений и ключей.</p>
-    <p>— Удалена возможность "Починки настроек" из-за ненадобности на деле.</p>
-    <p>— Переработана функция applyParameterColors, отвечающая за стиль Параметров и Навыков.</p>
-    <p>— Упрощение модулей Сборника Стилей - убрана поддержка модулей по ссылке.</p>
-    <p>— Упрощаем и улучшаем CSS стили:</p>
-    <p>—— Стандартные кнопки переведены на class="uwu-button"</p>
-    <p>—— Круглые кнопки переведены на class="uwu-button-round"</p> 
-    <p>—— Слайдеры переведены на class="uwu-range-slider"</p>
-    <p>—— Чуть упрощена функция addBBCodeButtons</p>
-    <p>—— Потихоньку делим CSS на две части - стандарт/основа и Glass Стиль. В будущем упростит кастомизацию всего UwU скрипта/мода.</p>
-    <p>— Некоторые var изменены на другие типы переменных.</p>
-    <p>— Основной цвет блоков теперь снова применяется и на Инфо-блок.</p>
-    <p>— Мучительно переработан код работы Редактора Минных полей и добавлена очередная патч-миграция уже существующих минных полей в новые значения.</p>
+    <p>— Удалена патч-миграция минных полей.</p>
+    <p>— Вроде бы Редактор минных полей теперь отзывчивей...?</p>
+    <p>— Мелочное исправление не сохранения галочки, если с Редактором больше никак не взаимодействовали.</p>
+    <p>— Исправлена ошибка, что отсутствие хотя бы одного выставленного цвета вызывала остановку почти половину скрипта.</p>
     <hr>
-    <p>Дата выпуска: 25.07.24</p>
+    <p>Дата выпуска: 31.07.24</p>
   </div>
 </div>
 `;
@@ -1355,6 +1373,9 @@ const css_uwu_main = `
 
   background-color: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 2em;
+  font-weight: bold;
+  color: #ff00ff;
 }
 
 #extended-settings-container {
@@ -1378,9 +1399,17 @@ const css_uwu_main = `
 
   display: grid;
   place-items: center;
-  padding: 20px;
+  padding: 15px;
   box-sizing: border-box;
   overflow-y: auto;
+}
+
+.extended-settings-block {
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 5px;
+  margin-bottom: 8px;
 }
 
 #news {
@@ -3100,7 +3129,8 @@ if (window.location.href === targetCW3) {
       settings.extendedSettingsPanel ||
       settings.showSplashScreens ||
       settings.showUpdateNotification ||
-      settings.manualWeatherPanel
+      settings.manualWeatherPanel ||
+      settings.fastStyles
     );
   };
 
@@ -3373,6 +3403,11 @@ if (window.location.href === targetCW3) {
         background-color: white;
         color: black;
       }
+
+      .other-cat-info-container {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      }
     
       .close-info-container {
         text-align: right;
@@ -3497,9 +3532,15 @@ if (window.location.href === targetCW3) {
 
     contentContainer.innerHTML = `
       <h2>${catName}</h2>
-      <p><strong>ID</strong>: ${catId}</p>
-      <p><strong>Размер</strong>: ${catSize}</p>
-      <img src="${catImage}">
+      <div class="other-cat-info-container">
+        <div>
+          <img src="${catImage}" class="cat-image">
+        </div>
+        <div class="cat-details">
+          <p><strong>ID</strong>: ${catId}</p>
+          <p><strong>Размер</strong>: ${catSize}</p>
+        </div>
+      </div>
     `;
 
     const defectsContainer = document.createElement("div");
@@ -3521,9 +3562,12 @@ if (window.location.href === targetCW3) {
           defectsContainer.appendChild(defectLine);
         }
       });
-      contentContainer.appendChild(defectsContainer);
+      contentContainer
+        .querySelector(".cat-details")
+        .appendChild(defectsContainer);
     } else {
-      contentContainer.innerHTML += "<p><strong>Здоровый</strong></p>";
+      contentContainer.querySelector(".cat-details").innerHTML +=
+        "<p><strong>Здоровый</strong></p>";
     }
 
     globalContainer.appendChild(catInfoElement);
@@ -3543,14 +3587,26 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   //  . . . ГРАНИЦЫ ЯЧЕЕК . . . cellsNumbers
   // ====================================================================================================================
-  if (settings.cellsBorders) {
-    const css_cellsBorders = document.createElement("style");
-    css_cellsBorders.innerHTML = `
-    .cage {
-      box-shadow: inset 0 0 0 0.${settings.cellsBordersThickness}px #ffffff;
+  function updateCellsBordersStyle(checked) {
+    let styleElement = document.getElementById("cellsBordersStyle");
+    const cellsBordersStyle = `
+      .cage {
+        box-shadow: inset 0 0 0 0.${settingsMap.uwu_settings.cellsBordersThickness}px #ffffff;
+      }
+    `;
+
+    if (checked) {
+      if (!styleElement) {
+        styleElement = document.createElement("style");
+        styleElement.id = "cellsBordersStyle";
+        styleElement.innerHTML = cellsBordersStyle;
+        document.head.appendChild(styleElement);
+      }
+    } else {
+      if (styleElement) {
+        document.head.removeChild(styleElement);
+      }
     }
-   `;
-    document.head.appendChild(css_cellsBorders);
   }
   // ====================================================================================================================
   //  . . . НУМЕРАЦИЯ ЯЧЕЕК . . .
@@ -3853,48 +3909,17 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   //   . . . МИННОЕ ПОЛЕ . . .
   // ====================================================================================================================
-  // ХАХАХАХАХАХХАХАХАХА
-  function migrateOldData() {
-    const savedState = localStorage.getItem("uwu_climbingPanelState");
-    if (savedState) {
-      const state = JSON.parse(savedState);
-      if (state.tabs && Array.isArray(state.tabs)) {
-        state.tabs.forEach(tab => {
-          if (tab.tables && Array.isArray(tab.tables)) {
-            tab.tables.forEach(table => {
-              if (table.data && Array.isArray(table.data)) {
-                table.data.forEach(row => {
-                  if (row && Array.isArray(row)) {
-                    row.forEach(cell => {
-                      if (cell && cell.backgroundColor !== undefined) {
-                        if (cell.backgroundColor === "rgba(91, 0, 0, 0.45)") {
-                          cell.value = "mine";
-                        } else if (cell.backgroundColor === "rgba(255, 255, 255, 0.53)") {
-                          cell.value = "transit";
-                        } else if (cell.backgroundColor === "") {
-                          delete cell.backgroundColor;
-                        }
-                        delete cell.backgroundColor;
-                      }
-                    });
-                  }
-                });
-              }
-            });
-          }
-        });
-      }
-      localStorage.setItem("uwu_climbingPanelState", JSON.stringify(state));
-    } else {
-      console.log("Ладно");
-    }
-  }
-  
-  migrateOldData();
   // Вторая по ненависти работа с кодами. Но уже к самому себе а не к сайту.........
   // чат уже ничего не перебьёт....... наверно????????????
+  // TODO - Переписать всё это мессиво к чертям, это кошмар какой-то. Как оно вообще ещё работает?????? Что я употреблял?????????????????????
   if (settings.climbingPanel) {
-    // Функция для сохранения состояния панели
+    let isDragging = false;
+    let initialX;
+    let initialY;
+    let currentX;
+    let currentY;
+    let wasDragging = false;
+
     function saveClimbingPanelStatus() {
       const status = {
         x: currentX,
@@ -3907,19 +3932,18 @@ if (window.location.href === targetCW3) {
       localStorage.setItem("uwu_climbingPanelStatus", JSON.stringify(status));
     }
 
-    // Функция для загрузки состояния панели
     function loadClimbingPanelStatus() {
       const savedStatus = localStorage.getItem("uwu_climbingPanelStatus");
-    
+
       if (savedStatus) {
         const status = JSON.parse(savedStatus);
-    
+
         currentX = status.x;
         currentY = status.y;
-    
+
         climbingPanelContainer.classList.toggle("open", status.isOpen);
         transferCheckbox.checked = status.isChecked;
-    
+
         tabManager.currentTabIndex = status.currentTabIndex;
         if (
           status.currentTableId !== null &&
@@ -3927,20 +3951,19 @@ if (window.location.href === targetCW3) {
         ) {
           tabManager.currentTableId = status.currentTableId;
         }
-    
+
         tabManager.render();
-    
+
         if (status.isChecked) {
           transferColors();
         }
       } else {
         tabManager.render();
       }
-    
+
       checkAndResetPanelPosition();
     }
 
-    // Функция для обновления ячейки таблицы
     function updateCell(cell, value) {
       cell.dataset.value = value || "";
       cell.textContent = value === "mine" || value === "transit" ? "" : value;
@@ -3956,7 +3979,6 @@ if (window.location.href === targetCW3) {
       }
     }
 
-    // Функция для переноса цветов на другое поле
     function transferColors() {
       const transferCheckbox = document.getElementById("uwu-transferCheckbox");
       if (!transferCheckbox.checked) return;
@@ -3976,7 +3998,6 @@ if (window.location.href === targetCW3) {
       });
     }
 
-    // Функция для очистки цветов ячеек
     function clearColors() {
       const cagesCells = document.querySelectorAll("#cages tbody td.cage");
       cagesCells.forEach((cell) => {
@@ -3986,7 +4007,6 @@ if (window.location.href === targetCW3) {
 
     let lastClickedCell = null;
 
-    // Обработчик клика по ячейке
     function handleCellClick(event) {
       const cell = event.target.closest("td");
       if (!cell || !cell.closest("#uwu-climbingPanel")) return;
@@ -4001,7 +4021,6 @@ if (window.location.href === targetCW3) {
       }
     }
 
-    // Обработчик нажатия клавиши
     function handleKeyDown(event) {
       const keyPressed = event.key;
       const activeElement = document.activeElement;
@@ -4037,33 +4056,33 @@ if (window.location.href === targetCW3) {
       }
     }
 
-    // Обработчик изменения состояния чекбокса переноса
     function handleTransferCheckboxChange(event) {
       event.target.checked ? transferColors() : clearColors();
+      saveClimbingPanelStatus();
     }
 
-    // HTML-шаблон панели
     const uwuClimbingPanelContainer = `
-  <div id="uwu-climbingMainPanel">
+    <div id="uwu-climbingMainPanel">
     <div id="uwu-climbingPanelButton">
-      <h2>Минное поле</h2>
+        <h2>Минное поле</h2>
     </div>
     <div id="uwu-climbingPanelContainer">
-      <h3>Вкладка</h3>
-      <div id="uwu-buttonRow1"></div>
-      <hr>
-      <h3>Локация</h3>
-      <div id="uwu-buttonRow2"></div>
-      <div id="uwu-functionButtonsContainer">
-        <input type="checkbox" id="uwu-transferCheckbox">
-        <label for="uwu-transferCheckbox">Перенос на Игровое поле</label>
-      </div>
-      <div id="uwu-tableContainer"></div>
+        <div id="uwu-buttonContainer">
+            <h3>Вкладка</h3>
+            <div id="uwu-buttonRow1"></div>
+            <hr>
+            <h3>Локация</h3>
+            <div id="uwu-buttonRow2"></div>
+        </div>
+        <div id="uwu-functionButtonsContainer">
+            <input type="checkbox" id="uwu-transferCheckbox">
+            <label for="uwu-transferCheckbox">Перенос на Игровое поле</label>
+        </div>
+        <div id="uwu-tableContainer"></div>
     </div>
-  </div>
-`;
+    </div>
+    `;
 
-    // Функция для создания панели
     function createClimbingPanel() {
       const globalContainer = document.getElementById("uwu-global-container");
       globalContainer.insertAdjacentHTML(
@@ -4077,7 +4096,6 @@ if (window.location.href === targetCW3) {
       transferCheckbox.addEventListener("change", handleTransferCheckboxChange);
     }
 
-    // Функция для сохранения данных таблицы
     function saveTableData(tableIndex) {
       const climbingPanel = document.getElementById("uwu-climbingPanel");
       if (!climbingPanel) return;
@@ -4091,7 +4109,6 @@ if (window.location.href === targetCW3) {
       tabManager.saveState();
     }
 
-    // Функция для очистки таблицы
     function clearTable() {
       const climbingPanel = document.getElementById("uwu-climbingPanel");
       if (!climbingPanel) return;
@@ -4112,13 +4129,11 @@ if (window.location.href === targetCW3) {
       transferColors();
     }
 
-    // Объект для управления вкладками и таблицами
     const tabManager = {
       tabs: [],
       currentTabIndex: 0,
       currentTableId: 0,
 
-      // Метод для создания новой вкладки
       createTab(name) {
         const newTab = {
           name: name,
@@ -4130,23 +4145,22 @@ if (window.location.href === targetCW3) {
         this.switchTab(this.tabs.length - 1);
       },
 
-      // Метод для переключения вкладки
       switchTab(index) {
         this.currentTabIndex = index;
         const currentTab = this.tabs[this.currentTabIndex];
-        this.currentTableId = currentTab && currentTab.tables.length > 0 ? 0 : null;
-      
+        this.currentTableId =
+          currentTab && currentTab.tables.length > 0 ? 0 : null;
+
         if (currentTab && currentTab.tables.length === 0) {
           this.renderNoTableMessage();
         } else {
           this.render();
         }
-      
+
         transferColors();
         saveClimbingPanelStatus();
       },
 
-      // Метод для переключения таблицы
       switchTable(tableIndex) {
         this.currentTableId = tableIndex;
         this.render();
@@ -4154,12 +4168,10 @@ if (window.location.href === targetCW3) {
         saveClimbingPanelStatus();
       },
 
-      // Метод для сохранения состояния
       saveState() {
         localStorage.setItem("uwu_climbingPanelState", JSON.stringify(this));
       },
 
-      // Метод для отрисовки интерфейса
       render() {
         this.renderTabs();
         this.renderTables();
@@ -4168,7 +4180,6 @@ if (window.location.href === targetCW3) {
         }
       },
 
-      // Метод для отрисовки вкладок
       renderTabs() {
         const tabRow = document.getElementById("uwu-buttonRow1");
         tabRow.innerHTML = "";
@@ -4192,7 +4203,6 @@ if (window.location.href === targetCW3) {
         });
       },
 
-      // Метод для отрисовки таблиц
       renderTables() {
         const tableRow = document.getElementById("uwu-buttonRow2");
         tableRow.innerHTML = "";
@@ -4221,7 +4231,6 @@ if (window.location.href === targetCW3) {
         }
       },
 
-      // Метод для отрисовки таблицы
       renderTable(tableIndex) {
         const tableContainer = document.getElementById("uwu-tableContainer");
         tableContainer.innerHTML = "";
@@ -4260,53 +4269,52 @@ if (window.location.href === targetCW3) {
         tableContainer.appendChild(clearButton);
       },
 
-      // При отсутствии таблиц во вкладке
       renderNoTableMessage() {
         const tableContainer = document.getElementById("uwu-tableContainer");
         tableContainer.innerHTML = "";
-      
+
         const message = document.createElement("div");
         message.textContent = "Добавьте поле/таблицу в настройках";
         message.style.textAlign = "center";
         message.style.marginTop = "20px";
         tableContainer.appendChild(message);
-      
+
         this.renderTabs();
         this.renderTables();
       },
     };
 
-    // Загрузка сохраненного состояния
-    const savedState = localStorage.getItem("uwu_climbingPanelState");
-    if (savedState) {
-      const state = JSON.parse(savedState);
-      Object.assign(tabManager, state);
-      tabManager.currentTabIndex = 0;
+    function loadSavedState() {
+      const savedState = localStorage.getItem("uwu_climbingPanelState");
+      if (savedState) {
+        const state = JSON.parse(savedState);
+        Object.assign(tabManager, state);
+        tabManager.currentTabIndex = 0;
 
-      const currentTab = tabManager.tabs[tabManager.currentTabIndex];
-      if (currentTab && currentTab.tables.length > 0) {
-        if (tabManager.currentTableId >= currentTab.tables.length) {
-          tabManager.currentTableId = 0;
+        const currentTab = tabManager.tabs[tabManager.currentTabIndex];
+        if (currentTab && currentTab.tables.length > 0) {
+          if (tabManager.currentTableId >= currentTab.tables.length) {
+            tabManager.currentTableId = 0;
+          }
+        } else {
+          tabManager.currentTableId = null;
         }
-      } else {
-        tabManager.currentTableId = null;
       }
     }
 
-    // Создание панели и отрисовка интерфейса
+    loadSavedState();
     createClimbingPanel();
     tabManager.render();
 
-    // Функция для получения данных таблицы
     function getTableData(tableId) {
       const table = document.getElementById(tableId);
       if (!table) {
         console.error(`Таблица с id ${tableId} не найдена`);
         return [];
       }
-    
+
       const tableData = [];
-    
+
       for (let i = 0; i < table.rows.length; i++) {
         const rowData = [];
         for (let j = 0; j < table.rows[i].cells.length; j++) {
@@ -4317,10 +4325,12 @@ if (window.location.href === targetCW3) {
         }
         tableData.push(rowData);
       }
-    
+
       return tableData;
     }
+
     // ===================== ПЕРЕТАСКИВАНИЕ =====================
+
     const climbingMainPanel = document.getElementById("uwu-climbingMainPanel");
     const climbingPanelButton = document.getElementById(
       "uwu-climbingPanelButton"
@@ -4330,14 +4340,6 @@ if (window.location.href === targetCW3) {
     );
     const transferCheckbox = document.getElementById("uwu-transferCheckbox");
 
-    let isDragging = false;
-    let initialX;
-    let initialY;
-    let currentX;
-    let currentY;
-    let wasDragging = false;
-
-    // Функция для начала перетаскивания
     function dragStart(e) {
       e.preventDefault();
       const savedStatus = JSON.parse(
@@ -4355,7 +4357,6 @@ if (window.location.href === targetCW3) {
       }
     }
 
-    // Функция для перетаскивания
     function drag(e) {
       if (isDragging) {
         e.preventDefault();
@@ -4380,7 +4381,6 @@ if (window.location.href === targetCW3) {
       }
     }
 
-    // Функция для завершения перетаскивания
     function dragEnd(e) {
       if (isDragging) {
         saveClimbingPanelStatus();
@@ -4388,23 +4388,19 @@ if (window.location.href === targetCW3) {
       isDragging = false;
     }
 
-    // Функция для установки позиции элемента
     function setPosition(x, y, el) {
       el.style.left = `${x}px`;
       el.style.top = `${y}px`;
     }
 
-    // Функция для переключения состояния панели
     function togglePanelContainer(e) {
       if (!wasDragging) {
-        // Проверяем флаг перетаскивания
         climbingPanelContainer.classList.toggle("open");
         saveClimbingPanelStatus();
       }
       wasDragging = false;
     }
 
-    // Функция для проверки и сброса позиции панели
     function checkAndResetPanelPosition() {
       const windowWidth = window.innerWidth;
       const windowHeight = window.innerHeight;
@@ -4432,18 +4428,15 @@ if (window.location.href === targetCW3) {
         saveClimbingPanelStatus();
       }
 
-      // Устанавливаем позицию панели
       setPosition(currentX, currentY, climbingMainPanel);
     }
 
-    // Обработчики событий
     climbingPanelButton.addEventListener("mousedown", dragStart);
     document.addEventListener("mouseup", dragEnd);
     document.addEventListener("mousemove", drag);
     climbingPanelButton.addEventListener("click", togglePanelContainer);
 
-    // Загрузка состояния панели и отрисовка
-    window.addEventListener("load", loadClimbingPanelStatus);
+    setTimeout(loadClimbingPanelStatus, 10);
 
     const uwuClimbingPanel = document.createElement("style");
     uwuClimbingPanel.innerHTML = `
@@ -4556,6 +4549,164 @@ if (window.location.href === targetCW3) {
     }
   `;
     document.head.appendChild(uwuClimbingPanel);
+  }
+  // ====================================================================================================================
+  //   . . . БЫСТРЫЕ СТИЛИ . . .
+  // ====================================================================================================================
+  const settingsContainer = document.getElementById(
+    "extended-settings-container"
+  );
+  if (!settingsContainer) {
+    console.error("Контейнер #extended-settings-container не найден");
+    return;
+  }
+
+  const checkboxes = [
+    {
+      label: "Не показывать всплывающее окно 'О коте'",
+      key: "hideCatTooltip",
+      storageKey: "uwu_fastStyles",
+      style: ".cat_tooltip { display: none !important; }",
+      callback: function (checked) {
+        if (checked) {
+          const style = document.createElement("style");
+          style.innerHTML = this.style;
+          document.head.appendChild(style);
+        } else {
+          const styles = document.head.querySelectorAll("style");
+          styles.forEach((style) => {
+            if (style.innerHTML === this.style) {
+              document.head.removeChild(style);
+            }
+          });
+        }
+      },
+    },
+    {
+      label: "Скрыть Игровое поле",
+      key: "hideGameField",
+      storageKey: "uwu_fastStyles",
+      style: "#cages_overflow { visibility: hidden !important; }",
+      callback: function (checked) {
+        if (checked) {
+          const style = document.createElement("style");
+          style.innerHTML = this.style;
+          document.head.appendChild(style);
+        } else {
+          const styles = document.head.querySelectorAll("style");
+          styles.forEach((style) => {
+            if (style.innerHTML === this.style) {
+              document.head.removeChild(style);
+            }
+          });
+        }
+      },
+    },
+    {
+      label: "Скрыть фон Игрового Поля",
+      key: "hideGameFieldBackground",
+      storageKey: "uwu_fastStyles",
+      style: "#cages_div { background-image: none !important; }",
+      callback: function (checked) {
+        if (checked) {
+          const style = document.createElement("style");
+          style.innerHTML = this.style;
+          document.head.appendChild(style);
+        } else {
+          const styles = document.head.querySelectorAll("style");
+          styles.forEach((style) => {
+            if (style.innerHTML === this.style) {
+              document.head.removeChild(style);
+            }
+          });
+        }
+      },
+    },
+    {
+      label: "Всегда день/ярко",
+      key: "alwaysDay",
+      storageKey: "uwu_settings",
+      callback: function (checked) {
+        updateAlwaysDayStyle(checked);
+      },
+    },
+    {
+      label: "Границы клеток",
+      key: "cellsBorders",
+      storageKey: "uwu_settings",
+      callback: function (checked) {
+        updateCellsBordersStyle(checked);
+      },
+    },
+  ];
+
+  const loadSettings = (storageKey) => {
+    const savedSettings = localStorage.getItem(storageKey);
+    return savedSettings ? JSON.parse(savedSettings) : {};
+  };
+
+  const saveSettings = (storageKey, settings) => {
+    localStorage.setItem(storageKey, JSON.stringify(settings));
+  };
+
+  const settingsMap = {
+    uwu_fastStyles: loadSettings("uwu_fastStyles"),
+    uwu_settings: loadSettings("uwu_settings"),
+  };
+
+  const applyStyles = () => {
+    checkboxes.forEach((checkbox) => {
+      if (settingsMap[checkbox.storageKey][checkbox.key] === true) {
+        checkbox.callback.call(checkbox, true);
+      }
+    });
+  };
+
+  if (settings.fastStyles) {
+    const settingsDiv = document.createElement("div");
+    settingsDiv.id = "fast-Styles-container";
+    settingsDiv.classList.add("extended-settings-block");
+
+    checkboxes.forEach((checkbox) => {
+      const label = document.createElement("div");
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.name = checkbox.key;
+
+      const storedValue = settingsMap[checkbox.storageKey][checkbox.key];
+      if (storedValue === true) {
+        input.checked = true;
+        checkbox.callback.call(checkbox, true);
+      }
+
+      input.addEventListener("change", function () {
+        settingsMap[checkbox.storageKey][checkbox.key] = this.checked;
+        saveSettings(checkbox.storageKey, settingsMap[checkbox.storageKey]);
+        checkbox.callback.call(checkbox, this.checked);
+      });
+
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(checkbox.label));
+      settingsDiv.appendChild(label);
+    });
+
+    settingsContainer.appendChild(settingsDiv);
+
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .extended-settings-block {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .extended-settings-block div {
+        display: flex;
+       align-items: center;
+      }
+    `;
+    document.head.appendChild(style);
+  } else {
+    applyStyles();
   }
   // ====================================================================================================================
   //   . . . БЫСТРЫЕ ССЫЛКИ В ИГРОВОЙ . . .
@@ -4728,11 +4879,10 @@ if (window.location.href === targetCW3) {
   function applyTheme(themeName) {
     const theme = colorThemes[themeName]?.colors;
 
-    if (theme) {
-      const newStyle = document.createElement("style");
-      newStyle.innerHTML = `
+    const newStyle = document.createElement("style");
+    newStyle.innerHTML = `
       body {
-        background: ${theme.backgroundColor || ""};
+        background: ${theme?.backgroundColor || ""};
       }
 
       #cages_overflow {
@@ -4740,7 +4890,7 @@ if (window.location.href === targetCW3) {
       } 
 
       #tr_actions > td, #tr_mouth > td, #location, .small {
-        background-color: ${theme.blocksColor};
+        background-color: ${theme?.blocksColor || ""};
       }
 
       #main_table, #tr_mouth, #tr_actions, #info_main {
@@ -4749,37 +4899,37 @@ if (window.location.href === targetCW3) {
       }
     
       #tr_chat {
-        background-color: ${theme.chatColor};
+        background-color: ${theme?.chatColor || ""};
       }
     
       body, input, select, .ui-slider-handle {
-        color: ${theme.textColor};
+        color: ${theme?.textColor || ""};
       }
     
       input, select, .ui-slider-horizontal {
-        background-color: ${theme.accentColor1};
-        background: ${theme.accentColor1};
-        border: solid 1px ${theme.accentColor2};
+        background-color: ${theme?.accentColor1 || ""};
+        background: ${theme?.accentColor1 || ""};
+        border: solid 1px ${theme?.accentColor2 || ""};
       }
 
       .ui-widget-content .ui-state-default {
-        background: ${theme.accentColor2};
-        border: solid 1px ${theme.accentColor2};
+        background: ${theme?.accentColor2 || ""};
+        border: solid 1px ${theme?.accentColor2 || ""};
       } 
 
       hr {
-        border: solid 1px ${theme.accentColor2};
+        border: solid 1px ${theme?.accentColor2 || ""};
       }
 
       .myname {
-        color: ${theme.accentColor1};
-        background: ${theme.accentColor3};
+        color: ${theme?.accentColor1 || ""};
+        background: ${theme?.accentColor3 || ""};
       }
 
       span.cat_tooltip {
-        background: ${theme.catTooltipBackground} !important;
-        color: ${theme.textColor} !important;
-        border: 2px solid ${theme.accentColor2} !important;
+        background: ${theme?.catTooltipBackground || ""} !important;
+        color: ${theme?.textColor || ""} !important;
+        border: 2px solid ${theme?.accentColor2 || ""} !important;
       } 
 
       span.cat_tooltip > span.online {
@@ -4787,37 +4937,36 @@ if (window.location.href === targetCW3) {
       }
       
       .cat:hover .cat_tooltip a, .other_cats_list > a { 
-        color: ${theme.linkColor}; 
+        color: ${theme?.linkColor || ""}; 
       }
 
       .move_name {
-        color: ${theme.textColor};
-        background-color: ${theme.blocksColor} !important;
+        color: ${theme?.textColor || ""};
+        background-color: ${theme?.blocksColor || ""} !important;
       }
     
       a, a:hover {
-        color: ${theme.linkColor};
+        color: ${theme?.linkColor || ""};
       }
 
       #fightPanel {
-        background-color: ${theme.fightPanelBackground};
+        background-color: ${theme?.fightPanelBackground || ""};
       }
 
       .hotkey {
-        background-color: ${theme.accentColor1};
+        background-color: ${theme?.accentColor1 || ""};
       }
 
       #newchat, #newls {
-        color: ${theme.accentColor3};
+        color: ${theme?.accentColor3 || ""};
       }
 
-    .cat-info {
-      background-color: ${theme.catTooltipBackground} !important;
-      color: ${theme.textColor} !important;
+      .cat-info {
+      background-color: ${theme?.catTooltipBackground || ""} !important;
+      color: ${theme?.textColor || ""} !important;
       }
-    `;
-      document.head.appendChild(newStyle);
-    }
+      `;
+    document.head.appendChild(newStyle);
   }
 
   if (settings.userTheme) {
@@ -5119,6 +5268,175 @@ if (window.location.href === targetCW3) {
     }
     applyLayoutSettingsForInfoMain();
   }
+
+  // ====================================================================================================================
+  //   . . . ПОДСКАЗЫВАТЬ ОСТАВШЕЕСЯ ВРЕМЯ ДО НЮХА . . .
+  // ====================================================================================================================
+  if (settings.showHintWhenToSniff) {
+    let firstNote = "";
+    let timerStartTime = null;
+    let initialTimerValue = 0;
+    
+    const smellTimer = {
+      0: 3600,
+      1: 3600,
+      2: 3600,
+      3: 3600,
+      4: 1800,
+      5: 1200,
+      6: 900,
+      7: 720,
+      8: 600,
+      9: 0,
+    };
+    
+    function formatTime(seconds) {
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const remainingSeconds = seconds % 60;
+      return `${hours ? `${hours} ч ` : ""}${
+        minutes ? `${minutes} мин ` : ""
+      }${remainingSeconds} с`;
+    }
+    
+    function updateSmellTimer() {
+      const timerElement = document.getElementById("uwu_sniff_timer");
+      if (!timerElement) return;
+    
+      if (timerStartTime !== null) {
+        const isActive = document.querySelector('#dein a[data-id="14"]') !== null;
+        if (isActive) {
+          timerStartTime = null;
+          initialTimerValue = 0;
+          timerElement.setAttribute("value", 0);
+          timerElement.textContent = "";
+          soundManager.playSound("notificationSound2", settings.notificationMyNameVolume);
+          return;
+        }
+    
+        const currentTime = Date.now();
+        const elapsedTime = Math.floor((currentTime - timerStartTime) / 1000);
+        let remainingTime = initialTimerValue - elapsedTime;
+    
+        if (remainingTime <= 0) {
+          remainingTime = 0;
+          timerStartTime = null;
+          initialTimerValue = 0;
+          soundManager.playSound("notificationSound2", settings.notificationMyNameVolume);
+        }
+    
+        timerElement.setAttribute("value", remainingTime);
+        timerElement.textContent = remainingTime > 0 ? ` | Нюх через: ${formatTime(remainingTime)}` : "";
+      }
+    }
+    
+    setInterval(updateSmellTimer, 1000);
+    
+    function smellIconClick() {
+      firstNote = document.getElementById("error").innerHTML;
+      document.getElementById("smell_icon").click();
+    }
+    
+    function errorObserver() {
+      const errorElement = document.getElementById("error");
+      const html = errorElement.innerHTML;
+      if (html && html.includes("Следующее обнюхивание")) {
+        const text = html.replace(
+          "Следующее обнюхивание будет доступно через ",
+          ""
+        );
+        const smellMin =
+          (text.match(/(\d+) мин/g) || [])
+            .map((num) => parseInt(num.replace(/\D/g, ""), 10))
+            .shift() || 0;
+        const smellSec = parseInt(
+          (text.match(/(\d+) с/g) || [])
+            .map((num) => num.replace(/\D/g, ""))
+            .shift(),
+          10
+        );
+        const totalSec = smellMin * 60 + smellSec;
+        const timerElement = document.getElementById("uwu_sniff_timer");
+        timerElement.setAttribute("value", totalSec);
+        timerElement.textContent = ` | Нюх через: ${smellMin} мин ${smellSec} с`;
+        timerStartTime = Date.now();
+        initialTimerValue = totalSec;
+        if (firstNote !== "") {
+          errorElement.innerHTML = firstNote;
+          firstNote = "";
+        }
+      } else if (html.includes("Час уже прошёл") && firstNote !== "") {
+        errorElement.innerHTML = firstNote;
+        firstNote = "";
+      }
+    }
+    
+    function messObserver() {
+      const blockMessElement = document.getElementById("block_mess");
+      if (!blockMessElement) return;
+    
+      const isActive = document.querySelector('#dein a[data-id="14"]') !== null;
+      if (!isActive && blockMessElement.children.length === 0 && timerStartTime === null) {
+        const smellLevel = document.querySelector("#smell b").textContent;
+        const smellTime = smellTimer[smellLevel];
+        const timerElement = document.getElementById("uwu_sniff_timer");
+        timerElement.setAttribute("value", smellTime);
+        timerElement.textContent = ` | Нюх через: ${formatTime(smellTime)}`;
+        timerStartTime = Date.now();
+        initialTimerValue = smellTime;
+      }
+    }
+    
+    function timerElement() {
+      const smallElement = document.querySelector(".small");
+      if (smallElement) {
+        smallElement.insertAdjacentHTML(
+          "beforeend",
+          '<span id="uwu_sniff_timer" value="0"></span>'
+        );
+      }
+    }
+    
+    window.addEventListener("load", function () {
+      setupSingleCallback(".small", timerElement);
+      setupSingleCallback("#smell_icon", smellIconClick);
+      setupMutationObserver("#error", errorObserver, {
+        childList: true,
+        subtree: true,
+      });
+      setupMutationObserver("#block_mess", messObserver, {
+        childList: true,
+        subtree: true,
+      }, 8, 500, 20);
+    });
+  }
+  // ====================================================================================================================
+  //   . . . ДУБЛИРОВАНИЕ ВРЕМЯ НА ВКЛАДКУ БРАУЗЕРА . . .
+  // ====================================================================================================================
+  if (settings.duplicateTimeInBrowserTab) {
+    const blockMess = document.getElementById("block_mess");
+    const titleElement = document.querySelector("title");
+    let previousTime = null;
+
+    const observer = new MutationObserver(() => {
+      const timeElement = blockMess.querySelector("#sek");
+      if (timeElement) {
+        const currentTime = timeElement.textContent.trim();
+        if (currentTime !== previousTime) {
+          const actionText = blockMess.textContent
+            .replace(currentTime, "")
+            .trim();
+          titleElement.textContent = `${currentTime} | ${actionText}`;
+          previousTime = currentTime;
+        }
+      } else {
+        titleElement.textContent = "Игровая / CatWar";
+        previousTime = null;
+      }
+    });
+
+    observer.observe(blockMess, { childList: true, subtree: true });
+  }
   // ====================================================================================================================
   //   . . . ЗВУКОВЫЕ УВЕДОМЛЕНИЯ . . .
   // ====================================================================================================================
@@ -5381,6 +5699,8 @@ if (window.location.href === targetCW3) {
           height: ${settings.chatHeight}px;
           resize: vertical;
           overflow-y: auto;
+          display: flex;
+          flex-direction: ${settings.reverseChat ? "column-reverse" : "column"};
         }
   
         #chat_msg {
@@ -5397,6 +5717,18 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   //   . . . НОВЫЙ ВВОД ЧАТА . . .
   // ====================================================================================================================
+  const chatForm = document.getElementById("chat_form");
+  const trChatTd = document.querySelector("#tr_chat > td");
+
+  function updateChatFormPosition() {
+    if (settings.reverseChat) {
+      trChatTd.appendChild(chatForm);
+    } else {
+      trChatTd.prepend(chatForm);
+    }
+  }
+  updateChatFormPosition();
+
   if (settings.newChatInput) {
     const txtSpan = document.getElementById("txt");
     const selectField = txtSpan.querySelector("select#text");
@@ -5482,7 +5814,7 @@ if (window.location.href === targetCW3) {
   if (settings.sliceInfoBlock) {
     sliceInfoStyle.innerHTML = `
       #info_main > tbody > tr > td {
-        background-color: ${theme.blocksColor};
+        background-color: ${theme?.blocksColor || ""};
         margin-bottom: 5px;
       }
     `;
@@ -5490,7 +5822,7 @@ if (window.location.href === targetCW3) {
   } else {
     sliceInfoStyle.innerHTML = `
       #tr_info > td {
-        background-color: ${theme.blocksColor};
+        background-color: ${theme?.blocksColor || ""};
       }
     `;
     document.head.appendChild(sliceInfoStyle);
@@ -5806,14 +6138,30 @@ if (window.location.href === targetCW3) {
   //   . . . ВСЕГДА ДЕНЬ В ИГРОВОЙ . . .
   // ====================================================================================================================
   // Вот бы всё писалось так кратко и легко...........
-  const alwaysDay = document.createElement("style");
-  if (settings.alwaysDay) {
-    alwaysDay.innerHTML = `
-    #cages_div {
-      opacity: 1 !important;
-    }   
+  function updateAlwaysDayStyle(checked) {
+    const alwaysDayStyle = `
+      #cages_div {
+        opacity: 1 !important;
+      }   
     `;
-    document.head.appendChild(alwaysDay);
+
+    const styles = document.head.querySelectorAll("style");
+    let styleFound = false;
+
+    styles.forEach((style) => {
+      if (style.innerHTML === alwaysDayStyle) {
+        if (!checked) {
+          document.head.removeChild(style);
+        }
+        styleFound = true;
+      }
+    });
+
+    if (checked && !styleFound) {
+      const alwaysDay = document.createElement("style");
+      alwaysDay.innerHTML = alwaysDayStyle;
+      document.head.appendChild(alwaysDay);
+    }
   }
   // ====================================================================================================================
   //   . . . НЕБО - ШАПКА . . .
@@ -6024,7 +6372,14 @@ if (window.location.href === targetCW3) {
         {
           description: "Холодно",
           temperature: -2,
-          colors: ["#7FAAC5", "#76A2C0", "#6A96B8", "#6593B6", "#618FB3"],
+          colors: [
+            "#7FAAC5",
+            "#76A2C0",
+            "#6A96B8",
+            "#6593B6",
+            "#618FB3",
+            "#7BA6C3",
+          ],
         },
         {
           description: "Прохладно",
@@ -6036,6 +6391,7 @@ if (window.location.href === targetCW3) {
             "#5D8BB0",
             "#4777A3",
             "#366899",
+            "#3F709E",
           ],
         },
         {
