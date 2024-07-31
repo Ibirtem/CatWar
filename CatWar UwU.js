@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.24.0-07.24
+// @version      v1.24.1-07.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.24.0";
+const current_uwu_version = "1.24.1";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   uwuSettingsTextColor: "2",
@@ -963,6 +963,8 @@ const newsPanel = `
     <p>— Вроде бы Редактор минных полей теперь отзывчивей...?</p>
     <p>— Мелочное исправление не сохранения галочки, если с Редактором больше никак не взаимодействовали.</p>
     <p>— Исправлена ошибка, что отсутствие хотя бы одного выставленного цвета вызывала остановку почти половину скрипта.</p>
+    <p>—— v1.24.1</p>
+    <p>—— Небольшой приятный фиксик звука уведомления нюха со 2 звука на более приятный и тихий 3, пока в будущем не выдам редактор звука.</p>
     <hr>
     <p>Дата выпуска: 31.07.24</p>
   </div>
@@ -5310,7 +5312,7 @@ if (window.location.href === targetCW3) {
           initialTimerValue = 0;
           timerElement.setAttribute("value", 0);
           timerElement.textContent = "";
-          soundManager.playSound("notificationSound2", settings.notificationMyNameVolume);
+          soundManager.playSound("notificationSound3", settings.notificationMyNameVolume);
           return;
         }
     
@@ -5322,7 +5324,7 @@ if (window.location.href === targetCW3) {
           remainingTime = 0;
           timerStartTime = null;
           initialTimerValue = 0;
-          soundManager.playSound("notificationSound2", settings.notificationMyNameVolume);
+          soundManager.playSound("notificationSound3", settings.notificationMyNameVolume);
         }
     
         timerElement.setAttribute("value", remainingTime);
