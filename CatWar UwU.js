@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.24.3-07.24
+// @version      v1.25.0-08.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.24.3";
+const current_uwu_version = "1.25.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   uwuSettingsTextColor: "2",
@@ -901,19 +901,6 @@ const uwusettings = `
       <label for="extended-Hints">Расширенные подсказки</label>
     </div>
 
-    <hr>
-    <h2>Гейм-Мастер</h2>
-    <div>
-      <p>⚠️Как пользователь, вы должны осознавать возможные риски и проблемы как с некоторым функционалом, так и с приватностью⚠️</p>
-      <input type="checkbox" id="GM-beta-Test" data-setting="GMbetaTest" />
-      <label for="GM-beta-Test">Стать тестировщиком функционала для Гейм-Мастеров.</label>
-      <p>Что тут будет? Пока не ясно, могу лишь наобещать:</p>
-      <p>- Показывать тревоги и уведомление от вашего племени/клана (Под большим сомнением)</p>
-      <p>- Игровые режимы/комнаты (Очень хочется опробовать вернуть пошаговую боёвку, но в стиле Балдуры или Дивинити с передвижением и прочими плюхами)</p>
-      <p>- Интерактив между котами и улучшение проводимости ивентов. Примером, Звуковые эмоции, или что-то в этом дух.</p>
-      <p>- И ещё больше интерактива с Природными Эффектами при взаимодействии с локациями.</p>
-    </div>
-
   <hr>
     <h2>Сборник стилей</h2>
     <p>Онлайн сборник стилей от Разработчика.</p>
@@ -948,29 +935,22 @@ const uwusettings = `
 const newsPanel = `
 <div id="news-panel">
   <button id="news-button">
-    v${current_uwu_version} - ❄️ Инверсия Чата, Быстрые стили, Дублирование время на вкладку и когда же там нюх?!
+    v${current_uwu_version} - ❄️ Ничего особенного, просто правки под финальный релиз.
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
-    <p>— Дублирование времени и Нюх ищите в Уведомлениях во вкладке "Инструментарий"! Остальное в оформлении!🍤🐈Мяу-мяу-мяу-мяу.</p>
+    <p>— пиу пиу</p>
     <hr>
     <h3>Внешний вид</h3>
-    <p>— Небольшой редизайн отображения информации "О коте", теперь компактнее и опрятнее.</p>
-    <p>— Уменьшен пробел между границей и блоками в Расширенных настройках.</p>
+    <p>— а где</p>
     <hr>
     <h3>Изменения кода</h3>
-    <p>— Удалена патч-миграция минных полей.</p>
-    <p>— Вроде бы Редактор минных полей теперь отзывчивей...?</p>
-    <p>— Мелочное исправление не сохранения галочки, если с Редактором больше никак не взаимодействовали.</p>
-    <p>— Исправлена ошибка, что отсутствие хотя бы одного выставленного цвета вызывала остановку почти половину скрипта.</p>
-    <p>—— v1.24.1</p>
-    <p>—— Небольшой приятный фиксик звука уведомления нюха со 2 звука на более приятный и тихий 3, пока в будущем не выдам редактор звука.</p>
-    <p>—— v1.24.2</p>
-    <p>—— Быстрые стили по стандарту теперь выключены.</p>
-    <p>—— v1.24.3</p>
-    <p>—— Кружок уведомления теперь не такой большой. Почему он вообще таким стал...</p>
+    <p>— BBCode'ы теперь появляются и в личных сообщениях.</p>
+    <p>— Никакого Гейм-Мастер режима...😿</p>
+    <p>— Добавлены быстрые стили: скрывать небо...</p>
+    <p>— Исправленно неправильное применение стиля к БР стрелкам. Теперь при перемещении по клеткам они не теряются.</p>
     <hr>
-    <p>Дата выпуска: 31.07.24</p>
+    <p>Дата выпуска: 10.08.24</p>
   </div>
 </div>
 `;
@@ -4629,6 +4609,26 @@ if (window.location.href === targetCW3) {
       },
     },
     {
+      label: "Скрыть Небо",
+      key: "hideSky",
+      storageKey: "uwu_fastStyles",
+      style: "#tr_sky { display: none !important; }",
+      callback: function (checked) {
+        if (checked) {
+          const style = document.createElement("style");
+          style.innerHTML = this.style;
+          document.head.appendChild(style);
+        } else {
+          const styles = document.head.querySelectorAll("style");
+          styles.forEach((style) => {
+            if (style.innerHTML === this.style) {
+              document.head.removeChild(style);
+            }
+          });
+        }
+      },
+    },
+    {
       label: "Всегда день/ярко",
       key: "alwaysDay",
       storageKey: "uwu_settings",
@@ -5874,19 +5874,19 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   if (settings.fightTeams) {
     const colors = settings.fightTeamsColors;
-
+  
     const fightPanel = document.getElementById("fightPanel");
     const buttonHTML =
       '<button id="updateTableButton" style="width: 100%;">Обновить команды</button>';
     fightPanel.insertAdjacentHTML("beforeend", buttonHTML);
-
+  
     document.getElementById("updateTableButton").onclick = () => {
       if (!document.getElementById("uwu-team-settings")) {
         createTeamTable();
       }
       updateTeamTable();
     };
-
+  
     function createTeamTable() {
       const tableHTML = `
         <div id="uwu-team-settings" style="height: ${
@@ -5903,45 +5903,63 @@ if (window.location.href === targetCW3) {
           </table>
         </div>
       `;
-      // Вставляем таблицу перед кнопкой
       const updateButton = document.getElementById("updateTableButton");
       updateButton.insertAdjacentHTML("beforebegin", tableHTML);
     }
-
+  
     function updateTeamTable() {
       const tbody = document.getElementById("teamTableBody");
       tbody.innerHTML = "";
       const cages = document.querySelectorAll("#cages .cage");
-
+  
       cages.forEach((cage) => {
         const catName = cage.querySelector(".cat_tooltip a")?.textContent;
         const arrow = cage.querySelector(".arrow.arrow-paws");
-
+  
         if (catName && arrow) {
           const arrowId = arrow.id;
           const buttonsHTML = Object.keys(colors)
             .map((team) => {
               return `
                 <button 
+                  class="team-color-button"
+                  data-arrow-id="${arrowId}"
+                  data-team="${team}"
                   style="background-color: ${colors[team][0]}; width: 21%; height: 16px;"
-                  onclick="document.getElementById('${arrowId}').querySelector('.arrow_green').style.backgroundColor = '${colors[team][0]}';
-                           document.getElementById('${arrowId}').querySelector('.arrow_red').style.backgroundColor = '${colors[team][1]}';"
                 ></button>
               `;
             })
             .join("");
-
+  
           const rowHTML = `
             <tr>
               <td style="border: 1px solid #000; padding: 5px;">${catName}</td>
-              <td style="border: 1px solid #000; padding: 5px;">
-                ${buttonsHTML}
-              </td>
+              <td style="border: 1px solid #000; padding: 5px;">${buttonsHTML}</td>
             </tr>
           `;
           tbody.insertAdjacentHTML("beforeend", rowHTML);
         }
       });
+  
+      const teamColorButtons = document.querySelectorAll('.team-color-button');
+      teamColorButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const arrowId = button.getAttribute('data-arrow-id');
+          const team = button.getAttribute('data-team');
+          applyTeamColors(arrowId, team);
+        });
+      });
+    }
+  
+    function applyTeamColors(arrowId, team) {
+      const styleElement = document.createElement('style');
+      styleElement.type = 'text/css';
+      const cssRule = `
+        #${arrowId} .arrow_green { background-color: ${colors[team][0]} !important; }
+        #${arrowId} .arrow_red { background-color: ${colors[team][1]} !important; }
+      `;
+      styleElement.appendChild(document.createTextNode(cssRule));
+      document.head.appendChild(styleElement);
     }
   }
   // ====================================================================================================================
@@ -6131,14 +6149,12 @@ if (window.location.href === targetCW3) {
       }
 
       #fightLog, #uwu-Compacted-Fight-Log {
+        height: ${settings.FightPanelHeight || ""}px;
         resize: vertical;
         overflow-y: scroll;
       }   
       `;
     document.head.appendChild(uwuFightLog);
-
-    const fightLog = document.getElementById("fightLog");
-    fightLog.style.height = settings.FightPanelHeight + "px";
   }
   // ====================================================================================================================
   //   . . . ВСЕГДА ДЕНЬ В ИГРОВОЙ . . .
@@ -6373,7 +6389,7 @@ if (window.location.href === targetCW3) {
         {
           description: "Очень холодно",
           temperature: -3,
-          colors: ["#94BDD2"],
+          colors: ["#94BDD2", "#9DC5D8", "#B2D8E5", "#C3E8EF", "#AED4E2", "#AAD1E0"],
         },
         {
           description: "Холодно",
@@ -7229,13 +7245,7 @@ if (window.location.href === targetCW3) {
       }
     }
   }
-  // ====================================================================================================================
-  //   . . . РЕЖИМ ГЕЙМ-МАСТЕРА . . . АВТОРИЗАЦИЯ . . .
-  // ====================================================================================================================
-  if (settings.GMbetaTest) {
-    // Епупе а когда?
-  }
-  // ====================================================================================================================
+// ====================================================================================================================
 } // Конец грандиозного, но и начало чево то нового... Зогдачно......
 // ====================================================================================================================
 // 🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨
@@ -7616,7 +7626,6 @@ if (targetBlogsCreation.test(window.location.href)) {
 if (settings.moreBBCodes) {
   function addBBCodeButtons() {
     const bbCodeContainers = document.querySelectorAll(".bbcode");
-    if (!bbCodeContainers.length) return;
 
     const commonButtonsHTML = `
       <button class="bbcode" title="Абзац" data-code="p">p</button>
@@ -7651,5 +7660,5 @@ if (settings.moreBBCodes) {
     });
   }
 
-  addBBCodeButtons();
+  setupSingleCallback(".bbcode", addBBCodeButtons);
 }
