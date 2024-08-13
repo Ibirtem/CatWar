@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.26.1-08.24
+// @version      v1.26.2-08.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.26.1";
+const current_uwu_version = "1.26.2";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   uwuSettingsTextColor: "2",
@@ -965,6 +965,9 @@ const newsPanel = `
     <h3>Изменения кода</h3>
     <p>— 1.26.1✨</p>
     <p>—— Небольшая правка совместимости для уже существующих пользователей.</p>
+    <p>——— 1.26.2✨</p>
+    <p>——— Я лёг и вспомнил что забыл исправление и для новых пользователей, чтобы правильно применялась тёмная тема.</p>
+    <p>——— Небольшие правки в соответствии с прошлыми правками. Правки на правке. Надеюсь ничего не поломалось и не сделалось хуже аххаа.</p>
     <hr>
     <p>Дата выпуска: 13.08.24</p>
   </div>
@@ -1963,8 +1966,36 @@ if (targetSettings.test(window.location.href)) {
   // ====================================================================================================================
   //  . . . ТЕМЫ И ЦВЕТА ИГРОВОЙ . . .
   // ====================================================================================================================
-  let currentTheme = localStorage.getItem("uwu_currentTheme") || "Тёмная Тема";
+  let currentTheme = localStorage.getItem("uwu_currentTheme");
   const colorThemes = loadColorThemes();
+  
+  if (!currentTheme && !colorThemes["Моя Тема"]) {
+    const darkTheme = {
+      "colors": {
+        "backgroundColor": "#000",
+        "blocksColor": "#242424",
+        "chatColor": "#242424",
+        "textColor": "#d5d5d5",
+        "catTooltipBackground": "#242424",
+        "fightPanelBackground": "#242424",
+        "linkColor": "#d5d5d5",
+        "accentColor1": "#111111",
+        "accentColor2": "#2e2e2e82",
+        "accentColor3": "#fc872a",
+        "moveNameColor": "#d5d5d5",
+        "moveNameBackground": "#242424"
+      }
+    };
+  
+    colorThemes["Тёмная Тема"] = darkTheme;
+    localStorage.setItem("uwu_colorThemes", JSON.stringify(colorThemes));
+  
+    currentTheme = "Тёмная Тема";
+    localStorage.setItem("uwu_currentTheme", currentTheme);
+  } else if (!currentTheme) {
+    currentTheme = "Моя Тема";
+    localStorage.setItem("uwu_currentTheme", currentTheme);
+  }
   
   const colorInputs = document.querySelectorAll("#color-picker input[type='text']");
   const saveThemeButton = document.getElementById("saveThemeButton");
@@ -1994,28 +2025,6 @@ if (targetSettings.test(window.location.href)) {
   
   function updateThemeSelect() {
     themeSelect.innerHTML = "";
-    const darkTheme = {
-      "colors": {
-      "backgroundColor": "#000",
-      "blocksColor": "#242424",
-      "chatColor": "#242424",
-      "textColor": "#d5d5d5",
-      "catTooltipBackground": "#242424",
-      "fightPanelBackground": "#242424",
-      "linkColor": "#d5d5d5",
-      "accentColor1": "#111111",
-      "accentColor2": "#2e2e2e82",
-      "accentColor3": "#fc872a",
-      "moveNameColor": "#d5d5d5",
-      "moveNameBackground": "#242424"
-      }
-    };
-  
-    if (!colorThemes["Тёмная Тема"]) {
-      colorThemes["Тёмная Тема"] = darkTheme;
-      localStorage.setItem("uwu_colorThemes", JSON.stringify(colorThemes));
-    }
-  
     Object.keys(colorThemes).forEach((themeName) => {
       const option = document.createElement("option");
       option.value = themeName;
@@ -2071,7 +2080,6 @@ if (targetSettings.test(window.location.href)) {
     });
   });
   
-  // Инициализация
   updateThemeSelect();
   loadThemeToInputs();
   // ====================================================================================================================
@@ -3190,9 +3198,13 @@ if (window.location.href === targetCW3) {
     if (!theme) return {};
     return theme;
   }
-
-  let currentTheme = localStorage.getItem("uwu_currentTheme") || "Моя Тема";
-  const theme = getThemeColors(currentTheme);
+  
+  let theme = {};
+  
+  if (settings.userTheme) {
+    let currentTheme = localStorage.getItem("uwu_currentTheme") || "Моя Тема";
+    theme = getThemeColors(currentTheme);
+  }
   // ====================================================================================================================
   //  . . . РАСШИРЕННЫЕ НАСТРОЙКИ . . .
   // ====================================================================================================================
