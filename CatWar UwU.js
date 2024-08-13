@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.26.0-08.24
+// @version      v1.26.1-08.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.26.0";
+const current_uwu_version = "1.26.1";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   uwuSettingsTextColor: "2",
@@ -963,7 +963,8 @@ const newsPanel = `
     <p>— ✨</p>
     <hr>
     <h3>Изменения кода</h3>
-    <p>— ✨</p>
+    <p>— 1.26.1✨</p>
+    <p>—— Небольшая правка совместимости для уже существующих пользователей.</p>
     <hr>
     <p>Дата выпуска: 13.08.24</p>
   </div>
@@ -1962,7 +1963,7 @@ if (targetSettings.test(window.location.href)) {
   // ====================================================================================================================
   //  . . . ТЕМЫ И ЦВЕТА ИГРОВОЙ . . .
   // ====================================================================================================================
-  let currentTheme = localStorage.getItem("uwu_currentTheme") || "Тёмная тема";
+  let currentTheme = localStorage.getItem("uwu_currentTheme") || "Тёмная Тема";
   const colorThemes = loadColorThemes();
   
   const colorInputs = document.querySelectorAll("#color-picker input[type='text']");
@@ -2010,8 +2011,8 @@ if (targetSettings.test(window.location.href)) {
       }
     };
   
-    if (!colorThemes["Тёмная тема"]) {
-      colorThemes["Тёмная тема"] = darkTheme;
+    if (!colorThemes["Тёмная Тема"]) {
+      colorThemes["Тёмная Тема"] = darkTheme;
       localStorage.setItem("uwu_colorThemes", JSON.stringify(colorThemes));
     }
   
@@ -2028,7 +2029,7 @@ if (targetSettings.test(window.location.href)) {
     currentTheme = event.target.value;
     localStorage.setItem("uwu_currentTheme", currentTheme);
     loadThemeToInputs();
-    removeThemeButton.style.display = currentTheme === "Тёмная тема" ? "none" : "inline";
+    removeThemeButton.style.display = currentTheme === "Тёмная Тема" ? "none" : "inline";
   });
   
   addThemeButton.addEventListener("click", () => {
@@ -2044,11 +2045,11 @@ if (targetSettings.test(window.location.href)) {
   });
   
   removeThemeButton.addEventListener("click", () => {
-    if (currentTheme && currentTheme !== "Тёмная тема") {
+    if (currentTheme && currentTheme !== "Тёмная Тема") {
       delete colorThemes[currentTheme];
       localStorage.setItem("uwu_colorThemes", JSON.stringify(colorThemes));
       updateThemeSelect();
-      currentTheme = "Тёмная тема";
+      currentTheme = "Тёмная Тема";
       themeSelect.value = currentTheme;
       loadThemeToInputs();
     }
@@ -2061,7 +2062,7 @@ if (targetSettings.test(window.location.href)) {
   
   colorInputs.forEach((input) => {
     input.addEventListener("input", () => {
-      if (currentTheme === "Тёмная тема") {
+      if (currentTheme === "Тёмная Тема") {
         alert("Вы не можете изменять стандартные темы. Пожалуйста, выберите другую или создайте новую.");
         loadThemeToInputs();
         return;
@@ -3190,7 +3191,7 @@ if (window.location.href === targetCW3) {
     return theme;
   }
 
-  let currentTheme = localStorage.getItem("uwu_currentTheme") || "Тёмная тема";
+  let currentTheme = localStorage.getItem("uwu_currentTheme") || "Моя Тема";
   const theme = getThemeColors(currentTheme);
   // ====================================================================================================================
   //  . . . РАСШИРЕННЫЕ НАСТРОЙКИ . . .
