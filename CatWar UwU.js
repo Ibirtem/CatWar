@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.26.3-08.24
+// @version      v1.27.0-08.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.26.3";
+const current_uwu_version = "1.27.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   uwuSettingsTextColor: "2",
@@ -126,11 +126,36 @@ const uwuDefaultSettings = {
   GMbetaTest: false,
 };
 
-// Типо начальные таргетные ссылки.
+// ====================================================================================================================
+//   . . . ТАРГЕТНЫЕ ССЫЛКИ . . .
+// ====================================================================================================================
 const targetSettings = /^https:\/\/catwar\.su\/settings/;
 const targetCW3 = "https://catwar.su/cw3/";
 const targetCW3Hunt = "https://catwar.su/cw3/jagd";
 const targetBlogsCreation = /^https:\/\/catwar\.su\/blogs\?creation/;
+
+// ====================================================================================================================
+//   . . . СТАНДАРТНЫЕ ЦВЕТОВЫЕ ТЕМЫ . . .
+// ====================================================================================================================
+const defaultThemes = {
+  "Тёмная Тема": {
+    colors: {
+      backgroundColor: "#161616",
+      blocksColor: "#242424",
+      chatColor: "#242424",
+      textColor: "#d5d5d5",
+      catTooltipBackground: "#242424",
+      fightPanelBackground: "#242424",
+      linkColor: "#d5d5d5",
+      accentColor1: "#111111",
+      accentColor2: "#2e2e2e82",
+      accentColor3: "#fc872a",
+      moveNameColor: "#d5d5d5",
+      moveNameBackground: "#242424",
+    },
+  },
+};
+
 // ====================================================================================================================
 //   . . . HTML ПАНЕЛЬ НАСТРОЕК . . .
 // ====================================================================================================================
@@ -396,6 +421,83 @@ const uwusettings = `
         </p>
       </div>
     </div>
+
+    <hr>
+    <h2>Шрифты и текст</h2>
+    
+    <div>
+      <p>Кастомная настройка шрифтов в Игровой</p>
+      <input type="checkbox" id="use-User-Fonts" data-setting="useUserFonts" />
+      <label for="use-User-Fonts">Свой шрифт</label>
+    </div>
+
+    <div>
+      <input type="text" id="font-Size-Body" placeholder="14" data-font-size="fontSizeBody" />
+      <label for="font-Size-Body">px; Размер общего шрифт</label>
+    </div>
+
+    <div>
+      <input type="text" id="font-Size-Small" placeholder="12" data-font-size="fontSizeSmall" />
+      <label for="font-Size-Small">px; Размер шрифта быстрых ссылок</label>
+    </div>
+
+    <div>
+      <input type="text" id="font-Size-Location" placeholder="14" data-font-size="fontSizeLocation" />
+      <label for="font-Size-Location">px; Размер шрифта локации</label>
+    </div>
+
+    <div>
+      <input type="text" id="font-Family-Body" placeholder="Verdana" data-font-size="fontFamilyBody" />
+      <label for="font-Family-Body">Название вида шрифта</label>
+    </div>
+
+    <details>
+      <summary style="cursor: pointer; font-size: 16px; font-weight: bold;">Настройка шрифта громкости сообщений в чате</summary>
+      <div>
+        <input type="text" id="vlm0" placeholder="10" data-font-size="vlm0" />
+        <label for="vlm0">px; Громкость 0 (Самый тихий)</label>
+      </div>
+      <div>
+        <input type="text" id="vlm1" placeholder="11" data-font-size="vlm1" />
+        <label for="vlm1">px; Громкость 1</label>
+      </div>
+      <div>
+        <input type="text" id="vlm2" placeholder="11.5" data-font-size="vlm2" />
+        <label for="vlm2">px; Громкость 2</label>
+      </div>
+      <div>
+        <input type="text" id="vlm3" placeholder="12" data-font-size="vlm3" />
+        <label for="vlm3">px; Громкость 3</label>
+      </div>
+      <div>
+        <input type="text" id="vlm4" placeholder="12.5" data-font-size="vlm4" />
+        <label for="vlm4">px; Громкость 4</label>
+      </div>
+      <div>
+        <input type="text" id="vlm5" placeholder="13" data-font-size="vlm5" />
+        <label for="vlm5">px; Громкость 5 (Стандартная громкость)</label>
+      </div>
+      <div>
+        <input type="text" id="vlm6" placeholder="15" data-font-size="vlm6" />
+        <label for="vlm6">px; Громкость 6</label>
+      </div>
+      <div>
+        <input type="text" id="vlm7" placeholder="17" data-font-size="vlm7" />
+        <label for="vlm7">px; Громкость 7</label>
+      </div>
+      <div>
+        <input type="text" id="vlm8" placeholder="19" data-font-size="vlm8" />
+        <label for="vlm8">px; Громкость 8</label>
+      </div>
+      <div>
+        <input type="text" id="vlm9" placeholder="21" data-font-size="vlm9" />
+        <label for="vlm9">px; Громкость 9</label>
+      </div>
+      <div>
+        <input type="text" id="vlm10" placeholder="23" data-font-size="vlm10" />
+        <label for="vlm10">px; Громкость 10 (Самая громкая)</label>
+      </div>
+    </details>
 
     <hr>
     <h2>Редизайны Игровой</h2>
@@ -953,25 +1055,25 @@ const uwusettings = `
 const newsPanel = `
 <div id="news-panel">
   <button id="news-button">
-    v${current_uwu_version} - 🌸 Возможность выбирать темы и чуть больше настроек цветов!
+    v${current_uwu_version} - 🌸 Кастомизация шрифта и его размеров!
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
-    <p>— Появилась возможность менять цвета переходов в Игровой! Ну а про выбор тем вы и так понимаете...</p>
+    <p>— Не то, что хотелось бы давать на кастомизацию, однако лучше что-то, чем ничего. В особенности для тех, кто любит отдалять
+    или приближать Игровую.</p>
     <hr>
     <h3>Внешний вид</h3>
-    <p>— ✨</p>
+    <p>— Фон в Тёмной Теме теперь тёмно-серый, а не просто чёрный.</p>
+    <p>— Цвет кнопок теперь тоже определяются ползунком выбора цвета текста.</p>
     <hr>
     <h3>Изменения кода</h3>
-    <p>— 1.26.1✨</p>
-    <p>—— Небольшая правка совместимости для уже существующих пользователей.</p>
-    <p>——— 1.26.2✨</p>
-    <p>——— Я лёг и вспомнил что забыл исправление и для новых пользователей, чтобы правильно применялась тёмная тема.</p>
-    <p>——— Небольшие правки в соответствии с прошлыми правками. Правки на правке. Надеюсь ничего не поломалось и не сделалось хуже аххаа.</p>
-    <p>———— 1.26.3🦐</p>
-    <p>———— Никогда не спрашивайте, что произошло ночью 13.08.24</p>
+    <p>— Тёмная Тема теперь достаётся из константы.</p>
+    <p>— И вообще переписана работа тем для более "адекватного" поведения.</p>
+    <p>— Высота ванильного чата "chat_msg" теперь тоже регулируется.</p>
+    <p>— Звуки теперь (вроде) должны работать в браузерах на iOS / macOS.</p>
+    <p>— Небольшая переделка кода ползунка выбора цвета текста.</p>
     <hr>
-    <p>Дата выпуска: 13.08.24</p>
+    <p>Дата выпуска: 18.08.24</p>
   </div>
 </div>
 `;
@@ -1802,17 +1904,6 @@ function loadSettings() {
   }
 }
 // ====================================================================================================================
-//  . . . СОХРАНЕНИЯ И ЗАГРУЗКА ЦВЕТОВЫХ ТЕМ . . .
-// ====================================================================================================================
-function loadColorThemes() {
-  const storedThemes = localStorage.getItem("uwu_colorThemes");
-  let colorThemes = {};
-  if (storedThemes && typeof storedThemes === "string") {
-    colorThemes = JSON.parse(storedThemes);
-  }
-  return colorThemes;
-}
-// ====================================================================================================================
 //   . . . ДИНАМИЧНЫЕ ОБОЗРЕВАТЕЛИ . . .
 // ====================================================================================================================
 function debounce(func, wait) {
@@ -1867,6 +1958,42 @@ async function setupSingleCallback(
     `Элемент с селектором "${selector}" не найден после ${maxAttempts} попыток.`
   );
 }
+// ====================================================================================================================
+//   . . . СОХРАНЕНИЕ И РАБОТА С ЦВЕТОВЫМИ ТЕМАМИ . . .
+// ====================================================================================================================
+function getThemes() {
+  const storedThemes = localStorage.getItem("uwu_colorThemes");
+  const userThemes = storedThemes ? JSON.parse(storedThemes) : {};
+  return { ...userThemes, ...defaultThemes };
+}
+
+function saveThemes(themes) {
+  const themesToSave = Object.keys(themes)
+    .filter(themeName => !isDefaultTheme(themeName))
+    .reduce((obj, key) => {
+      obj[key] = themes[key];
+      return obj;
+    }, {}); 
+
+  localStorage.setItem("uwu_colorThemes", JSON.stringify(themesToSave));
+}
+
+function getCurrentThemeName() {
+  return localStorage.getItem("uwu_currentTheme") || "Тёмная Тема";
+}
+
+function setCurrentThemeName(themeName) {
+  localStorage.setItem("uwu_currentTheme", themeName);
+}
+
+function isDefaultTheme(themeName) {
+  return Object.keys(defaultThemes).includes(themeName);
+}
+
+function updateSaveButtonState() {
+  saveThemeButton.disabled = isDefaultTheme(currentThemeName);
+}
+
 // ====================================================================================================================
 //  . . . ВНЕШНИЙ ВИД ПАНЕЛИ НАСТРОЕК . . .
 // ====================================================================================================================
@@ -1931,166 +2058,194 @@ if (targetSettings.test(window.location.href)) {
     '#uwu-Settings-Text-Color-Step option[value="2"]'
   );
   option2.style.color = bodyColor;
-
+  
   function setupTextColorListener() {
     const manualUwUSettingsTextColor = document.getElementById(
       "manualUwUSettingsTextColor"
     );
     const uwusettings = document.getElementById("uwusettings");
-
+  
     if (manualUwUSettingsTextColor && uwusettings) {
       function setTextColor(value) {
+        let textColor;
         switch (value) {
           case 1:
-            uwusettings.style.color = "#f1f1f1";
+            textColor = "#f1f1f1";
             break;
           case 2:
-            uwusettings.style.color = "";
+            textColor = bodyColor;
             break;
           case 3:
-            uwusettings.style.color = "black";
+            textColor = "black";
             break;
           default:
-            uwusettings.style.color = "";
+            textColor = "";
             break;
         }
+  
+        uwusettings.style.color = textColor;
+  
+        const style = document.createElement('style');
+        style.innerHTML = `
+          #news-button, .uwu-button {
+            color: ${textColor} !important;
+          }
+        `;
+  
+        document.head.appendChild(style);
       }
-
+  
       setTextColor(parseInt(manualUwUSettingsTextColor.value));
-
+  
       manualUwUSettingsTextColor.addEventListener("change", function () {
         setTextColor(parseInt(manualUwUSettingsTextColor.value));
       });
     }
   }
-
+  
   setupTextColorListener();
+  // ====================================================================================================================
+  //  . . . ШРИФТ ГРОМКОСТИ ЧАТА . . .
+  // ====================================================================================================================
+  function saveFontSettings() {
+    let fontSize = {};
+  
+    document.querySelectorAll('input[data-font-size]').forEach(input => {
+      fontSize[input.dataset.fontSize] = input.value;
+    });
+  
+    localStorage.setItem('uwu_fontSize', JSON.stringify(fontSize));
+  }
+  
+  function loadFontSettings() {
+    let defaultFontSize = {
+      vlm0: '10',
+      vlm1: '11',
+      vlm2: '11.5',
+      vlm3: '12',
+      vlm4: '12.5',
+      vlm5: '13',
+      vlm6: '15',
+      vlm7: '17',
+      vlm8: '19',
+      vlm9: '21',
+      vlm10: '23',
+      fontSizeBody: '14',
+      fontSizeSmall: '12',
+      fontSizeLocation: '14',
+      fontFamilyBody: 'Verdana'
+    };
+  
+    let fontSize = JSON.parse(localStorage.getItem('uwu_fontSize')) || defaultFontSize;
+  
+    document.querySelectorAll('input[data-font-size]').forEach(input => {
+      input.value = fontSize[input.dataset.fontSize] || ''; 
+    });
+
+    saveFontSettings();
+  }
+  
+  document.querySelectorAll('input[data-font-size]').forEach(input => {
+    input.addEventListener('input', saveFontSettings); 
+  });
+  
+  loadFontSettings();
   // ====================================================================================================================
   //  . . . ТЕМЫ И ЦВЕТА ИГРОВОЙ . . .
   // ====================================================================================================================
-  let currentTheme = localStorage.getItem("uwu_currentTheme");
-  const colorThemes = loadColorThemes();
-  
-  if (!colorThemes["Тёмная Тема"]) {
-    const darkTheme = {
-      "colors": {
-        "backgroundColor": "#000",
-        "blocksColor": "#242424",
-        "chatColor": "#242424",
-        "textColor": "#d5d5d5",
-        "catTooltipBackground": "#242424",
-        "fightPanelBackground": "#242424",
-        "linkColor": "#d5d5d5",
-        "accentColor1": "#111111",
-        "accentColor2": "#2e2e2e82",
-        "accentColor3": "#fc872a",
-        "moveNameColor": "#d5d5d5",
-        "moveNameBackground": "#242424"
-      }
-    };
-  
-    colorThemes["Тёмная Тема"] = darkTheme;
-    localStorage.setItem("uwu_colorThemes", JSON.stringify(colorThemes));
-  }
-  
-  if (!currentTheme && !colorThemes["Моя Тема"]) {
-    currentTheme = "Тёмная Тема";
-    localStorage.setItem("uwu_currentTheme", currentTheme);
-  } else if (!currentTheme) {
-    currentTheme = "Моя Тема";
-    localStorage.setItem("uwu_currentTheme", currentTheme);
-  }
-  
   const colorInputs = document.querySelectorAll("#color-picker input[type='text']");
   const saveThemeButton = document.getElementById("saveThemeButton");
   const themeSelect = document.getElementById("theme-select");
   const addThemeButton = document.getElementById("addThemeButton");
   const removeThemeButton = document.getElementById("removeThemeButton");
   
-  function loadThemeToInputs() {
-    const theme = colorThemes[currentTheme]?.colors;
-    if (theme) {
-      colorInputs.forEach((input) => {
-        const colorKey = input.dataset.color;
-        input.value = theme[colorKey] || "";
-      });
-    }
+  let currentThemeName = getCurrentThemeName();
+  let allThemes = getThemes();
+  
+  function loadThemeToInputs(themeName) {
+    const theme = allThemes[themeName]?.colors;
+    colorInputs.forEach((input) => {
+      const colorKey = input.dataset.color;
+      input.value = theme?.[colorKey] || "";
+    });
   }
   
   function saveThemeFromInputs() {
-    const theme = colorThemes[currentTheme] || { colors: {} };
+    const themeData = { colors: {} };
     colorInputs.forEach((input) => {
       const colorKey = input.dataset.color;
-      theme.colors[colorKey] = input.value;
+      themeData.colors[colorKey] = input.value;
     });
-    colorThemes[currentTheme] = theme;
-    localStorage.setItem("uwu_colorThemes", JSON.stringify(colorThemes));
+    allThemes[currentThemeName] = themeData; 
+    saveThemes(allThemes);
+    console.log(`Тема "${currentThemeName}" сохранена!`);
   }
   
   function updateThemeSelect() {
     themeSelect.innerHTML = "";
-    Object.keys(colorThemes).forEach((themeName) => {
+    Object.keys(allThemes).forEach((name) => {
       const option = document.createElement("option");
-      option.value = themeName;
-      option.textContent = themeName;
+      option.value = name;
+      option.textContent = name;
       themeSelect.appendChild(option);
     });
-    themeSelect.value = currentTheme;
-    removeThemeButton.style.display = currentTheme === "Тёмная Тема" ? "none" : "inline";
+    themeSelect.value = currentThemeName;
+    removeThemeButton.style.display = Object.keys(defaultThemes).includes(currentThemeName) ? "none" : "inline";
   }
   
   themeSelect.addEventListener("change", (event) => {
-    currentTheme = event.target.value;
-    localStorage.setItem("uwu_currentTheme", currentTheme);
-    loadThemeToInputs();
-    removeThemeButton.style.display = currentTheme === "Тёмная Тема" ? "none" : "inline";
+    currentThemeName = event.target.value;
+    setCurrentThemeName(currentThemeName);
+    loadThemeToInputs(currentThemeName);
+    updateThemeSelect(); 
+    updateSaveButtonState();
   });
   
   addThemeButton.addEventListener("click", () => {
     const newThemeName = prompt("Введите название новой темы:");
-    if (newThemeName && !colorThemes[newThemeName]) {
-      colorThemes[newThemeName] = { colors: {} };
-      localStorage.setItem("uwu_colorThemes", JSON.stringify(colorThemes));
+    if (newThemeName && !allThemes[newThemeName]) {
+      allThemes[newThemeName] = { colors: {} };
+      saveThemes(allThemes);
       updateThemeSelect();
       themeSelect.value = newThemeName;
-      currentTheme = newThemeName;
-      localStorage.setItem("uwu_currentTheme", currentTheme);
-      loadThemeToInputs();
-      removeThemeButton.style.display = currentTheme === "Тёмная Тема" ? "none" : "inline";
+      currentThemeName = newThemeName;
+      setCurrentThemeName(currentThemeName);
+      loadThemeToInputs(currentThemeName);
     }
   });
   
   removeThemeButton.addEventListener("click", () => {
-    if (currentTheme && currentTheme !== "Тёмная Тема") {
-      delete colorThemes[currentTheme];
-      localStorage.setItem("uwu_colorThemes", JSON.stringify(colorThemes));
+    if (!Object.keys(defaultThemes).includes(currentThemeName)) {
+      delete allThemes[currentThemeName];
+      saveThemes(allThemes);
+      currentThemeName = "Тёмная Тема";
+      setCurrentThemeName(currentThemeName);
       updateThemeSelect();
-      currentTheme = "Тёмная Тема";
-      themeSelect.value = currentTheme;
-      localStorage.setItem("uwu_currentTheme", currentTheme);
-      loadThemeToInputs();
-      removeThemeButton.style.display = currentTheme === "Тёмная Тема" ? "none" : "inline";
+      loadThemeToInputs(currentThemeName);
     }
   });
   
   saveThemeButton.addEventListener("click", () => {
-    saveThemeFromInputs();
-    console.log(`Тема "${currentTheme}" сохранена!`);
+    if (isDefaultTheme(currentThemeName)) {
+      alert("Вы не можете изменять стандартные темы. Пожалуйста, создайте свою собственную тему.");
+    } else {
+      saveThemeFromInputs();
+    }
   });
   
   colorInputs.forEach((input) => {
     input.addEventListener("input", () => {
-      if (currentTheme === "Тёмная Тема") {
-        alert("Вы не можете изменять стандартные темы. Пожалуйста, выберите другую или создайте новую.");
-        loadThemeToInputs();
-        return;
+      if (isDefaultTheme(currentThemeName)) {
+        alert("Вы не можете изменять стандартные темы. Пожалуйста, создайте свою собственную тему.");
+        loadThemeToInputs(currentThemeName); 
+      } else {
+        saveThemeFromInputs(); 
       }
-      saveThemeFromInputs();
     });
   });
   
   updateThemeSelect();
-  loadThemeToInputs();
+  loadThemeToInputs(currentThemeName);
   // ====================================================================================================================
   //  . . . РАБОТА ЦВЕТОВ НАВЫКОВ И ПАРАМЕТРОВ . . .
   // ====================================================================================================================
@@ -2186,6 +2341,8 @@ if (targetSettings.test(window.location.href)) {
     "uwu_climbingPanelStatus",
     "uwu_privateModules",
     "uwu_colorThemes",
+    "uwu_currentTheme",
+    "uwu_fontSize",
   ];
 
   function resetAllSaves() {
@@ -3111,7 +3268,19 @@ function createSoundManager() {
   let isUserInteracted = false;
   let lastPendingSound = null;
 
+  function isSafariOrIOS() {
+    const ua = navigator.userAgent.toLowerCase();
+    return (
+      ua.indexOf("safari") > -1 &&
+      (ua.indexOf("iphone") > -1 ||
+        ua.indexOf("ipad") > -1 ||
+        ua.indexOf("macintosh") > -1)
+    );
+  }
+
   function loadSound(id, url) {
+    url = isSafariOrIOS() && url.endsWith(".ogg") ? url.replace(/\.ogg$/, ".mp3") : url;
+
     const audio = new Audio(url);
     sounds[id] = audio;
   }
@@ -3200,20 +3369,12 @@ if (window.location.href === targetCW3) {
   globalContainerElement.id = "uwu-global-container";
   containerElement.appendChild(globalContainerElement);
 
-  const colorThemes = loadColorThemes();
-
-  function getThemeColors(themeName) {
-    const theme = colorThemes[themeName]?.colors;
-    if (!theme) return {};
-    return theme;
-  }
-  
-  let theme = {};
-  
-  if (settings.userTheme) {
-    let currentTheme = localStorage.getItem("uwu_currentTheme") || "Моя Тема";
-    theme = getThemeColors(currentTheme);
-  }
+  // ====================================================================================================================
+  //  . . . ПОДГРУЗКА ЦВЕТОВЫХ ТЕМ . . .
+  // ====================================================================================================================
+  const currentThemeName = getCurrentThemeName();
+  const allThemes = getThemes();
+  const theme = allThemes[currentThemeName]?.colors || {};
   // ====================================================================================================================
   //  . . . РАСШИРЕННЫЕ НАСТРОЙКИ . . .
   // ====================================================================================================================
@@ -5000,6 +5161,66 @@ if (window.location.href === targetCW3) {
     applyParameterColors();
   }
   // ====================================================================================================================
+  //   . . . ПОЛЬЗОВАТЕЛЬСКИЙ ШРИФТ . . .
+  // ====================================================================================================================
+  function applyFonts() {
+    const fontSize = JSON.parse(localStorage.getItem('uwu_fontSize'));
+    const newFontStyle = document.createElement("style");
+    newFontStyle.innerHTML = `
+      body {
+        font-size: ${fontSize?.fontSizeBody}px;
+        font-family: ${fontSize?.fontFamilyBody};
+      }
+
+      .small {
+        font-size: ${fontSize?.fontSizeSmall}px;
+      }
+
+      #location {
+        font-size: ${fontSize?.fontSizeLocation}px !important;
+      }
+
+      .vlm0 {
+        font-size: ${fontSize?.vlm0}px; }
+
+      .vlm1 {
+        font-size: ${fontSize?.vlm1}px; }
+
+      .vlm2 {
+        font-size: ${fontSize?.vlm2}px; }
+
+      .vlm3 {
+        font-size: ${fontSize?.vlm3}px; }
+
+      .vlm4 {
+        font-size: ${fontSize?.vlm4}px; }
+
+      .vlm5 {
+        font-size: ${fontSize?.vlm5}px; }
+
+      .vlm6 {
+        font-size: ${fontSize?.vlm6}px; }
+
+      .vlm7 {
+        font-size: ${fontSize?.vlm7}px; }
+
+      .vlm8 {
+        font-size: ${fontSize?.vlm8}px; }
+
+      .vlm9 {
+        font-size: ${fontSize?.vlm9}px; }
+
+      .vlm10 {
+        font-size: ${fontSize?.vlm10}px; }
+      `;
+    document.head.appendChild(newFontStyle);
+  }
+
+  if (settings.useUserFonts) {
+    applyFonts();
+  }
+
+  // ====================================================================================================================
   //   . . . ПОЛЬЗОВАТЕЛЬСКИЕ ТЕМЫ / ЦВЕТА . . .
   // ====================================================================================================================
   function applyTheme() {
@@ -5258,6 +5479,7 @@ if (window.location.href === targetCW3) {
   }
   
   #chat_msg, #cws_chat_msg {
+    height: ${settings.chatHeight}px;
     width: auto;
   }
 
