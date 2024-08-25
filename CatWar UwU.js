@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.27.0-08.24
+// @version      v1.28.0-08.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -19,7 +19,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.27.0";
+const current_uwu_version = "1.28.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   uwuSettingsTextColor: "2",
@@ -117,6 +117,7 @@ const uwuDefaultSettings = {
 
   restoreBlogCreation: false,
   moreBBCodes: false,
+  commentPreview: false,
 
   extendedSettingsPanel: false,
   showUpdateNotification: false,
@@ -131,6 +132,8 @@ const uwuDefaultSettings = {
 const targetSettings = /^https:\/\/catwar\.su\/settings/;
 const targetCW3 = "https://catwar.su/cw3/";
 const targetCW3Hunt = "https://catwar.su/cw3/jagd";
+const targetBlog = /^https:\/\/catwar\.su\/(?:blog\d+|blogs)(?:$|[/?#])/i;
+const targetSniff = /^https:\/\/catwar\.su\/sniff(?:\d+|)(?:$|[/?#])/i;
 const targetBlogsCreation = /^https:\/\/catwar\.su\/blogs\?creation/;
 
 // ====================================================================================================================
@@ -991,6 +994,12 @@ const uwusettings = `
       <label for="more-BB-Codes">Дополнительные BB-Коды</label>
     </div>
 
+    <div>
+      <p>Позволяет предпросматривать отправляемые сообщения в лентах и блогах.</p>
+      <input type="checkbox" id="comment-Preview" data-setting="commentPreview" />
+      <label for="comment-Preview">Предпросмотр сообщений.</label>
+    </div>
+
   </div>
 
   <div id="modules-panel">
@@ -1054,25 +1063,19 @@ const uwusettings = `
 const newsPanel = `
 <div id="news-panel">
   <button id="news-button">
-    v${current_uwu_version} - 🌸 Кастомизация шрифта и его размеров!
+    v${current_uwu_version} - 🌸 Предпросмотр отправляемых сообщений в блогах и лентах.
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
-    <p>— Не то, что хотелось бы давать на кастомизацию, однако лучше что-то, чем ничего. В особенности для тех, кто любит отдалять
-    или приближать Игровую.</p>
+    <p>— 🌸</p>
     <hr>
     <h3>Внешний вид</h3>
-    <p>— Фон в Тёмной Теме теперь тёмно-серый, а не просто чёрный.</p>
-    <p>— Цвет кнопок теперь тоже определяются ползунком выбора цвета текста.</p>
+    <p>— 🍃</p>
     <hr>
     <h3>Изменения кода</h3>
-    <p>— Тёмная Тема теперь достаётся из константы.</p>
-    <p>— И вообще переписана работа тем для более "адекватного" поведения.</p>
-    <p>— Высота ванильного чата "chat_msg" теперь тоже регулируется.</p>
-    <p>— Звуки теперь (вроде) должны работать в браузерах на iOS / macOS.</p>
-    <p>— Небольшая переделка кода ползунка выбора цвета текста.</p>
+    <p>— Добавлен Pull Request от Arisamiga на замену GM_addStyle на чистый JS и CSS.</p>
     <hr>
-    <p>Дата выпуска: 18.08.24</p>
+    <p>Дата выпуска: 25.08.24</p>
   </div>
 </div>
 `;
@@ -6769,7 +6772,7 @@ if (window.location.href === targetCW3) {
         {
           description: "Тепло",
           temperature: 1,
-          colors: ["#FCBD8E", "#F8A37A", "#F79E77", "#FDC291"],
+          colors: ["#FCBD8E", "#F8A37A", "#F79E77", "#FDC291", "#FCB88A"],
         },
         {
           description: "Жарковато",
@@ -8012,3 +8015,81 @@ if (settings.moreBBCodes) {
 
   setupSingleCallback(".bbcode", addBBCodeButtons);
 }
+// ====================================================================================================================
+//   . . . БЛОГИ . . .
+// ====================================================================================================================
+if (targetBlog.test(window.location.href)) {
+
+  if (settings.commentPreview) {
+    setupMutationObserver("#site_table", addCommentPreview); 
+  }
+
+}
+
+// ====================================================================================================================
+//   . . . ЛЕНТА . . .
+// ====================================================================================================================
+if (targetSniff.test(window.location.href)) {
+  
+  if (settings.commentPreview) {
+    setupMutationObserver("#site_table", addCommentPreview); 
+  }
+
+}
+
+// ====================================================================================================================
+//   . . . ПРЕДПРОСМОТР КОММЕНТАРИЯ . . .
+// ====================================================================================================================
+function addCommentPreview() {
+  const form = document.querySelector("#send_comment_form");
+  if (!form || document.getElementById("comment-preview")) return;
+
+  const lastParagraph = form.querySelector("p:last-child");
+  lastParagraph.insertAdjacentHTML( "afterbegin",
+    `
+    <input type="button" id="comment-preview" value="Предпросмотр"> 
+    `
+  );
+
+  form.insertAdjacentHTML( "afterend",
+    `
+    <p id="comment-preview-hide" style="display: none; margin: 0.5em 0;"><a href="#">Скрыть предпросмотр</a></p>
+    <div id="comment-preview-div" style="display: none;"></div>
+    `
+  );
+
+  const previewButton = document.getElementById("comment-preview");
+  const hideParagraph = document.getElementById("comment-preview-hide");
+  const previewDiv = document.getElementById("comment-preview-div");
+
+  const ws = io(window.location.origin, {
+    path: "/ws/blogs/socket.io",
+    reconnectionDelay: 10000,
+    reconnectionDelayMax: 20000,
+  });
+
+  ws.on('creation preview', (data) => {
+    previewDiv.innerHTML = data;
+    previewDiv.style.display = 'block';
+    hideParagraph.style.display = 'block';
+  });
+
+  previewButton.addEventListener('click', function() {
+    const commentText = document.getElementById('comment').value;
+    ws.emit('creation preview', commentText);
+  });
+
+  form
+    .querySelector('[type="submit"]')
+    .addEventListener("click", hideCommentPreview);
+  hideParagraph.addEventListener("click", function (e) {
+    e.preventDefault();
+    hideCommentPreview();
+  });
+
+  function hideCommentPreview() {
+    hideParagraph.style.display = "none";
+    previewDiv.innerHTML = "";
+    previewDiv.style.display = "none";
+  }
+};
