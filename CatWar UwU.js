@@ -10,7 +10,6 @@
 // @match        http*://*.catwar.su/*
 // @updateURL    https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.js
 // @downloadURL  https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.js
-// @grant        GM_addStyle
 // @license      MIT
 // @iconURL      https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png
 // ==/UserScript==
@@ -3144,9 +3143,15 @@ async function loadModule(moduleName, description, version) {
   }
 }
 
+function addStyle(css) {
+  const style = document.createElement('style');
+  style.appendChild(document.createTextNode(css));
+  document.head.appendChild(style);
+}
+
 function activateModule(data, moduleName, description, version) {
   if (moduleName.endsWith(".css")) {
-    GM_addStyle(data); // TODO - убрать на ванильную JS
+    addStyle(data);
   } else if (moduleName.endsWith(".js")) {
     try {
       new Function(data);
