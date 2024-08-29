@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.28.0-08.24
+// @version      v1.29.0-08.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -19,7 +19,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.28.0";
+const current_uwu_version = "1.29.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   uwuSettingsTextColor: "2",
@@ -118,6 +118,9 @@ const uwuDefaultSettings = {
   restoreBlogCreation: false,
   moreBBCodes: false,
   commentPreview: false,
+  moreCommentButtons: false,
+  lsWrapPreview: false,
+  calculators: false,
 
   extendedSettingsPanel: false,
   showUpdateNotification: false,
@@ -132,9 +135,12 @@ const uwuDefaultSettings = {
 const targetSettings = /^https:\/\/catwar\.su\/settings/;
 const targetCW3 = "https://catwar.su/cw3/";
 const targetCW3Hunt = "https://catwar.su/cw3/jagd";
+const targetMainProfile = /^https:\/\/catwar\.su\/$/;
+const targetProfile = /^https:\/\/catwar\.su\/cat\d+$/;
+const targetLs = /^https:\/\/catwar\.su\/ls(\?new)?$/;
 const targetBlog = /^https:\/\/catwar\.su\/(?:blog\d+|blogs)(?:$|[/?#])/i;
-const targetSniff = /^https:\/\/catwar\.su\/sniff(?:\d+|)(?:$|[/?#])/i;
 const targetBlogsCreation = /^https:\/\/catwar\.su\/blogs\?creation/;
+const targetSniff = /^https:\/\/catwar\.su\/sniff(?:\d+|)(?:$|[/?#])/i;
 
 // ====================================================================================================================
 //   . . . СТАНДАРТНЫЕ ЦВЕТОВЫЕ ТЕМЫ . . .
@@ -862,6 +868,18 @@ const uwusettings = `
       <label for="show-Parameter-Details">Подробные параметры</label>
     </div>
 
+    <div>
+      <p>Показывает дополнительную информацию в профиле кота, например БУ цифрой.</p>
+      <input type="checkbox" id="more-Profile-Info" data-setting="moreProfileInfo" />
+      <label for="more-Profile-Info">Больше информации в профиле</label>
+    </div>
+
+    <div>
+      <p>Добавляет полезные калькуляторы для вычислений в профиля.</p>
+      <input type="checkbox" id="calculators" data-setting="calculators" />
+      <label for="calculators">Калькуляторы активностей и лун.</label>
+    </div>
+
     <hr>
     <h2>Минное поле</h2>
 
@@ -943,7 +961,7 @@ const uwusettings = `
 
     <hr>
     <div>
-      <h2>Настройки уведомлений</h2>
+      <h2>Уведомления</h2>
       <p>Уведомлять звуком, когда:</p>
     </div>
     
@@ -997,7 +1015,20 @@ const uwusettings = `
     <div>
       <p>Позволяет предпросматривать отправляемые сообщения в лентах и блогах.</p>
       <input type="checkbox" id="comment-Preview" data-setting="commentPreview" />
-      <label for="comment-Preview">Предпросмотр сообщений.</label>
+      <label for="comment-Preview">Предпросмотр сообщений</label>
+    </div>
+
+    <div>
+      <p>Позволяет "отвечать" и "цитировать" сообщения в лентах и блогах. При цитировании вы можете выделить кусочек 
+      текста на который хотите ответить.</p>
+      <input type="checkbox" id="more-Comment-Buttons" data-setting="moreCommentButtons" />
+      <label for="more-Comment-Buttons">Кнопки "Отправить" и "Цитировать"</label>
+    </div>
+
+    <div>
+      <p>Оборачивает предпросмотр письма в оболочку, похожую на ту которая во "Входящие".</p>
+      <input type="checkbox" id="ls-Wrap-Preview" data-setting="lsWrapPreview" />
+      <label for="ls-Wrap-Preview">Наглядный предпросмотр письма</label>
     </div>
 
   </div>
@@ -1063,19 +1094,20 @@ const uwusettings = `
 const newsPanel = `
 <div id="news-panel">
   <button id="news-button">
-    v${current_uwu_version} - 🌸 Предпросмотр отправляемых сообщений в блогах и лентах.
+    v${current_uwu_version} - 🌿 Кнопки "Ответить" и "Цитировать", шаблонный предпросмотр отправляемых писем,
+     БУ цифрой в профиле игроков и калькуляторы!
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
-    <p>— 🌸</p>
+    <p>— 🌸 Ищите новые функции во вкладке Надстройки -> Общение и "О котах"!</p>
     <hr>
     <h3>Внешний вид</h3>
-    <p>— 🍃</p>
+    <p>— 🍃"Настройки уведомлений" просто в "Уведомления".</p>
     <hr>
     <h3>Изменения кода</h3>
-    <p>— Добавлен Pull Request от Arisamiga на замену GM_addStyle на чистый JS и CSS.</p>
+    <p>— 🍏</p>
     <hr>
-    <p>Дата выпуска: 25.08.24</p>
+    <p>Дата выпуска: 29.08.24</p>
   </div>
 </div>
 `;
@@ -2002,9 +2034,7 @@ function updateSaveButtonState() {
 function createSettingsBlock(blockId, content) {
   const siteTable = document.querySelector("#site_table");
   const isMobile = siteTable.getAttribute("data-mobile") === "0";
-  const backgroundImage = window.getComputedStyle(
-    document.body
-  ).backgroundImage;
+  const backgroundImage = window.getComputedStyle(document.body).backgroundImage;
 
   const settingsElement = document.createElement("div");
   settingsElement.classList.add("rounded-image");
@@ -6785,6 +6815,7 @@ if (window.location.href === targetCW3) {
             "#F38563",
             "#F17A5C",
             "#EF6B50",
+            "#F07054",
           ],
         },
         {
@@ -8016,12 +8047,631 @@ if (settings.moreBBCodes) {
   setupSingleCallback(".bbcode", addBBCodeButtons);
 }
 // ====================================================================================================================
+//   . . . ПРОФИЛЬ ИГРОКА . . .
+// ====================================================================================================================
+if (targetMainProfile.test(window.location.href)) {
+
+  if (settings.calculators) {
+    setupSingleCallback("#info", setupActivityCalc);
+    setupSingleCallback("#info", moonCalculator);
+  }
+
+}
+// ====================================================================================================================
+//   . . . ПРОФИЛЯ ДРУГИХ ПОЛЬЗОВАТЕЛЕЙ . . .
+// ====================================================================================================================
+if (targetProfile.test(window.location.href)) {
+
+  // ====================================================================================================================
+  //   . . . БУ И ПРОЧЕЕ . . .
+  // ====================================================================================================================
+  if (settings.moreProfileInfo) {
+    setupSingleCallback("tr:has(img[src='img/icon_kraft.png'])", addKraftLevel);
+    
+    function addKraftLevel() {
+      const kraftLevels = {
+        "блоха": 0,
+        "котёночек": 1,
+        "задира": 2,
+        "гроза детской": 3,
+        "страх барсуков": 4,
+        "победитель псов": 5,
+        "защитник племени": 6,
+        "великий воин": 7,
+        "достоин Львиного племени": 8,
+        "идеальная": 9
+      };
+    
+        const kraftRow = document.querySelector('tr:has(img[src="img/icon_kraft.png"])');
+        const kraftTextElement = kraftRow.querySelector('b');
+        const kraftText = kraftTextElement.textContent.trim();
+        const kraftLevel = kraftLevels[kraftText];
+        if (kraftLevel !== undefined) {
+            kraftTextElement.textContent = `${kraftText} (${kraftLevel})`;
+        }
+    }
+  }
+  
+  if (settings.calculators) {
+    setupSingleCallback("#info", moonCalculator);
+  }
+}
+
+// ===================================================================================================================
+// Калькуляторы возраста/лун и активности частично под авторством "CatWar Mod (Варомод) от Хвойницы"
+// ====================================================================================================================
+//   . . . КАЛЬКУЛЯТОР ВОЗРАСТА / ЛУН . . .
+// ====================================================================================================================
+function moonCalculator() {
+  const months = [
+    "января",
+    "февраля",
+    "марта",
+    "апреля",
+    "мая",
+    "июня",
+    "июля",
+    "августа",
+    "сентября",
+    "октября",
+    "ноября",
+    "декабря",
+  ];
+  
+  const infoElement = document.getElementById("info");
+  if (!infoElement) return;
+
+  if (document.getElementById("calculator-age")) return;
+
+  const style = document.createElement("style");
+  style.textContent = `
+    .calculator-error {
+      color: darkred; 
+    }
+    
+    .hidden {
+      display: none; 
+    }
+    
+    .calculator-style {
+      max-width: 400px;
+      margin: 5px;
+      padding: 5px;
+      border-radius: 10px;
+      background: #ffffff08;
+    }
+  `;
+  document.head.appendChild(style);
+
+  infoElement.insertAdjacentHTML('afterend', `
+    <div id="calculator-age" class="calculator-style hidden">
+      <p><b>Калькулятор возраста</b></p>
+      <label>Дата и время: <input type="datetime-local" id="calculator-date" min="" value="" max="9999-12-31T23:59"></label> <span id="calculator-error-date" class="calculator-error"></span>
+      <br><label>Возраст: <input type="number" id="calculator-moons" min="0" step="0.1" value="" style="width: 60px"></label> <span id="moon-word">лун</span> <span id="calculator-error-moons" class="calculator-error"></span>
+      <br> по кошачьему времени.
+      <br><br>
+    </div>
+  `);
+
+  const calculatorAgeElement = document.getElementById("calculator-age");
+
+  const infoObserver = new MutationObserver((mutations) => {
+    mutations.forEach(() => {
+      if (!infoElement.textContent.match("Дата")) {
+        calculatorAgeElement.classList.add("hidden");
+        return;
+      }
+
+      calculatorAgeElement.classList.remove("hidden");
+
+      const birthDateString = infoElement.textContent
+        .match(/\d{4}-\d\d-\d\d \d\d:\d\d/)[0]
+        .replace(" ", "T");
+      const nowDateString = formatDate(new Date());
+
+      const ageMoons = getMoonsFromElement("age_icon");
+      const age2Moons = getMoonsFromElement("age2_icon");
+
+      const sex = document.querySelector('[src^="//e.catwar.su/avatar"]').style
+        .borderColor;
+      const isRegistrationDate = /регистрац/.test(infoElement.textContent);
+      const moonsNow = age2Moons
+        ? isRegistrationDate
+          ? ageMoons
+          : age2Moons
+        : ageMoons;
+
+      const bornWord = getBornWord(sex, isRegistrationDate);
+      const catTimeString = formatCatTime(Date.parse(birthDateString));
+
+      document.getElementById("calculator-date").min = birthDateString;
+      document.getElementById("calculator-date").value = nowDateString;
+      document.getElementById("calculator-moons").value = moonsNow;
+      document.querySelector("br").nextSibling.textContent = `${bornWord} ${catTimeString} по кошачьему времени.`;
+
+      updateMoonWord(moonsNow);
+
+      calculatorAgeElement.addEventListener("input", function (event) {
+        if (event.target.id === "calculator-date") {
+          handleDateInput.call(event.target, birthDateString);
+        } else if (event.target.id === "calculator-moons") {
+          handleMoonsInput.call(event.target, birthDateString);
+        }
+      });
+    });
+  });
+
+  infoObserver.observe(infoElement, { childList: true });
+
+  function getMoonsFromElement(iconId) {
+    const iconElement = document.querySelector(`img[id="${iconId}"]`);
+    if (!iconElement) return 0;
+    const ageElement = iconElement
+      .closest("tr")
+      .querySelector("td:nth-child(2) b");
+    return parseFloat(ageElement.textContent);
+  }
+
+  function getBornWord(sex, isRegistrationDate) {
+    const sexWords = {
+      pink: ["Зарегистрировалась", "Родилась"],
+      blue: ["Зарегистрировался", "Родился"],
+      default: ["Зарегистрировалось", "Родилось"],
+    };
+    return isRegistrationDate
+      ? sexWords[sex]
+        ? sexWords[sex][0]
+        : sexWords.default[0]
+      : sexWords[sex]
+      ? sexWords[sex][1]
+      : sexWords.default[1];
+  }
+
+  function formatDate(date) {
+    const pad = (num) => String(num).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+      date.getDate()
+    )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  function formatCatTime(timestamp) {
+    const date = new Date(timestamp);
+    const pad = (num) => String(num).padStart(2, "0");
+    return `${date.getDate()} ${
+      months[date.getMonth()]
+    } ${date.getFullYear()} года в ${pad(date.getHours())}:${pad(
+      date.getMinutes()
+    )}`;
+  }
+
+  function updateMoonWord(moons) {
+    document.getElementById("moon-word").textContent =
+      moons === 1 ? "луна" : "лун";
+  }
+
+  function handleDateInput(birthDateString) {
+    const dateString = this.value;
+    const date = Date.parse(dateString);
+    const errorDateElement = document.getElementById("calculator-error-date");
+    errorDateElement.textContent = "";
+
+    if (isNaN(date) || date < Date.parse(birthDateString)) {
+      errorDateElement.textContent = "Ошибка!";
+      return;
+    }
+
+    const moons = getMoonsFromDate(birthDateString, dateString);
+    const calcMoonsElement = document.getElementById("calculator-moons");
+    if (calcMoonsElement) {
+      calcMoonsElement.value = moons;
+      updateMoonWord(moons);
+    }
+  }
+
+  function handleMoonsInput(birthDateString) {
+    const moons = Number(this.value);
+    const errorMoonsElement = document.getElementById("calculator-error-moons");
+    errorMoonsElement.textContent = "";
+
+    if (moons < 0 || isNaN(moons)) {
+      errorMoonsElement.textContent = "Ошибка!";
+      return;
+    }
+
+    const calcDateElement = document.getElementById("calculator-date");
+    if (calcDateElement) {
+      calcDateElement.value = getDateStringFromMoons(birthDateString, moons);
+      updateMoonWord(moons);
+    }
+  }
+
+  function getMoonsFromDate(birthDateString, targetDateString) {
+    const birthDate = new Date(birthDateString);
+    const targetDate = new Date(targetDateString);
+    const diffTime = targetDate - birthDate;
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+    return Math.round((diffDays / 4) * 10) / 10;
+  }
+
+  function getDateStringFromMoons(birthDateString, moons) {
+    const birthDate = new Date(birthDateString);
+    const daysToAdd = moons * 4;
+    const targetDate = new Date(
+      birthDate.getTime() + daysToAdd * 24 * 60 * 60 * 1000
+    );
+    return formatDate(targetDate);
+  }
+}
+
+// ====================================================================================================================
+//   . . . КАЛЬКУЛЯТОР АКТИВНОСТИ . . .
+// ====================================================================================================================
+// TODO - Написано всё хорошо, но очень кучковато и не красиво. Как-то переписать / перестроить надо.
+function setupActivityCalc() {
+  const catId = document.getElementById("id_val").textContent;
+
+  const activityStages = [
+    { name: "пустое место", fromZero: -5000 },
+    { name: "подлежащий удалению", fromZero: -5000 },
+    { name: "покинувший игру", fromZero: -2000 },
+    { name: "забывший про игру", fromZero: -1000 },
+    { name: "забытый кот", fromZero: -750 },
+    { name: "ужаснейшая", fromZero: -500 },
+    { name: "ужасная", fromZero: -300 },
+    { name: "ухудшающаяся", fromZero: -150 },
+    { name: "отрицательная", fromZero: -50 },
+    { name: "переходная", fromZero: -5 },
+    { name: "положительная", fromZero: 5 },
+    { name: "улучшающаяся", fromZero: 50 },
+    { name: "замечательная", fromZero: 150 },
+    { name: "переход 2 мин 15 с", fromZero: 225 },
+    { name: "замечательнейшая", fromZero: 300 },
+    { name: "переход 2 мин", fromZero: 450 },
+    { name: "любимый кот", fromZero: 500 },
+    { name: "переход 1 мин 45 с", fromZero: 675 },
+    { name: "легенда сайта", fromZero: 750 },
+    { name: "переход 1 мин 30 с", fromZero: 900 },
+    { name: "ходячий миф", fromZero: 1000 },
+    { name: "переход 1 мин 15 с", fromZero: 1125 },
+    { name: "переход 1 мин", fromZero: 1350 },
+    { name: "переход 45 c", fromZero: 1575 },
+    { name: "император Игровой", fromZero: 2000 },
+    { name: "частичка Игровой", fromZero: 5000 },
+    { name: "хранитель Игровой", fromZero: 20000 },
+    { name: "идеальная", fromZero: 75000 },
+    { name: "сверхидеальная", fromZero: 150000 },
+  ];
+
+  const months = [
+    "января",
+    "февраля",
+    "марта",
+    "апреля",
+    "мая",
+    "июня",
+    "июля",
+    "августа",
+    "сентября",
+    "октября",
+    "ноября",
+    "декабря",
+  ];
+
+  const activitySettings = JSON.parse(
+    window.localStorage.getItem("uwu_activity") || "{}"
+  );
+
+  if (!activitySettings[catId]) {
+    activitySettings[catId] = { hours: 24, opened: false };
+  }
+
+  if (activitySettings[catId].actgoal) {
+    activityStages.forEach(function (stage, index) {
+      if (index && Number(activitySettings[catId].actgoal) === stage.fromZero) {
+        activitySettings[catId].goal = index;
+        delete activitySettings[catId].actgoal;
+      }
+    });
+  }
+
+  function updateHourWord() {
+    const hours = activitySettings[catId].hours;
+    document.getElementById("hour-word").textContent = declensionOfNumber(hours, [
+      "час",
+      "часа",
+      "часов",
+    ]);
+  }
+
+  function calculateActivityLength(days) {
+    const minus = activitySettings[catId].minus || 0;
+    if (days <= 14) return 150 - minus;
+    else if (days >= 1575) return 45 - minus;
+    else return Math.ceil(150 - days / 15) - minus;
+  }
+
+  function calculateRemainingTime(currentActivity, goal, hoursPerDay) {
+    const secondsPerDay = convertTime("h s", hoursPerDay);
+    if (calculateActivityLength(currentActivity) * 4 + 1 > secondsPerDay) {
+      return { actions: "∞", time: "∞", date: "никогда" };
+    }
+
+    const actionsWithoutDecrease = goal - currentActivity;
+    let days = 0;
+    let secondsToday;
+
+    while (currentActivity < goal) {
+      secondsToday = 0;
+      while (secondsToday < secondsPerDay) {
+        currentActivity++;
+        secondsToday += calculateActivityLength(currentActivity);
+        if (currentActivity >= goal) break;
+      }
+      if (currentActivity >= goal) break;
+      days++;
+      currentActivity -= 4.8;
+    }
+
+    const actionsDecrease = Math.floor(
+      days * 4.8 + convertTime("s h", secondsToday) / 5
+    );
+    const totalTime = secondsPerDay * days + secondsToday;
+
+    const now = new Date();
+    const tomorrow = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1
+    );
+    const secondsToTomorrow = convertTime("ms s", tomorrow - now);
+    if (days === 0 && secondsToday > secondsToTomorrow) days++;
+
+    const targetDate = new Date(Date.now() + convertTime("d ms", days));
+
+    return {
+      actions: actionsWithoutDecrease + actionsDecrease,
+      time: secondsToTime(totalTime),
+      date:
+        targetDate.getDate() +
+        " " +
+        months[targetDate.getMonth()] +
+        " " +
+        targetDate.getFullYear(),
+    };
+  }
+
+  function updateGoalProgress() {
+    if (progress.stage === activityStages.length - 1) {
+      document.getElementById("goal-progress").style.display = "none";
+      return;
+    }
+    const goalIndex = Number(document.getElementById("activity-list").value);
+    const result = calculateRemainingTime(
+      progress.doneFromZero,
+      activityStages[goalIndex].fromZero,
+      activitySettings[catId].hours
+    );
+    document.querySelector("#goal-progress > ul").innerHTML = `
+      <li>${result.actions} ${declensionOfNumber(result.actions, [
+      "переход",
+      "перехода",
+      "переходов",
+    ])} (${result.time})</li>
+      <li>будет достигнута ${result.date}</li>
+    `;
+  }
+
+  const activity = document
+    .querySelector("#act_name b")
+    .textContent.split(" (");
+  const progress = {};
+  activityStages.forEach(function (stage, index) {
+    if (activity[0] === stage.name) {
+      progress.doneFromZero =
+        stage.fromZero + Number(activity[1].split("/")[0]);
+    }
+    if (
+      (!activityStages[index + 1] ||
+        activityStages[index + 1].fromZero > progress.doneFromZero) &&
+      activityStages[index].fromZero <= progress.doneFromZero
+    ) {
+      progress.stage = index;
+    }
+  });
+
+  const activityInfoHTML = `
+    <details id="calculator-activity" class="calculator-style">
+      <summary id="open-calculator"><b>Калькулятор активности</b></summary>
+      <div id="calculator-content" style="margin-top: 10px;">
+        <p id="congratulations" style="display:none"></p>
+        <div id="activity-length"><b>Переход</b>: ${secondsToTime(calculateActivityLength(progress.doneFromZero))}</div>
+        <div>Мой переход уменьшен на <input id="minus" type="number" value="${activitySettings[catId].minus || 0}" min="-60" max="10" step="1" style="width: 50px;"> <span id="minus-word"></span></nobr>
+        </div>
+        <div>Я качаю активность <input id="hours-per-day" type="number" step="0.25" min="0" max="24"
+        value="${activitySettings[catId].hours}" style="width: 60px"> <span id="hour-word"></span> в сутки</div>
+        <div id="goal-progress">
+          <b>Цель: <select style="display: inline" id="activity-list"></select></b>:
+          <ul style="margin: 0.5em"></ul>
+        </div>
+        <div id="to-fall-container" style="display: none;">Переход начнёт падать <span id="to-fall"></span></div>
+      </div>
+    </details>
+  `;
+  document
+    .getElementById("info")
+    .insertAdjacentHTML("afterend", activityInfoHTML);
+
+  if (activitySettings[catId].opened) {
+    document.getElementById("calculator-activity").open = true;
+  }
+
+  for (let i = progress.stage + 1; i < activityStages.length; i++) {
+    const option = document.createElement("option");
+    option.value = i;
+    option.textContent = activityStages[i].name;
+    document.getElementById("activity-list").appendChild(option);
+  }
+
+  function showCongratulations() {
+    document.getElementById("congratulations").innerHTML = `
+      Цель <b>«${activityStages[activitySettings[catId].goal].name}»</b> достигнута!
+      <center><img src="/img/stickers/systempaw3/6.png"></center>
+      <input id="congratulations-button" type="button" value="Скрыть">
+      <br><input id="never-show-congratulations" type="checkbox"> Больше не поздравлять на этом персонаже
+    `;
+    document.getElementById("congratulations").style.display = "block";
+    document
+      .getElementById("congratulations-button")
+      .addEventListener("click", function () {
+        document.getElementById("congratulations").style.display = "none";
+        activitySettings[catId].goal = Number(
+          document.getElementById("activity-list").value
+        );
+        activitySettings[catId].noGrats = document.getElementById(
+          "never-show-congratulations"
+        ).checked;
+        saveData(activitySettings);
+      });
+  }
+
+  if (activitySettings[catId].goal > progress.stage || activitySettings[catId].noGrats) {
+    document.querySelector(
+      `#activity-list > [value="${activitySettings[catId].goal}"]`
+    ).selected = true;
+  } else if (activitySettings[catId].goal) {
+    showCongratulations();
+  }
+
+  if (activitySettings[catId].minus) {
+    document.getElementById("minus").value = activitySettings[catId].minus;
+  }
+
+  updateHourWord();
+  updateGoalProgress();
+  updateMinusWord();
+
+  if (calculateActivityLength(progress.doneFromZero) !== 45) {
+    document.getElementById("to-fall-container").style.display = "none";
+  } else {
+    const timeFall = new Date(
+      Date.now() + (progress.doneFromZero - 1575) * 5 * 3600000
+    );
+    document.getElementById("to-fall").innerHTML =
+      timeFall.getDate() +
+      " " +
+      months[timeFall.getMonth()] +
+      " " +
+      timeFall.getFullYear();
+    document.getElementById("to-fall-container").style.display = "block";
+  }
+
+  document.getElementById("minus").addEventListener("change", function () {
+    activitySettings[catId].minus = this.value;
+    saveData(activitySettings);
+    updateGoalProgress();
+    document.getElementById(
+      "activity-length"
+    ).innerHTML = `<b>Переход</b>: ${secondsToTime(
+      calculateActivityLength(progress.doneFromZero)
+    )}`;
+    updateMinusWord();
+  });
+
+  document.getElementById("activity-list").addEventListener("change", function () {
+    activitySettings[catId].goal = Number(this.value);
+    saveData(activitySettings);
+    updateGoalProgress();
+  });
+
+  document
+    .getElementById("hours-per-day")
+    .addEventListener("input", function () {
+      const hours = Number(this.value);
+      if (hours < 0 || hours > 24 || !Number.isInteger(hours * 1000)) {
+        this.value = activitySettings[catId].hours;
+        return;
+      }
+      activitySettings[catId].hours = hours;
+      saveData(activitySettings);
+      updateHourWord();
+      updateGoalProgress();
+    });
+
+  document.getElementById("open-calculator").addEventListener("click", function () {
+    activitySettings[catId].opened = !document.getElementById("calculator-activity").open;
+    saveData(activitySettings);
+  });
+
+  function saveData(data) {
+    window.localStorage.setItem("uwu_activity", JSON.stringify(data));
+  }
+
+  function declensionOfNumber(number, titles) {
+    const cases = [2, 0, 1, 1, 1, 2];
+    const absNumber = Math.abs(number);
+    return titles[
+      absNumber % 100 > 4 && absNumber % 100 < 20
+        ? 2
+        : cases[absNumber % 10 < 5 ? absNumber % 10 : 5]
+    ];
+  }
+
+  function convertTime(from, value) {
+    const factors = {
+      ms: 1,
+      s: 1000,
+      m: 60000,
+      h: 3600000,
+      d: 86400000,
+    };
+    const [fromUnit, toUnit] = from.split(" ");
+    return (value * factors[fromUnit]) / factors[toUnit];
+  }
+
+  function secondsToTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    let result = "";
+    if (hours > 0) result += `${hours} ч `;
+    if (minutes > 0) result += `${minutes} мин `;
+    if (secs > 0 || result === "") result += `${secs} с`;
+    return result.trim();
+  }
+
+  function updateMinusWord() {
+    const minusValue = document.getElementById("minus").value;
+    document.getElementById("minus-word").textContent = declensionOfNumber(minusValue, ["секунду", "секунды", "секунд"]);
+  }
+}
+// ====================================================================================================================
+//   . . . ПИСЬМА . . .
+// ====================================================================================================================
+if (targetLs.test(window.location.href)) {
+
+  if (settings.lsWrapPreview) {
+    setupMutationObserver("#main", setupPreviewButton, {
+      childList: true,
+      subtree: true,
+    }); 
+  }
+
+}
+// ====================================================================================================================
 //   . . . БЛОГИ . . .
 // ====================================================================================================================
 if (targetBlog.test(window.location.href)) {
 
   if (settings.commentPreview) {
     setupMutationObserver("#site_table", addCommentPreview); 
+  }
+
+  if (settings.moreCommentButtons) {
+    setupMutationObserver("#view_comments", addCommentButtons, {
+      childList: true,
+      subtree: true,
+    });
+    setupSingleCallback("#view_comments", handleCommentActions);
   }
 
 }
@@ -8033,6 +8683,14 @@ if (targetSniff.test(window.location.href)) {
   
   if (settings.commentPreview) {
     setupMutationObserver("#site_table", addCommentPreview); 
+  }
+
+  if (settings.moreCommentButtons) {
+    setupMutationObserver("#view_comments", addCommentButtons, {
+      childList: true,
+      subtree: true,
+    });
+    setupSingleCallback("#view_comments", handleCommentActions);
   }
 
 }
@@ -8093,3 +8751,131 @@ function addCommentPreview() {
     previewDiv.style.display = "none";
   }
 };
+// ====================================================================================================================
+//   . . . КНОПКИ ОТВЕТИТЬ И ЦИТИРОВАТЬ . . .
+// ====================================================================================================================
+function addCommentButtons() {
+  const comments = document.querySelectorAll('#view_comments .view-comment');
+  comments.forEach(comment => {
+      if (!comment.querySelector('.comment-answer-buttons')) {
+          const buttons = document.createElement('p');
+          buttons.className = 'comment-answer-buttons';
+          buttons.innerHTML = `<a class="comment-answer" href="#">Ответить</a><span class="comment-cite-wrap"> | <a class="comment-cite" href="#">Цитировать</a></span>`;
+          comment.appendChild(buttons);
+      } 
+  });
+}
+
+function getCommentInfo(comment) {
+  const commentId = comment.getAttribute('data-id');
+  const commentNum = comment.querySelector('.num').textContent;
+  const authorLink = comment.querySelector('.comment-info a.author');
+  const authorSpan = comment.querySelector('.comment-info span[data-id]');
+  const authorName = authorLink ? authorLink.textContent : (authorSpan ? authorSpan.textContent : '...');
+  const authorProfile = authorLink ? authorLink.getAttribute('href').replace('/cat', '') : null;
+  const commentText = comment.querySelector('.comment-text .parsed').innerText;
+  const commentInfo = comment.querySelector('.comment-info');
+  const commentTime = commentInfo.innerHTML.split('</b>')[1].split(' @')[0].trim();
+
+  return {
+    commentId,
+    commentNum,
+    authorName,
+    authorProfile,
+    commentText,
+    commentTime
+  };
+}
+
+function handleAnswerAction(commentInfo) {
+  const textarea = document.getElementById('comment');
+  if (commentInfo.authorProfile) {
+      textarea.value = `[link${commentInfo.authorProfile}] (#${commentInfo.commentNum}), `;
+  } else {
+      textarea.value = `[b][code]${commentInfo.authorName}[/code][/b] (#${commentInfo.commentNum}), `;
+  }
+}
+
+function handleCiteAction(commentInfo) {
+  const selectedText = window.getSelection().toString().trim();
+  const quoteText = selectedText ? selectedText : commentInfo.commentText;
+  const profileLink = commentInfo.authorProfile ? `[link${commentInfo.authorProfile}]` : commentInfo.authorName;
+
+  const quote = `[table][tr][td][size=10][i]Цитата:[/i] [b]#${commentInfo.commentNum}[/b] ${commentInfo.commentTime} @ ${profileLink}[/size][/td][/tr][tr][td][table=0][tr][td]  [/td][td]${quoteText}[/td][/tr][/table][/td][/tr][/table]`;
+
+  const textarea = document.getElementById('comment');
+  textarea.value = quote;
+}
+
+function handleCommentActions() {
+  const viewComments = document.getElementById('view_comments');
+  viewComments.addEventListener('click', function(event) {
+      const target = event.target;
+      if (target.classList.contains('comment-answer')) {
+          event.preventDefault();
+          const comment = target.closest('.view-comment');
+          const commentInfo = getCommentInfo(comment);
+          handleAnswerAction(commentInfo);
+      } else if (target.classList.contains('comment-cite')) {
+          event.preventDefault();
+          const comment = target.closest('.view-comment');
+          const commentInfo = getCommentInfo(comment);
+          handleCiteAction(commentInfo);
+      }
+  });
+}
+
+// ====================================================================================================================
+//   . . . КРАСИВЫЙ ПРЕДПРОСМОТР ПИСЬМА . . .
+// ====================================================================================================================
+function setupPreviewButton() {
+  const previewButton = document.getElementById('preview');
+  if (previewButton) {
+      previewButton.addEventListener('click', wrapPreviewInTable);
+  }
+}
+
+function wrapPreviewInTable() {
+  const previewDiv = document.getElementById('preview_div');
+  if (!previewDiv) return;
+
+  const mainElement = document.getElementById('main');
+  const senderId = mainElement.getAttribute('data-id');
+  const senderLogin = mainElement.getAttribute('data-login');
+  const recipientLogin = document.getElementById('login').value;
+  const subject = document.getElementById('subject').value;
+  const currentDate = new Date().toLocaleString('ru-RU', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+  });
+
+  const newTable = document.createElement('table');
+  newTable.border = "1";
+  newTable.style.width = "90%";
+  newTable.style.maxWidth = "500px";
+
+  newTable.innerHTML = `
+      <tbody>
+          <tr><td id="preview-subject" colspan="2">${subject}</td></tr>
+          <tr>
+              <td valign="top" id="msg_info">
+                  Отправитель: <span id="preview-sender"><a href="cat${senderId}">${senderLogin}</a></span>
+                  <br>${currentDate}
+                  <br>Переписка: <u><big><b>+</b></big></u> …
+              </td>
+              <td id="preview-text">${previewDiv.outerHTML}</td>
+          </tr>
+      </tbody>
+  `;
+
+  const existingTable = document.querySelector('table');
+  if (existingTable) {
+      existingTable.parentNode.replaceChild(newTable, existingTable);
+  } else {
+      previewDiv.parentNode.insertBefore(newTable, previewDiv);
+      previewDiv.style.display = 'none';
+  }
+}
