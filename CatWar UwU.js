@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.29.0-08.24
+// @version      v1.29.1-08.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -19,7 +19,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.29.0";
+const current_uwu_version = "1.29.1";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   uwuSettingsTextColor: "2",
@@ -1103,6 +1103,8 @@ const newsPanel = `
     <hr>
     <h3>Внешний вид</h3>
     <p>— 🍃"Настройки уведомлений" просто в "Уведомления".</p>
+    <p>—— v1.29.1</p>
+    <p>—— Подправлено описание с "Мой переход уменьшен" на "Мой переход изменён"</p>
     <hr>
     <h3>Изменения кода</h3>
     <p>— 🍏</p>
@@ -8485,7 +8487,7 @@ function setupActivityCalc() {
       <div id="calculator-content" style="margin-top: 10px;">
         <p id="congratulations" style="display:none"></p>
         <div id="activity-length"><b>Переход</b>: ${secondsToTime(calculateActivityLength(progress.doneFromZero))}</div>
-        <div>Мой переход уменьшен на <input id="minus" type="number" value="${activitySettings[catId].minus || 0}" min="-60" max="10" step="1" style="width: 50px;"> <span id="minus-word"></span></nobr>
+        <div>Мой переход изменён на <input id="minus" type="number" value="${activitySettings[catId].minus || 0}" min="-60" max="10" step="1" style="width: 50px;"> <span id="minus-word"></span></nobr>
         </div>
         <div>Я качаю активность <input id="hours-per-day" type="number" step="0.25" min="0" max="24"
         value="${activitySettings[catId].hours}" style="width: 60px"> <span id="hour-word"></span> в сутки</div>
