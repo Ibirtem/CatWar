@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.29.1-08.24
+// @version      v1.30.0-09.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -19,10 +19,10 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.29.1";
+const current_uwu_version = "1.30.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
-  uwuSettingsTextColor: "2",
+  settingsTheme: "dark",
 
   weatherEnabled: false,
   weatherDrops: false,
@@ -58,6 +58,7 @@ const uwuDefaultSettings = {
 
   cellsBorders: false,
   cellsBordersThickness: "1",
+  cellsBordersColor: "#ffffff",
   cellsNumbers: false,
   fastStyles: false,
   displayParametersPercentages: false,
@@ -83,6 +84,7 @@ const uwuDefaultSettings = {
   sizeHuntingVirtualJoystick: "150",
 
   climbingPanel: false,
+  climbingPanelOrientation: "vertical",
   climbingNotificationsNumbers: false,
   climbingRefreshNotification: false,
   climbingRefreshNotificationSound: "notificationSound1",
@@ -167,956 +169,985 @@ const defaultThemes = {
 // ====================================================================================================================
 //   . . . HTML ПАНЕЛЬ НАСТРОЕК . . .
 // ====================================================================================================================
-const uwusettings = `
+const uwusettings = // html
+`
 <div id="uwusettings">
 
-  <div class="main-settings-container">
-    <div id="uwu-Settings-Text-Color">
-      <input type="range" id="manualUwUSettingsTextColor" list="uwu-Settings-Text-Color-Step" min="1" max="3" value="2" class="uwu-range-slider" data-setting="uwuSettingsTextColor">
-      <datalist id="uwu-Settings-Text-Color-Step" class="uwu-range-step">
-      <option value="1" style="color: #f1f1f1; font: caption;">Аа</option>
-      <option value="2" style="font: caption;">Аа</option>
-      <option value="3" style="color: black; font: caption;">Аа</option>
-      </datalist>
-    </div>
+  <div id="uwusettings-header">
+    <div id="uwusettings-header-glass">
+      <div class="main-settings-container">
+        <div id="settingsTheme" class="custom-select">
+          <label for="settingsTheme">Тема настроек:</label>
+          <div class="select-selected">Классическая</div>
+          <div class="select-items">
+            <!-- Опции будут добавлены сюда -->
+          </div>
+        </div>
 
-      <h1>Настройки CatWar UwU</h1>
-    <div class="link-container" title="ВК Группа по Скрипту/Моду.">
-      <a href="https://vk.com/catwar_uwu" target="_blank" rel="noopener noreferrer">
-        <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/VK_logo.png" alt="Иконка" width="36" height="36">
-      </a>
+          <h1>Настройки CatWar UwU</h1>
+        <div class="link-container" title="ВК Группа по Скрипту/Моду.">
+          <a href="https://vk.com/catwar_uwu" target="_blank" rel="noopener noreferrer">
+            <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/VK_logo.png" alt="Иконка" width="36" height="36">
+          </a>
+        </div>
+      </div>
+
+      <hr id="uwu-hr" class="uwu-hr-head">
+      <div id="button-container">
+        <button id="effects-button" class="active">
+          <h2>
+            Природные эффекты
+            <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png" alt="Иконка"
+              width="24" height="24" />
+          </h2>
+        </button>
+        <button id="theme-button">
+          <h2>
+            Оформление
+            <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/sparkles.png" alt="Иконка" width="24"
+              height="24" />
+          </h2>
+        </button>
+        <button id="utility-button">
+          <h2>
+            Инструментарий
+            <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/flashlight.png" alt="Иконка" width="24"
+              height="24" />
+          </h2>
+        </button>
+        <button id="modules-button">
+          <h2>
+            Надстройки
+            <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/construction.png" alt="Иконка" width="24"
+              height="24" />
+          </h2>
+        </button>
+      </div>
+      <hr id="uwu-hr" class="uwu-hr-head">
     </div>
   </div>
 
-  <hr>
-  <div id="button-container">
-    <button id="effects-button" class="active">
-      <h2>
-        Природные эффекты
-        <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png" alt="Иконка"
-          width="24" height="24" />
-      </h2>
-    </button>
-    <button id="theme-button">
-      <h2>
-        Оформление
-        <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/sparkles.png" alt="Иконка" width="24"
-          height="24" />
-      </h2>
-    </button>
-    <button id="utility-button">
-      <h2>
-        Инструментарий
-        <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/flashlight.png" alt="Иконка" width="24"
-          height="24" />
-      </h2>
-    </button>
-    <button id="modules-button">
-      <h2>
-        Надстройки
-        <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/construction.png" alt="Иконка" width="24"
-          height="24" />
-      </h2>
-    </button>
-  </div>
-  <hr>
+  <div id="uwusettings-main">
+    <div id="effects-panel">
 
-  <div id="effects-panel">
+    <h2>Природа и окружение</h2>
 
-  <h2>Природа и окружение</h2>
+      <div>
+        <p>
+          Включает генерацию Динамичной погоды в Игровой, такие как дождь, снегопады или Северные Сияния.
+        </p>
+        <input type="checkbox" id="weather-enabled" data-setting="weatherEnabled" />
+        <label for="weather-enabled">Показывать природные эффекты</label>
+      </div>
 
-    <div>
-      <p>
-        Включает генерацию Динамичной погоды в Игровой, такие как дождь, снегопады или Северные Сияния.
-      </p>
-      <input type="checkbox" id="weather-enabled" data-setting="weatherEnabled" />
-      <label for="weather-enabled">Показывать природные эффекты</label>
+      <div>
+        <p>
+        Сокращает количество частиц динамичной погоды, увеличивая тем самым производительность на слабых устройствах.
+        </p>
+      <input type="checkbox" id="low-Performance-Mode" data-setting="lowPerformanceMode" />
+      <label for="low-Performance-Mode">Режим низкой производительности</label>
+      </div>
+
+      <div>
+        <p>Может немного повлиять на производительность из-за возрастания количества частиц на экране.</p>
+        <input type="checkbox" id="weather-drops" data-setting="weatherDrops" />
+        <label for="weather-drops">Эффекты приземления частиц</label>
+      </div>
+
+      <div>
+        <p>Замена стандартных частиц на знакомые всеми пиксельные частицы.</p>
+        <input type="checkbox" id="minecraft-style" data-setting="minecraftStyle" />
+        <label for="minecraft-style-enabled">Minecraft частицы</label>
+      </div>
+
+      <div>
+        <p>Убирает затемнение Игрового поля.</p>
+        <input type="checkbox" id="always-day" data-setting="alwaysDay" />
+        <label for="always-day">Всегда день/ярко</label>
+      </div>
+
+      <div>
+        <p>Отображает панель Ручного управления погодой в ⚙️Панели Расширенных Настройках Игровой. Выключает натуральную генерацию погоды.</p>
+        <input type="checkbox" id="manual-Weather-Panel" data-setting="manualWeatherPanel" />
+        <label for="manual-Weather-Panel">Ручное управление погоды</label>
+      </div>
+
+      <hr id="uwu-hr" class="uwu-hr">
+      <p>Расположение Северного Сияния</p>
+      <div id="auroraPanel">
+        <input type="range" min="1" max="2" value="1" class="uwu-range-slider" id="aurora-pos" list="auroraStep"
+          data-setting="auroraPos">
+        <datalist id="auroraStep">
+          <option value="1">Верх</option>
+          <option value="2">Низ</option>
+        </datalist>
+      </div>
+
+      <div>
+        <p>Делает небо шапкой страницы, пряча под игровую, а так же по факту чинит его потерю при Редизайне игровой. Будет
+          выглядеть не очень на широкоформатных мониторах из-за растягивания изображения.</p>
+        <input type="checkbox" id="sky-in-the-sky" data-setting="skyInHeader" />
+        <label for="sky-in-the-sky">Небо в небе.</label>
+      </div>
+
     </div>
 
-    <div>
-      <p>
-      Сокращает количество частиц динамичной погоды, увеличивая тем самым производительность на слабых устройствах.
-      </p>
-    <input type="checkbox" id="low-Performance-Mode" data-setting="lowPerformanceMode" />
-    <label for="low-Performance-Mode">Режим низкой производительности</label>
-    </div>
+    <div id="theme-panel">
+
+    <h2>Поле Игровой</h2>
 
     <div>
-      <p>Может немного повлиять на производительность из-за возрастания количества частиц на экране.</p>
-      <input type="checkbox" id="weather-drops" data-setting="weatherDrops" />
-      <label for="weather-drops">Эффекты приземления частиц</label>
-    </div>
-
-    <div>
-      <p>Замена стандартных частиц на знакомые всеми пиксельные частицы.</p>
-      <input type="checkbox" id="minecraft-style" data-setting="minecraftStyle" />
-      <label for="minecraft-style-enabled">Minecraft частицы</label>
-    </div>
-
-    <div>
-      <p>Убирает затемнение Игрового поля.</p>
-      <input type="checkbox" id="always-day" data-setting="alwaysDay" />
-      <label for="always-day">Всегда день/ярко</label>
-    </div>
-
-    <div>
-      <p>Отображает панель Ручного управления погодой в ⚙️Панели Расширенных Настройках Игровой. Выключает натуральную генерацию погоды.</p>
-      <input type="checkbox" id="manual-Weather-Panel" data-setting="manualWeatherPanel" />
-      <label for="manual-Weather-Panel">Ручное управление погоды</label>
-    </div>
-
-    <hr>
-    <p>Расположение Северного Сияния</p>
-    <div id="auroraPanel">
-      <input type="range" min="1" max="2" value="1" class="uwu-range-slider" id="aurora-pos" list="auroraStep"
-        data-setting="auroraPos">
-      <datalist id="auroraStep">
-        <option value="1">Верх</option>
-        <option value="2">Низ</option>
-      </datalist>
-    </div>
-
-    <div>
-      <p>Делает небо шапкой страницы, пряча под игровую, а так же по факту чинит его потерю при Редизайне игровой. Будет
-        выглядеть не очень на широкоформатных мониторах из-за растягивания изображения.</p>
-      <input type="checkbox" id="sky-in-the-sky" data-setting="skyInHeader" />
-      <label for="sky-in-the-sky">Небо в небе.</label>
-    </div>
-
-  </div>
-
-  <div id="theme-panel">
-
-  <h2>Поле Игровой</h2>
-
-  <div>
-    <p> Заменяет все фоны игровых локаций на выбранный вами фон. Помните, что для правильного отображения нужно изображение 1000х1000 px.</p>
-    <input type="checkbox" id="game-Field-background-User" data-setting="gameFieldBackgroundUser" />
-    <label for="game-Field-background-User-enabled">Статичный фон локации:</label>
-    <input type="text" id="gameFieldSettingImageURLField" placeholder="Вставьте URL" data-setting="gameFieldBackgroundUserImageURL" />
-    <button id="SettingSaveButton1" class="uwu-button">Сохранить</button>
-  </div>
-
-  <div>
-    <p>Отрисовывает границы клеток Игрового поля.</p>
-    <input type="checkbox" id="cells-Borders" data-setting="cellsBorders" />
-    <label for="cells-Borders">Границы клеток</label>
-  </div>
-  <p>Толщина/Яркость границ</p>
-  <div id="step-slider">
-    <input type="range" min="1" max="9" value="1" id="cells-Borders-Thickness" class="uwu-range-slider" list="ThicknessStep" data-setting="cellsBordersThickness">
-    <datalist id="ThicknessStep">
-     <option value="1">0.1</option>
-     <option value="5">0.5</option>
-     <option value="9">0.9</option>
-    </datalist>
-  </div>
-  
-  <div>
-  <p>Обозначает клетки Игрового поля числами.</p>
-    <input type="checkbox" id="cells-Numbers" data-setting="cellsNumbers" />
-    <label for="cells-Numbers">Нумерация клеток</label>
-  </div>
-
-    <div>
-      <p>
-        Ставит на страницу фон, повторяющий фон Игровой локации, а так же
-        размывает и затемняет его.
-      </p>
-      <input type="checkbox" id="background-repeat" data-setting="backgroundRepeat" />
-      <label for="weather-enabled">Фон страницы из локации</label>
-    </div>
-
-    <div>
-      <p>Ставит на страницу фон из предоставленной ссылки.</p>
-      <input type="checkbox" id="background-user" data-setting="backgroundUser" />
-      <label for="background-user-enabled">Свой фон страницы:</label>
-      <input type="text" id="SettingImageURLField" placeholder="Вставьте URL" data-setting="backgroundUserImageURL" />
+      <p> Заменяет все фоны игровых локаций на выбранный вами фон. Помните, что для правильного отображения нужно изображение 1000х1000 px.</p>
+      <input type="checkbox" id="game-Field-background-User" data-setting="gameFieldBackgroundUser" />
+      <label for="game-Field-background-User-enabled">Статичный фон локации:</label>
+      <input type="text" id="gameFieldSettingImageURLField" placeholder="Вставьте URL" data-setting="gameFieldBackgroundUserImageURL" />
       <button id="SettingSaveButton1" class="uwu-button">Сохранить</button>
     </div>
 
     <div>
-      <p>Позволяет быстро сменять стили в ⚙️Панели Расширенных настроек в Игровой.</p>
-      <input type="checkbox" id="fast-Styles" data-setting="fastStyles" />
-      <label for="fast-Styles">Быстрые стили</label>
+      <p>Отрисовывает границы клеток Игрового поля.</p>
+      <input type="checkbox" id="cells-Borders" data-setting="cellsBorders" />
+      <label for="cells-Borders">Границы клеток</label>
     </div>
-
-    <hr>
-    <h2>Темы и цвета Игровой</h2>
-
-    <p>
-      Здесь вы можете выставить собственные цвета для игровой. Принимаются "HEX"
-      значения (Пример: #000) с поддержкой прозрачности. Будьте аккуратны и
-      не забывайте выключать другие цвета/темы в других скриптах/модах. Очистите поле
-      чтобы вернуться к стандартным цветам.
-    </p>
-    <input type="checkbox" id="user-theme" data-setting="userTheme" />
-    <label for="user-theme-enabled">Использовать свои цвета</label>
-
-  <div id="theme-selector" class="uwu-select">
-    <label for="theme-select">Выберите тему:</label>
-    <select id="theme-select" class="uwu-select-selected"></select>
-    <button id="addThemeButton" class="uwu-button">Добавить тему</button>
-    <button id="removeThemeButton" style="display: none;" class="uwu-button remove-button">Удалить тему</button>
-  </div>
-
-    <div id="color-picker">
-      <div id="color-picker-input">
-        <input type="text" id="backgroundColorField" placeholder="Вставьте HEX код"
-          data-color="backgroundColor" />
-        <label>Цвет фона</label>
-      </div>
-      <div id="color-picker-input">
-        <input type="text" id="blocksColorField" placeholder="Вставьте HEX код"
-          data-color="blocksColor" />
-        <label>Основной цвет блоков</label>
-      </div>
-      <div id="color-picker-input">
-        <input type="text" id="chatColorField" placeholder="Вставьте HEX код" data-color="chatColor" />
-        <label>Основной цвет чата</label>
-      </div>
-      <div id="color-picker-input">
-        <input type="text" id="SettingTextColorField" placeholder="Вставьте HEX код" data-color="textColor" />
-        <label>Цвет текста</label>
-      </div>
-      <div id="color-picker-input">
-        <input type="text" id="colorField" placeholder="Вставьте HEX код" data-color="linkColor" />
-        <label>Цвет ссылок</label>
-      </div>
-      <div id="color-picker-input">
-        <input type="text" id="catTooltipBackgroundField" placeholder="Вставьте HEX код"
-          data-color="catTooltipBackground" />
-        <label>Цвет фона подсказки "О Коте"</label>
-      </div>
-      <div id="color-picker-input">
-        <input type="text" id="settingFightPanelBackgroundField" placeholder="Вставьте HEX код"
-          data-color="fightPanelBackground" />
-        <label>Цвет панели Боевого режима</label>
-      </div>
-      <div id="color-picker-input">
-        <input type="text" id="settingsMoveNameColorField" placeholder="Вставьте HEX код"
-          data-color="moveNameColor" />
-        <label>Цвет текста перехода</label>
-      </div>
-      <div id="color-picker-input">
-        <input type="text" id="settingsMoveNameBackgroundField" placeholder="Вставьте HEX код"
-          data-color="moveNameBackground" />
-        <label>Цвет фона перехода</label>
-      </div>
-      <div id="color-picker-input">
-        <input type="text" id="accentColorField1" placeholder="Вставьте HEX код"
-          data-color="accentColor1" />
-        <label
-          title="В основном всякие кнопки, слайдеры и строки ввода + цвет букв упоминания вас в Чате. Старайтесь пока делать просто оттенки чёрного цвета.">[?]
-          Акценты 1</label>
-      </div>
-      <div id="color-picker-input">
-        <input type="text" id="accentColorField2" placeholder="Вставьте HEX код"
-          data-color="accentColor2" />
-        <label title="Линии в чате и некоторых других частях, кружочек слайдера громкости.">[?] Акценты 2</label>
-      </div>
-      <div id="color-picker-input">
-        <input type="text" id="accentColorField3" placeholder="Вставьте HEX код"
-          data-color="accentColor3" />
-        <label title="Цвет уведомлений. Например ЛС и вашего имени в Чате">[?] Акценты 3</label>
-      </div>
-
-      <div style="flex: 0 0 100%">
-        <button id="saveThemeButton" class="uwu-button">Сохранить</button>
-        <p>
-          Отличный сайт для выбора цветов с поддержкой прозрачности:
-          <a href="https://get-color.ru/transparent/" target="_blank">https://get-color.ru/transparent/</a>
-        </p>
-      </div>
-    </div>
-
-    <hr>
-    <h2>Шрифты и текст</h2>
-    
-    <div>
-      <p>Кастомная настройка шрифтов в Игровой</p>
-      <input type="checkbox" id="use-User-Fonts" data-setting="useUserFonts" />
-      <label for="use-User-Fonts">Свой шрифт</label>
-    </div>
-
-    <div>
-      <input type="text" id="font-Size-Body" placeholder="14" data-font-size="fontSizeBody" />
-      <label for="font-Size-Body">px; Размер общего шрифт</label>
-    </div>
-
-    <div>
-      <input type="text" id="font-Size-Small" placeholder="12" data-font-size="fontSizeSmall" />
-      <label for="font-Size-Small">px; Размер шрифта быстрых ссылок</label>
-    </div>
-
-    <div>
-      <input type="text" id="font-Size-Location" placeholder="14" data-font-size="fontSizeLocation" />
-      <label for="font-Size-Location">px; Размер шрифта локации</label>
-    </div>
-
-    <div>
-      <input type="text" id="font-Family-Body" placeholder="Verdana" data-font-size="fontFamilyBody" />
-      <label for="font-Family-Body">Название вида шрифта</label>
-    </div>
-
-    <details>
-      <summary style="cursor: pointer; font-size: 16px; font-weight: bold;">Настройка шрифта громкости сообщений в чате</summary>
-      <div>
-        <input type="text" id="vlm0" placeholder="10" data-font-size="vlm0" />
-        <label for="vlm0">px; Громкость 0 (Самый тихий)</label>
-      </div>
-      <div>
-        <input type="text" id="vlm1" placeholder="11" data-font-size="vlm1" />
-        <label for="vlm1">px; Громкость 1</label>
-      </div>
-      <div>
-        <input type="text" id="vlm2" placeholder="11.5" data-font-size="vlm2" />
-        <label for="vlm2">px; Громкость 2</label>
-      </div>
-      <div>
-        <input type="text" id="vlm3" placeholder="12" data-font-size="vlm3" />
-        <label for="vlm3">px; Громкость 3</label>
-      </div>
-      <div>
-        <input type="text" id="vlm4" placeholder="12.5" data-font-size="vlm4" />
-        <label for="vlm4">px; Громкость 4</label>
-      </div>
-      <div>
-        <input type="text" id="vlm5" placeholder="13" data-font-size="vlm5" />
-        <label for="vlm5">px; Громкость 5 (Стандартная громкость)</label>
-      </div>
-      <div>
-        <input type="text" id="vlm6" placeholder="15" data-font-size="vlm6" />
-        <label for="vlm6">px; Громкость 6</label>
-      </div>
-      <div>
-        <input type="text" id="vlm7" placeholder="17" data-font-size="vlm7" />
-        <label for="vlm7">px; Громкость 7</label>
-      </div>
-      <div>
-        <input type="text" id="vlm8" placeholder="19" data-font-size="vlm8" />
-        <label for="vlm8">px; Громкость 8</label>
-      </div>
-      <div>
-        <input type="text" id="vlm9" placeholder="21" data-font-size="vlm9" />
-        <label for="vlm9">px; Громкость 9</label>
-      </div>
-      <div>
-        <input type="text" id="vlm10" placeholder="23" data-font-size="vlm10" />
-        <label for="vlm10">px; Громкость 10 (Самая громкая)</label>
-      </div>
-    </details>
-
-    <hr>
-    <h2>Редизайны Игровой</h2>
-
-    <p>Тот самый знаменитный редизайн, но с почти более расширенной кастомизацией.</p>
-    <input type="checkbox" id="custom-layout" data-setting="customLayout" />
-    <label for="custom-layout">Компактный редизайн</label>
-
-    <div id="layout-customizer">
-      <div id="layout-preview">
-        <div class="column left">
-          <!-- Левая колонка -->
-        </div>
-        <div class="column center">
-          <!-- Центральная колонка -->
-          <div class="block center-block">Поле Игровой</div>
-        </div>
-        <div class="column right">
-          <!-- Правая колонка -->
-        </div>
-        <ul id="block-list">
-          <!-- Элементы списка блоков -->
-        </ul>
-      </div>
-    </div>
-    <button id="SettingSaveButton4" class="uwu-button">Сохранить</button>
-
-    <div>
-      <input type="text" id="chat-height" placeholder="Вставьте значение" data-setting="chatHeight" />
-      <label for="chat-height">px; Высота Чата</label>
-    </div>
-
-    <div>
-      <input type="text" id="history-height" placeholder="Вставьте значение" data-setting="historyHeight" />
-      <label for="history-height">px; Высота Истории</label>
-    </div>
-
-    <label>Отображать Душевых котов:</label>
-    <div class="custom-select" id="showOtherCatsList">
-      <div class="select-selected">Выберите стиль отображения Душевых котов</div>
-      <div class="select-items">
-        <!-- Опции будут добавлены сюда -->
-      </div>
-    </div>
-
-    <div>
-      <p>Визуальное разделение блока "Информация" на меньшие блоки "Параметров, Истории и Родственные связи".</p>
-      <input type="checkbox" id="slice-info-block" data-setting="sliceInfoBlock" />
-      <label for="slice-info-block">Разделить блок Информации</label>
-    </div>
-
-    <div>
-      <p>Скругляет края блоков в Игровой.</p>
-      <input type="checkbox" id="edge-trim-blocks" data-setting="edgeTrimBlocks" />
-      <label for="edge-trim-blocks">Скругление блоков</label>
-    </div>
-
-    <hr>
-    <h2>Общение</h2>
-
-    <div>
-      <p>Добавляет аватар с профиля отправителя на его комментарий в лентах и блогах.</p>
-      <input type="checkbox" id="comments-avatars" data-setting="commentsAvatars" />
-      <label for="comments-avatars">Аватарки в комментариях</label>
-    </div>
-
-    <div>
-      <p>Более функциональный Чат: допись ID отправителя и звуковое уведомление при вашем упоминании.
-      </p>
-      <input type="checkbox" id="new-chat" data-setting="newChat" />
-      <label for="new-chat">Современный Чат</label>
-    </div>
-
-    <div>
-      <p>Работает только с "Современным чатом". Отображет чат снизу вверх, а так же смещает окно ввода сообщения под чат.</p>
-      <input type="checkbox" id="reverse-Chat" data-setting="reverseChat" />
-      <label for="reverse-Chat">Инверсия чата</label>
-    </div>
-
-    <div id="myNameNotificationSoundContainer">
-      <div class="custom-select" id="myNameNotificationSound">
-        <div class="select-selected">Выберите звук</div>
-        <div class="select-items">
-          <!-- Опции будут добавлены сюда -->
-      </div>
-    </div>
-  
-    <div id="notification-volume">
-    <p>Громкость</p>
-      <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notification-MyName-Volume" list="volumeStep"
-        data-setting="notificationMyNameVolume">
-      <datalist id="volumeStep">
-        <option value="1">10%</option>
-        <option value="5">50%</option>
-        <option value="10">100%</option>
+    <p>Толщина/Яркость границ</p>
+    <div id="step-slider">
+      <input type="range" min="1" max="9" value="1" id="cells-Borders-Thickness" class="uwu-range-slider" list="ThicknessStep" data-setting="cellsBordersThickness">
+      <datalist id="ThicknessStep">
+      <option value="1">0.1</option>
+      <option value="5">0.5</option>
+      <option value="9">0.9</option>
       </datalist>
     </div>
-  </div>
-
-  <div>
-    <p>Ваши собственные имена и клички на упоминания в чате. Просто пропишите их через запятую. Пример: Мяу, Мяуич, МяуВкин</p>
-    <input type="text" id="names-For-Notification" placeholder=". . ." data-setting="namesForNotification" />
-  </div>
-
     <div>
-      <p>Более удобная строка ввода сообщений над чатом с возможностью растягивания. Пока что насильно берёт цвета с "Использовать свои цвета".</p>
-      <input type="checkbox" id="new-chat-input" data-setting="newChatInput" />
-      <label for="new-chat-input">Альтернативная строка ввода сообщений</label>
+      <label for="cells-Borders-Color">Цвет границы клеток</label>
+      <input type="color" id="cells-Borders-Color" data-setting="cellsBordersColor" value="#ffffff">
     </div>
-
-    <hr>
-    <h2>Параметры и навыки</h2>
     
     <div>
-      <p>Параметр наглядно отображает рядом с собой свой процент.</p>
-      <input type="checkbox" id="display-Parameters-Percentages" data-setting="displayParametersPercentages" />
-      <label for="display-Parameters-Percentages">Отображать проценты Параметров</label>
+    <p>Обозначает клетки Игрового поля числами.</p>
+      <input type="checkbox" id="cells-Numbers" data-setting="cellsNumbers" />
+      <label for="cells-Numbers">Нумерация клеток</label>
+    </div>
+
+      <div>
+        <p>
+          Ставит на страницу фон, повторяющий фон Игровой локации, а так же
+          размывает и затемняет его.
+        </p>
+        <input type="checkbox" id="background-repeat" data-setting="backgroundRepeat" />
+        <label for="weather-enabled">Фон страницы из локации</label>
+      </div>
+
+      <div>
+        <p>Ставит на страницу фон из предоставленной ссылки.</p>
+        <input type="checkbox" id="background-user" data-setting="backgroundUser" />
+        <label for="background-user-enabled">Свой фон страницы:</label>
+        <input type="text" id="SettingImageURLField" placeholder="Вставьте URL" data-setting="backgroundUserImageURL" />
+        <button id="SettingSaveButton1" class="uwu-button">Сохранить</button>
+      </div>
+
+      <div>
+        <p>Позволяет быстро сменять стили в ⚙️Панели Расширенных настроек в Игровой.</p>
+        <input type="checkbox" id="fast-Styles" data-setting="fastStyles" />
+        <label for="fast-Styles">Быстрые стили</label>
+      </div>
+
+      <hr id="uwu-hr" class="uwu-hr">
+      <h2>Темы и цвета Игровой</h2>
+
+      <p>
+        Здесь вы можете выставить собственные цвета для игровой. Принимаются "HEX"
+        значения (Пример: #000) с поддержкой прозрачности. Будьте аккуратны и
+        не забывайте выключать другие цвета/темы в других скриптах/модах. Очистите поле
+        чтобы вернуться к стандартным цветам.
+      </p>
+      <input type="checkbox" id="user-theme" data-setting="userTheme" />
+      <label for="user-theme-enabled">Использовать свои цвета</label>
+
+    <div id="theme-selector" class="uwu-select">
+      <label for="theme-select">Выберите тему:</label>
+      <select id="theme-select" class="uwu-select-selected"></select>
+      <button id="addThemeButton" class="uwu-button">Добавить тему</button>
+      <button id="removeThemeButton" style="display: none;" class="uwu-button remove-button">Удалить тему</button>
+    </div>
+
+      <div id="color-picker">
+        <div id="color-picker-input">
+          <input type="text" id="backgroundColorField" placeholder="Вставьте HEX код"
+            data-color="backgroundColor" />
+          <label>Цвет фона</label>
+        </div>
+        <div id="color-picker-input">
+          <input type="text" id="blocksColorField" placeholder="Вставьте HEX код"
+            data-color="blocksColor" />
+          <label>Основной цвет блоков</label>
+        </div>
+        <div id="color-picker-input">
+          <input type="text" id="chatColorField" placeholder="Вставьте HEX код" data-color="chatColor" />
+          <label>Основной цвет чата</label>
+        </div>
+        <div id="color-picker-input">
+          <input type="text" id="SettingTextColorField" placeholder="Вставьте HEX код" data-color="textColor" />
+          <label>Цвет текста</label>
+        </div>
+        <div id="color-picker-input">
+          <input type="text" id="colorField" placeholder="Вставьте HEX код" data-color="linkColor" />
+          <label>Цвет ссылок</label>
+        </div>
+        <div id="color-picker-input">
+          <input type="text" id="catTooltipBackgroundField" placeholder="Вставьте HEX код"
+            data-color="catTooltipBackground" />
+          <label>Цвет фона подсказки "О Коте"</label>
+        </div>
+        <div id="color-picker-input">
+          <input type="text" id="settingFightPanelBackgroundField" placeholder="Вставьте HEX код"
+            data-color="fightPanelBackground" />
+          <label>Цвет панели Боевого режима</label>
+        </div>
+        <div id="color-picker-input">
+          <input type="text" id="settingsMoveNameColorField" placeholder="Вставьте HEX код"
+            data-color="moveNameColor" />
+          <label>Цвет текста перехода</label>
+        </div>
+        <div id="color-picker-input">
+          <input type="text" id="settingsMoveNameBackgroundField" placeholder="Вставьте HEX код"
+            data-color="moveNameBackground" />
+          <label>Цвет фона перехода</label>
+        </div>
+        <div id="color-picker-input">
+          <input type="text" id="accentColorField1" placeholder="Вставьте HEX код"
+            data-color="accentColor1" />
+          <label
+            title="В основном всякие кнопки, слайдеры и строки ввода + цвет букв упоминания вас в Чате. Старайтесь пока делать просто оттенки чёрного цвета.">[?]
+            Акценты 1</label>
+        </div>
+        <div id="color-picker-input">
+          <input type="text" id="accentColorField2" placeholder="Вставьте HEX код"
+            data-color="accentColor2" />
+          <label title="Линии в чате и некоторых других частях, кружочек слайдера громкости.">[?] Акценты 2</label>
+        </div>
+        <div id="color-picker-input">
+          <input type="text" id="accentColorField3" placeholder="Вставьте HEX код"
+            data-color="accentColor3" />
+          <label title="Цвет уведомлений. Например ЛС и вашего имени в Чате">[?] Акценты 3</label>
+        </div>
+
+        <div style="flex: 0 0 100%">
+          <button id="saveThemeButton" class="uwu-button">Сохранить</button>
+          <p>
+            Отличный сайт для выбора цветов с поддержкой прозрачности:
+            <a href="https://get-color.ru/transparent/" target="_blank">https://get-color.ru/transparent/</a>
+          </p>
+        </div>
+      </div>
+
+      <hr id="uwu-hr" class="uwu-hr">
+      <h2>Шрифты и текст</h2>
+      
+      <div>
+        <p>Кастомная настройка шрифтов в Игровой</p>
+        <input type="checkbox" id="use-User-Fonts" data-setting="useUserFonts" />
+        <label for="use-User-Fonts">Свой шрифт</label>
+      </div>
+
+      <div>
+        <input type="text" id="font-Size-Body" placeholder="14" data-font-size="fontSizeBody" />
+        <label for="font-Size-Body">px; Размер общего шрифт</label>
+      </div>
+
+      <div>
+        <input type="text" id="font-Size-Small" placeholder="12" data-font-size="fontSizeSmall" />
+        <label for="font-Size-Small">px; Размер шрифта быстрых ссылок</label>
+      </div>
+
+      <div>
+        <input type="text" id="font-Size-Location" placeholder="14" data-font-size="fontSizeLocation" />
+        <label for="font-Size-Location">px; Размер шрифта локации</label>
+      </div>
+
+      <div>
+        <input type="text" id="font-Family-Body" placeholder="Verdana" data-font-size="fontFamilyBody" />
+        <label for="font-Family-Body">Название вида шрифта</label>
+      </div>
+
+      <details>
+        <summary style="cursor: pointer; font-size: 16px; font-weight: bold;">Настройка шрифта громкости сообщений в чате</summary>
+        <div>
+          <input type="text" id="vlm0" placeholder="10" data-font-size="vlm0" />
+          <label for="vlm0">px; Громкость 0 (Самый тихий)</label>
+        </div>
+        <div>
+          <input type="text" id="vlm1" placeholder="11" data-font-size="vlm1" />
+          <label for="vlm1">px; Громкость 1</label>
+        </div>
+        <div>
+          <input type="text" id="vlm2" placeholder="11.5" data-font-size="vlm2" />
+          <label for="vlm2">px; Громкость 2</label>
+        </div>
+        <div>
+          <input type="text" id="vlm3" placeholder="12" data-font-size="vlm3" />
+          <label for="vlm3">px; Громкость 3</label>
+        </div>
+        <div>
+          <input type="text" id="vlm4" placeholder="12.5" data-font-size="vlm4" />
+          <label for="vlm4">px; Громкость 4</label>
+        </div>
+        <div>
+          <input type="text" id="vlm5" placeholder="13" data-font-size="vlm5" />
+          <label for="vlm5">px; Громкость 5 (Стандартная громкость)</label>
+        </div>
+        <div>
+          <input type="text" id="vlm6" placeholder="15" data-font-size="vlm6" />
+          <label for="vlm6">px; Громкость 6</label>
+        </div>
+        <div>
+          <input type="text" id="vlm7" placeholder="17" data-font-size="vlm7" />
+          <label for="vlm7">px; Громкость 7</label>
+        </div>
+        <div>
+          <input type="text" id="vlm8" placeholder="19" data-font-size="vlm8" />
+          <label for="vlm8">px; Громкость 8</label>
+        </div>
+        <div>
+          <input type="text" id="vlm9" placeholder="21" data-font-size="vlm9" />
+          <label for="vlm9">px; Громкость 9</label>
+        </div>
+        <div>
+          <input type="text" id="vlm10" placeholder="23" data-font-size="vlm10" />
+          <label for="vlm10">px; Громкость 10 (Самая громкая)</label>
+        </div>
+      </details>
+
+      <hr id="uwu-hr" class="uwu-hr">
+      <h2>Редизайны Игровой</h2>
+
+      <p>Тот самый знаменитный редизайн, но с почти более расширенной кастомизацией.</p>
+      <input type="checkbox" id="custom-layout" data-setting="customLayout" />
+      <label for="custom-layout">Компактный редизайн</label>
+
+      <div id="layout-customizer">
+        <div id="layout-preview">
+          <div class="column left">
+            <!-- Левая колонка -->
+          </div>
+          <div class="column center">
+            <!-- Центральная колонка -->
+            <div class="block center-block">Поле Игровой</div>
+          </div>
+          <div class="column right">
+            <!-- Правая колонка -->
+          </div>
+          <ul id="block-list">
+            <!-- Элементы списка блоков -->
+          </ul>
+        </div>
+      </div>
+      <button id="SettingSaveButton4" class="uwu-button">Сохранить</button>
+
+      <div>
+        <input type="text" id="chat-height" placeholder="Вставьте значение" data-setting="chatHeight" />
+        <label for="chat-height">px; Высота Чата</label>
+      </div>
+
+      <div>
+        <input type="text" id="history-height" placeholder="Вставьте значение" data-setting="historyHeight" />
+        <label for="history-height">px; Высота Истории</label>
+      </div>
+
+      <label>Отображать Душевых котов:</label>
+      <div class="custom-select" id="showOtherCatsList">
+        <div class="select-selected">Выберите стиль отображения Душевых котов</div>
+        <div class="select-items">
+          <!-- Опции будут добавлены сюда -->
+        </div>
+      </div>
+
+      <div>
+        <p>Визуальное разделение блока "Информация" на меньшие блоки "Параметров, Истории и Родственные связи".</p>
+        <input type="checkbox" id="slice-info-block" data-setting="sliceInfoBlock" />
+        <label for="slice-info-block">Разделить блок Информации</label>
+      </div>
+
+      <div>
+        <p>Скругляет края блоков в Игровой.</p>
+        <input type="checkbox" id="edge-trim-blocks" data-setting="edgeTrimBlocks" />
+        <label for="edge-trim-blocks">Скругление блоков</label>
+      </div>
+
+      <hr id="uwu-hr" class="uwu-hr">
+      <h2>Общение</h2>
+
+      <div>
+        <p>Добавляет аватар с профиля отправителя на его комментарий в лентах и блогах.</p>
+        <input type="checkbox" id="comments-avatars" data-setting="commentsAvatars" />
+        <label for="comments-avatars">Аватарки в комментариях</label>
+      </div>
+
+      <div>
+        <p>Более функциональный Чат: допись ID отправителя и звуковое уведомление при вашем упоминании.
+        </p>
+        <input type="checkbox" id="new-chat" data-setting="newChat" />
+        <label for="new-chat">Современный Чат</label>
+      </div>
+
+      <div>
+        <p>Работает только с "Современным чатом". Отображет чат снизу вверх, а так же смещает окно ввода сообщения под чат.</p>
+        <input type="checkbox" id="reverse-Chat" data-setting="reverseChat" />
+        <label for="reverse-Chat">Инверсия чата</label>
+      </div>
+
+      <div id="myNameNotificationSoundContainer">
+        <div class="custom-select" id="myNameNotificationSound">
+          <div class="select-selected">Выберите звук</div>
+          <div class="select-items">
+            <!-- Опции будут добавлены сюда -->
+        </div>
+      </div>
+    
+      <div id="notification-volume">
+      <p>Громкость</p>
+        <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notification-MyName-Volume" list="volumeStep"
+          data-setting="notificationMyNameVolume">
+        <datalist id="volumeStep">
+          <option value="1">10%</option>
+          <option value="5">50%</option>
+          <option value="10">100%</option>
+        </datalist>
+      </div>
     </div>
 
     <div>
-      <p>Заменяет стандартное оформление Параметров и Навыков на ваш.</p>
-      <input type="checkbox" id="user-Parameters-Theme" data-setting="userParametersTheme" />
-      <label for="user-Parameters-Theme">Использовать своё оформление</label>
+      <p>Ваши собственные имена и клички на упоминания в чате. Просто пропишите их через запятую. Пример: Мяу, Мяуич, МяуВкин</p>
+      <input type="text" id="names-For-Notification" placeholder=". . ." data-setting="namesForNotification" />
     </div>
 
-<div id="parameters-color-settings" class="parameters-color-settings">
-  <table class="parameters-color-table">
+      <div>
+        <p>Более удобная строка ввода сообщений над чатом с возможностью растягивания. Пока что насильно берёт цвета с "Использовать свои цвета".</p>
+        <input type="checkbox" id="new-chat-input" data-setting="newChatInput" />
+        <label for="new-chat-input">Альтернативная строка ввода сообщений</label>
+      </div>
+
+      <hr id="uwu-hr" class="uwu-hr">
+      <h2>Параметры и навыки</h2>
+      
+      <div>
+        <p>Параметр наглядно отображает рядом с собой свой процент.</p>
+        <input type="checkbox" id="display-Parameters-Percentages" data-setting="displayParametersPercentages" />
+        <label for="display-Parameters-Percentages">Отображать проценты Параметров</label>
+      </div>
+
+      <div>
+        <p>Заменяет стандартное оформление Параметров и Навыков на ваш.</p>
+        <input type="checkbox" id="user-Parameters-Theme" data-setting="userParametersTheme" />
+        <label for="user-Parameters-Theme">Использовать своё оформление</label>
+      </div>
+
+  <div id="parameters-color-settings" class="parameters-color-settings">
+    <table class="parameters-color-table">
+      <thead>
+        <tr>
+          <th class="parameters-color-table--header">Градиент</th>
+          <th class="parameters-color-table--header">От</th>
+          <th class="parameters-color-table--header">До</th>
+          <th class="parameters-color-table--header">От</th>
+          <th class="parameters-color-table--header">До</th>
+        </tr>
+      </thead>
+      <tbody id="color-settings-body" class="parameters-color-table--body">
+        <tr>
+          <th class="parameters-color-table--cell" colspan="5">Параметры</th>
+        </tr>
+        <tr>
+          <td class="parameters-color-table--cell">Сон</td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="dream" data-color-type="bar-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="dream" data-color-type="bar-to"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="dream" data-color-type="bg-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="dream" data-color-type="bg-to"></td>
+        </tr>
+        <tr>
+          <td class="parameters-color-table--cell">Голод</td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="hunger" data-color-type="bar-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="hunger" data-color-type="bar-to"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="hunger" data-color-type="bg-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="hunger" data-color-type="bg-to"></td>
+        </tr>
+        <tr>
+          <td class="parameters-color-table--cell">Жажда</td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="thirst" data-color-type="bar-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="thirst" data-color-type="bar-to"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="thirst" data-color-type="bg-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="thirst" data-color-type="bg-to"></td>
+        </tr>
+        <tr>
+          <td class="parameters-color-table--cell">Нужда</td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="need" data-color-type="bar-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="need" data-color-type="bar-to"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="need" data-color-type="bg-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="need" data-color-type="bg-to"></td>
+        </tr>
+        <tr>
+          <td class="parameters-color-table--cell">Здоровье</td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="health" data-color-type="bar-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="health" data-color-type="bar-to"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="health" data-color-type="bg-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="health" data-color-type="bg-to"></td>
+        </tr>
+        <tr>
+          <td class="parameters-color-table--cell">Чистота</td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="clean" data-color-type="bar-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="clean" data-color-type="bar-to"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="clean" data-color-type="bg-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="clean" data-color-type="bg-to"></td>
+        </tr>
+        <tr>
+          <th class="parameters-color-table--cell" colspan="5">Навыки</th>
+        </tr>
+        <tr>
+          <td class="parameters-color-table--cell">Запах</td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="smell" data-color-type="bar-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="smell" data-color-type="bar-to"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="smell" data-color-type="bg-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="smell" data-color-type="bg-to"></td>
+        </tr>
+        <tr>
+          <td class="parameters-color-table--cell">Копание</td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="dig" data-color-type="bar-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="dig" data-color-type="bar-to"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="dig" data-color-type="bg-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="dig" data-color-type="bg-to"></td>
+        </tr>
+        <tr>
+          <td class="parameters-color-table--cell">Плавание</td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="swim" data-color-type="bar-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="swim" data-color-type="bar-to"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="swim" data-color-type="bg-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="swim" data-color-type="bg-to"></td>
+        </tr>
+        <tr>
+          <td class="parameters-color-table--cell">БУ</td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="might" data-color-type="bar-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="might" data-color-type="bar-to"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="might" data-color-type="bg-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="might" data-color-type="bg-to"></td>
+        </tr>
+        <tr>
+          <td class="parameters-color-table--cell">Лазание</td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="tree" data-color-type="bar-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="tree" data-color-type="bar-to"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="tree" data-color-type="bg-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="tree" data-color-type="bg-to"></td>
+        </tr>
+        <tr>
+          <td class="parameters-color-table--cell">Зоркость</td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="observ" data-color-type="bar-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="observ" data-color-type="bar-to"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="observ" data-color-type="bg-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="observ" data-color-type="bg-to"></td>
+        </tr>
+        <tr>
+          <th class="parameters-color-table--cell" colspan="5">Уникальные навыки</th>
+        </tr>
+        <tr>
+          <td class="parameters-color-table--cell"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="other" data-color-type="bar-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="other" data-color-type="bar-to"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="other" data-color-type="bg-from"></td>
+          <td class="parameters-color-table--cell"><input type="color" data-param="other" data-color-type="bg-to"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+      <div>
+        <p>Накладывает поверх цветов изображение с узорами.</p>
+        <input type="checkbox" id="parameters-Background-Image" data-setting="parametersBackgroundImage" />
+        <label for="parameters-Background-Image">Узоры</label>
+      </div>
+
+      <div>
+        <p>Накладывает поверх уже ваше изображение.</p>
+        <input type="checkbox" id="parameters-User-Background-Image" data-setting="parametersUserBackgroundImage" />
+        <label for="parameters-User-Background-Image">Свои узоры:</label>
+        <input type="text" id="parametersUserBackgroundImageField" placeholder="Вставьте URL" data-setting="parametersUserBackgroundImageURL" />
+        <button id="SettingSaveButton1" class="uwu-button">Сохранить</button>
+      </div>
+
+    </div>
+
+    <div id="utility-panel">
+
+      <h2>Боевой режим</h2>
+
+      <div>
+        <p>Позволяет перетаскивать панель Боевого режима за штучку.</p>
+        <input type="checkbox" id="dragging-Fight-Panel" data-setting="draggingFightPanel" />
+        <label for="dragging-Fight-Panel">Перетаскивание панели Боевого режима</label>
+      </div>
+
+      <div>
+        <p>Сокращает и прописывает количество повторяющихся ударов.</p>
+        <input type="checkbox" id="compact-Fight-Log" data-setting="compactFightLog" />
+        <label for="compact-Fight-Log">Компактный боевой лог</label>
+      </div>
+
+      <div>
+        <p>Возможность растягивать высоту панели и её начальная высота.</p>
+        <input type="checkbox" id="fight-Panel-Adjustable-Height" data-setting="fightPanelAdjustableHeight" />
+        <label for="fight-Panel-Adjustable-Height">Настраиваемая высота панели</label>
+        <input type="text" id="fightPanelHeightField" placeholder=". . ." data-setting="fightPanelHeight" />
+        <label>px; - Начальная высота панели</label>
+      </div>
+
+      <div>
+        <p>Возможность перекрашивать и создавать команды в Панели Боевого Режима.</p>
+        <input type="checkbox" id="Fight-Teams" data-setting="fightTeams" />
+        <label for="fight-Teams">Команды в Боевом Режиме</label>
+        <input type="text" id="fightTeamsPanelHightField" placeholder=". . ." data-setting="fightTeamsPanelHight" />
+        <label>px; - Начальная высота панели Командного Боя</label>
+      </div>
+
+  <table id="colorSettingsTable">
     <thead>
       <tr>
-        <th class="parameters-color-table--header">Градиент</th>
-        <th class="parameters-color-table--header">От</th>
-        <th class="parameters-color-table--header">До</th>
-        <th class="parameters-color-table--header">От</th>
-        <th class="parameters-color-table--header">До</th>
+        <th></th>
+        <th>Энергия</th>
+        <th>Снесено</th>
       </tr>
     </thead>
-    <tbody id="color-settings-body" class="parameters-color-table--body">
+    <tbody>
       <tr>
-        <th class="parameters-color-table--cell" colspan="5">Параметры</th>
+        <td>Команда 1</td>
+        <td><input type="color" data-team="1" data-part="green" value="#41cd70"></td>
+        <td><input type="color" data-team="1" data-part="red" value="#cd4141"></td>
       </tr>
       <tr>
-        <td class="parameters-color-table--cell">Сон</td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="dream" data-color-type="bar-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="dream" data-color-type="bar-to"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="dream" data-color-type="bg-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="dream" data-color-type="bg-to"></td>
+        <td>Команда 2</td>
+        <td><input type="color" data-team="2" data-part="green" value="#c968ff"></td>
+        <td><input type="color" data-team="2" data-part="red" value="#cd4141"></td>
       </tr>
       <tr>
-        <td class="parameters-color-table--cell">Голод</td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="hunger" data-color-type="bar-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="hunger" data-color-type="bar-to"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="hunger" data-color-type="bg-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="hunger" data-color-type="bg-to"></td>
+        <td>Команда 3</td>
+        <td><input type="color" data-team="3" data-part="green" value="#44bcff"></td>
+        <td><input type="color" data-team="3" data-part="red" value="#cd4141"></td>
       </tr>
       <tr>
-        <td class="parameters-color-table--cell">Жажда</td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="thirst" data-color-type="bar-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="thirst" data-color-type="bar-to"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="thirst" data-color-type="bg-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="thirst" data-color-type="bg-to"></td>
-      </tr>
-      <tr>
-        <td class="parameters-color-table--cell">Нужда</td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="need" data-color-type="bar-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="need" data-color-type="bar-to"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="need" data-color-type="bg-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="need" data-color-type="bg-to"></td>
-      </tr>
-      <tr>
-        <td class="parameters-color-table--cell">Здоровье</td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="health" data-color-type="bar-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="health" data-color-type="bar-to"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="health" data-color-type="bg-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="health" data-color-type="bg-to"></td>
-      </tr>
-      <tr>
-        <td class="parameters-color-table--cell">Чистота</td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="clean" data-color-type="bar-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="clean" data-color-type="bar-to"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="clean" data-color-type="bg-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="clean" data-color-type="bg-to"></td>
-      </tr>
-      <tr>
-        <th class="parameters-color-table--cell" colspan="5">Навыки</th>
-      </tr>
-      <tr>
-        <td class="parameters-color-table--cell">Запах</td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="smell" data-color-type="bar-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="smell" data-color-type="bar-to"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="smell" data-color-type="bg-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="smell" data-color-type="bg-to"></td>
-      </tr>
-      <tr>
-        <td class="parameters-color-table--cell">Копание</td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="dig" data-color-type="bar-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="dig" data-color-type="bar-to"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="dig" data-color-type="bg-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="dig" data-color-type="bg-to"></td>
-      </tr>
-      <tr>
-        <td class="parameters-color-table--cell">Плавание</td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="swim" data-color-type="bar-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="swim" data-color-type="bar-to"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="swim" data-color-type="bg-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="swim" data-color-type="bg-to"></td>
-      </tr>
-      <tr>
-        <td class="parameters-color-table--cell">БУ</td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="might" data-color-type="bar-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="might" data-color-type="bar-to"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="might" data-color-type="bg-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="might" data-color-type="bg-to"></td>
-      </tr>
-      <tr>
-        <td class="parameters-color-table--cell">Лазание</td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="tree" data-color-type="bar-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="tree" data-color-type="bar-to"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="tree" data-color-type="bg-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="tree" data-color-type="bg-to"></td>
-      </tr>
-      <tr>
-        <td class="parameters-color-table--cell">Зоркость</td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="observ" data-color-type="bar-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="observ" data-color-type="bar-to"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="observ" data-color-type="bg-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="observ" data-color-type="bg-to"></td>
-      </tr>
-      <tr>
-        <th class="parameters-color-table--cell" colspan="5">Уникальные навыки</th>
-      </tr>
-      <tr>
-        <td class="parameters-color-table--cell"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="other" data-color-type="bar-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="other" data-color-type="bar-to"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="other" data-color-type="bg-from"></td>
-        <td class="parameters-color-table--cell"><input type="color" data-param="other" data-color-type="bg-to"></td>
+        <td>Команда 4</td>
+        <td><input type="color" data-team="4" data-part="green" value="#FFFF00"></td>
+        <td><input type="color" data-team="4" data-part="red" value="#cd4141"></td>
       </tr>
     </tbody>
   </table>
-</div>
+    
+    <hr id="uwu-hr" class="uwu-hr">
+    <h2>Охота</h2>
 
-    <div>
-      <p>Накладывает поверх цветов изображение с узорами.</p>
-      <input type="checkbox" id="parameters-Background-Image" data-setting="parametersBackgroundImage" />
-      <label for="parameters-Background-Image">Узоры</label>
-    </div>
+      <div>
+        <p>Дописывает на запахе, во время охоты, приближаетесь вы или отдаляетесь от цели, а так же включает таймер.</p>
+        <input type="checkbox" id="describe-Hunting-Smell" data-setting="describeHuntingSmell" />
+        <label for="describe-Hunting-Smell">Подсказки на запахе</label>
+      </div>
 
-    <div>
-      <p>Накладывает поверх уже ваше изображение.</p>
-      <input type="checkbox" id="parameters-User-Background-Image" data-setting="parametersUserBackgroundImage" />
-      <label for="parameters-User-Background-Image">Свои узоры:</label>
-      <input type="text" id="parametersUserBackgroundImageField" placeholder="Вставьте URL" data-setting="parametersUserBackgroundImageURL" />
-      <button id="SettingSaveButton1" class="uwu-button">Сохранить</button>
-    </div>
+    <hr id="uwu-hr" class="uwu-hr">
+    <h2>Джойстики</h2>
 
-  </div>
+      <div>
+        <p>Отображает Виртуальную сенсорную Джойстиковую кнопку для мобильных устройств во время охоты для более удобного управления.</p>
+        <input type="checkbox" id="hunting-Virtual-Joystick" data-setting="huntingVirtualJoystick" />
+        <label for="hunting-Virtual-Joystick">Виртуальный джойстик для охоты</label>
+        <input type="text" id="sizeHuntingVirtualJoystickField" placeholder=". . ." data-setting="sizeHuntingVirtualJoystick" />
+        <label>px; - Размер Джойстика. Стандартный размер - 150 px;</label>
+      </div>
 
-  <div id="utility-panel">
+    <hr id="uwu-hr" class="uwu-hr">
+    <h2>"О котах"</h2>
 
-    <h2>Боевой режим</h2>
+      <div>
+        <p>Добавляет во всплывающее окно "О коте" кнопку "Подробнее" для просмотра большей полезной информации.</p>
+        <input type="checkbox" id="show-More-Cat-Info" data-setting="showMoreCatInfo" />
+        <label for="show-More-Cat-Info">Больше информации о Коте</label>
+      </div>
 
-    <div>
-      <p>Позволяет перетаскивать панель Боевого режима за штучку.</p>
-      <input type="checkbox" id="dragging-Fight-Panel" data-setting="draggingFightPanel" />
-      <label for="dragging-Fight-Panel">Перетаскивание панели Боевого режима</label>
-    </div>
+      <div>
+        <p>Сокращает и прописывает количество повторяющихся предметов в "О коте".</p>
+        <input type="checkbox" id="compact-Mouth" data-setting="compactMouth" />
+        <label for="compact-Mouth">Компактные инвентари</label>
+      </div>
 
-    <div>
-      <p>Сокращает и прописывает количество повторяющихся ударов.</p>
-      <input type="checkbox" id="compact-Fight-Log" data-setting="compactFightLog" />
-      <label for="compact-Fight-Log">Компактный боевой лог</label>
-    </div>
+      <div>
+        <p>Добавляет над собственными параметрами кнопку "Подробнее" для просмотра большей полезной информации.</p>
+        <input type="checkbox" id="show-Parameter-Details" data-setting="showParametersDetails" />
+        <label for="show-Parameter-Details">Подробные параметры</label>
+      </div>
 
-    <div>
-      <p>Возможность растягивать высоту панели и её начальная высота.</p>
-      <input type="checkbox" id="fight-Panel-Adjustable-Height" data-setting="fightPanelAdjustableHeight" />
-      <label for="fight-Panel-Adjustable-Height">Настраиваемая высота панели</label>
-      <input type="text" id="fightPanelHeightField" placeholder=". . ." data-setting="fightPanelHeight" />
-      <label>px; - Начальная высота панели</label>
-    </div>
+      <div>
+        <p>Показывает дополнительную информацию в профиле кота, например БУ цифрой.</p>
+        <input type="checkbox" id="more-Profile-Info" data-setting="moreProfileInfo" />
+        <label for="more-Profile-Info">Больше информации в профиле</label>
+      </div>
 
-    <div>
-      <p>Возможность перекрашивать и создавать команды в Панели Боевого Режима.</p>
-      <input type="checkbox" id="Fight-Teams" data-setting="fightTeams" />
-      <label for="fight-Teams">Команды в Боевом Режиме</label>
-      <input type="text" id="fightTeamsPanelHightField" placeholder=". . ." data-setting="fightTeamsPanelHight" />
-      <label>px; - Начальная высота панели Командного Боя</label>
-    </div>
+      <div>
+        <p>Добавляет полезные калькуляторы для вычислений в профиля.</p>
+        <input type="checkbox" id="calculators" data-setting="calculators" />
+        <label for="calculators">Калькуляторы активностей и лун.</label>
+      </div>
 
-<table id="colorSettingsTable">
-  <thead>
-    <tr>
-      <th></th>
-      <th>Энергия</th>
-      <th>Снесено</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Команда 1</td>
-      <td><input type="color" data-team="1" data-part="green" value="#41cd70"></td>
-      <td><input type="color" data-team="1" data-part="red" value="#cd4141"></td>
-    </tr>
-    <tr>
-      <td>Команда 2</td>
-      <td><input type="color" data-team="2" data-part="green" value="#c968ff"></td>
-      <td><input type="color" data-team="2" data-part="red" value="#cd4141"></td>
-    </tr>
-    <tr>
-      <td>Команда 3</td>
-      <td><input type="color" data-team="3" data-part="green" value="#44bcff"></td>
-      <td><input type="color" data-team="3" data-part="red" value="#cd4141"></td>
-    </tr>
-    <tr>
-      <td>Команда 4</td>
-      <td><input type="color" data-team="4" data-part="green" value="#FFFF00"></td>
-      <td><input type="color" data-team="4" data-part="red" value="#cd4141"></td>
-    </tr>
-  </tbody>
-</table>
-  
-  <hr>
-  <h2>Охота</h2>
+      <hr id="uwu-hr" class="uwu-hr">
+      <h2>Минное поле</h2>
 
-    <div>
-      <p>Дописывает на запахе, во время охоты, приближаетесь вы или отдаляетесь от цели, а так же включает таймер.</p>
-      <input type="checkbox" id="describe-Hunting-Smell" data-setting="describeHuntingSmell" />
-      <label for="describe-Hunting-Smell">Подсказки на запахе</label>
-    </div>
+      <div>
+      <p>ЛКМ - выбрать клетку. С клавиатуры мины ставятся от "0" до "7". Знак "минус" ( - ) равняется красной клетке, а "равно" ( = ) ставит более яркую клетку, например для переходов,
+      которая не будет очищаться при "Очистить всё поле/таблицу". Два раза ЛКМ на ячейку, чтобы очистить её значение.</p>
+        <p>Включает окно для расчерчивания минного поля в Игровой.</p>
+        <input type="checkbox" id="climbing-panel" data-setting="climbingPanel" />
+        <label for="climbing-panel">Минное поле</label>
+        <p>Здесь вы можете добавить/удалить Вкладки для хранения Таблиц и количество самих таблиц в выбранной вкладке.
+        Не изменяйте !одновременно! ячейки минного поля и структуру Вкладок и Таблиц, а то можете потерять выставленные новые ячейки.</p>
+          <h4>Вкладки</h4>
+          <div id="uwu-buttonRow1-settings"></div>
+          <h4>Локации / Таблицы</h4>
+          <div id="uwu-buttonRow2-settings"></div>
+      </div>
 
-  <hr>
-  <h2>Джойстики</h2>
+      <label>Дизайн окна минного поля:</label>
+      <div class="custom-select" id="climbingPanelOrientation">
+        <div class="select-selected">Вертикальный</div>
+        <div class="select-items">
+          <!-- Опции будут добавлены сюда -->
+        </div>
+      </div>
 
-    <div>
-      <p>Отображает Виртуальную сенсорную Джойстиковую кнопку для мобильных устройств во время охоты для более удобного управления.</p>
-      <input type="checkbox" id="hunting-Virtual-Joystick" data-setting="huntingVirtualJoystick" />
-      <label for="hunting-Virtual-Joystick">Виртуальный джойстик для охоты</label>
-      <input type="text" id="sizeHuntingVirtualJoystickField" placeholder=". . ." data-setting="sizeHuntingVirtualJoystick" />
-      <label>px; - Размер Джойстика. Стандартный размер - 150 px;</label>
-    </div>
+      <div>
+        <p>Дописывает в чате громкость уведомлений числом. В случае с лазательными локациями - количество опасных клеток вокруг вас.</p>
+        <input type="checkbox" id="climbing-Notifications-Numbers" data-setting="climbingNotificationsNumbers" />
+        <label for="climbing-Notifications-Numbers">Подписывать громкость уведомления</label>
+      </div>
 
-  <hr>
-  <h2>"О котах"</h2>
+      <div>
+        <p>Звуковое уведомление, когда карта локации обновляется.</p>
+        <input type="checkbox" id="climbing-Refresh-Notification" data-setting="climbingRefreshNotification" />
+        <label for="climbing-Refresh-Notification">Уведомлять об перестановке</label>
+      </div>
 
-    <div>
-      <p>Добавляет во всплывающее окно "О коте" кнопку "Подробнее" для просмотра большей полезной информации.</p>
-      <input type="checkbox" id="show-More-Cat-Info" data-setting="showMoreCatInfo" />
-      <label for="show-More-Cat-Info">Больше информации о Коте</label>
-    </div>
-
-    <div>
-      <p>Сокращает и прописывает количество повторяющихся предметов в "О коте".</p>
-      <input type="checkbox" id="compact-Mouth" data-setting="compactMouth" />
-      <label for="compact-Mouth">Компактные инвентари</label>
-    </div>
-
-    <div>
-      <p>Добавляет над собственными параметрами кнопку "Подробнее" для просмотра большей полезной информации.</p>
-      <input type="checkbox" id="show-Parameter-Details" data-setting="showParametersDetails" />
-      <label for="show-Parameter-Details">Подробные параметры</label>
-    </div>
-
-    <div>
-      <p>Показывает дополнительную информацию в профиле кота, например БУ цифрой.</p>
-      <input type="checkbox" id="more-Profile-Info" data-setting="moreProfileInfo" />
-      <label for="more-Profile-Info">Больше информации в профиле</label>
-    </div>
-
-    <div>
-      <p>Добавляет полезные калькуляторы для вычислений в профиля.</p>
-      <input type="checkbox" id="calculators" data-setting="calculators" />
-      <label for="calculators">Калькуляторы активностей и лун.</label>
-    </div>
-
-    <hr>
-    <h2>Минное поле</h2>
-
-    <div>
-    <p>ЛКМ - выбрать клетку. С клавиатуры мины ставятся от "0" до "7". Знак "минус" ( - ) равняется красной клетке, а "равно" ( = ) ставит более яркую клетку, например для переходов,
-    которая не будет очищаться при "Очистить всё поле/таблицу". Два раза ЛКМ на ячейку, чтобы очистить её значение.</p>
-      <p>Включает окно для расчерчивания минного поля в Игровой.</p>
-      <input type="checkbox" id="climbing-panel" data-setting="climbingPanel" />
-      <label for="climbing-panel">Минное поле</label>
-      <p>Здесь вы можете добавить/удалить Вкладки для хранения Таблиц и количество самих таблиц в выбранной вкладке.
-      Не изменяйте !одновременно! ячейки минного поля и структуру Вкладок и Таблиц, а то можете потерять выставленные новые ячейки.</p>
-        <h4>Вкладки</h4>
-        <div id="uwu-buttonRow1-settings"></div>
-        <h4>Локации</h4>
-        <div id="uwu-buttonRow2-settings"></div>
-    </div>
-
-    <div>
-      <p>Дописывает в чате громкость уведомлений числом. В случае с лазательными локациями - количество опасных клеток вокруг вас.</p>
-      <input type="checkbox" id="climbing-Notifications-Numbers" data-setting="climbingNotificationsNumbers" />
-      <label for="climbing-Notifications-Numbers">Подписывать громкость уведомления</label>
-    </div>
-
-    <div>
-      <p>Звуковое уведомление, когда карта локации обновляется.</p>
-      <input type="checkbox" id="climbing-Refresh-Notification" data-setting="climbingRefreshNotification" />
-      <label for="climbing-Refresh-Notification">Уведомлять об перестановке</label>
-    </div>
-
-    <div id="climbingRefreshNotificationSoundContainer">
-      <div class="custom-select" id="climbingRefreshNotificationSound">
-        <div class="select-selected">Выберите звук</div>
-      <div class="select-items">
-        <!-- Опции будут добавлены сюда -->
+      <div id="climbingRefreshNotificationSoundContainer">
+        <div class="custom-select" id="climbingRefreshNotificationSound">
+          <div class="select-selected">Выберите звук</div>
+        <div class="select-items">
+          <!-- Опции будут добавлены сюда -->
+        </div>
+      </div>
+    
+      <div id="notification-volume">
+      <p>Громкость</p>
+        <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="climbing-Refresh-Notification-Volume" list="volumeStep"
+          data-setting="climbingRefreshNotificationVolume">
+        <datalist id="volumeStep">
+          <option value="1">10%</option>
+          <option value="5">50%</option>
+          <option value="10">100%</option>
+        </datalist>
       </div>
     </div>
-  
-    <div id="notification-volume">
-    <p>Громкость</p>
-      <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="climbing-Refresh-Notification-Volume" list="volumeStep"
-        data-setting="climbingRefreshNotificationVolume">
-      <datalist id="volumeStep">
-        <option value="1">10%</option>
-        <option value="5">50%</option>
-        <option value="10">100%</option>
-      </datalist>
-    </div>
-  </div>
 
-    <hr>
-    <h2>Быстрые ссылки</h2>
+      <hr id="uwu-hr" class="uwu-hr">
+      <h2>Быстрые ссылки</h2>
 
-    <p>Быстрые ссылки в Игровой.</p>
-    <div>
-      <input type="checkbox" id="quick-Link1" data-setting="quickLink1" />
-      <label for="quick-Link1">Настройки</label>
-    </div>
+      <p>Быстрые ссылки в Игровой.</p>
+      <div>
+        <input type="checkbox" id="quick-Link1" data-setting="quickLink1" />
+        <label for="quick-Link1">Настройки</label>
+      </div>
 
-    <div>
-      <input type="checkbox" id="quick-Link2" data-setting="quickLink2" />
-      <label for="quick-Link2">Памятка</label>
-    </div>
+      <div>
+        <input type="checkbox" id="quick-Link2" data-setting="quickLink2" />
+        <label for="quick-Link2">Памятка</label>
+      </div>
 
-    <div>
-      <input type="checkbox" id="quick-Link3" data-setting="quickLink3" />
-      <label for="quick-Link3">Блоги</label>
-    </div>
+      <div>
+        <input type="checkbox" id="quick-Link3" data-setting="quickLink3" />
+        <label for="quick-Link3">Блоги</label>
+      </div>
 
-    <div>
-      <input type="checkbox" id="quick-Link4" data-setting="quickLink4" />
-      <label for="quick-Link4">Лента</label>
-    </div>
+      <div>
+        <input type="checkbox" id="quick-Link4" data-setting="quickLink4" />
+        <label for="quick-Link4">Лента</label>
+      </div>
 
-    <div>
-      <p>Ваши ссылки. Вставляете ссылку, пробел и пишите название. Для множества просто пишите через запятую. Пример:
-        https://мяу Котики, https://мяу2 Больше-котиков</p>
-      <input type="text" id="users-quick-Links" placeholder=". . ." data-setting="userQuickLinks" />
-    </div>
+      <div>
+        <p>Ваши ссылки. Вставляете ссылку, пробел и пишите название. Для множества просто пишите через запятую. Пример:
+          https://мяу Котики, https://мяу2 Больше-котиков</p>
+        <input type="text" id="users-quick-Links" placeholder=". . ." data-setting="userQuickLinks" />
+      </div>
 
-    <hr>
-    <div>
-      <h2>Уведомления</h2>
-      <p>Уведомлять звуком, когда:</p>
-    </div>
-    
-    <div>
-      <input type="checkbox" id="notification-PM" data-setting="notificationPM" />
-      <label for="notification-PM">Новое Личное Сообщение</label>
-    </div>
+      <hr id="uwu-hr" class="uwu-hr">
+      <div>
+        <h2>Уведомления</h2>
+        <p>Уведомлять звуком, когда:</p>
+      </div>
+      
+      <div>
+        <input type="checkbox" id="notification-PM" data-setting="notificationPM" />
+        <label for="notification-PM">Новое Личное Сообщение</label>
+      </div>
 
-    <div>
-      <input type="checkbox" id="notification-Action-End" data-setting="notificationActionEnd" />
-      <label for="notification-Action-End">Действие закончилось</label>
-    </div>
+      <div>
+        <input type="checkbox" id="notification-Action-End" data-setting="notificationActionEnd" />
+        <label for="notification-Action-End">Действие закончилось</label>
+      </div>
 
-    <div>
-      <input type="checkbox" id="notification-In-Mouth" data-setting="notificationInMouth" />
-      <label for="notification-In-Mouth">Кто-то меня поднял</label>
-    </div>
+      <div>
+        <input type="checkbox" id="notification-In-Mouth" data-setting="notificationInMouth" />
+        <label for="notification-In-Mouth">Кто-то меня поднял</label>
+      </div>
 
-    <div>
-      <input type="checkbox" id="notification-In-Fight-Mode" data-setting="notificationInFightMode" />
-      <label for="notification-In-Fight-Mode">Ввели в боевую стойку через Т+2 или Т+3</label>
-    </div>
+      <div>
+        <input type="checkbox" id="notification-In-Fight-Mode" data-setting="notificationInFightMode" />
+        <label for="notification-In-Fight-Mode">Ввели в боевую стойку через Т+2 или Т+3</label>
+      </div>
 
-    <div>
-      <p>Дублирует время действий на название браузерной вкладки.</p>
-      <input type="checkbox" id="duplicate-Time-In-Browser-Tab" data-setting="duplicateTimeInBrowserTab" />
-      <label for="duplicate-Time-In-Browser-Tab">Показывать время действия на вкладке</label>
-    </div>
+      <div>
+        <p>Дублирует время действий на название браузерной вкладки.</p>
+        <input type="checkbox" id="duplicate-Time-In-Browser-Tab" data-setting="duplicateTimeInBrowserTab" />
+        <label for="duplicate-Time-In-Browser-Tab">Показывать время действия на вкладке</label>
+      </div>
 
-    <div>
-      <p>Подсказывает оставшееся время до возможности понюхать.</p>
-      <input type="checkbox" id="show-Hint-When-To-Sniff" data-setting="showHintWhenToSniff" />
-      <label for="show-Hint-When-To-Sniff">Когда нюхать?</label>
-    </div>
+      <div>
+        <p>Подсказывает оставшееся время до возможности понюхать.</p>
+        <input type="checkbox" id="show-Hint-When-To-Sniff" data-setting="showHintWhenToSniff" />
+        <label for="show-Hint-When-To-Sniff">Когда нюхать?</label>
+      </div>
 
-    <hr>
-    <h2>Общение</h2>
+      <hr id="uwu-hr" class="uwu-hr">
+      <h2>Общение</h2>
 
-    <div>
-      <p>Автоматически сохраняет и восстанавливает редактируемый текст блога. Теперь вы не потеряете его случайно.</p>
-      <input type="checkbox" id="restore-Blog-Creation" data-setting="restoreBlogCreation" />
-      <label for="restore-Blog-Creation">Восстановление содержимого Блога</label>
-    </div>
+      <div>
+        <p>Автоматически сохраняет и восстанавливает редактируемый текст блога. Теперь вы не потеряете его случайно.</p>
+        <input type="checkbox" id="restore-Blog-Creation" data-setting="restoreBlogCreation" />
+        <label for="restore-Blog-Creation">Восстановление содержимого Блога</label>
+      </div>
 
-    <div>
-      <p>Говорит само за себя.</p>
-      <input type="checkbox" id="more-BB-Codes" data-setting="moreBBCodes" />
-      <label for="more-BB-Codes">Дополнительные BB-Коды</label>
-    </div>
+      <div>
+        <p>Говорит само за себя.</p>
+        <input type="checkbox" id="more-BB-Codes" data-setting="moreBBCodes" />
+        <label for="more-BB-Codes">Дополнительные BB-Коды</label>
+      </div>
 
-    <div>
-      <p>Позволяет предпросматривать отправляемые сообщения в лентах и блогах.</p>
-      <input type="checkbox" id="comment-Preview" data-setting="commentPreview" />
-      <label for="comment-Preview">Предпросмотр сообщений</label>
-    </div>
+      <div>
+        <p>Позволяет предпросматривать отправляемые сообщения в лентах и блогах.</p>
+        <input type="checkbox" id="comment-Preview" data-setting="commentPreview" />
+        <label for="comment-Preview">Предпросмотр сообщений</label>
+      </div>
 
-    <div>
-      <p>Позволяет "отвечать" и "цитировать" сообщения в лентах и блогах. При цитировании вы можете выделить кусочек 
-      текста на который хотите ответить.</p>
-      <input type="checkbox" id="more-Comment-Buttons" data-setting="moreCommentButtons" />
-      <label for="more-Comment-Buttons">Кнопки "Отправить" и "Цитировать"</label>
+      <div>
+        <p>Позволяет "отвечать" и "цитировать" сообщения в лентах и блогах. При цитировании вы можете выделить кусочек 
+        текста на который хотите ответить.</p>
+        <input type="checkbox" id="more-Comment-Buttons" data-setting="moreCommentButtons" />
+        <label for="more-Comment-Buttons">Кнопки "Отправить" и "Цитировать"</label>
+      </div>
+
+      <div>
+        <p>Оборачивает предпросмотр письма в оболочку, похожую на ту которая во "Входящие".</p>
+        <input type="checkbox" id="ls-Wrap-Preview" data-setting="lsWrapPreview" />
+        <label for="ls-Wrap-Preview">Наглядный предпросмотр письма</label>
+      </div>
+
     </div>
 
-    <div>
-      <p>Оборачивает предпросмотр письма в оболочку, похожую на ту которая во "Входящие".</p>
-      <input type="checkbox" id="ls-Wrap-Preview" data-setting="lsWrapPreview" />
-      <label for="ls-Wrap-Preview">Наглядный предпросмотр письма</label>
-    </div>
+    <div id="modules-panel">
 
-  </div>
+      <h2>Главное</h2>
+      <div>
+        <p>Постоянное отображание Панели Расширенных Настроек в Игровой. Сама по себе пустая.</p>
+        <input type="checkbox" id="extended-settings-Panel" data-setting="extendedSettingsPanel" />
+        <label for="extended-settings-Panel">⚙️Панель Расширенных Настроек</label>
+      </div>
 
-  <div id="modules-panel">
+      <div>
+        <p>Отображает уведомление в ⚙️Панели Расширенных настроек в Игровой.</p>
+        <input type="checkbox" id="show-Update-Notification" data-setting="showUpdateNotification" />
+        <label for="show-Update-Notification">Уведомлять об обновлении Скрипта/Мода UwU</label>
+      </div>
 
-    <h2>Главное</h2>
-    <div>
-      <p>Постоянное отображание Панели Расширенных Настроек в Игровой. Сама по себе пустая.</p>
-      <input type="checkbox" id="extended-settings-Panel" data-setting="extendedSettingsPanel" />
-      <label for="extended-settings-Panel">⚙️Панель Расширенных Настроек</label>
-    </div>
+      <div>
+        <p>⚙️Панели Расширенных Настроек не будет так скучно с рандомными фразами.</p>
+        <input type="checkbox" id="show-Splash-Screens" data-setting="showSplashScreens" />
+        <label for="show-Splash-Screens">Показывать Splash надписи.</label>
+      </div>
 
-    <div>
-      <p>Отображает уведомление в ⚙️Панели Расширенных настроек в Игровой.</p>
-      <input type="checkbox" id="show-Update-Notification" data-setting="showUpdateNotification" />
-      <label for="show-Update-Notification">Уведомлять об обновлении Скрипта/Мода UwU</label>
-    </div>
+      <div>
+        <p>Скрывать или отображать расширенные подсказки к настройкам. Привет, я та самая расширенная подсказка. Делает Настройки CatWar UwU очень компактным на вид.</p>
+        <input type="checkbox" id="extended-Hints" data-setting="extendedHints" />
+        <label for="extended-Hints">Расширенные подсказки</label>
+      </div>
 
-    <div>
-      <p>⚙️Панели Расширенных Настроек не будет так скучно с рандомными фразами.</p>
-      <input type="checkbox" id="show-Splash-Screens" data-setting="showSplashScreens" />
-      <label for="show-Splash-Screens">Показывать Splash надписи.</label>
-    </div>
+    <hr id="uwu-hr" class="uwu-hr">
+      <h2>Сборник стилей</h2>
+      <p>Онлайн сборник стилей от Разработчика.</p>
+    <hr id="uwu-hr" class="uwu-hr">
+      <div id="module-info">
+        <!-- Сюда модули -->
+      </div>
 
-    <div>
-      <p>Скрывать или отображать расширенные подсказки к настройкам. Привет, я та самая расширенная подсказка. Делает Настройки CatWar UwU очень компактным на вид.</p>
-      <input type="checkbox" id="extended-Hints" data-setting="extendedHints" />
-      <label for="extended-Hints">Расширенные подсказки</label>
-    </div>
+    <hr id="uwu-hr" class="uwu-hr">
+      <h2>Импорт/Экспорт</h2>
 
-  <hr>
-    <h2>Сборник стилей</h2>
-    <p>Онлайн сборник стилей от Разработчика.</p>
-  <hr>
-    <div id="module-info">
-      <!-- Сюда модули -->
-    </div>
+      <div>
+        <p>Импорт/Экспорт всех настроек (Пока без расставленных блоков Компактной Игровой, Сборника Стилей и Минного поля).</p>
+        <input type="text" id="exportSettings" placeholder="Экспорт"/>
+        <input type="text" id="importSettings" placeholder="Импорт"/>
+        <button id="importSettingsButton" class="uwu-button">Вставить</button>
+      </div>
+      
+      <div>
+        <p>Удаляет все настройки. В очень редких случаях может помочь при проблемных проблемах.</p>
+        <button id="resetAllSaves" class="uwu-button remove-button">Сброс сохранений</button>
+      </div>
 
-  <hr>
-    <h2>Импорт/Экспорт</h2>
-
-    <div>
-      <p>Импорт/Экспорт всех настроек (Пока без расставленных блоков Компактной Игровой, Сборника Стилей и Минного поля).</p>
-      <input type="text" id="exportSettings" placeholder="Экспорт"/>
-      <input type="text" id="importSettings" placeholder="Импорт"/>
-      <button id="importSettingsButton" class="uwu-button">Вставить</button>
-    </div>
-    
-    <div>
-      <p>Удаляет все настройки. В очень редких случаях может помочь при проблемных проблемах.</p>
-      <button id="resetAllSaves" class="uwu-button remove-button">Сброс сохранений</button>
     </div>
 
   </div>
-
-  <hr>
+  <hr id="uwu-hr" class="uwu-hr-head">
 </div>
 `;
 // ====================================================================================================================
 //   . . . HTML БЛОК НОВОСТЕЙ . . .
 // ====================================================================================================================
-const newsPanel = `
+const newsPanel = // html
+`
 <div id="news-panel">
   <button id="news-button">
-    v${current_uwu_version} - 🌿 Кнопки "Ответить" и "Цитировать", шаблонный предпросмотр отправляемых писем,
-     БУ цифрой в профиле игроков и калькуляторы!
+    v${current_uwu_version} - 🍂 Темы Настроек и Общая полировка!
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
-    <p>— 🌸 Ищите новые функции во вкладке Надстройки -> Общение и "О котах"!</p>
-    <hr>
+    <p>— Возможность переименовать Вкладки и Локации/Таблицы минного поля, выбор между вертикальным и горизонтальным 
+    дизайном окна минного поля и Настройка цвета границы клеток Игровой!</p>
+    <hr id="uwu-hr" class="uwu-hr">
     <h3>Внешний вид</h3>
-    <p>— 🍃"Настройки уведомлений" просто в "Уведомления".</p>
-    <p>—— v1.29.1</p>
-    <p>—— Подправлено описание с "Мой переход уменьшен" на "Мой переход изменён"</p>
-    <hr>
+    <p>— Теперь есть заглушка-картинка, если на комментарий не удалось поставить аватарку.</p>
+    <p>— Выпадающие списки теперь под ширину содержимого.</p>
+    <p>— Вернули линии в чате Игровой.</p>
+    <p>— Квадратные скобки в чате Игровой теперь тоже наклонные.</p>
+    <p>— Обёртка для кнопок Вкладок и Локации/Таблиц для более легкого восприятия.</p>
+    <p>— "Моё местонахождение" теперь без назойливой белой подложки.</p>
+    <hr id="uwu-hr" class="uwu-hr">
     <h3>Изменения кода</h3>
-    <p>— 🍏</p>
-    <hr>
-    <p>Дата выпуска: 29.08.24</p>
+    <p>— Нумерация ячеек больше не должна нумеровать БР стрелы при фоновом обновлении страницы.</p>
+    <p>— hr теперь hr id="uwu-hr", чинит потеряшку и позволяет легче накладывать стили.</p>
+    <p>— Перепись функции createCustomSelect от повторений и облегчения использования.</p>
+    <p>— Незначительная сортировка css стилей из-за тем Настроек. Наконец-то хотя бы начал.</p>
+    <p>— Починился калькулятор возраста и лун. Теперь пишет дату регистрации и рождения по кошачьему времени.</p>
+    <p>— В коде появились комментарии для работы VS плагина "es6-string-html". 
+    Удобно и красиво подсвечивает HTML и CSS в коде.</p>
+    <hr id="uwu-hr" class="uwu-hr">
+    <p>Дата выпуска: 13.09.24</p>
   </div>
 </div>
 `;
 // ====================================================================================================================
 //   . . . HTML ПАНЕЛЬ РАСШИРЕННЫХ НАСТРОЕК . . .
 // ====================================================================================================================
-const extendedSettingsButton = `
+const extendedSettingsButton = // html
+`
 <div id="uwu-extended-settings">
   <button type="button" id="extended-settings-button">
     <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png" alt="Иконка"
@@ -1132,7 +1163,8 @@ const extendedSettingsButton = `
 // ====================================================================================================================
 //   . . . HTML БЛОК РУЧНОГО УПРАВЛЕНИЯ ПОГОДЫ . . .
 // ====================================================================================================================
-const manualWeatherPanel = `
+const manualWeatherPanel = // html
+`
 <div id="manual-weather-panel">
 <p>Изменения, сделанные в этой панели, носят временный характер и не сохраняются.</p>
 <h3>Переключить погоду</h3>
@@ -1187,15 +1219,29 @@ const manualWeatherPanel = `
 //   . . . ГЛАВНЫЙ CSS СТИЛЬ . . .
 // ====================================================================================================================
 // TODO - Унифицировать шрифты, цвета текстов, прозрачность, закруглённость штучек ну кароче всё как надо чтобы не сделать в итоге лабиринт.
-const css_uwu_main = `
+const css_uwu_main =
+`
+#uwu-settings {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 #uwusettings {
   font-family: "Montserrat", sans-serif;
   margin: 0 auto;
-  backdrop-filter: blur(16px);
-  background-color: rgba(255, 255, 255, 0.03);
   border-radius: 20px;
-  padding: 15px;
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.main-settings-container {
+  padding: 10px 15px 10px 15px;
+}
+
+#uwusettings-main {
+  padding: 0px 15px 0px 15px;
+}
+
+#news-panel {
+  padding: 5px 15px 15px 15px;
 }
 
 .main-settings-container {
@@ -1232,58 +1278,14 @@ const css_uwu_main = `
   list-style-type: "+ ";
 }
 
-#uwusettings hr {
+.uwu-hr-head {
+  border: rgba(255, 255, 255, 0.1) solid;
+  border-radius: 0px;
+}
+
+.uwu-hr {
   border: rgba(255, 255, 255, 0.1) solid;
   border-radius: 15px;
-}
-
-#uwusettings input[type="checkbox"] {
-  margin-right: 8px;
-  appearance: none;
-  transform: translate(-10%, 30%);
-  width: 35px;
-  height: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-}
-
-#uwusettings input[type="checkbox"]:checked {
-  background-color: #90ff78a8;
-}
-
-#uwusettings input[type="checkbox"]:not(:checked) {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-#uwusettings input[type="checkbox"]:before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 4px;
-  transform: translate(-50%, -50%);
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: background-color 0.2s ease-in-out, left 0.2s ease-in-out;
-}
-
-#uwusettings input[type="checkbox"]:checked:before {
-  left: calc(100% - 4px);
-}
-
-#uwusettings input[type="text"] {
-  width: 150px;
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 8px;
-  border-radius: 10px;
-  outline: none;
-  margin: 5px;
-  margin-left: 0px;
 }
 
 #uwusettings .parameters-color-table,
@@ -1303,7 +1305,13 @@ const css_uwu_main = `
   margin-top: 8px;
 }
 
-.rounded-image {
+.header-rounded-image {
+  background-repeat: repeat;
+  background-attachment: fixed;
+  border-radius: 20px 20px 0px 0px;
+}
+
+.main-rounded-image {
   background-repeat: repeat;
   background-attachment: fixed;
   border-radius: 20px;
@@ -1349,7 +1357,7 @@ const css_uwu_main = `
   margin: 10px;
   display: flex;
   flex-direction: column;
-  align-items: stretch; /* Изменено */
+  align-items: stretch;
   padding: 15px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
@@ -1485,6 +1493,18 @@ const css_uwu_main = `
 
 #uwu-buttonRow1-settings > div > button.tab-button.active, #uwu-buttonRow2-settings > div > button.table-button.active {
   background-color: #abf6ffb0;
+}
+
+#uwu-buttonRow1-settings > .tab-container,
+#uwu-buttonRow2-settings > .table-container {
+  border-radius: 15px;
+  background-color: #54545473;
+  margin-right: 5px;
+  padding-left: 4px;
+  padding-right: 2px;
+  padding-top: 2px;
+  border-bottom-width: 2px;
+  padding-bottom: 2px;
 }
 
 #uwu-global-container {
@@ -1766,7 +1786,7 @@ const css_uwu_main = `
 
 .select-selected, .uwu-select-selected {
   margin-top: 10px;
-  width: 120px;
+  width: fit-content;
   border-radius: 10px;
   color: white;
   background-color: #5c5c5c;
@@ -1777,7 +1797,7 @@ const css_uwu_main = `
 }
 
 .uwu-select-selected {
-  width: 160px;
+  width: fit-content;
 }
 
 .select-items, uwu-select-items {
@@ -1785,7 +1805,7 @@ const css_uwu_main = `
   display: none;
   position: absolute;
   border-radius: 10px;
-  width: 120px;
+  width: max-content;
   color: white;
   background-color: #5c5c5c;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
@@ -1858,6 +1878,7 @@ const css_uwu_main = `
   overflow-y: scroll;
 }
 `;
+
 document.head.insertAdjacentHTML(
   "beforeend",
   `<style id="css-uwu-main">${css_uwu_main}</style>`
@@ -1867,7 +1888,13 @@ document.head.insertAdjacentHTML(
 //   . . . ПРОЗРАЧНЫЙ CSS СТИЛЬ . . .
 // ====================================================================================================================
 // Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд
-const css_uwu_glass = `
+const css_uwu_glass = // css
+`
+#uwusettings {
+  backdrop-filter: blur(16px);
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
 .uwu-button {
   background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1910,11 +1937,174 @@ const css_uwu_glass = `
 .uwu-range-slider::-webkit-slider-thumb {
   transform: translateY(-35%);
 }
+
+#uwusettings input[type="checkbox"] {
+  margin-right: 8px;
+  appearance: none;
+  transform: translate(-10%, 30%);
+  width: 35px;
+  height: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+#uwusettings input[type="checkbox"]:checked {
+  background-color: #90ff78a8;
+}
+
+#uwusettings input[type="checkbox"]:not(:checked) {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#uwusettings input[type="checkbox"]:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  transform: translate(-50%, -50%);
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background-color 0.2s ease-in-out, left 0.2s ease-in-out;
+}
+
+#uwusettings input[type="checkbox"]:checked:before {
+  left: calc(100% - 4px);
+}
+
+#uwusettings input[type="text"] {
+  width: 150px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px;
+  border-radius: 10px;
+  outline: none;
+  margin: 5px;
+  margin-left: 0px;
+}
 `;
-document.head.insertAdjacentHTML(
-  "beforeend",
-  `<style id="css-uwu-glass">${css_uwu_glass}</style>`
-);
+// ====================================================================================================================
+//   . . . ТЁМНАЯ ТЕМА . . .
+// ====================================================================================================================
+const css_uwu_dark = // css
+`
+#uwusettings {
+  background-color: #242424;
+  color: #dddddd;
+}
+
+#uwusettings-header-glass {
+  border-radius: 20px 20px 0px 0px;
+  backdrop-filter: blur(16px) brightness(0.9);
+}
+
+#news-button {
+  color: #dddddd;
+}
+
+.uwu-button {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 5px;
+  margin-left: 0px;
+}
+
+.uwu-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.uwu-range-slider {
+  width: 100%;
+  cursor: pointer;
+  -webkit-appearance: none;
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 10px;
+  height: 10px;
+  outline: none;
+}
+
+.uwu-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+
+.uwu-range-slider::-webkit-slider-thumb {
+  transform: translateY(-35%);
+}
+
+#uwusettings input[type="checkbox"] {
+  margin-right: 8px;
+  appearance: none;
+  transform: translate(-10%, 30%);
+  width: 35px;
+  height: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+#uwusettings input[type="checkbox"]:checked {
+  background-color: #90ff78a8;
+}
+
+#uwusettings input[type="checkbox"]:not(:checked) {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#uwusettings input[type="checkbox"]:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  transform: translate(-50%, -50%);
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background-color 0.2s ease-in-out, left 0.2s ease-in-out;
+}
+
+#uwusettings input[type="checkbox"]:checked:before {
+  left: calc(100% - 4px);
+}
+
+#uwusettings input[type="text"] {
+  width: 150px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px;
+  border-radius: 10px;
+  outline: none;
+  margin: 5px;
+  margin-left: 0px;
+}
+`;
+// ====================================================================================================================
+//   . . . КЛАССИЧЕСКАЯ ТЕМА . . .
+// ====================================================================================================================
+// лол
+const css_uwu_classic = `
+
+`;
 // ====================================================================================================================
 //  . . . СОХРАНЕНИЯ И ЗАГРУЗКА НАСТРОЕК . . .
 // ====================================================================================================================
@@ -2033,16 +2223,17 @@ function updateSaveButtonState() {
 // ====================================================================================================================
 //  . . . ВНЕШНИЙ ВИД ПАНЕЛИ НАСТРОЕК . . .
 // ====================================================================================================================
+function applyBackgroundImage(element, backgroundImage) {
+  element.style.backgroundImage = backgroundImage;
+}
+
 function createSettingsBlock(blockId, content) {
   const siteTable = document.querySelector("#site_table");
   const isMobile = siteTable.getAttribute("data-mobile") === "0";
-  const backgroundImage = window.getComputedStyle(document.body).backgroundImage;
 
   const settingsElement = document.createElement("div");
-  settingsElement.classList.add("rounded-image");
   settingsElement.id = blockId;
   settingsElement.innerHTML = content;
-  settingsElement.style.backgroundImage = backgroundImage;
 
   const settingsContainer = isMobile
     ? document.querySelector("#branch")
@@ -2086,58 +2277,44 @@ if (targetSettings.test(window.location.href)) {
   // ====================================================================================================================
   //  . . . ЦВЕТ ТЕКСТА НАСТРОЕК . . .
   // ====================================================================================================================
-  const bodyColor = getComputedStyle(document.body).color;
-
-  const option2 = document.querySelector(
-    '#uwu-Settings-Text-Color-Step option[value="2"]'
-  );
-  option2.style.color = bodyColor;
+  function applySettingsTheme(theme) {
+    let css;
+    const settingsBlock = document.getElementById("uwu-settings");
+    const settingsHeader = document.getElementById("uwusettings-header");
   
-  function setupTextColorListener() {
-    const manualUwUSettingsTextColor = document.getElementById(
-      "manualUwUSettingsTextColor"
-    );
-    const uwusettings = document.getElementById("uwusettings");
-  
-    if (manualUwUSettingsTextColor && uwusettings) {
-      function setTextColor(value) {
-        let textColor;
-        switch (value) {
-          case 1:
-            textColor = "#f1f1f1";
-            break;
-          case 2:
-            textColor = bodyColor;
-            break;
-          case 3:
-            textColor = "black";
-            break;
-          default:
-            textColor = "";
-            break;
-        }
-  
-        uwusettings.style.color = textColor;
-  
-        const style = document.createElement('style');
-        style.innerHTML = `
-          #news-button, .uwu-button {
-            color: ${textColor} !important;
-          }
-        `;
-  
-        document.head.appendChild(style);
-      }
-  
-      setTextColor(parseInt(manualUwUSettingsTextColor.value));
-  
-      manualUwUSettingsTextColor.addEventListener("change", function () {
-        setTextColor(parseInt(manualUwUSettingsTextColor.value));
-      });
+    switch (theme) {
+      case "classic":
+        css = css_uwu_classic;
+        break;
+      case "dark":
+        css = css_uwu_dark;
+        const backgroundImageDark = window.getComputedStyle(document.body).backgroundImage;
+        applyBackgroundImage(settingsHeader, backgroundImageDark);
+        settingsHeader.classList.add("header-rounded-image");
+        break;
+      case "glass":
+        css = css_uwu_glass;
+        const backgroundImageGlass = window.getComputedStyle(document.body).backgroundImage;
+        applyBackgroundImage(settingsBlock, backgroundImageGlass);
+        settingsBlock.classList.add("main-rounded-image");
+        break;
+      default:
+        css = css_uwu_classic;
+        break;
     }
+  
+    const oldStyle = document.getElementById("css-uwu-theme");
+    if (oldStyle) {
+      oldStyle.remove();
+    }
+  
+    document.head.insertAdjacentHTML(
+      "beforeend",
+      `<style id="css-uwu-theme">${css}</style>`
+    );
   }
   
-  setupTextColorListener();
+  applySettingsTheme(settings.settingsTheme);
   // ====================================================================================================================
   //  . . . ШРИФТ ГРОМКОСТИ ЧАТА . . .
   // ====================================================================================================================
@@ -2442,24 +2619,6 @@ if (targetSettings.test(window.location.href)) {
     { name: "Звук 3", id: "notificationSound3" },
   ];
 
-  if (settings["myNameNotificationSound"]) {
-    const selectedOption = notificationSounds.find(
-      (option) => option.id === settings["myNameNotificationSound"]
-    );
-    document
-      .getElementById("myNameNotificationSound")
-      .querySelector(".select-selected").textContent = selectedOption.name;
-  }
-
-  if (settings["climbingRefreshNotificationSound"]) {
-    const selectedOption = notificationSounds.find(
-      (option) => option.id === settings["climbingRefreshNotificationSound"]
-    );
-    document
-      .getElementById("climbingRefreshNotificationSound")
-      .querySelector(".select-selected").textContent = selectedOption.name;
-  }
-
   createCustomSelect("climbingRefreshNotificationSound", notificationSounds);
   createCustomSelect("myNameNotificationSound", notificationSounds);
   // ==============================================================================
@@ -2469,16 +2628,59 @@ if (targetSettings.test(window.location.href)) {
     { name: "Целиком", id: "3" },
   ];
 
-  if (settings["showOtherCatsList"]) {
-    const selectedOption = howShowOtherCatsList.find(
-      (option) => option.id === settings["showOtherCatsList"]
-    );
-    document
-      .getElementById("showOtherCatsList")
-      .querySelector(".select-selected").textContent = selectedOption.name;
-  }
-
   createCustomSelect("showOtherCatsList", howShowOtherCatsList);
+  // ==============================================================================
+  const themeOptions = [
+    { id: "classic", name: "Классическая" },
+    { id: "dark", name: "Тёмная" },
+    { id: "glass", name: "Стеклянная" },
+  ];
+  
+  createCustomSelect("settingsTheme", themeOptions);
+  // ==============================================================================
+  const climbingPanelOrientations = [
+    { id: "vertical", name: "Вертикальный" },
+    { id: "horizontal", name: "Горизонтальный" },
+  ]
+
+  createCustomSelect("climbingPanelOrientation", climbingPanelOrientations);
+  // ====================================================================================================================
+  //   . . . СОЗДАНИЕ ВЫПАДАЮЩИХ СПИСКОВ . . .
+  // ====================================================================================================================
+  function createCustomSelect(selectId, options) {
+  
+    const selectContainer = document.getElementById(selectId);
+    const selectedElement = selectContainer.querySelector(".select-selected");
+    const optionsContainer = selectContainer.querySelector(".select-items");
+  
+    if (settings && settings[selectId] !== undefined) {
+      const selectedOption = options.find(
+        (option) => option.id === settings[selectId]
+      );
+      if (selectedOption) {
+        selectedElement.textContent = selectedOption.name;
+      }
+    }
+  
+    options.forEach((option, index) => {
+      const optionElement = document.createElement("div");
+      optionElement.textContent = option.name;
+      optionElement.dataset.id = option.id;
+  
+      optionElement.addEventListener("click", () => {
+        selectedElement.textContent = option.name;
+        settings[selectId] = option.id;
+        saveSettings();
+        selectContainer.classList.remove("active");
+      });
+  
+      optionsContainer.appendChild(optionElement);
+    });
+  
+    selectedElement.addEventListener("click", () => {
+      selectContainer.classList.toggle("active");
+    });
+  }
   // ====================================================================================================================
   //  . . . КНОПКА НОВОСТЕЙ . . .
   // ====================================================================================================================
@@ -2537,33 +2739,6 @@ if (targetSettings.test(window.location.href)) {
     "myNameNotificationSound",
     "notificationMyNameVolume"
   );
-  // ====================================================================================================================
-  //   . . . СОЗДАНИЕ ВЫПАДАЮЩИХ СПИСКОВ . . .
-  // ====================================================================================================================
-  function createCustomSelect(selectId, options) {
-    const selectContainer = document.getElementById(selectId);
-    const selectedElement = selectContainer.querySelector(".select-selected");
-    const optionsContainer = selectContainer.querySelector(".select-items");
-
-    options.forEach((option, index) => {
-      const optionElement = document.createElement("div");
-      optionElement.textContent = option.name;
-      optionElement.dataset.id = option.id;
-
-      optionElement.addEventListener("click", () => {
-        selectedElement.textContent = option.name;
-        settings[selectId] = option.id;
-        saveSettings();
-        selectContainer.classList.remove("active");
-      });
-
-      optionsContainer.appendChild(optionElement);
-    });
-
-    selectedElement.addEventListener("click", () => {
-      selectContainer.classList.toggle("active");
-    });
-  }
   // ====================================================================================================================
   //  . . . ИМПОРТ / ЭКСПОРТ НАСТРОЕК . . .
   // ====================================================================================================================
@@ -2740,19 +2915,19 @@ if (targetSettings.test(window.location.href)) {
   const tabManager = {
     tabs: [],
     currentTabIndex: 0,
-
+  
     createTab(name) {
       const newTab = {
         name: name,
         tables: [],
         currentTableId: 0,
       };
-
+  
       this.tabs.push(newTab);
       this.render();
       this.switchTab(this.tabs.length - 1);
     },
-
+  
     createTable(
       tableName = `Локация ${this.tabs[this.currentTabIndex].tables.length + 1}`
     ) {
@@ -2761,7 +2936,7 @@ if (targetSettings.test(window.location.href)) {
       this.saveState();
       this.render();
     },
-
+  
     removeTable(tableIndex) {
       const currentTab = this.tabs[this.currentTabIndex];
       if (currentTab && currentTab.tables[tableIndex]) {
@@ -2776,7 +2951,7 @@ if (targetSettings.test(window.location.href)) {
         this.render();
       }
     },
-
+  
     removeTab(index) {
       this.tabs.splice(index, 1);
       if (index === this.currentTabIndex) {
@@ -2785,12 +2960,12 @@ if (targetSettings.test(window.location.href)) {
       this.saveState();
       this.render();
     },
-
+  
     switchTab(index) {
       this.currentTabIndex = index;
       this.render();
     },
-
+  
     switchTable(tableIndex) {
       const currentTab = this.tabs[this.currentTabIndex];
       if (currentTab) {
@@ -2799,45 +2974,73 @@ if (targetSettings.test(window.location.href)) {
         this.render();
       }
     },
-
+  
+    renameTab(index) {
+      const newName = prompt("Введите новое имя вкладки:", this.tabs[index].name);
+      if (newName) {
+        this.tabs[index].name = newName;
+        this.saveState();
+        this.render();
+      }
+    },
+  
+    renameTable(tableIndex) {
+      const currentTab = this.tabs[this.currentTabIndex];
+      if (currentTab) {
+        const newName = prompt("Введите новое имя поля:", currentTab.tables[tableIndex].name);
+        if (newName) {
+          currentTab.tables[tableIndex].name = newName;
+          this.saveState();
+          this.render();
+        }
+      }
+    },
+  
     saveState() {
       localStorage.setItem("uwu_climbingPanelState", JSON.stringify(this));
     },
-
+  
     render() {
       this.renderTabs();
       this.renderTables();
     },
-
+  
     renderTabs() {
       const tabRow = document.getElementById("uwu-buttonRow1-settings");
       tabRow.innerHTML = "";
-
+  
       this.tabs.forEach((tab, index) => {
         const tabButton = document.createElement("button");
         tabButton.textContent = tab.name;
         tabButton.classList.add("tab-button");
-
+  
         if (index === this.currentTabIndex) {
           tabButton.classList.add("active");
         }
-
+  
         tabButton.addEventListener("click", () => this.switchTab(index));
-
+  
         const removeButton = document.createElement("button");
         removeButton.textContent = "X";
         removeButton.classList.add("remove-button");
-
+  
         removeButton.addEventListener("click", () => this.removeTab(index));
-
+  
+        const renameButton = document.createElement("button");
+        renameButton.textContent = "✎";
+        renameButton.classList.add("rename-button");
+  
+        renameButton.addEventListener("click", () => this.renameTab(index));
+  
         const tabContainer = document.createElement("div");
         tabContainer.classList.add("tab-container");
         tabContainer.appendChild(tabButton);
+        tabContainer.appendChild(renameButton);
         tabContainer.appendChild(removeButton);
-
+  
         tabRow.appendChild(tabContainer);
       });
-
+  
       const addTabButton = document.createElement("button");
       addTabButton.textContent = "+";
       addTabButton.classList.add("add-button");
@@ -2849,69 +3052,76 @@ if (targetSettings.test(window.location.href)) {
       });
       tabRow.appendChild(addTabButton);
     },
-
+  
     renderTables() {
       const tableRow = document.getElementById("uwu-buttonRow2-settings");
       tableRow.innerHTML = "";
-
+  
       const currentTab = this.tabs[this.currentTabIndex];
-
+  
       if (currentTab) {
         currentTab.tables.forEach((table, index) => {
           const tableButton = document.createElement("button");
           tableButton.textContent = table.name;
           tableButton.classList.add("table-button");
-
+  
           tableButton.addEventListener("click", () => this.switchTable(index));
-
+  
           const removeButton = document.createElement("button");
           removeButton.textContent = "X";
           removeButton.classList.add("remove-button");
-
+  
           removeButton.addEventListener("click", () => this.removeTable(index));
-
+  
+          const renameButton = document.createElement("button");
+          renameButton.textContent = "✎";
+          renameButton.classList.add("rename-button");
+  
+          renameButton.addEventListener("click", () => this.renameTable(index));
+  
           const tableContainer = document.createElement("div");
           tableContainer.classList.add("table-container");
           tableContainer.appendChild(tableButton);
+          tableContainer.appendChild(renameButton);
           tableContainer.appendChild(removeButton);
-
+  
           tableRow.appendChild(tableContainer);
         });
-
+  
         const addTableButton = document.createElement("button");
         addTableButton.textContent = "+";
         addTableButton.classList.add("add-button");
-
+  
         addTableButton.addEventListener("click", () => {
           const tableName = prompt("Введите имя поля:");
           if (tableName) {
             this.createTable(tableName);
           }
         });
-
+  
         tableRow.appendChild(addTableButton);
       }
     },
   };
-
+  
   const savedState = localStorage.getItem("uwu_climbingPanelState");
   if (!savedState) {
     tabManager.createTab("Вкладка 1");
     for (let i = 0; i < 5; i++) {
       tabManager.createTable(`Поле ${i + 1}`);
     }
-
+  
     tabManager.createTab("Вкладка 2");
     for (let i = 0; i < 5; i++) {
       tabManager.createTable(`Поле ${i + 1}`);
     }
-
+  
     tabManager.saveState();
   } else {
     const state = JSON.parse(savedState);
     Object.assign(tabManager, state);
   }
-
+  
   tabManager.render();
 }
 // ====================================================================================================================
@@ -3251,23 +3461,21 @@ if (window.location.href !== targetCW3) {
 
         comments.forEach((comment) => {
           const authorLink = comment.querySelector(".author");
-          if (authorLink) {
-            const catId = authorLink
-              .getAttribute("href")
-              .match(/\/cat(\d+)/)?.[1];
-            if (catId) {
-              const avatarImg = document.createElement("img");
-              avatarImg.alt = "Аватар пользователя";
-              avatarImg.classList.add("avatar-img");
+          const catId = authorLink ? authorLink.getAttribute("href").match(/\/cat(\d+)/)?.[1] : null;
 
-              loadAvatar(catId, (avatarUrl) => {
-                if (avatarUrl) {
-                  avatarImg.src = avatarUrl;
-                  comment.insertBefore(avatarImg, comment.firstChild);
-                }
-              });
-            }
+          const avatarImg = document.createElement("img");
+          avatarImg.alt = "Аватар пользователя";
+          avatarImg.classList.add("avatar-img");
+
+          if (!catId) {
+            avatarImg.src = "https://e.catwar.su/avatar/0.jpg";
+          } else {
+            loadAvatar(catId, (avatarUrl) => {
+              avatarImg.src = avatarUrl || "https://e.catwar.su/avatar/0.jpg";
+            });
           }
+
+          comment.insertBefore(avatarImg, comment.firstChild);
         });
       }
     }, 200);
@@ -3281,11 +3489,8 @@ if (window.location.href !== targetCW3) {
       const url = `https://e.catwar.su/avatar/${catId}.${formats[currentFormat]}`;
       const img = new Image();
 
-      img.onload = function () {
-        callback(url);
-      };
-
-      img.onerror = function () {
+      img.onload = () => callback(url);
+      img.onerror = () => {
         currentFormat++;
         if (currentFormat < formats.length) {
           tryNextFormat();
@@ -3696,7 +3901,8 @@ if (window.location.href === targetCW3) {
     catInfoElement.appendChild(closeButton);
 
     const css_catDefects = document.createElement("style");
-    css_catDefects.innerHTML = `
+    css_catDefects.innerHTML = // css
+    `
       .cat-info {
         pointer-events: auto;
         position: fixed;
@@ -3840,7 +4046,8 @@ if (window.location.href === targetCW3) {
 
     let { catInfoElement, contentContainer } = createCatInfoContainer();
 
-    contentContainer.innerHTML = `
+    contentContainer.innerHTML = // html
+    `
       <h2>${catName}</h2>
       <div class="other-cat-info-container">
         <div>
@@ -3901,7 +4108,7 @@ if (window.location.href === targetCW3) {
     let styleElement = document.getElementById("cellsBordersStyle");
     const cellsBordersStyle = `
       .cage {
-        box-shadow: inset 0 0 0 0.${settingsMap.uwu_settings.cellsBordersThickness}px #ffffff;
+        box-shadow: inset 0 0 0 0.${settingsMap.uwu_settings.cellsBordersThickness}px ${settings.cellsBordersColor};
       }
     `;
 
@@ -3923,10 +4130,11 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   if (settings.cellsNumbers) {
     function createCellNumbers(style) {
-      let css = `
+      let css = // css
+      `
         #cages_div { position: relative; }
-        #cages td { position: relative; }
-        #cages td::before { 
+        #cages > tbody > tr > td { position: relative; }
+        #cages > tbody > tr > td::before { 
           content: attr(data-cell-num);
           position: absolute; 
           z-index: 0; 
@@ -3938,14 +4146,15 @@ if (window.location.href === targetCW3) {
           font-weight: bold;
         }
       `;
-
+  
       let cagesNums = document.createElement("style");
       cagesNums.id = "cages_nums";
       cagesNums.innerHTML = css;
       document.head.appendChild(cagesNums);
-
+  
       let table = document.getElementById("cages");
-      let rows = table.querySelectorAll("tr");
+      if (!table) return;
+      let rows = table.querySelectorAll("tbody > tr");
       for (let i = 0; i < rows.length; i++) {
         let cells = rows[i].querySelectorAll("td");
         for (let j = 0; j < cells.length; j++) {
@@ -3953,7 +4162,7 @@ if (window.location.href === targetCW3) {
         }
       }
     }
-
+  
     createCellNumbers({
       color: "white",
       opacity: 0.8,
@@ -4371,26 +4580,29 @@ if (window.location.href === targetCW3) {
       saveClimbingPanelStatus();
     }
 
-    const uwuClimbingPanelContainer = `
-    <div id="uwu-climbingMainPanel">
-    <div id="uwu-climbingPanelButton">
-        <h2>Минное поле</h2>
-    </div>
-    <div id="uwu-climbingPanelContainer">
-        <div id="uwu-buttonContainer">
-            <h3>Вкладка</h3>
-            <div id="uwu-buttonRow1"></div>
-            <hr>
-            <h3>Локация</h3>
-            <div id="uwu-buttonRow2"></div>
-        </div>
-        <div id="uwu-functionButtonsContainer">
-            <input type="checkbox" id="uwu-transferCheckbox">
-            <label for="uwu-transferCheckbox">Перенос на Игровое поле</label>
-        </div>
-        <div id="uwu-tableContainer"></div>
-    </div>
-    </div>
+    const uwuClimbingPanelContainer = // html
+    `
+      <div id="uwu-climbingMainPanel">
+          <div id="uwu-climbingPanelButton">
+              <h2>Минное поле</h2>
+          </div>
+          <div id="uwu-climbingPanelContainer">
+              <div id="uwu-climbingPanelContent">
+                  <div id="uwu-buttonContainer">
+                      <h3>Вкладка</h3>
+                      <div id="uwu-buttonRow1"></div>
+                      <hr id="uwu-hr">
+                      <h3>Локация</h3>
+                      <div id="uwu-buttonRow2"></div>
+                  </div>
+                  <div id="uwu-functionButtonsContainer">
+                      <input type="checkbox" id="uwu-transferCheckbox">
+                      <label for="uwu-transferCheckbox">Перенос на Игровое поле</label>
+                  </div>
+                  <div id="uwu-tableContainer"></div>
+              </div>
+          </div>
+      </div>
     `;
 
     function createClimbingPanel() {
@@ -4749,7 +4961,8 @@ if (window.location.href === targetCW3) {
     setTimeout(loadClimbingPanelStatus, 10);
 
     const uwuClimbingPanel = document.createElement("style");
-    uwuClimbingPanel.innerHTML = `
+    uwuClimbingPanel.innerHTML = // css
+    `
     #uwu-climbingPanelContainer {
       display: none;
     }
@@ -4782,7 +4995,7 @@ if (window.location.href === targetCW3) {
       margin-top: 2px;
       margin-bottom: 2px;
       justify-content: center;
-      pointer-events: none; /* Добавьте это правило */
+      pointer-events: none;
     }
 
     #uwu-climbingPanel {
@@ -4859,6 +5072,40 @@ if (window.location.href === targetCW3) {
     }
   `;
     document.head.appendChild(uwuClimbingPanel);
+
+    const uwuClimbingPanelHorizontal = document.createElement("style");
+    uwuClimbingPanelHorizontal.innerHTML = // css
+    `
+    #uwu-climbingMainPanel {
+      width: 390px !important;
+    }
+
+    #uwu-climbingPanelContent {
+      display: grid !important;
+      grid-template-columns: 1fr 2fr;
+      grid-template-rows: auto auto;
+    }
+    
+    #uwu-buttonContainer {
+      overflow-y: auto;
+      grid-column: 1 / 2;
+      grid-row: 1 / 3;
+    }
+    
+    #uwu-functionButtonsContainer {
+      grid-column: 2 / 3;
+      grid-row: 1 / 2;
+    }
+    
+    #uwu-tableContainer {
+      grid-column: 2 / 3;
+      grid-row: 2 / 3;
+    }
+    `;
+
+    if (settings.climbingPanelOrientation === "horizontal") {
+      document.head.appendChild(uwuClimbingPanelHorizontal);
+    }
   }
   // ====================================================================================================================
   //   . . . БЫСТРЫЕ СТИЛИ . . .
@@ -5206,7 +5453,8 @@ if (window.location.href === targetCW3) {
   function applyFonts() {
     const fontSize = JSON.parse(localStorage.getItem('uwu_fontSize'));
     const newFontStyle = document.createElement("style");
-    newFontStyle.innerHTML = `
+    newFontStyle.innerHTML = // css
+      `
       body {
         font-size: ${fontSize?.fontSizeBody}px;
         font-family: ${fontSize?.fontFamilyBody};
@@ -5265,7 +5513,8 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   function applyTheme() {
     const newStyle = document.createElement("style");
-    newStyle.innerHTML = `
+    newStyle.innerHTML = // css
+    `
       body {
         background: ${theme?.backgroundColor || ""};
       }
@@ -5276,6 +5525,10 @@ if (window.location.href === targetCW3) {
 
       #tr_actions > td, #tr_mouth > td, #location, .small {
         background-color: ${theme?.blocksColor || ""};
+      }
+
+      #history_block > div {
+        background-color: unset !important;
       }
 
       #main_table, #tr_mouth, #tr_actions, #info_main {
@@ -5499,134 +5752,135 @@ if (window.location.href === targetCW3) {
 
     // Больше фикс стилей.
     const fixStyle = document.createElement("style");
-    fixStyle.innerHTML = `
-  #main_table {
-    width: 100%;
-    max-width: unset;
-    height: 100%;
+    fixStyle.innerHTML = // css
+    `
+      #main_table {
+        width: 100%;
+        max-width: unset;
+        height: 100%;
 
-    background: none;
-    border-spacing: 0px !important;
-  }
+        background: none;
+        border-spacing: 0px !important;
+      }
 
-  #main_table > tbody {
-    margin-top: 10px;
-  }
+      #main_table > tbody {
+        margin-top: 10px;
+      }
 
-  #app {
-    width: 100%;
-    height: 100%;
-  }
-  
-  #chat_msg, #cws_chat_msg {
-    height: ${settings.chatHeight}px;
-    width: auto;
-  }
+      #app {
+        width: 100%;
+        height: 100%;
+      }
+      
+      #chat_msg, #cws_chat_msg {
+        height: ${settings.chatHeight}px;
+        width: auto;
+      }
 
-  #history_block > div { 
-    visibility: hidden; 
-  }
+      #history_block > div { 
+        visibility: hidden; 
+      }
 
-  #history_block {
-    display: block;
-    height: ${settings.historyHeight}px; 
-    overflow-y: auto;
-    resize: vertical;
-  }
+      #history_block {
+        display: block;
+        height: ${settings.historyHeight}px; 
+        overflow-y: auto;
+        resize: vertical;
+      }
 
-  #family { 
-    display: block;
-    overflow-y: auto;
-    resize: vertical;
-  }
+      #family { 
+        display: block;
+        overflow-y: auto;
+        resize: vertical;
+      }
 
-  .infos {
-    width: auto;
-  }
+      .infos {
+        width: auto;
+      }
 
-  #cages_overflow {
-    background: black;
-  }
+      #cages_overflow {
+        background: black;
+      }
 
-  .chat_text {
-    width: auto !important;
-    overflow-wrap: anywhere;
-  }
+      .chat_text {
+        width: auto !important;
+        overflow-wrap: anywhere;
+      }
 
-  #chat_form {
-    margin: unset;
-    margin: 5px;
-  }
+      #chat_form {
+        margin: unset;
+        margin: 5px;
+      }
 
-  #volume {
-    margin: 5px;
-  }
+      #volume {
+        margin: 5px;
+      }
 
-  #app > p:last-of-type {
-    position: fixed;
-    bottom: 0px;
-    margin: 8px;
-  }
+      #app > p:last-of-type {
+        position: fixed;
+        bottom: 0px;
+        margin: 8px;
+      }
 
-  h2 {
-    margin-top: 5px;
-    margin-bottom: 10px;
-  }
+      h2 {
+        margin-top: 5px;
+        margin-bottom: 10px;
+      }
 
-  #itemList {
-    overflow-y: auto;
-    max-height: 180px;
-    display: flex;
-    flex-wrap: wrap;
-  }
+      #itemList {
+        overflow-y: auto;
+        max-height: 180px;
+        display: flex;
+        flex-wrap: wrap;
+      }
 
-  #location {
-    visibility: visible;
-    position: fixed;
-    right: 0px;
-    top: 0px;
-    font-size: 1.5rem;
-    background-color: ${theme?.blocksColor};
-    z-index: 1;
-  }
+      #location {
+        visibility: visible;
+        position: fixed;
+        right: 0px;
+        top: 0px;
+        font-size: 1.5rem;
+        background-color: ${theme?.blocksColor};
+        z-index: 1;
+      }
 
-  .small {
-    position: fixed;
-    left: 0px;
-    top: 0px;
-    font-size: 16px;
-    z-index: 1;
-  }
+      .small {
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        font-size: 16px;
+        z-index: 1;
+      }
 
-  body {
-    overflow-y: scroll;
-  }
+      body {
+        overflow-y: scroll;
+      }
 
-  #tr_chat, #tr_actions > td, #tr_mouth > td, #location, .small, #info_main > tbody > tr > td {
-    padding: 5px !important;
-  }
+      #tr_chat, #tr_actions > td, #tr_mouth > td, #location, .small, #info_main > tbody > tr > td {
+        padding: 5px !important;
+      }
 
-  #tr_chat > td {
-    display: contents;
-  }
+      #tr_chat > td {
+        display: contents;
+      }
 
-  #chat_msg, #cws_chat_msg {
-    height: ${theme?.chatHeight}px;
-    resize: vertical;
-  }
+      #chat_msg, #cws_chat_msg {
+        height: ${theme?.chatHeight}px;
+        resize: vertical;
+      }
 
-  #tr_field, #tr_info {
-    height: 10px;
-  }
+      #tr_field, #tr_info {
+        height: 10px;
+      }
 
-  #newchat, #newls {
-    background-color: transparent;
-  }
+      #newchat, #newls {
+        background-color: transparent;
+      }
 
-  .other_cats_list {
-    display: none;
-  }
-  `;
+      .other_cats_list {
+        display: none;
+      }
+    `;
     document.head.appendChild(fixStyle);
     applyLayoutSettings();
 
@@ -6066,10 +6320,11 @@ if (window.location.href === targetCW3) {
       const reportLink = chatMessage.querySelector(".msg_report");
       const dataId = reportLink ? reportLink.getAttribute("data-id") : "";
 
-      const newChatMessageHTML = `
+      const newChatMessageHTML = // html
+      `
         <hr>
         <div id="msg">
-          <div class="${chatTextClasses}">${processedText} - <b class="nick" style="${nickStyle}">${nickName}</b> [<i>${catId}</i>]</div>
+          <div class="${chatTextClasses}">${processedText} - <b class="nick" style="${nickStyle}">${nickName}</b> <i>[${catId}]</i></div>
           <div>
             <a href="${profileLink}" title="Перейти в профиль" target="_blank" rel="noopener noreferrer">➝</a>&nbsp;|&nbsp;
             <a href="#" title="Пожаловаться на нарушение ОПИ" class="msg_report" data-id="${dataId}">X</a>
@@ -6096,6 +6351,10 @@ if (window.location.href === targetCW3) {
         #msg {
           display: flex;
           justify-content: space-between;
+        }
+
+        #uwu_chat_msg > hr {
+          width: -webkit-fill-available;
         }
      `;
     document.head.appendChild(uwuChatMsg);
@@ -6213,7 +6472,8 @@ if (window.location.href === targetCW3) {
 
   const edgeTrimBlocksStyle = document.createElement("style");
   if (settings.edgeTrimBlocks) {
-    edgeTrimBlocksStyle.innerHTML = `
+    edgeTrimBlocksStyle.innerHTML = // css
+    `
     #info_main > tbody > tr > td {
       width: fit-content;
       border-radius: 10px;
@@ -6265,7 +6525,8 @@ if (window.location.href === targetCW3) {
     };
   
     function createTeamTable() {
-      const tableHTML = `
+      const tableHTML = // html
+      `
         <div id="uwu-team-settings" style="height: ${
           settings.fightTeamsPanelHight || "auto"
         }px; overflow-y: scroll; resize: vertical;">
@@ -7755,7 +8016,8 @@ if (window.location.href === targetCW3Hunt) {
       const uwuContainer = document.getElementById("uwu-global-container");
       uwuContainer.insertAdjacentHTML("beforeend", joystickHTML);
 
-      const css = `
+      const css = // css
+      `
         #nav_buttons_wrapper {
           display: none;
         }
@@ -8013,7 +8275,8 @@ if (settings.moreBBCodes) {
   function addBBCodeButtons() {
     const bbCodeContainers = document.querySelectorAll(".bbcode");
 
-    const commonButtonsHTML = `
+    const commonButtonsHTML = // html
+    `
       <button class="bbcode" title="Абзац" data-code="p">p</button>
       <button class="bbcode" title="Перенос" data-code="br" data-parameter="0">br</button>
       <button class="bbcode" title="Таблица" data-code="table">table</button>
@@ -8106,56 +8369,28 @@ if (targetProfile.test(window.location.href)) {
 // ====================================================================================================================
 function moonCalculator() {
   const months = [
-    "января",
-    "февраля",
-    "марта",
-    "апреля",
-    "мая",
-    "июня",
-    "июля",
-    "августа",
-    "сентября",
-    "октября",
-    "ноября",
-    "декабря",
+    "января", "февраля", "марта", "апреля", "мая", "июня",
+    "июля", "августа", "сентября", "октября", "ноября", "декабря"
   ];
-  
+
+  const catTimeStart = 1200000000000;
+
   const infoElement = document.getElementById("info");
   if (!infoElement) return;
 
-  if (document.getElementById("calculator-age")) return;
-
   const style = document.createElement("style");
   style.textContent = `
-    .calculator-error {
-      color: darkred; 
-    }
-    
-    .hidden {
-      display: none; 
-    }
-    
-    .calculator-style {
-      max-width: 400px;
-      margin: 5px;
-      padding: 5px;
-      border-radius: 10px;
-      background: #ffffff08;
-    }
+    .calculator-error { color: darkred; }
+    .hidden { display: none; }
+    .calculator-style { max-width: 400px; margin: 5px; padding: 5px; border-radius: 10px; background: #ffffff08; }
   `;
   document.head.appendChild(style);
 
-  infoElement.insertAdjacentHTML('afterend', `
-    <div id="calculator-age" class="calculator-style hidden">
-      <p><b>Калькулятор возраста</b></p>
-      <label>Дата и время: <input type="datetime-local" id="calculator-date" min="" value="" max="9999-12-31T23:59"></label> <span id="calculator-error-date" class="calculator-error"></span>
-      <br><label>Возраст: <input type="number" id="calculator-moons" min="0" step="0.1" value="" style="width: 60px"></label> <span id="moon-word">лун</span> <span id="calculator-error-moons" class="calculator-error"></span>
-      <br> по кошачьему времени.
-      <br><br>
-    </div>
-  `);
-
-  const calculatorAgeElement = document.getElementById("calculator-age");
+  let calculatorAgeElement = document.getElementById("calculator-age");
+  if (!calculatorAgeElement) {
+    infoElement.insertAdjacentHTML('afterend', `<div id="calculator-age" class="calculator-style hidden"></div>`);
+    calculatorAgeElement = document.getElementById("calculator-age");
+  }
 
   const infoObserver = new MutationObserver((mutations) => {
     mutations.forEach(() => {
@@ -8166,39 +8401,38 @@ function moonCalculator() {
 
       calculatorAgeElement.classList.remove("hidden");
 
-      const birthDateString = infoElement.textContent
-        .match(/\d{4}-\d\d-\d\d \d\d:\d\d/)[0]
-        .replace(" ", "T");
+      const birthDateString = infoElement.textContent.match(/\d{4}-\d\d-\d\d \d\d:\d\d/)[0].replace(" ", "T");
       const nowDateString = formatDate(new Date());
 
       const ageMoons = getMoonsFromElement("age_icon");
       const age2Moons = getMoonsFromElement("age2_icon");
 
-      const sex = document.querySelector('[src^="//e.catwar.su/avatar"]').style
-        .borderColor;
+      const sex = document.querySelector('[src^="//e.catwar.su/avatar"]').style.borderColor;
       const isRegistrationDate = /регистрац/.test(infoElement.textContent);
-      const moonsNow = age2Moons
-        ? isRegistrationDate
-          ? ageMoons
-          : age2Moons
-        : ageMoons;
+      const moonsNow = age2Moons ? (isRegistrationDate ? ageMoons : age2Moons) : ageMoons;
 
       const bornWord = getBornWord(sex, isRegistrationDate);
-      const catTimeString = formatCatTime(Date.parse(birthDateString));
+      const catTimeString = formatCatTime(Date.parse(birthDateString), moonsNow);
 
-      document.getElementById("calculator-date").min = birthDateString;
-      document.getElementById("calculator-date").value = nowDateString;
-      document.getElementById("calculator-moons").value = moonsNow;
-      document.querySelector("br").nextSibling.textContent = `${bornWord} ${catTimeString} по кошачьему времени.`;
+      calculatorAgeElement.innerHTML = `
+        <p><b>Калькулятор возраста</b></p>
+        <label>Дата и время: <input type="datetime-local" id="calculator-date" min="${birthDateString}" value="${nowDateString}" max="9999-12-31T23:59"></label> <span id="calculator-error-date" class="calculator-error"></span>
+        <br><label>Возраст: <input type="number" id="calculator-moons" min="0" step="0.1" value="${moonsNow}" style="width: 60px"></label> <span id="moon-word"></span> <span id="calculator-error-moons" class="calculator-error"></span>
+        <br>${bornWord} ${catTimeString} по кошачьему времени.
+        <br><br>
+      `;
 
       updateMoonWord(moonsNow);
 
-      calculatorAgeElement.addEventListener("input", function (event) {
-        if (event.target.id === "calculator-date") {
-          handleDateInput.call(event.target, birthDateString);
-        } else if (event.target.id === "calculator-moons") {
-          handleMoonsInput.call(event.target, birthDateString);
-        }
+      const calculatorDateElement = document.getElementById("calculator-date");
+      const calculatorMoonsElement = document.getElementById("calculator-moons");
+
+      calculatorDateElement.addEventListener("input", function () {
+        handleDateInput.call(this, birthDateString);
+      });
+
+      calculatorMoonsElement.addEventListener("input", function () {
+        handleMoonsInput.call(this, birthDateString);
       });
     });
   });
@@ -8208,9 +8442,7 @@ function moonCalculator() {
   function getMoonsFromElement(iconId) {
     const iconElement = document.querySelector(`img[id="${iconId}"]`);
     if (!iconElement) return 0;
-    const ageElement = iconElement
-      .closest("tr")
-      .querySelector("td:nth-child(2) b");
+    const ageElement = iconElement.closest("tr").querySelector("td:nth-child(2) b");
     return parseFloat(ageElement.textContent);
   }
 
@@ -8220,35 +8452,32 @@ function moonCalculator() {
       blue: ["Зарегистрировался", "Родился"],
       default: ["Зарегистрировалось", "Родилось"],
     };
-    return isRegistrationDate
-      ? sexWords[sex]
-        ? sexWords[sex][0]
-        : sexWords.default[0]
-      : sexWords[sex]
-      ? sexWords[sex][1]
-      : sexWords.default[1];
+    return isRegistrationDate ? (sexWords[sex] ? sexWords[sex][0] : sexWords.default[0]) : (sexWords[sex] ? sexWords[sex][1] : sexWords.default[1]);
   }
 
   function formatDate(date) {
     const pad = (num) => String(num).padStart(2, "0");
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
-      date.getDate()
-    )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   }
 
-  function formatCatTime(timestamp) {
-    const date = new Date(timestamp);
+  function formatCatTime(birthTimestamp, moons) {
+    const daysToAdd = moons * 4;
+    const targetDate = new Date(birthTimestamp + daysToAdd * 24 * 60 * 60 * 1000);
+    const ms = birthTimestamp - catTimeStart;
+    let time = Math.round(ms / 1000 * 7);
+    const secInYear = 12 * 28 * 24 * 60 * 60;
+    const secInMonth = 28 * 24 * 60 * 60;
+    const year = Math.floor(time / secInYear);
+    time -= year * secInYear;
+    const month = Math.floor(time / secInMonth);
+    time -= month * secInMonth;
+    const day = Math.floor(time / (24 * 60 * 60)) + 1;
+    time -= (day - 1) * 24 * 60 * 60;
+    const hour = Math.floor(time / (60 * 60));
+    time -= hour * 60 * 60;
+    const minute = Math.floor(time / 60);
     const pad = (num) => String(num).padStart(2, "0");
-    return `${date.getDate()} ${
-      months[date.getMonth()]
-    } ${date.getFullYear()} года в ${pad(date.getHours())}:${pad(
-      date.getMinutes()
-    )}`;
-  }
-
-  function updateMoonWord(moons) {
-    document.getElementById("moon-word").textContent =
-      moons === 1 ? "луна" : "лун";
+    return `${day} ${months[month]} ${year} года в ${pad(hour)}:${pad(minute)}`;
   }
 
   function handleDateInput(birthDateString) {
@@ -8267,7 +8496,10 @@ function moonCalculator() {
     if (calcMoonsElement) {
       calcMoonsElement.value = moons;
       updateMoonWord(moons);
+      const catTimeString = formatCatTime(Date.parse(birthDateString), moons);
+      document.querySelector("br").nextSibling.textContent = `${catTimeString} по кошачьему времени.`;
     }
+    updateMoonWord(moons);
   }
 
   function handleMoonsInput(birthDateString) {
@@ -8284,27 +8516,35 @@ function moonCalculator() {
     if (calcDateElement) {
       calcDateElement.value = getDateStringFromMoons(birthDateString, moons);
       updateMoonWord(moons);
+      const catTimeString = formatCatTime(Date.parse(birthDateString), moons);
+      document.querySelector("br").nextSibling.textContent = `${catTimeString} по кошачьему времени.`;
     }
+    updateMoonWord(moons);
   }
 
-  function getMoonsFromDate(birthDateString, targetDateString) {
-    const birthDate = new Date(birthDateString);
-    const targetDate = new Date(targetDateString);
-    const diffTime = targetDate - birthDate;
-    const diffDays = diffTime / (1000 * 60 * 60 * 24);
-    return Math.round((diffDays / 4) * 10) / 10;
+  function getMoonsFromDate(birthDateString, dateString) {
+    const birthday = Date.parse(birthDateString);
+    const date = Date.parse(dateString);
+    const moons = Math.floor((date - birthday) / (1000 * 60 * 60 * 24 * 4) * 10) / 10;
+    return moons;
   }
 
   function getDateStringFromMoons(birthDateString, moons) {
-    const birthDate = new Date(birthDateString);
-    const daysToAdd = moons * 4;
-    const targetDate = new Date(
-      birthDate.getTime() + daysToAdd * 24 * 60 * 60 * 1000
-    );
-    return formatDate(targetDate);
+    const birthday = Date.parse(birthDateString);
+    const age = Math.round(moons * 4 * 24 * 60 * 60 * 1000);
+    return formatDate(new Date(birthday + age));
+  }
+
+  function updateMoonWord(moons) {
+    const integerMoons = Math.floor(moons);
+    document.getElementById("moon-word").textContent = declOfNum(integerMoons, ['луна', 'луны', 'лун']);
+  }
+
+  function declOfNum(number, titles) {
+    const cases = [2, 0, 1, 1, 1, 2];
+    return titles[(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number % 10 < 5) ? number % 10 : 5]];
   }
 }
-
 // ====================================================================================================================
 //   . . . КАЛЬКУЛЯТОР АКТИВНОСТИ . . .
 // ====================================================================================================================
@@ -8345,18 +8585,8 @@ function setupActivityCalc() {
   ];
 
   const months = [
-    "января",
-    "февраля",
-    "марта",
-    "апреля",
-    "мая",
-    "июня",
-    "июля",
-    "августа",
-    "сентября",
-    "октября",
-    "ноября",
-    "декабря",
+    "января", "февраля", "марта", "апреля", "мая", "июня",
+    "июля", "августа", "сентября", "октября", "ноября", "декабря"
   ];
 
   const activitySettings = JSON.parse(
@@ -8481,7 +8711,8 @@ function setupActivityCalc() {
     }
   });
 
-  const activityInfoHTML = `
+  const activityInfoHTML = // html
+  `
     <details id="calculator-activity" class="calculator-style">
       <summary id="open-calculator"><b>Калькулятор активности</b></summary>
       <div id="calculator-content" style="margin-top: 10px;">
@@ -8515,7 +8746,8 @@ function setupActivityCalc() {
   }
 
   function showCongratulations() {
-    document.getElementById("congratulations").innerHTML = `
+    document.getElementById("congratulations").innerHTML = // html
+    `
       Цель <b>«${activityStages[activitySettings[catId].goal].name}»</b> достигнута!
       <center><img src="/img/stickers/systempaw3/6.png"></center>
       <input id="congratulations-button" type="button" value="Скрыть">
@@ -8859,7 +9091,8 @@ function wrapPreviewInTable() {
   newTable.style.width = "90%";
   newTable.style.maxWidth = "500px";
 
-  newTable.innerHTML = `
+  newTable.innerHTML = // html
+  `
       <tbody>
           <tr><td id="preview-subject" colspan="2">${subject}</td></tr>
           <tr>
