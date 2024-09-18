@@ -1,3 +1,7 @@
-#tr_chat, #tr_actions > td, #tr_mouth > td, .small, #info_main > tbody > tr > td {
+#tr_chat,
+#tr_actions > td,
+#tr_mouth > td, .small,
+#info_main > tbody > tr > td,
+#uwu-clock {
     backdrop-filter: blur(16px);
 } 
