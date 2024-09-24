@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.30.0-09.24
+// @version      v1.31.0-09.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -19,7 +19,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.30.0";
+const current_uwu_version = "1.31.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   settingsTheme: "dark",
@@ -78,6 +78,13 @@ const uwuDefaultSettings = {
     team4: ["#FFFF00", "#cd4141"],
   },
   fightTeamsPanelHight: "100",
+
+  highlightResources: false,
+  highlightResourcesStyle: "background",
+
+  showClock: false,
+  clockStyle: "compact",
+  clockFontSize: "14",
 
   describeHuntingSmell: false,
   huntingVirtualJoystick: false,
@@ -139,10 +146,13 @@ const targetCW3 = "https://catwar.su/cw3/";
 const targetCW3Hunt = "https://catwar.su/cw3/jagd";
 const targetMainProfile = /^https:\/\/catwar\.su\/$/;
 const targetProfile = /^https:\/\/catwar\.su\/cat\d+$/;
-const targetLs = /^https:\/\/catwar\.su\/ls(\?new)?$/;
+const targetLs = /^https:\/\/catwar\.su\/ls/;
+const targetLsNew = /^https:\/\/catwar\.su\/ls\?new(=.*)?$/;
+const targetChats = /^https:\/\/catwar\.su\/chat/;
 const targetBlog = /^https:\/\/catwar\.su\/(?:blog\d+|blogs)(?:$|[/?#])/i;
 const targetBlogsCreation = /^https:\/\/catwar\.su\/blogs\?creation/;
 const targetSniff = /^https:\/\/catwar\.su\/sniff(?:\d+|)(?:$|[/?#])/i;
+const targetSniffCreation = /^https:\/\/catwar\.su\/sniff\?creation/;
 
 // ====================================================================================================================
 //   . . . СТАНДАРТНЫЕ ЦВЕТОВЫЕ ТЕМЫ . . .
@@ -301,7 +311,7 @@ const uwusettings = // html
       <input type="checkbox" id="game-Field-background-User" data-setting="gameFieldBackgroundUser" />
       <label for="game-Field-background-User-enabled">Статичный фон локации:</label>
       <input type="text" id="gameFieldSettingImageURLField" placeholder="Вставьте URL" data-setting="gameFieldBackgroundUserImageURL" />
-      <button id="SettingSaveButton1" class="uwu-button">Сохранить</button>
+      <button id="SettingSaveButton1" class="uwu-button install-button">Сохранить</button>
     </div>
 
     <div>
@@ -343,7 +353,7 @@ const uwusettings = // html
         <input type="checkbox" id="background-user" data-setting="backgroundUser" />
         <label for="background-user-enabled">Свой фон страницы:</label>
         <input type="text" id="SettingImageURLField" placeholder="Вставьте URL" data-setting="backgroundUserImageURL" />
-        <button id="SettingSaveButton1" class="uwu-button">Сохранить</button>
+        <button id="SettingSaveButton1" class="uwu-button install-button">Сохранить</button>
       </div>
 
       <div>
@@ -367,7 +377,7 @@ const uwusettings = // html
     <div id="theme-selector" class="uwu-select">
       <label for="theme-select">Выберите тему:</label>
       <select id="theme-select" class="uwu-select-selected"></select>
-      <button id="addThemeButton" class="uwu-button">Добавить тему</button>
+      <button id="addThemeButton" class="uwu-button install-button">Добавить тему</button>
       <button id="removeThemeButton" style="display: none;" class="uwu-button remove-button">Удалить тему</button>
     </div>
 
@@ -433,7 +443,7 @@ const uwusettings = // html
         </div>
 
         <div style="flex: 0 0 100%">
-          <button id="saveThemeButton" class="uwu-button">Сохранить</button>
+          <button id="saveThemeButton" class="uwu-button install-button">Сохранить</button>
           <p>
             Отличный сайт для выбора цветов с поддержкой прозрачности:
             <a href="https://get-color.ru/transparent/" target="_blank">https://get-color.ru/transparent/</a>
@@ -542,7 +552,7 @@ const uwusettings = // html
           </ul>
         </div>
       </div>
-      <button id="SettingSaveButton4" class="uwu-button">Сохранить</button>
+      <button id="SettingSaveButton4" class="uwu-button install-button">Сохранить</button>
 
       <div>
         <input type="text" id="chat-height" placeholder="Вставьте значение" data-setting="chatHeight" />
@@ -769,12 +779,100 @@ const uwusettings = // html
         <input type="checkbox" id="parameters-User-Background-Image" data-setting="parametersUserBackgroundImage" />
         <label for="parameters-User-Background-Image">Свои узоры:</label>
         <input type="text" id="parametersUserBackgroundImageField" placeholder="Вставьте URL" data-setting="parametersUserBackgroundImageURL" />
-        <button id="SettingSaveButton1" class="uwu-button">Сохранить</button>
+        <button id="SettingSaveButton1" class="uwu-button install-button">Сохранить</button>
       </div>
 
     </div>
 
     <div id="utility-panel">
+
+      <h2>Подсветка</h2>
+
+      <div>
+        <p>Подсвечивает обводкой клетки полезные, и не очень, ресурсы</p>
+        <input type="checkbox" id="highlight-Resources" data-setting="highlightResources" />
+        <label for="highlight-Resources">Подсветка ресурсов</label>
+      </div>
+
+      <label>Стиль подсветки предметов:</label>
+      <div class="custom-select" id="highlightResourcesStyle">
+        <div class="select-selected">Выберите стиль подсветки предметов</div>
+        <div class="select-items">
+          <!-- Опции будут добавлены сюда -->
+        </div>
+      </div>
+      <label id="uwu-what-this" title="Стиль 'Фон' подсвечивает всю клетку и не нагружает Игровую. Стиль 'Свечение' дублирует содержимое ячейки и стилизует его, что может нагружать Игровую.">[?]</label>
+
+      <table class="uwu-table-highlight-Resources">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Цвет</th>
+                <th>Подсвечивать?</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Травы</td>
+                <td><input type="color" class="uwu-color-picker" data-resource="Травы" value="#90EE90"></td>
+                <td class="uwu-checkbox-cell"><input type="checkbox" class="uwu-highlight-checkbox" data-resource="Травы"></td>
+            </tr>
+            <tr>
+                <td>Мох</td>
+                <td><input type="color" class="uwu-color-picker" data-resource="Мох" value="#90EE90"></td>
+                <td class="uwu-checkbox-cell"><input type="checkbox" class="uwu-highlight-checkbox" data-resource="Мох"></td>
+            </tr>
+            <tr>
+                <td>Паутина</td>
+                <td><input type="color" class="uwu-color-picker" data-resource="Паутина" value="#90EE90"></td>
+                <td class="uwu-checkbox-cell"><input type="checkbox" class="uwu-highlight-checkbox" data-resource="Паутина"></td>
+            </tr>
+            <tr>
+                <td>Пыль</td>
+                <td><input type="color" class="uwu-color-picker" data-resource="Пыль" value="#DDA0DD"></td>
+                <td class="uwu-checkbox-cell"><input type="checkbox" class="uwu-highlight-checkbox" data-resource="Пыль"></td>
+            </tr>
+            <tr>
+                <td>Ветки, вьюнки, костоправы</td>
+                <td><input type="color" class="uwu-color-picker" data-resource="Ветки, вьюнки, костоправы" value="#90EE90"></td>
+                <td class="uwu-checkbox-cell"><input type="checkbox" class="uwu-highlight-checkbox" data-resource="Ветки, вьюнки, костоправы"></td>
+            </tr>
+            <tr>
+                <td>Травящие предметы</td>
+                <td><input type="color" class="uwu-color-picker" data-resource="Травящие предметы" value="#FF0000"></td>
+                <td class="uwu-checkbox-cell"><input type="checkbox" class="uwu-highlight-checkbox" data-resource="Травящие предметы"></td>
+            </tr>
+        </tbody>
+      </table>
+
+      <hr class="uwu-hr-head" />
+
+      <h2>Шаблоны</h2>
+
+      <div>
+        <p>Позволяет создавать и быстро использовать собственные шаблоны сообщений.</p>
+        <input type="checkbox" id="show-Templates" data-setting="showTemplates" />
+        <label for="show-Templates">Отображать шаблоны</label>
+      </div>
+
+      <table id="uwu-table-templates">
+      <thead>
+          <tr>
+              <th>Сообщения</th>
+              <th>Чаты</th>
+              <th>Блоги и Лента</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+              <td class="uwu-checkbox-cell"><input type="checkbox" data-setting="templatesInLs"></td>
+              <td class="uwu-checkbox-cell"><input type="checkbox" data-setting="templatesInChats"></td>
+              <td class="uwu-checkbox-cell"><input type="checkbox" data-setting="templatesInBlogsAndSniffs"></td>
+          </tr>
+        </tbody>
+        </table>
+
+      <hr class="uwu-hr-head" />
 
       <h2>Боевой режим</h2>
 
@@ -839,6 +937,37 @@ const uwusettings = // html
   </table>
     
     <hr id="uwu-hr" class="uwu-hr">
+    <h2>Часы</h2>
+
+    <div>
+      <p>Показывать ли часы в Игровой?</p>
+      <input type="checkbox" id="describe-show-clock" data-setting="showClock" />
+      <label for="describe-show-clock">Часы в Игровой</label>
+    </div>
+
+    <label>Стиль часов:</label>
+    <div class="custom-select" id="clockStyle">
+      <div class="select-selected">Выберите стиль часов</div>
+      <div class="select-items">
+        <!-- Опции будут добавлены сюда -->
+      </div>
+    </div>
+
+    <div>
+      <input type="checkbox" id="describe-clock-Moscow-Time" data-setting="clockMoscowTime" />
+      <label for="describe-clock-Moscow-Time">Московское время</label>
+    </div>
+
+    <div>
+      <p>Размер шрифта часов</p>
+      <input type="text" id="clock-Font-Size" placeholder=". . ." data-setting="clockFontSize" />
+    </div>
+
+    <div>
+      <button id="resetClockPosition" class="uwu-button remove-button">Сброс позиции часов</button>
+    </div>
+
+    <hr id="uwu-hr" class="uwu-hr">
     <h2>Охота</h2>
 
       <div>
@@ -900,8 +1029,7 @@ const uwusettings = // html
         <p>Включает окно для расчерчивания минного поля в Игровой.</p>
         <input type="checkbox" id="climbing-panel" data-setting="climbingPanel" />
         <label for="climbing-panel">Минное поле</label>
-        <p>Здесь вы можете добавить/удалить Вкладки для хранения Таблиц и количество самих таблиц в выбранной вкладке.
-        Не изменяйте !одновременно! ячейки минного поля и структуру Вкладок и Таблиц, а то можете потерять выставленные новые ячейки.</p>
+        <p>Здесь вы можете добавить/удалить Вкладки для хранения Таблиц и количество самих таблиц в выбранной вкладке.</p>
           <h4>Вкладки</h4>
           <div id="uwu-buttonRow1-settings"></div>
           <h4>Локации / Таблицы</h4>
@@ -1094,7 +1222,7 @@ const uwusettings = // html
         <p>Импорт/Экспорт всех настроек (Пока без расставленных блоков Компактной Игровой, Сборника Стилей и Минного поля).</p>
         <input type="text" id="exportSettings" placeholder="Экспорт"/>
         <input type="text" id="importSettings" placeholder="Импорт"/>
-        <button id="importSettingsButton" class="uwu-button">Вставить</button>
+        <button id="importSettingsButton" class="uwu-button install-button">Вставить</button>
       </div>
       
       <div>
@@ -1115,31 +1243,35 @@ const newsPanel = // html
 `
 <div id="news-panel">
   <button id="news-button">
-    v${current_uwu_version} - 🍂 Темы Настроек и Общая полировка!
+    v${current_uwu_version} - ❄️ Точные часы и подсветка ресурсов в Игровой, а так же Шаблоны сообщений!
   </button>
   <div id="news-list" style="display: none">
     <h3>Главное</h3>
-    <p>— Возможность переименовать Вкладки и Локации/Таблицы минного поля, выбор между вертикальным и горизонтальным 
-    дизайном окна минного поля и Настройка цвета границы клеток Игровой!</p>
+    <p>— Ищите новые функции в "Инструментарии"!🍤🦐🍤🦐</p>
     <hr id="uwu-hr" class="uwu-hr">
     <h3>Внешний вид</h3>
-    <p>— Теперь есть заглушка-картинка, если на комментарий не удалось поставить аватарку.</p>
-    <p>— Выпадающие списки теперь под ширину содержимого.</p>
-    <p>— Вернули линии в чате Игровой.</p>
-    <p>— Квадратные скобки в чате Игровой теперь тоже наклонные.</p>
-    <p>— Обёртка для кнопок Вкладок и Локации/Таблиц для более легкого восприятия.</p>
-    <p>— "Моё местонахождение" теперь без назойливой белой подложки.</p>
+    <p>— Размытие блоков в Сборнике стилей поддерживает часы!</p>
+    <p>— Многие кнопки в настройках теперь имеют стили благодаря классу "install-button" и выглядят наглядней.</p>
+    <p>— Кнопка "Подробнее" в "Параметрах и навыках" теперь тоже скрывается и имеет небольшой приятный отступ.</p>
+    <p>— Шрифт Скрипта/Мода UwU "Montserrat" теперь самостоятелен и не будет теряться.</p>
+    <p>— "➝ | X" в "Современном чате" не должно теперь некрасиво съезжать.</p>
     <hr id="uwu-hr" class="uwu-hr">
     <h3>Изменения кода</h3>
-    <p>— Нумерация ячеек больше не должна нумеровать БР стрелы при фоновом обновлении страницы.</p>
-    <p>— hr теперь hr id="uwu-hr", чинит потеряшку и позволяет легче накладывать стили.</p>
-    <p>— Перепись функции createCustomSelect от повторений и облегчения использования.</p>
-    <p>— Незначительная сортировка css стилей из-за тем Настроек. Наконец-то хотя бы начал.</p>
-    <p>— Починился калькулятор возраста и лун. Теперь пишет дату регистрации и рождения по кошачьему времени.</p>
-    <p>— В коде появились комментарии для работы VS плагина "es6-string-html". 
-    Удобно и красиво подсвечивает HTML и CSS в коде.</p>
+    <p>— Подправленна ссылка определения страниц личных сообщений.</p>
+    <p>— От этого предпросмотр сообщений теперь работает вроде бы везде где надо.</p>
+    <p>— Размер шрифта ссылок теперь тоже должен меняться.</p>
+    <p>— Первый надежда-фикс улетающего текста в панели БР.</p>
+    <p>— Исправление неправильного названия переменной хранения высоты панели БР. Теперь высота БР должна правильно работать.</p>
+    <p>— Лёгкие правки написания кода калькулятора активности для повышения читаемости.</p>
+    <p>— Упростил менеджер звуков убрав проверку на Apple устройства. Теперь всегда загружается .mp3</p>
+    <p>— Теперь в "uwu-global-container" есть "uwu-main-container" для фикс отображения вещей.
+     Туда ушли кнопка Расширенных настроек и погода.</p>
+     <p>— "uwu-global-container" же теперь менее фиксированный и перенимает body параметры. Вообщем для 
+     потоскать часы и минные поля.</p>
+    <p>— Небольшая оптимизация и корректировка кода работы Аватарок.</p>
+    <p>— Капля оптимизации в функцию addCommentButtons вставляющая кнопки "Ответить и Цитировать".</p>
     <hr id="uwu-hr" class="uwu-hr">
-    <p>Дата выпуска: 13.09.24</p>
+    <p>Дата выпуска: 24.09.24</p>
   </div>
 </div>
 `;
@@ -1244,6 +1376,11 @@ const css_uwu_main =
   padding: 5px 15px 15px 15px;
 }
 
+#uwu-what-this {
+  color: #83e5ff;
+  font: caption;
+}
+
 .main-settings-container {
     display: flex;
     justify-content: space-between;
@@ -1291,13 +1428,32 @@ const css_uwu_main =
 #uwusettings .parameters-color-table,
 #uwusettings .parameters-color-table tr,
 #uwusettings .parameters-color-table td {
-  border: 1px #232323 solid;
+  border: 1px #383838 solid;
 }
 
 #colorSettingsTable,
 #colorSettingsTable tr,
 #colorSettingsTable td {
-  border: 1px #232323 solid;
+  border: 1px #383838 solid;
+}
+
+.uwu-table-highlight-Resources,
+#uwu-table-templates {
+  margin-top: 5px;
+}
+.uwu-table-highlight-Resources th, .uwu-table-highlight-Resources td,
+#uwu-table-templates th, #uwu-table-templates td {
+  border: 1px solid #383838;
+}
+
+.uwu-color-picker {
+  border: none;
+  vertical-align: middle;
+}
+
+.uwu-checkbox-cell {
+  text-align: center;
+  vertical-align: middle;
 }
 
 #uwusettings .parameters-color-table,
@@ -1407,11 +1563,11 @@ const css_uwu_main =
 }
 
 .install-button {
-  background-color: #78c8ff87;
+  background-color: #78c8ff87 !important;
 }
 
 .remove-button {
-  background-color: #ff787887;
+  background-color: #ff787887 !important;
 }
 
 #module-info input[type="checkbox"] {
@@ -1508,6 +1664,13 @@ const css_uwu_main =
 }
 
 #uwu-global-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+#uwu-main-container {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -1877,6 +2040,7 @@ const css_uwu_main =
   resize: vertical;
   overflow-y: scroll;
 }
+
 `;
 
 document.head.insertAdjacentHTML(
@@ -1904,6 +2068,7 @@ const css_uwu_glass = // css
   transition: background-color 0.3s ease;
   margin: 5px;
   margin-left: 0px;
+  color: #d5d5d5;
 }
 
 .uwu-button:hover {
@@ -2101,10 +2266,18 @@ const css_uwu_dark = // css
 // ====================================================================================================================
 //   . . . КЛАССИЧЕСКАЯ ТЕМА . . .
 // ====================================================================================================================
-// лол
+// лол а где
 const css_uwu_classic = `
 
 `;
+// ====================================================================================================================
+//   . . . топовой шрифт кто не согласен тому в глаз 👅👅👅👅👅👅бе бе бе мяу мяу мяу мяу мяу мяу . . .
+// ====================================================================================================================
+var link = document.createElement('link');
+link.rel = 'stylesheet';
+link.href = 'https://fonts.googleapis.com/css?family=Montserrat';
+document.head.appendChild(link);
+// TODO - автоматически подкачивать шрифты нужные пользователю по названию в "Название вида шрифта" в Настройках
 // ====================================================================================================================
 //  . . . СОХРАНЕНИЯ И ЗАГРУЗКА НАСТРОЕК . . .
 // ====================================================================================================================
@@ -2275,7 +2448,7 @@ if (targetSettings.test(window.location.href)) {
     });
 
   // ====================================================================================================================
-  //  . . . ЦВЕТ ТЕКСТА НАСТРОЕК . . .
+  //  . . . ТЕМА UWU . . .
   // ====================================================================================================================
   function applySettingsTheme(theme) {
     let css;
@@ -2510,6 +2683,53 @@ if (targetSettings.test(window.location.href)) {
   }
   restoreColorPickers();
   // ====================================================================================================================
+  //  . . . ПОДСВЕТКА РЕСУРСОВ . . .
+  // ====================================================================================================================
+  function saveHighlightSettings() {
+    const uwu_highlightResources = [];
+
+    document.querySelectorAll('.uwu-table-highlightResources tbody tr').forEach(row => {
+        const resourceName = row.querySelector('td:first-child').textContent;
+        const colorPicker = row.querySelector('.uwu-color-picker');
+        const checkbox = row.querySelector('.uwu-highlight-checkbox');
+
+        const resource = {
+            name: resourceName,
+            color: colorPicker.value,
+            highlight: checkbox.checked
+        };
+
+        uwu_highlightResources.push(resource);
+    });
+
+    localStorage.setItem('uwu_highlightResources', JSON.stringify(uwu_highlightResources));
+  }
+
+  function restoreHighlightSettings() {
+    const savedSettings = localStorage.getItem('uwu_highlightResources');
+    if (savedSettings) {
+        const uwu_highlightResources = JSON.parse(savedSettings);
+
+        uwu_highlightResources.forEach(resource => {
+            const colorPicker = document.querySelector(`.uwu-color-picker[data-resource="${resource.name}"]`);
+            const checkbox = document.querySelector(`.uwu-highlight-checkbox[data-resource="${resource.name}"]`);
+
+            if (colorPicker) colorPicker.value = resource.color;
+            if (checkbox) checkbox.checked = resource.highlight;
+        });
+    }
+  }
+
+  document.querySelectorAll('.uwu-color-picker').forEach(element => {
+    element.addEventListener('change', saveHighlightSettings);
+  });
+
+  document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
+    element.addEventListener('change', saveHighlightSettings);
+  });
+
+  restoreHighlightSettings();
+  // ====================================================================================================================
   //  . . . ЦВЕТА КОМАНДНЫХ БОЁВ . . .
   // ====================================================================================================================
   document
@@ -2554,6 +2774,7 @@ if (targetSettings.test(window.location.href)) {
     "uwu_colorThemes",
     "uwu_currentTheme",
     "uwu_fontSize",
+    "uwu_clock",
   ];
 
   function resetAllSaves() {
@@ -2644,6 +2865,20 @@ if (targetSettings.test(window.location.href)) {
   ]
 
   createCustomSelect("climbingPanelOrientation", climbingPanelOrientations);
+    // ==============================================================================
+    const clockStyles = [
+      { id: "compact", name: "Компактный" },
+      { id: "standard", name: "Стандартный" },
+    ]
+  
+    createCustomSelect("clockStyle", clockStyles);
+    // ==============================================================================
+    const highlightResourcesStyles = [
+      { id: "background", name: "Фон / Быстро" },
+      { id: "glow", name: "Свечение / Медленно" },
+    ]
+    
+    createCustomSelect("highlightResourcesStyle", highlightResourcesStyles);
   // ====================================================================================================================
   //   . . . СОЗДАНИЕ ВЫПАДАЮЩИХ СПИСКОВ . . .
   // ====================================================================================================================
@@ -2739,6 +2974,13 @@ if (targetSettings.test(window.location.href)) {
     "myNameNotificationSound",
     "notificationMyNameVolume"
   );
+  // ====================================================================================================================
+  //  . . . СБРОС ПОЗИЦИИ ЧАСИКОВ . . .
+  // ====================================================================================================================
+  document.getElementById('resetClockPosition').addEventListener('click', () => {
+    const defaultPosition = { x: 10, y: 10 };
+    localStorage.setItem("uwu_clock", JSON.stringify(defaultPosition));
+  });
   // ====================================================================================================================
   //  . . . ИМПОРТ / ЭКСПОРТ НАСТРОЕК . . .
   // ====================================================================================================================
@@ -3165,10 +3407,9 @@ if (targetSettings.test(window.location.href)) {
   defaultButton.classList.add("active");
 }
 // ====================================================================================================================
-//  . . . МОДУЛЬНОСТЬ СКРИПТА . . .
+//  . . . ОНЛАЙН МАГАЗИН СТИЛЕЙ . . .
 // ====================================================================================================================
 // буду вечно задаваться вопросом, а зачем я это вообще сделал..................
-// фортнайт магазин сделать вхъазваъхзпъхазыв
 const moduleStates = {};
 const defaultModules = [
   // "style.css",
@@ -3454,31 +3695,37 @@ if (window.location.href !== targetCW3) {
     `;
     document.head.appendChild(styleElement);
 
-    const checkForComments = setInterval(() => {
-      const comments = document.querySelectorAll(".view-comment");
-      if (comments.length > 0) {
-        clearInterval(checkForComments);
+    startCheckingForComments();
+  }
 
-        comments.forEach((comment) => {
-          const authorLink = comment.querySelector(".author");
-          const catId = authorLink ? authorLink.getAttribute("href").match(/\/cat(\d+)/)?.[1] : null;
+  function startCheckingForComments() {
+    setupMutationObserver("#view_comments", insertAvatars, {
+      childList: true,
+    });
+  }
 
-          const avatarImg = document.createElement("img");
-          avatarImg.alt = "Аватар пользователя";
-          avatarImg.classList.add("avatar-img");
+  function insertAvatars() {
+    const comments = document.querySelectorAll(".view-comment");
+    comments.forEach((comment) => {
+      if (!comment.querySelector('.avatar-img')) {
+        const authorLink = comment.querySelector(".author");
+        const catId = authorLink ? authorLink.getAttribute("href").match(/\/cat(\d+)/)?.[1] : null;
 
-          if (!catId) {
-            avatarImg.src = "https://e.catwar.su/avatar/0.jpg";
-          } else {
-            loadAvatar(catId, (avatarUrl) => {
-              avatarImg.src = avatarUrl || "https://e.catwar.su/avatar/0.jpg";
-            });
-          }
+        const avatarImg = document.createElement("img");
+        avatarImg.alt = "Аватар пользователя";
+        avatarImg.classList.add("avatar-img");
 
-          comment.insertBefore(avatarImg, comment.firstChild);
-        });
+        if (!catId) {
+          avatarImg.src = "https://e.catwar.su/avatar/0.jpg";
+        } else {
+          loadAvatar(catId, (avatarUrl) => {
+            avatarImg.src = avatarUrl || "https://e.catwar.su/avatar/0.jpg";
+          });
+        }
+
+        comment.insertBefore(avatarImg, comment.firstChild);
       }
-    }, 200);
+    });
   }
 
   function loadAvatar(catId, callback) {
@@ -3513,19 +3760,7 @@ function createSoundManager() {
   let isUserInteracted = false;
   let lastPendingSound = null;
 
-  function isSafariOrIOS() {
-    const ua = navigator.userAgent.toLowerCase();
-    return (
-      ua.indexOf("safari") > -1 &&
-      (ua.indexOf("iphone") > -1 ||
-        ua.indexOf("ipad") > -1 ||
-        ua.indexOf("macintosh") > -1)
-    );
-  }
-
   function loadSound(id, url) {
-    url = isSafariOrIOS() && url.endsWith(".ogg") ? url.replace(/\.ogg$/, ".mp3") : url;
-
     const audio = new Audio(url);
     sounds[id] = audio;
   }
@@ -3593,15 +3828,15 @@ const soundManager = createSoundManager();
 
 soundManager.loadSound(
   "notificationSound1",
-  "https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_1.ogg"
+  "https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_1.mp3"
 );
 soundManager.loadSound(
   "notificationSound2",
-  "https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_2.ogg"
+  "https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_2.mp3"
 );
 soundManager.loadSound(
   "notificationSound3",
-  "https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_3.ogg"
+  "https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_3.mp3"
 );
 
 // ====================================================================================================================
@@ -3614,6 +3849,10 @@ if (window.location.href === targetCW3) {
   globalContainerElement.id = "uwu-global-container";
   containerElement.appendChild(globalContainerElement);
 
+  const mainContainerElement = document.createElement("div");
+  mainContainerElement.id = "uwu-main-container";
+  globalContainerElement.appendChild(mainContainerElement);
+
   // ====================================================================================================================
   //  . . . ПОДГРУЗКА ЦВЕТОВЫХ ТЕМ . . .
   // ====================================================================================================================
@@ -3625,7 +3864,7 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   const extendedSettingsButtonElement = document.createElement("div");
   extendedSettingsButtonElement.innerHTML = extendedSettingsButton;
-  globalContainerElement.appendChild(extendedSettingsButtonElement);
+  mainContainerElement.appendChild(extendedSettingsButtonElement);
 
   const panel = extendedSettingsButtonElement.querySelector(
     "#uwu-extended-settings"
@@ -3784,6 +4023,241 @@ if (window.location.href === targetCW3) {
       toggleFireflies();
     });
   }
+  // ====================================================================================================================
+  //   . . . ЧАСЫ . . .
+  // ====================================================================================================================
+  if (settings.showClock) {
+    const style = document.createElement("style");
+    style.textContent = // css
+    `
+        #uwu-clock {
+          border-radius: 10px;
+          width: min-content;
+          height: min-content;
+          background-color: ${theme?.blocksColor || "#242424"};
+          color: ${theme?.textColor || "#d5d5d5"};
+          border: 1px solid #ffffff1a;
+          display: grid;
+          grid-template-columns: auto 1fr;
+          grid-template-rows: auto auto;
+          align-items: center;
+          justify-content: space-between;
+          font-family: Arial, sans-serif;
+          text-align: center;
+          cursor: move;
+          pointer-events: auto;
+          position: absolute;
+          z-index: 10;
+          padding: 5px;
+          font-size: ${settings.clockFontSize || 14}px;
+        }
+
+        #uwu-clock .time {
+          font-size: 2em;
+        }
+
+        #uwu-clock .icon {
+          cursor: help;
+        }
+
+        .compact #uwu-clock {
+          column-gap: 5px;
+          grid-template-columns: auto 1fr;
+          grid-template-rows: auto auto;
+        }
+
+        .compact #uwu-clock .time {
+          grid-column: 1 / 2;
+          grid-row: 1 / 3;
+        }
+
+        .compact #uwu-clock .icon {
+          grid-column: 2 / 3;
+          grid-row: 1 / 2;
+        }
+
+        .compact #uwu-clock .date {
+          grid-column: 2 / 3;
+          grid-row: 2 / 3;
+        }
+
+        .standard #uwu-clock {
+          grid-template-columns: auto auto;
+          grid-template-rows: auto auto;
+        }
+
+        .standard #uwu-clock .time {
+          text-align: start;
+          grid-column: 1 / 2;
+          grid-row: 1 / 2;
+        }
+
+        .standard #uwu-clock .icon {
+          grid-column: 2 / 3;
+          grid-row: 1 / 2;
+        }
+
+        .standard #uwu-clock .date {
+          font-size: 1.2em;
+          grid-column: 1 / 3;
+          grid-row: 2 / 3;
+          width: max-content;
+        }
+    `;
+    document.head.appendChild(style);
+
+    const container = document.getElementById("uwu-global-container");
+    const clockElement = document.createElement("div");
+    clockElement.id = "uwu-clock";
+
+    const timeElement = document.createElement("span");
+    timeElement.className = "time";
+    clockElement.appendChild(timeElement);
+
+    const iconElement = document.createElement("span");
+    iconElement.className = "icon";
+    clockElement.appendChild(iconElement);
+
+    const dateElement = document.createElement("span");
+    dateElement.className = "date";
+    clockElement.appendChild(dateElement);
+
+    if (settings.clockMoscowTime) {
+        const mskElement = document.createElement("span");
+        mskElement.className = "msk";
+        mskElement.textContent = "MSK";
+        clockElement.appendChild(mskElement);
+    }
+
+    container.appendChild(clockElement);
+
+    let useInternetTime = false;
+    let isDragging = false;
+    let offsetX, offsetY;
+    let internetTime = null;
+    let timerInterval = null;
+
+    function updateClock(timeSource = new Date()) {
+        const hours = String(timeSource.getHours()).padStart(2, "0");
+        const minutes = String(timeSource.getMinutes()).padStart(2, "0");
+        const seconds = String(timeSource.getSeconds()).padStart(2, "0");
+        const day = String(timeSource.getDate()).padStart(2, "0");
+        const month = String(timeSource.getMonth() + 1).padStart(2, "0");
+        const year = String(timeSource.getFullYear()).slice(-2);
+
+        timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+
+        if (settings.clockStyle === "compact") {
+            dateElement.textContent = `${day}.${month}.${year}`;
+        } else if (settings.clockStyle === "standard") {
+            const dayOfWeek = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"][timeSource.getDay()];
+            const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+            const monthName = monthNames[timeSource.getMonth()];
+            dateElement.textContent = `${day} (${dayOfWeek}), ${monthName}, ${year}`;
+        }
+
+        if (useInternetTime) {
+            iconElement.textContent = "🌍︎";
+            iconElement.title = "Точное онлайн время";
+        } else {
+            iconElement.textContent = "⌨";
+            iconElement.title =
+                "Не удалось получить точное онлайн время! Используется локальное время устройства";
+        }
+    }
+
+    async function fetchInternetTime() {
+        try {
+            const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const url = settings.clockMoscowTime
+                ? "https://timeapi.io/api/Time/current/zone?timeZone=Europe/Moscow"
+                : `https://timeapi.io/api/Time/current/zone?timeZone=${userTimezone}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Онлайн ответ выдал ошибку: ${response.status} ${response.statusText}`);
+            const data = await response.json();
+            internetTime = new Date(data.dateTime);
+            useInternetTime = true;
+            updateClockWithInternetTime();
+        } catch (error) {
+            console.error('Ошибка при получении онлайн времени:', error);
+            useInternetTime = false;
+            updateClock();
+        }
+        startTimer();
+    }
+
+    function updateClockWithInternetTime() {
+        if (internetTime) {
+            internetTime.setSeconds(internetTime.getSeconds() + 1);
+            updateClock(internetTime);
+        }
+    }
+
+    function startTimer() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+        }
+        timerInterval = setInterval(() => {
+            if (useInternetTime) {
+                updateClockWithInternetTime();
+            } else {
+                updateClock();
+            }
+        }, 1000);
+    }
+
+    clockElement.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        offsetX = e.clientX - clockElement.offsetLeft;
+        offsetY = e.clientY - clockElement.offsetTop;
+        document.body.style.userSelect = "none";
+    });
+
+    document.addEventListener("mousemove", (e) => {
+        if (isDragging) {
+            clockElement.style.left = `${e.clientX - offsetX}px`;
+            clockElement.style.top = `${e.clientY - offsetY}px`;
+        }
+    });
+
+    document.addEventListener("mouseup", () => {
+        isDragging = false;
+        document.body.style.userSelect = "auto";
+        saveClockPosition();
+    });
+
+    function saveClockPosition() {
+        const clockPosition = {
+            x: clockElement.offsetLeft,
+            y: clockElement.offsetTop,
+        };
+        localStorage.setItem("uwu_clock", JSON.stringify(clockPosition));
+    }
+
+    function loadClockPosition() {
+        const storedPosition = localStorage.getItem("uwu_clock");
+        if (storedPosition) {
+            const clockPosition = JSON.parse(storedPosition);
+            clockElement.style.left = `${clockPosition.x}px`;
+            clockElement.style.top = `${clockPosition.y}px`;
+        }
+    }
+
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) {
+            fetchInternetTime();
+        }
+    });
+
+    window.addEventListener("focus", () => {
+        fetchInternetTime();
+    });
+
+    fetchInternetTime();
+    loadClockPosition();
+
+    document.body.classList.add(settings.clockStyle);
+}
   // ====================================================================================================================
   //  . . . ДЕЙСТВИЯ ПРИ НАВОДКЕ НА .cat . . .
   // ====================================================================================================================
@@ -4243,16 +4717,22 @@ if (window.location.href === targetCW3) {
   function createMoreInfoButton() {
     const parametersBlock = document.getElementById("parameters_block");
 
+    const buttonContainer = document.createElement("div");
+    buttonContainer.classList.add("button-container");
+    buttonContainer.style.paddingBottom = "5px";
+
     const moreInfoLink = document.createElement("a");
     moreInfoLink.href = "#";
     moreInfoLink.textContent = "Подробнее";
     moreInfoLink.classList.add("more-info-link");
     moreInfoLink.addEventListener("click", (event) => {
-      event.preventDefault();
-      showParameterDetails();
+        event.preventDefault();
+        showParameterDetails();
     });
 
-    parametersBlock.parentNode.insertBefore(moreInfoLink, parametersBlock);
+    buttonContainer.appendChild(moreInfoLink);
+
+    parametersBlock.insertBefore(buttonContainer, parametersBlock.firstChild);
   }
 
   function showParameterDetails() {
@@ -4355,7 +4835,7 @@ if (window.location.href === targetCW3) {
   }
 
   if (settings.showParametersDetails) {
-    setupSingleCallback("#parameters_block", createMoreInfoButton);
+    setupSingleCallback("#dream_table", createMoreInfoButton);
   }
   // ====================================================================================================================
   //   . . . ЧИСЛОВАЯ ГРОМКОСТЬ УВЕДОМЛЕНИЙ . . .
@@ -5337,6 +5817,150 @@ if (window.location.href === targetCW3) {
     });
   }
   // ====================================================================================================================
+  //  . . . ПОДСВЕТКА РЕСУРСОВ . . .
+  // ====================================================================================================================
+  if (settings.highlightResources) {
+    function hexToRGBA(hex, alpha) {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+  
+    const ITEM_MAP = {
+      'Травы': ['13', '15', '17', '19', '21', '23', '25', '26', '106', '108', '109', '110', '111', '112', '115', '116', '119', '655'],
+      'Мох': ['75', '78', '95'],
+      'Паутина': ['20'],
+      'Пыль': ['94', '385', '386', '387', '388', '389', '390', '391', '392'],
+      'Ветки, вьюнки, костоправы': ['565', '566', '562', '563', '3993'],
+      'Травящие предметы': ['985', '986', '987', '988', '989', '44', '180', '77', '7801', '7802', '7803', '7804', '7805', '7806']
+    };
+  
+    function generateHighlightStyles(cageItem) {
+      const savedSettings = localStorage.getItem('uwu_highlightResources');
+      if (!savedSettings) return;
+  
+      const uwu_highlightResources = JSON.parse(savedSettings);
+  
+      if (settings.highlightResourcesStyle === "background") {
+        const styleElement = document.getElementById('resourcesStyle') || document.createElement('style');
+        styleElement.id = 'resourcesStyle';
+        styleElement.textContent = '';
+  
+        uwu_highlightResources.forEach(resource => {
+          if (resource.highlight) {
+            const rgbaColor = hexToRGBA(resource.color, 0.4);
+            let cssRules = '';
+  
+            const items = ITEM_MAP[resource.name];
+            if (!items) {
+              console.warn("Неизвестный ресурс:", resource.name);
+              return;
+            }
+  
+            items.forEach(itemName => {
+              cssRules += `
+                .cage_items[style*='things/${itemName}.png'] {
+                  background-color: ${rgbaColor} !important;
+                }`;
+            });
+  
+            if (cssRules) {
+              styleElement.textContent += cssRules;
+            }
+          }
+        });
+  
+        document.head.appendChild(styleElement);
+      } else if (settings.highlightResourcesStyle === "glow") {
+        const style = cageItem.getAttribute("style");
+        if (!style) return;
+  
+        const oldHighlight = cageItem.querySelector("style.uwu_itemHighlight");
+        if (oldHighlight) oldHighlight.remove();
+  
+        cageItem.style.position = 'relative';
+  
+        let highlightedItems = [];
+        let highlightColor = '';
+  
+        uwu_highlightResources.forEach((resource) => {
+          if (resource.highlight) {
+            const rgbaColor = hexToRGBA(resource.color, 1);
+            highlightColor = rgbaColor;
+  
+            const items = ITEM_MAP[resource.name];
+            if (!items) {
+              console.warn("Неизвестный ресурс:", resource.name);
+              return;
+            }
+  
+            items.forEach((itemName) => {
+              const backgroundImages = style.match(/url\("things\/(.*?)\.png"\) (\d+)% (\d+)% no-repeat/g) || [];
+  
+              backgroundImages.forEach((backgroundImage) => {
+                if (backgroundImage.includes(`things/${itemName}.png`)) {
+                  const positionMatch = backgroundImage.match(/(url\("things\/(.*?)\.png"\)) (\d+)% (\d+)% no-repeat/);
+                  const imageUrl = positionMatch ? positionMatch[1] : "";
+                  const positionX = positionMatch ? positionMatch[3] : "0";
+                  const positionY = positionMatch ? positionMatch[4] : "0";
+  
+                  highlightedItems.push(
+                    `${imageUrl} ${positionX}% ${positionY}% no-repeat`
+                  );
+                }
+              });
+            });
+          }
+        });
+  
+        if (highlightedItems.length > 0) {
+          const styleBody = `
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: ${highlightedItems.join(", ")};
+            filter: drop-shadow(0 0 8px ${highlightColor}) drop-shadow(0 0 8px ${highlightColor});
+          `;
+  
+          const styleElement = document.createElement('style');
+          styleElement.classList.add('uwu_itemHighlight');
+          styleElement.textContent = `
+            .cage_items[style*='${style}']::before {
+              ${styleBody}
+            }
+          `;
+          cageItem.appendChild(styleElement);
+        }
+      }
+    }
+  
+    function setupMutationObserver(targetNode, callback, config) {
+      const observer = new MutationObserver((mutationsList, observer) => {
+        for (let mutation of mutationsList) {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+            callback(targetNode);
+          }
+        }
+      });
+  
+      observer.observe(targetNode, config);
+    }
+  
+    document.querySelectorAll(".cage_items").forEach((cageItem) => {
+      generateHighlightStyles(cageItem);
+      setupMutationObserver(cageItem, generateHighlightStyles, {
+        attributes: true,
+        childList: true,
+        subtree: true,
+      });
+    });
+  }
+  // ====================================================================================================================
   //   . . . ПОЛЬЗОВАТЕЛЬКИЙ ФОН . . .
   // ====================================================================================================================
   const cagesDiv = document.querySelector("#cages_div");
@@ -5450,8 +6074,8 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   //   . . . ПОЛЬЗОВАТЕЛЬСКИЙ ШРИФТ . . .
   // ====================================================================================================================
+  let fontSize = JSON.parse(localStorage.getItem('uwu_fontSize'));
   function applyFonts() {
-    const fontSize = JSON.parse(localStorage.getItem('uwu_fontSize'));
     const newFontStyle = document.createElement("style");
     newFontStyle.innerHTML = // css
       `
@@ -5848,7 +6472,7 @@ if (window.location.href === targetCW3) {
         position: fixed;
         left: 0px;
         top: 0px;
-        font-size: 16px;
+        font-size: ${fontSize?.fontSizeSmall || 16}px;
         z-index: 1;
       }
 
@@ -6325,7 +6949,7 @@ if (window.location.href === targetCW3) {
         <hr>
         <div id="msg">
           <div class="${chatTextClasses}">${processedText} - <b class="nick" style="${nickStyle}">${nickName}</b> <i>[${catId}]</i></div>
-          <div>
+          <div style="display: flex; width: 42px; justify-content: flex-end; margin-right: 2px;">
             <a href="${profileLink}" title="Перейти в профиль" target="_blank" rel="noopener noreferrer">➝</a>&nbsp;|&nbsp;
             <a href="#" title="Пожаловаться на нарушение ОПИ" class="msg_report" data-id="${dataId}">X</a>
           </div>
@@ -6704,7 +7328,7 @@ if (window.location.href === targetCW3) {
       if (!compactedFightLog) {
         compactedFightLog = document.createElement("div");
         compactedFightLog.id = "uwu-Compacted-Fight-Log";
-        compactedFightLog.style.height = settings.FightPanelHeight + "px";
+        compactedFightLog.style.height = settings.fightPanelHeight + "px";
         fightLog.parentNode.insertBefore(compactedFightLog, fightLog);
       }
 
@@ -6783,11 +7407,11 @@ if (window.location.href === targetCW3) {
     const uwuFightLog = document.createElement("style");
     uwuFightLog.innerHTML = `
       #fightPanel {
-        height: auto;
+        height: auto !important;
       }
 
       #fightLog, #uwu-Compacted-Fight-Log {
-        height: ${settings.FightPanelHeight || ""}px;
+        height: ${settings.fightPanelHeight || ""}px;
         resize: vertical;
         overflow-y: scroll;
       }   
@@ -7060,6 +7684,7 @@ if (window.location.href === targetCW3) {
             "#4777A3",
             "#366899",
             "#3F709E",
+            "#4374A1",
           ],
         },
         {
@@ -7169,7 +7794,7 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   //   . . . ПОДГОТОВКА КОНТЕЙНЕРОВ / ИЗОБРАЖЕНИЙ . . . 🖼️
   // ====================================================================================================================
-  const weatherContainer = document.getElementById("uwu-global-container");
+  const weatherContainer = document.getElementById("uwu-main-container");
   const weatherCanvas = document.createElement("canvas");
   weatherCanvas.classList.add("weatherCanvas");
   weatherContainer.appendChild(weatherCanvas);
@@ -7903,7 +8528,7 @@ if (window.location.href === targetCW3Hunt) {
   amogusSus();
   const containerElement = document.querySelector("body");
   const globalContainerElement = document.createElement("div");
-  globalContainerElement.id = "uwu-global-container";
+  globalContainerElement.id = "uwu-main-container";
   containerElement.appendChild(globalContainerElement);
   // ====================================================================================================================
   //   . . . ПОДПИСЫВАТЬ ЗАПАХ . . .
@@ -8013,7 +8638,7 @@ if (window.location.href === targetCW3Hunt) {
         </div>
       `;
 
-      const uwuContainer = document.getElementById("uwu-global-container");
+      const uwuContainer = document.getElementById("uwu-main-container");
       uwuContainer.insertAdjacentHTML("beforeend", joystickHTML);
 
       const css = // css
@@ -8548,7 +9173,7 @@ function moonCalculator() {
 // ====================================================================================================================
 //   . . . КАЛЬКУЛЯТОР АКТИВНОСТИ . . .
 // ====================================================================================================================
-// TODO - Написано всё хорошо, но очень кучковато и не красиво. Как-то переписать / перестроить надо.
+// TODO - Переписать, сделать рефакторинг и как-то объединить и упростить код с калькулятором выше.
 function setupActivityCalc() {
   const catId = document.getElementById("id_val").textContent;
 
@@ -8604,15 +9229,6 @@ function setupActivityCalc() {
         delete activitySettings[catId].actgoal;
       }
     });
-  }
-
-  function updateHourWord() {
-    const hours = activitySettings[catId].hours;
-    document.getElementById("hour-word").textContent = declensionOfNumber(hours, [
-      "час",
-      "часа",
-      "часов",
-    ]);
   }
 
   function calculateActivityLength(days) {
@@ -8697,39 +9313,32 @@ function setupActivityCalc() {
     .querySelector("#act_name b")
     .textContent.split(" (");
   const progress = {};
-  activityStages.forEach(function (stage, index) {
-    if (activity[0] === stage.name) {
-      progress.doneFromZero =
-        stage.fromZero + Number(activity[1].split("/")[0]);
-    }
-    if (
-      (!activityStages[index + 1] ||
-        activityStages[index + 1].fromZero > progress.doneFromZero) &&
-      activityStages[index].fromZero <= progress.doneFromZero
-    ) {
-      progress.stage = index;
-    }
-  });
+
+  const currentStage = activityStages.find(stage => stage.name === activity[0]);
+
+  if (currentStage) {
+    progress.doneFromZero = currentStage.fromZero + Number(activity[1].split("/")[0]);
+    progress.stage = activityStages.indexOf(currentStage); 
+  }
 
   const activityInfoHTML = // html
-  `
-    <details id="calculator-activity" class="calculator-style">
-      <summary id="open-calculator"><b>Калькулятор активности</b></summary>
-      <div id="calculator-content" style="margin-top: 10px;">
-        <p id="congratulations" style="display:none"></p>
-        <div id="activity-length"><b>Переход</b>: ${secondsToTime(calculateActivityLength(progress.doneFromZero))}</div>
-        <div>Мой переход изменён на <input id="minus" type="number" value="${activitySettings[catId].minus || 0}" min="-60" max="10" step="1" style="width: 50px;"> <span id="minus-word"></span></nobr>
+    `
+      <details id="calculator-activity" class="calculator-style">
+        <summary id="open-calculator"><b>Калькулятор активности</b></summary>
+        <div id="calculator-content" style="margin-top: 10px;">
+          <p id="congratulations" style="display:none"></p>
+          <div id="activity-length"><b>Переход</b>: ${secondsToTime(calculateActivityLength(progress.doneFromZero))}</div>
+          <div>Мой переход изменён на <input id="minus" type="number" value="${activitySettings[catId].minus || 0}" min="-60" max="10" step="1" style="width: 50px;"> <span id="minus-word"></span></nobr></div>
+          <div>Я качаю активность <input id="hours-per-day" type="number" step="0.25" min="0" max="24" value="${activitySettings[catId].hours}" style="width: 60px"> <span id="hour-word"></span> в сутки</div>
+          <div id="goal-progress">
+            <b>Цель: <select style="display: inline" id="activity-list"></select></b>:
+            <ul style="margin: 0.5em"></ul>
+          </div>
+          <div id="to-fall-container" style="display: none;">Переход начнёт падать <span id="to-fall"></span></div>
         </div>
-        <div>Я качаю активность <input id="hours-per-day" type="number" step="0.25" min="0" max="24"
-        value="${activitySettings[catId].hours}" style="width: 60px"> <span id="hour-word"></span> в сутки</div>
-        <div id="goal-progress">
-          <b>Цель: <select style="display: inline" id="activity-list"></select></b>:
-          <ul style="margin: 0.5em"></ul>
-        </div>
-        <div id="to-fall-container" style="display: none;">Переход начнёт падать <span id="to-fall"></span></div>
-      </div>
-    </details>
-  `;
+      </details>
+    `;
+
   document
     .getElementById("info")
     .insertAdjacentHTML("afterend", activityInfoHTML);
@@ -8746,6 +9355,7 @@ function setupActivityCalc() {
   }
 
   function showCongratulations() {
+
     document.getElementById("congratulations").innerHTML = // html
     `
       Цель <b>«${activityStages[activitySettings[catId].goal].name}»</b> достигнута!
@@ -8753,6 +9363,7 @@ function setupActivityCalc() {
       <input id="congratulations-button" type="button" value="Скрыть">
       <br><input id="never-show-congratulations" type="checkbox"> Больше не поздравлять на этом персонаже
     `;
+
     document.getElementById("congratulations").style.display = "block";
     document
       .getElementById("congratulations-button")
@@ -8780,9 +9391,12 @@ function setupActivityCalc() {
     document.getElementById("minus").value = activitySettings[catId].minus;
   }
 
-  updateHourWord();
+  const hours = activitySettings[catId].hours;
+  const minusValue = activitySettings[catId].minus || 0;
+
+  updateHourWord(hours);
   updateGoalProgress();
-  updateMinusWord();
+  updateMinusWord(minusValue);
 
   if (calculateActivityLength(progress.doneFromZero) !== 45) {
     document.getElementById("to-fall-container").style.display = "none";
@@ -8808,7 +9422,7 @@ function setupActivityCalc() {
     ).innerHTML = `<b>Переход</b>: ${secondsToTime(
       calculateActivityLength(progress.doneFromZero)
     )}`;
-    updateMinusWord();
+    updateMinusWord(this.value);
   });
 
   document.getElementById("activity-list").addEventListener("change", function () {
@@ -8827,7 +9441,7 @@ function setupActivityCalc() {
       }
       activitySettings[catId].hours = hours;
       saveData(activitySettings);
-      updateHourWord();
+      updateHourWord(hours);
       updateGoalProgress();
     });
 
@@ -8863,18 +9477,23 @@ function setupActivityCalc() {
   }
 
   function secondsToTime(seconds) {
-    const hours = Math.floor(seconds / 3600);
+    const days = Math.floor(seconds / 86400);
+    const hours = Math.floor((seconds % 86400) / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
     let result = "";
+    if (days > 0) result += `${days} д `;
     if (hours > 0) result += `${hours} ч `;
     if (minutes > 0) result += `${minutes} мин `;
     if (secs > 0 || result === "") result += `${secs} с`;
     return result.trim();
   }
 
-  function updateMinusWord() {
-    const minusValue = document.getElementById("minus").value;
+  function updateHourWord(hours) {
+    document.getElementById("hour-word").textContent = declensionOfNumber(hours, ["час", "часа", "часов"]);
+  }
+  
+  function updateMinusWord(minusValue) {
     document.getElementById("minus-word").textContent = declensionOfNumber(minusValue, ["секунду", "секунды", "секунд"]);
   }
 }
@@ -8992,11 +9611,14 @@ function addCommentButtons() {
   const comments = document.querySelectorAll('#view_comments .view-comment');
   comments.forEach(comment => {
       if (!comment.querySelector('.comment-answer-buttons')) {
-          const buttons = document.createElement('p');
-          buttons.className = 'comment-answer-buttons';
-          buttons.innerHTML = `<a class="comment-answer" href="#">Ответить</a><span class="comment-cite-wrap"> | <a class="comment-cite" href="#">Цитировать</a></span>`;
-          comment.appendChild(buttons);
-      } 
+          comment.insertAdjacentHTML('beforeend', // html
+            `
+              <p class="comment-answer-buttons">
+                  <a class="comment-answer" href="#">Ответить</a>
+                  <span class="comment-cite-wrap"> | <a class="comment-cite" href="#">Цитировать</a></span>
+              </p>
+          `);
+      }
   });
 }
 
@@ -9076,7 +9698,6 @@ function wrapPreviewInTable() {
   const mainElement = document.getElementById('main');
   const senderId = mainElement.getAttribute('data-id');
   const senderLogin = mainElement.getAttribute('data-login');
-  const recipientLogin = document.getElementById('login').value;
   const subject = document.getElementById('subject').value;
   const currentDate = new Date().toLocaleString('ru-RU', {
       year: 'numeric',
@@ -9114,3 +9735,234 @@ function wrapPreviewInTable() {
       previewDiv.style.display = 'none';
   }
 }
+
+// ====================================================================================================================
+//   . . . ШАБЛОНЫ . . .
+// ====================================================================================================================
+function initializeTemplates() {
+  if (!settings.showTemplates) return;
+
+  const templateContainer = // html
+  `
+      <div id="uwu-templates">
+          <h2>ШАБЛОНЫ</h2>
+          <div id="uwu-templates-list"></div>
+          <div class="button-container">
+              <button id="create-template-button" class="uwu-button install-button">Создать шаблон ✎</button>
+          </div>
+      </div>
+  `;
+
+  const templateItem = // html
+  `
+      <div class="uwu-template-item">
+          <div class="template-name-container">
+              <span class="template-name"></span>
+              <button class="rename-button uwu-button install-button" title="Переименовать шаблон">✎</button>
+          </div>
+          <div class="template-actions-container">
+              <button class="update-button uwu-button install-button" title="Обновить шаблон">↻</button>
+              <button class="remove-button uwu-button install-button" title="Удалить шаблон">X</button>
+          </div>
+      </div>
+  `;
+
+  const cssStyles = // css
+  `
+      #uwu-templates {
+        font-family: Montserrat;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        background-color: #242424;
+        margin-bottom: 5px;
+        margin-top: 5px;
+      }
+      
+      #uwu-templates > h2 {
+        font-size: 2em;
+        text-align: center;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        letter-spacing: 20px;
+      }
+
+      #uwu-templates-list {
+        max-height: 220px;
+        overflow-x: auto;
+        border-radius: 20px;
+        background-color: #2e2e2e;
+      }
+
+      .uwu-template-item {
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      #uwu-templates > div.button-container {
+        display: flex;
+        justify-content: flex-end;
+        padding-left: 10px;
+        padding-right: 4px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+      }
+
+      .template-name {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+
+      .uwu-button {
+        background-color: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 5px 10px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      
+      .uwu-button:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+  `;
+
+  document.head.insertAdjacentHTML('beforeend', `<style>${cssStyles}</style>`);
+
+  function setupTemplates(targetElementId, contentElementId, subjectElementId = null, pageType) {
+    const targetElement = document.getElementById(targetElementId);
+
+    if (!document.getElementById('uwu-templates')) {
+        if (targetElementId === 'mess_form') {
+            targetElement.insertAdjacentHTML('beforeend', templateContainer);
+        } else {
+            targetElement.insertAdjacentHTML('afterbegin', templateContainer);
+        }
+    }
+
+      const templatesList = document.getElementById('uwu-templates-list');
+      const createButton = document.getElementById('create-template-button');
+
+      createButton.addEventListener('click', (event) => {
+          event.preventDefault();
+          createTemplate(contentElementId, subjectElementId, pageType);
+      });
+
+      function createTemplate(contentElementId, subjectElementId, pageType) {
+          const templateName = prompt('Введите название шаблона:');
+          if (templateName) {
+              const template = {
+                  name: templateName,
+                  content: document.getElementById(contentElementId).innerText || document.getElementById(contentElementId).value,
+                  subject: subjectElementId ? document.getElementById(subjectElementId).value || "" : "",
+                  pageType: pageType
+              };
+              saveTemplate(template);
+              renderTemplates(pageType);
+          }
+      }
+
+      function saveTemplate(template) {
+          if (!localStorage.getItem('uwu_templates')) {
+              localStorage.setItem('uwu_templates', JSON.stringify([]));
+          }
+          const templates = JSON.parse(localStorage.getItem('uwu_templates'));
+          templates.push(template);
+          localStorage.setItem('uwu_templates', JSON.stringify(templates));
+      }
+
+      function renderTemplates(pageType) {
+          const templates = JSON.parse(localStorage.getItem('uwu_templates')) || [];
+          templatesList.innerHTML = '';
+
+          templates.forEach((template, index) => {
+              if (template.pageType === pageType) {
+                  const templateItemHTML = document.createElement('div');
+                  templateItemHTML.innerHTML = templateItem;
+                  const templateItemElement = templateItemHTML.children[0];
+
+                  const templateName = templateItemElement.querySelector('.template-name');
+                  templateName.textContent = template.name;
+                  templateName.addEventListener('click', () => {
+                      if (document.getElementById(contentElementId).tagName === 'DIV') {
+                          document.getElementById(contentElementId).innerText = template.content;
+                      } else {
+                          document.getElementById(contentElementId).value = template.content;
+                      }
+                      if (subjectElementId) {
+                          document.getElementById(subjectElementId).value = template.subject || "";
+                      }
+                  });
+
+                  const renameButton = templateItemElement.querySelector('.rename-button');
+                  renameButton.addEventListener('click', () => renameTemplate(index));
+
+                  const updateButton = templateItemElement.querySelector('.update-button');
+                  updateButton.addEventListener('click', () => updateTemplate(index, contentElementId, subjectElementId));
+
+                  const removeButton = templateItemElement.querySelector('.remove-button');
+                  removeButton.addEventListener('click', () => removeTemplate(index));
+
+                  templatesList.appendChild(templateItemElement);
+              }
+          });
+      }
+
+      function renameTemplate(index) {
+          const newName = prompt('Введите новое название шаблона:');
+          if (newName) {
+              const templates = JSON.parse(localStorage.getItem('uwu_templates'));
+              templates[index].name = newName;
+              localStorage.setItem('uwu_templates', JSON.stringify(templates));
+              renderTemplates(pageType);
+          }
+      }
+
+      function updateTemplate(index, contentElementId, subjectElementId) {
+          const templates = JSON.parse(localStorage.getItem('uwu_templates'));
+          if (document.getElementById(contentElementId).tagName === 'DIV') {
+              templates[index].content = document.getElementById(contentElementId).innerText;
+          } else {
+              templates[index].content = document.getElementById(contentElementId).value;
+          }
+          if (subjectElementId) {
+              templates[index].subject = document.getElementById(subjectElementId).value || "";
+          }
+          localStorage.setItem('uwu_templates', JSON.stringify(templates));
+          renderTemplates(pageType);
+      }
+
+      function removeTemplate(index) {
+        const confirmation = confirm('Вы уверены, что хотите удалить этот шаблон?');
+        if (confirmation) {
+            const templates = JSON.parse(localStorage.getItem('uwu_templates'));
+            templates.splice(index, 1);
+            localStorage.setItem('uwu_templates', JSON.stringify(templates));
+            renderTemplates(pageType);
+        }
+    }
+
+      renderTemplates(pageType);
+  }
+
+  function checkUrlAndSetup() {
+    if (targetLsNew.test(window.location.href) && settings.templatesInLs) {
+        setupSingleCallback("#write_form", () => setupTemplates("write_div", "text", "subject", "ls"));
+    } else if ((targetBlogsCreation.test(window.location.href) || targetSniffCreation.test(window.location.href)) && settings.templatesInBlogsAndSniffs) {
+        setupSingleCallback(".creation_form", () => setupTemplates("creation_form", "creation-text", "creation-title", "blogsAndSniffs"));
+    } else if (targetChats.test(window.location.href) && settings.templatesInChats) {
+        setupSingleCallback("#mess_form", () => setupTemplates("mess_form", "mess", null, "chat"));
+    }
+}
+
+setupMutationObserver("#main", checkUrlAndSetup, {
+  childList: true,
+  attributes: true,
+});
+}
+
+initializeTemplates();
