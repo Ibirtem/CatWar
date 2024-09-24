@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.31.0-09.24
+// @version      v1.31.1-09.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -19,7 +19,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.31.0";
+const current_uwu_version = "1.31.1";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   settingsTheme: "dark",
@@ -1242,37 +1242,42 @@ const uwusettings = // html
 const newsPanel = // html
 `
 <div id="news-panel">
-  <button id="news-button">
-    v${current_uwu_version} - ❄️ Точные часы и подсветка ресурсов в Игровой, а так же Шаблоны сообщений!
-  </button>
-  <div id="news-list" style="display: none">
-    <h3>Главное</h3>
-    <p>— Ищите новые функции в "Инструментарии"!🍤🦐🍤🦐</p>
-    <hr id="uwu-hr" class="uwu-hr">
-    <h3>Внешний вид</h3>
-    <p>— Размытие блоков в Сборнике стилей поддерживает часы!</p>
-    <p>— Многие кнопки в настройках теперь имеют стили благодаря классу "install-button" и выглядят наглядней.</p>
-    <p>— Кнопка "Подробнее" в "Параметрах и навыках" теперь тоже скрывается и имеет небольшой приятный отступ.</p>
-    <p>— Шрифт Скрипта/Мода UwU "Montserrat" теперь самостоятелен и не будет теряться.</p>
-    <p>— "➝ | X" в "Современном чате" не должно теперь некрасиво съезжать.</p>
-    <hr id="uwu-hr" class="uwu-hr">
-    <h3>Изменения кода</h3>
-    <p>— Подправленна ссылка определения страниц личных сообщений.</p>
-    <p>— От этого предпросмотр сообщений теперь работает вроде бы везде где надо.</p>
-    <p>— Размер шрифта ссылок теперь тоже должен меняться.</p>
-    <p>— Первый надежда-фикс улетающего текста в панели БР.</p>
-    <p>— Исправление неправильного названия переменной хранения высоты панели БР. Теперь высота БР должна правильно работать.</p>
-    <p>— Лёгкие правки написания кода калькулятора активности для повышения читаемости.</p>
-    <p>— Упростил менеджер звуков убрав проверку на Apple устройства. Теперь всегда загружается .mp3</p>
-    <p>— Теперь в "uwu-global-container" есть "uwu-main-container" для фикс отображения вещей.
-     Туда ушли кнопка Расширенных настроек и погода.</p>
-     <p>— "uwu-global-container" же теперь менее фиксированный и перенимает body параметры. Вообщем для 
-     потоскать часы и минные поля.</p>
-    <p>— Небольшая оптимизация и корректировка кода работы Аватарок.</p>
-    <p>— Капля оптимизации в функцию addCommentButtons вставляющая кнопки "Ответить и Цитировать".</p>
-    <hr id="uwu-hr" class="uwu-hr">
-    <p>Дата выпуска: 24.09.24</p>
-  </div>
+    <button id="news-button">
+        v${current_uwu_version} - ❄️ Точные часы и подсветка ресурсов в Игровой, а так же Шаблоны сообщений!
+    </button>
+    <div id="news-list" style="display: none">
+        <h3>Главное</h3>
+        <p>— Ищите новые функции в "Инструментарии"!🍤🦐🍤🦐</p>
+        <hr id="uwu-hr" class="uwu-hr">
+        <h3>Внешний вид</h3>
+        <p>— Размытие блоков в Сборнике стилей поддерживает часы!</p>
+        <p>— Многие кнопки в настройках теперь имеют стили благодаря классу "install-button" и выглядят наглядней.</p>
+        <p>— Кнопка "Подробнее" в "Параметрах и навыках" теперь тоже скрывается и имеет небольшой приятный отступ.</p>
+        <p>— Шрифт Скрипта/Мода UwU "Montserrat" теперь самостоятелен и не будет теряться.</p>
+        <p>— "➝ | X" в "Современном чате" не должно теперь некрасиво съезжать.</p>
+        <hr id="uwu-hr" class="uwu-hr">
+        <h3>Изменения кода</h3>
+        <p>— Подправленна ссылка определения страниц личных сообщений.</p>
+        <p>— От этого предпросмотр сообщений теперь работает вроде бы везде где надо.</p>
+        <p>— Размер шрифта ссылок теперь тоже должен меняться.</p>
+        <p>— Первый надежда-фикс улетающего текста в панели БР.</p>
+        <p>— Исправление неправильного названия переменной хранения высоты панели БР. Теперь высота БР должна правильно
+            работать.</p>
+        <p>— Лёгкие правки написания кода калькулятора активности для повышения читаемости.</p>
+        <p>— Упростил менеджер звуков убрав проверку на Apple устройства. Теперь всегда загружается .mp3</p>
+        <p>— Теперь в "uwu-global-container" есть "uwu-main-container" для фикс отображения вещей.
+            Туда ушли кнопка Расширенных настроек и погода.</p>
+        <p>— "uwu-global-container" же теперь менее фиксированный и перенимает body параметры. Вообщем для
+            потоскать часы и минные поля.</p>
+        <p>— Небольшая оптимизация и корректировка кода работы Аватарок.</p>
+        <p>— Капля оптимизации в функцию addCommentButtons вставляющая кнопки "Ответить и Цитировать".</p>
+        <p>—— Fix v1.31.1</p>
+        <p>—— Починились шаблоны в Чатах.</p>
+        <p>—— Починились галочки подсветки ресурсов.</p>
+        <p>—— Цвета подсветки ресурсов при выборе пипеткой теперь тоже сразу сохраняются.</p>
+        <hr id="uwu-hr" class="uwu-hr">
+        <p>Дата выпуска: 24.09.24</p>
+    </div>
 </div>
 `;
 // ====================================================================================================================
@@ -2686,49 +2691,50 @@ if (targetSettings.test(window.location.href)) {
   //  . . . ПОДСВЕТКА РЕСУРСОВ . . .
   // ====================================================================================================================
   function saveHighlightSettings() {
-    const uwu_highlightResources = [];
-
-    document.querySelectorAll('.uwu-table-highlightResources tbody tr').forEach(row => {
-        const resourceName = row.querySelector('td:first-child').textContent;
-        const colorPicker = row.querySelector('.uwu-color-picker');
-        const checkbox = row.querySelector('.uwu-highlight-checkbox');
-
-        const resource = {
-            name: resourceName,
-            color: colorPicker.value,
-            highlight: checkbox.checked
-        };
-
-        uwu_highlightResources.push(resource);
+    const highlightResources = [];
+  
+    document.querySelectorAll('.uwu-table-highlight-Resources tbody tr').forEach(row => {
+      const resourceName = row.querySelector('.uwu-color-picker').dataset.resource;
+      const colorPicker = row.querySelector('.uwu-color-picker');
+      const checkbox = row.querySelector('.uwu-highlight-checkbox');
+  
+      const resource = {
+        name: resourceName,
+        color: colorPicker.value,
+        highlight: checkbox.checked
+      };
+  
+      highlightResources.push(resource);
     });
-
-    localStorage.setItem('uwu_highlightResources', JSON.stringify(uwu_highlightResources));
+  
+    localStorage.setItem('highlightResources', JSON.stringify(highlightResources));
   }
-
+  
   function restoreHighlightSettings() {
-    const savedSettings = localStorage.getItem('uwu_highlightResources');
+    const savedSettings = localStorage.getItem('highlightResources');
     if (savedSettings) {
-        const uwu_highlightResources = JSON.parse(savedSettings);
-
-        uwu_highlightResources.forEach(resource => {
-            const colorPicker = document.querySelector(`.uwu-color-picker[data-resource="${resource.name}"]`);
-            const checkbox = document.querySelector(`.uwu-highlight-checkbox[data-resource="${resource.name}"]`);
-
-            if (colorPicker) colorPicker.value = resource.color;
-            if (checkbox) checkbox.checked = resource.highlight;
-        });
+      const highlightResources = JSON.parse(savedSettings);
+  
+      highlightResources.forEach(resource => {
+        const colorPicker = document.querySelector(`.uwu-color-picker[data-resource="${resource.name}"]`);
+        const checkbox = document.querySelector(`.uwu-highlight-checkbox[data-resource="${resource.name}"]`);
+  
+        if (colorPicker) colorPicker.value = resource.color;
+        if (checkbox) checkbox.checked = resource.highlight;
+      });
     }
   }
 
-  document.querySelectorAll('.uwu-color-picker').forEach(element => {
-    element.addEventListener('change', saveHighlightSettings);
-  });
+restoreHighlightSettings();
 
-  document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
-    element.addEventListener('change', saveHighlightSettings);
-  });
+document.querySelectorAll('.uwu-color-picker').forEach(element => {
+  element.addEventListener('input', saveHighlightSettings);
+});
 
-  restoreHighlightSettings();
+document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
+  element.addEventListener('change', saveHighlightSettings);
+});
+
   // ====================================================================================================================
   //  . . . ЦВЕТА КОМАНДНЫХ БОЁВ . . .
   // ====================================================================================================================
@@ -9962,6 +9968,10 @@ function initializeTemplates() {
 setupMutationObserver("#main", checkUrlAndSetup, {
   childList: true,
   attributes: true,
+});
+
+setupMutationObserver("#branch", checkUrlAndSetup, {
+  childList: true,
 });
 }
 
