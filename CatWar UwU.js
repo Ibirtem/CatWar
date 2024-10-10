@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.31.1-09.24
+// @version      v1.32.0-10.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -19,7 +19,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.31.1";
+const current_uwu_version = "1.32.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   settingsTheme: "dark",
@@ -85,6 +85,7 @@ const uwuDefaultSettings = {
   showClock: false,
   clockStyle: "compact",
   clockFontSize: "14",
+  clockPosition: "fly",
 
   describeHuntingSmell: false,
   huntingVirtualJoystick: false,
@@ -953,6 +954,16 @@ const uwusettings = // html
       </div>
     </div>
 
+    <div><!-- Деление --></div>
+
+    <label>Где вставлять часы:</label>
+    <div class="custom-select" id="clockPosition">
+      <div class="select-selected">Выберите положение часов</div>
+      <div class="select-items">
+        <!-- Опции будут добавлены сюда -->
+      </div>
+    </div>
+
     <div>
       <input type="checkbox" id="describe-clock-Moscow-Time" data-setting="clockMoscowTime" />
       <label for="describe-clock-Moscow-Time">Московское время</label>
@@ -1243,40 +1254,31 @@ const newsPanel = // html
 `
 <div id="news-panel">
     <button id="news-button">
-        v${current_uwu_version} - ❄️ Точные часы и подсветка ресурсов в Игровой, а так же Шаблоны сообщений!
+        v${current_uwu_version} - 🎃 Полировочка.
     </button>
     <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>— Ищите новые функции в "Инструментарии"!🍤🦐🍤🦐</p>
+        <p>— Ба бу бэ)) Часы теперь можно вставлять в блок Погоды, это затычка на крайняк.</p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Внешний вид</h3>
-        <p>— Размытие блоков в Сборнике стилей поддерживает часы!</p>
-        <p>— Многие кнопки в настройках теперь имеют стили благодаря классу "install-button" и выглядят наглядней.</p>
-        <p>— Кнопка "Подробнее" в "Параметрах и навыках" теперь тоже скрывается и имеет небольшой приятный отступ.</p>
-        <p>— Шрифт Скрипта/Мода UwU "Montserrat" теперь самостоятелен и не будет теряться.</p>
-        <p>— "➝ | X" в "Современном чате" не должно теперь некрасиво съезжать.</p>
+        <p>— Текст в информации в "О коте" сдвинута к левому краю и сделалась чуть компактнее.</p>
+        <p>— При выборе московского времени, "MSK" теперь пишется около значка откуда берётся время. 
+        Ну те самые 🌍︎ или ⌨.</p>
+        <p>— Небольшой редизайн кнопки разворачивания Минного Поля.</p>
+        <p>— Цвет текста в Шаблонах стал белым. Извените кому нравилось цветное, как нибудь потом.</p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Изменения кода</h3>
-        <p>— Подправленна ссылка определения страниц личных сообщений.</p>
-        <p>— От этого предпросмотр сообщений теперь работает вроде бы везде где надо.</p>
-        <p>— Размер шрифта ссылок теперь тоже должен меняться.</p>
-        <p>— Первый надежда-фикс улетающего текста в панели БР.</p>
-        <p>— Исправление неправильного названия переменной хранения высоты панели БР. Теперь высота БР должна правильно
-            работать.</p>
-        <p>— Лёгкие правки написания кода калькулятора активности для повышения читаемости.</p>
-        <p>— Упростил менеджер звуков убрав проверку на Apple устройства. Теперь всегда загружается .mp3</p>
-        <p>— Теперь в "uwu-global-container" есть "uwu-main-container" для фикс отображения вещей.
-            Туда ушли кнопка Расширенных настроек и погода.</p>
-        <p>— "uwu-global-container" же теперь менее фиксированный и перенимает body параметры. Вообщем для
-            потоскать часы и минные поля.</p>
-        <p>— Небольшая оптимизация и корректировка кода работы Аватарок.</p>
-        <p>— Капля оптимизации в функцию addCommentButtons вставляющая кнопки "Ответить и Цитировать".</p>
-        <p>—— Fix v1.31.1</p>
-        <p>—— Починились шаблоны в Чатах.</p>
-        <p>—— Починились галочки подсветки ресурсов.</p>
-        <p>—— Цвета подсветки ресурсов при выборе пипеткой теперь тоже сразу сохраняются.</p>
+        <p>— Немного почистил и чёта там поменял с высотами панели БР. 
+        Надеюсь кому-то чёта починило если нет то хихи хаха.</p>
+        <p>— Починина подсветка ресурсов в режиме "Подсветка".</p>
+        <p>— Теперь не будет использовать последний цвет из сохранения для подсветки всех ресурсов.</p>
+        <p>— Немного переписан код Дублирования действий на вкладку, а так же + ...</p>
+        <p>— ... теперь на название вкладки дублируется подняли ли вас, и кто поднял.</p>
+        <p>— Убраны console.warn от установок прослушок из-за как таковой ненадобности в общем пользовании. 
+        Консоль браузера теперь чистенькая 😊</p>
+        <p>— Чуть переписаны handleCommentActions и toggleAurora афигеть как круто сделано вау надо чаще так делать.</p>
         <hr id="uwu-hr" class="uwu-hr">
-        <p>Дата выпуска: 24.09.24</p>
+        <p>Дата выпуска: 10.10.24</p>
     </div>
 </div>
 `;
@@ -2041,11 +2043,6 @@ const css_uwu_main =
   padding: 5px;
 }
 
-#uwu-Compacted-Fight-Log {
-  resize: vertical;
-  overflow-y: scroll;
-}
-
 `;
 
 document.head.insertAdjacentHTML(
@@ -2338,9 +2335,9 @@ async function setupMutationObserver(
     }
     await new Promise((resolve) => setTimeout(resolve, delay));
   }
-  console.warn(
-    `Элемент с селектором "${selector}" не найден после ${maxAttempts} попыток.`
-  );
+  // console.warn(
+  //   `Элемент с селектором "${selector}" не найден после ${maxAttempts} попыток.`
+  // );
 }
 
 // Когда нужно вставить что-то в какой-то элемент, который ещё не успел появиться.
@@ -2358,9 +2355,9 @@ async function setupSingleCallback(
     }
     await new Promise((resolve) => setTimeout(resolve, delay));
   }
-  console.warn(
-    `Элемент с селектором "${selector}" не найден после ${maxAttempts} попыток.`
-  );
+  // console.warn(
+  //   `Элемент с селектором "${selector}" не найден после ${maxAttempts} попыток.`
+  // );
 }
 // ====================================================================================================================
 //   . . . СОХРАНЕНИЕ И РАБОТА С ЦВЕТОВЫМИ ТЕМАМИ . . .
@@ -2707,11 +2704,11 @@ if (targetSettings.test(window.location.href)) {
       highlightResources.push(resource);
     });
   
-    localStorage.setItem('highlightResources', JSON.stringify(highlightResources));
+    localStorage.setItem('uwu_highlightResources', JSON.stringify(highlightResources));
   }
   
   function restoreHighlightSettings() {
-    const savedSettings = localStorage.getItem('highlightResources');
+    const savedSettings = localStorage.getItem('uwu_highlightResources');
     if (savedSettings) {
       const highlightResources = JSON.parse(savedSettings);
   
@@ -2878,6 +2875,13 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     ]
   
     createCustomSelect("clockStyle", clockStyles);
+    // ==============================================================================
+    const clockPositions = [
+      { id: "fly", name: "Свободно" },
+      { id: "tos", name: "В блоке погоды" },
+    ]
+  
+    createCustomSelect("clockPosition", clockPositions);
     // ==============================================================================
     const highlightResourcesStyles = [
       { id: "background", name: "Фон / Быстро" },
@@ -4112,6 +4116,18 @@ if (window.location.href === targetCW3) {
     `;
     document.head.appendChild(style);
 
+    const tosStyle = document.createElement("style");
+    tosStyle.textContent = `
+      #uwu-clock {
+        position: relative;
+      }
+    `;
+    
+    const flyStyle = document.createElement("style");
+    flyStyle.textContent = `
+
+    `;
+
     const container = document.getElementById("uwu-global-container");
     const clockElement = document.createElement("div");
     clockElement.id = "uwu-clock";
@@ -4128,14 +4144,16 @@ if (window.location.href === targetCW3) {
     dateElement.className = "date";
     clockElement.appendChild(dateElement);
 
-    if (settings.clockMoscowTime) {
-        const mskElement = document.createElement("span");
-        mskElement.className = "msk";
-        mskElement.textContent = "MSK";
-        clockElement.appendChild(mskElement);
-    }
-
-    container.appendChild(clockElement);
+    if (settings.clockPosition === "fly") {
+      container.appendChild(clockElement);
+      document.head.appendChild(flyStyle);
+  } else if (settings.clockPosition === "tos") {
+      const trTos = document.getElementById("tr_tos").querySelector("tbody tr");
+      const newTd = document.createElement("td");
+      newTd.appendChild(clockElement);
+      trTos.appendChild(newTd);
+      document.head.appendChild(tosStyle);
+  }
 
     let useInternetTime = false;
     let isDragging = false;
@@ -4144,33 +4162,36 @@ if (window.location.href === targetCW3) {
     let timerInterval = null;
 
     function updateClock(timeSource = new Date()) {
-        const hours = String(timeSource.getHours()).padStart(2, "0");
-        const minutes = String(timeSource.getMinutes()).padStart(2, "0");
-        const seconds = String(timeSource.getSeconds()).padStart(2, "0");
-        const day = String(timeSource.getDate()).padStart(2, "0");
-        const month = String(timeSource.getMonth() + 1).padStart(2, "0");
-        const year = String(timeSource.getFullYear()).slice(-2);
-
-        timeElement.textContent = `${hours}:${minutes}:${seconds}`;
-
-        if (settings.clockStyle === "compact") {
-            dateElement.textContent = `${day}.${month}.${year}`;
-        } else if (settings.clockStyle === "standard") {
-            const dayOfWeek = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"][timeSource.getDay()];
-            const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
-            const monthName = monthNames[timeSource.getMonth()];
-            dateElement.textContent = `${day} (${dayOfWeek}), ${monthName}, ${year}`;
-        }
-
-        if (useInternetTime) {
-            iconElement.textContent = "🌍︎";
-            iconElement.title = "Точное онлайн время";
-        } else {
-            iconElement.textContent = "⌨";
-            iconElement.title =
-                "Не удалось получить точное онлайн время! Используется локальное время устройства";
-        }
-    }
+      const hours = String(timeSource.getHours()).padStart(2, "0");
+      const minutes = String(timeSource.getMinutes()).padStart(2, "0");
+      const seconds = String(timeSource.getSeconds()).padStart(2, "0");
+      const day = String(timeSource.getDate()).padStart(2, "0");
+      const month = String(timeSource.getMonth() + 1).padStart(2, "0");
+      const year = String(timeSource.getFullYear());
+  
+      timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+  
+      if (settings.clockStyle === "compact") {
+          dateElement.textContent = `${day}.${month}.${year.slice(-2)}`;
+      } else if (settings.clockStyle === "standard") {
+          const dayOfWeek = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"][timeSource.getDay()];
+          const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+          const monthName = monthNames[timeSource.getMonth()];
+          dateElement.textContent = `${day} (${dayOfWeek}), ${monthName}, ${year}`;
+      }
+  
+      if (useInternetTime) {
+          iconElement.textContent = "🌍︎";
+          iconElement.title = "Точное онлайн время";
+          if (settings.clockMoscowTime) {
+              iconElement.textContent += " MSK";
+          }
+      } else {
+          iconElement.textContent = "⌨";
+          iconElement.title =
+              "Не удалось получить точное онлайн время! Используется локальное время устройства";
+      }
+  }
 
     async function fetchInternetTime() {
         try {
@@ -4193,11 +4214,14 @@ if (window.location.href === targetCW3) {
     }
 
     function updateClockWithInternetTime() {
-        if (internetTime) {
-            internetTime.setSeconds(internetTime.getSeconds() + 1);
-            updateClock(internetTime);
-        }
-    }
+      if (internetTime) {
+          internetTime.setSeconds(internetTime.getSeconds() + 1);
+          updateClock(internetTime);
+          if (settings.clockMoscowTime) {
+              iconElement.textContent = "🌍︎ MSK";
+          }
+      }
+  }
 
     function startTimer() {
         if (timerInterval) {
@@ -4212,25 +4236,27 @@ if (window.location.href === targetCW3) {
         }, 1000);
     }
 
-    clockElement.addEventListener("mousedown", (e) => {
-        isDragging = true;
-        offsetX = e.clientX - clockElement.offsetLeft;
-        offsetY = e.clientY - clockElement.offsetTop;
-        document.body.style.userSelect = "none";
-    });
+    if (settings.clockPosition === "fly") {
+        clockElement.addEventListener("mousedown", (e) => {
+            isDragging = true;
+            offsetX = e.clientX - clockElement.offsetLeft;
+            offsetY = e.clientY - clockElement.offsetTop;
+            document.body.style.userSelect = "none";
+        });
 
-    document.addEventListener("mousemove", (e) => {
-        if (isDragging) {
-            clockElement.style.left = `${e.clientX - offsetX}px`;
-            clockElement.style.top = `${e.clientY - offsetY}px`;
-        }
-    });
+        document.addEventListener("mousemove", (e) => {
+            if (isDragging) {
+                clockElement.style.left = `${e.clientX - offsetX}px`;
+                clockElement.style.top = `${e.clientY - offsetY}px`;
+            }
+        });
 
-    document.addEventListener("mouseup", () => {
-        isDragging = false;
-        document.body.style.userSelect = "auto";
-        saveClockPosition();
-    });
+        document.addEventListener("mouseup", () => {
+            isDragging = false;
+            document.body.style.userSelect = "auto";
+            saveClockPosition();
+        });
+    }
 
     function saveClockPosition() {
         const clockPosition = {
@@ -4260,7 +4286,9 @@ if (window.location.href === targetCW3) {
     });
 
     fetchInternetTime();
-    loadClockPosition();
+    if (settings.clockPosition === "fly") {
+        loadClockPosition();
+    }
 
     document.body.classList.add(settings.clockStyle);
 }
@@ -4419,6 +4447,26 @@ if (window.location.href === targetCW3) {
 
       .parameter-details-container {
         text-align: left;
+      }
+
+      .cat-details {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-left: 8px;
+      }
+
+      .cat-details > p,
+      .cat-details > div > p {
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+
+      #uwu-global-container > div.cat-info > div > div > div.cat-details > div {
+        margin-top: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
       }
     `;
 
@@ -5069,25 +5117,30 @@ if (window.location.href === targetCW3) {
     const uwuClimbingPanelContainer = // html
     `
       <div id="uwu-climbingMainPanel">
-          <div id="uwu-climbingPanelButton">
-              <h2>Минное поле</h2>
-          </div>
-          <div id="uwu-climbingPanelContainer">
-              <div id="uwu-climbingPanelContent">
-                  <div id="uwu-buttonContainer">
-                      <h3>Вкладка</h3>
-                      <div id="uwu-buttonRow1"></div>
-                      <hr id="uwu-hr">
-                      <h3>Локация</h3>
-                      <div id="uwu-buttonRow2"></div>
-                  </div>
-                  <div id="uwu-functionButtonsContainer">
-                      <input type="checkbox" id="uwu-transferCheckbox">
-                      <label for="uwu-transferCheckbox">Перенос на Игровое поле</label>
-                  </div>
-                  <div id="uwu-tableContainer"></div>
+        <div id="uwu-climbingPanelButton">
+            <div class="left-content">
+                <h2>Минное поле</h2>
+            </div>
+            <div class="right-content">
+                <span id="uwu-arrow">▼</span>
+            </div>
+        </div>
+      <div id="uwu-climbingPanelContainer">
+          <div id="uwu-climbingPanelContent">
+              <div id="uwu-buttonContainer">
+                  <h3>Вкладка</h3>
+                  <div id="uwu-buttonRow1"></div>
+                  <hr id="uwu-hr">
+                  <h3>Локация</h3>
+                  <div id="uwu-buttonRow2"></div>
               </div>
+              <div id="uwu-functionButtonsContainer">
+                  <input type="checkbox" id="uwu-transferCheckbox">
+                  <label for="uwu-transferCheckbox">Перенос на Игровое поле</label>
+              </div>
+              <div id="uwu-tableContainer"></div>
           </div>
+      </div>
       </div>
     `;
 
@@ -5403,8 +5456,15 @@ if (window.location.href === targetCW3) {
 
     function togglePanelContainer(e) {
       if (!wasDragging) {
+        const arrow = document.getElementById("uwu-arrow");
         climbingPanelContainer.classList.toggle("open");
         saveClimbingPanelStatus();
+  
+        if (climbingPanelContainer.classList.contains("open")) {
+          arrow.textContent = "▲";
+        } else {
+          arrow.textContent = "▼";
+        }
       }
       wasDragging = false;
     }
@@ -5450,7 +5510,9 @@ if (window.location.href === targetCW3) {
     uwuClimbingPanel.innerHTML = // css
     `
     #uwu-climbingPanelContainer {
+      background-color: "";
       display: none;
+      padding: 5px;
     }
     
     #uwu-climbingPanelContainer.open {
@@ -5464,9 +5526,24 @@ if (window.location.href === targetCW3) {
       position: absolute;
       background-color: #ffffff08;
       border: 1px solid #ffffff1a;
-      padding: 5px;
       backdrop-filter: blur(20px);
       border-radius: 10px;
+    }
+
+    #uwu-climbingPanelButton .left-content {
+      pointer-events: none;
+      width: 90%;
+    }
+
+    #uwu-climbingPanelButton .right-content {
+      pointer-events: none;
+      width: 10%;
+      text-align: right;
+    }
+
+    #uwu-arrow {
+      font-size: 18px;
+      margin-right: 8px;
     }
 
     #uwu-climbingPanelButton {
@@ -5474,6 +5551,9 @@ if (window.location.href === targetCW3) {
       background-color: #00000026;
       border-radius: 10px;
       border: 1px solid #ffffff1a;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
     }
 
     #uwu-climbingPanelButton h2 {
@@ -5845,103 +5925,100 @@ if (window.location.href === targetCW3) {
     function generateHighlightStyles(cageItem) {
       const savedSettings = localStorage.getItem('uwu_highlightResources');
       if (!savedSettings) return;
-  
+    
       const uwu_highlightResources = JSON.parse(savedSettings);
-  
+    
       if (settings.highlightResourcesStyle === "background") {
         const styleElement = document.getElementById('resourcesStyle') || document.createElement('style');
         styleElement.id = 'resourcesStyle';
         styleElement.textContent = '';
-  
+    
         uwu_highlightResources.forEach(resource => {
           if (resource.highlight) {
             const rgbaColor = hexToRGBA(resource.color, 0.4);
             let cssRules = '';
-  
+    
             const items = ITEM_MAP[resource.name];
             if (!items) {
               console.warn("Неизвестный ресурс:", resource.name);
               return;
             }
-  
+    
             items.forEach(itemName => {
               cssRules += `
                 .cage_items[style*='things/${itemName}.png'] {
                   background-color: ${rgbaColor} !important;
                 }`;
             });
-  
+    
             if (cssRules) {
               styleElement.textContent += cssRules;
             }
           }
         });
-  
+    
         document.head.appendChild(styleElement);
       } else if (settings.highlightResourcesStyle === "glow") {
         const style = cageItem.getAttribute("style");
         if (!style) return;
-  
-        const oldHighlight = cageItem.querySelector("style.uwu_itemHighlight");
-        if (oldHighlight) oldHighlight.remove();
-  
+    
+        const oldHighlights = cageItem.querySelectorAll("style.uwu_itemHighlight");
+        oldHighlights.forEach(oldHighlight => oldHighlight.remove());
+    
         cageItem.style.position = 'relative';
-  
-        let highlightedItems = [];
-        let highlightColor = '';
-  
+    
         uwu_highlightResources.forEach((resource) => {
           if (resource.highlight) {
             const rgbaColor = hexToRGBA(resource.color, 1);
-            highlightColor = rgbaColor;
-  
+            let highlightedItems = [];
+    
             const items = ITEM_MAP[resource.name];
             if (!items) {
               console.warn("Неизвестный ресурс:", resource.name);
               return;
             }
-  
+    
             items.forEach((itemName) => {
               const backgroundImages = style.match(/url\("things\/(.*?)\.png"\) (\d+)% (\d+)% no-repeat/g) || [];
-  
+    
               backgroundImages.forEach((backgroundImage) => {
                 if (backgroundImage.includes(`things/${itemName}.png`)) {
                   const positionMatch = backgroundImage.match(/(url\("things\/(.*?)\.png"\)) (\d+)% (\d+)% no-repeat/);
                   const imageUrl = positionMatch ? positionMatch[1] : "";
                   const positionX = positionMatch ? positionMatch[3] : "0";
                   const positionY = positionMatch ? positionMatch[4] : "0";
-  
+    
                   highlightedItems.push(
                     `${imageUrl} ${positionX}% ${positionY}% no-repeat`
                   );
                 }
               });
             });
+    
+            if (highlightedItems.length > 0) {
+              const styleBody = `
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                background: ${highlightedItems.join(", ")};
+                filter: drop-shadow(0 0 8px ${rgbaColor}) drop-shadow(0 0 8px ${rgbaColor});
+              `;
+    
+              const styleElement = document.createElement('style');
+              styleElement.classList.add('uwu_itemHighlight');
+              styleElement.textContent = `
+                .cage_items[style*='${style}']::before {
+                  ${styleBody}
+                }
+              `;
+              cageItem.appendChild(styleElement);
+            }
           }
         });
-  
-        if (highlightedItems.length > 0) {
-          const styleBody = `
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            background: ${highlightedItems.join(", ")};
-            filter: drop-shadow(0 0 8px ${highlightColor}) drop-shadow(0 0 8px ${highlightColor});
-          `;
-  
-          const styleElement = document.createElement('style');
-          styleElement.classList.add('uwu_itemHighlight');
-          styleElement.textContent = `
-            .cage_items[style*='${style}']::before {
-              ${styleBody}
-            }
-          `;
-          cageItem.appendChild(styleElement);
-        }
       }
     }
   
@@ -6681,20 +6758,31 @@ if (window.location.href === targetCW3) {
     });
   }
   // ====================================================================================================================
-  //   . . . ДУБЛИРОВАНИЕ ВРЕМЯ НА ВКЛАДКУ БРАУЗЕРА . . .
+  //   . . . ДУБЛИРОВАНИЕ ДЕЙСТВИЙ НА ВКЛАДКУ БРАУЗЕРА . . .
   // ====================================================================================================================
   if (settings.duplicateTimeInBrowserTab) {
     const blockMess = document.getElementById("block_mess");
     const titleElement = document.querySelector("title");
     let previousTime = null;
-
-    const observer = new MutationObserver(() => {
+    let previousMessage = null;
+  
+    function updateTitle() {
       const timeElement = blockMess.querySelector("#sek");
-      if (timeElement) {
+      const messageText = blockMess.textContent.trim();
+  
+      if (messageText === previousMessage) return;
+  
+      const catNameMatch = messageText.match(/^(.+?)\s+держит/);
+      const catName = catNameMatch ? catNameMatch[1] : "";
+  
+      if (catName) {
+        titleElement.textContent = `Поднят. Во рту | ${catName}`;
+      } else if (timeElement) {
         const currentTime = timeElement.textContent.trim();
         if (currentTime !== previousTime) {
-          const actionText = blockMess.textContent
+          const actionText = messageText
             .replace(currentTime, "")
+            .replace(/\s*\.\s*Отменить$/, "")
             .trim();
           titleElement.textContent = `${currentTime} | ${actionText}`;
           previousTime = currentTime;
@@ -6703,9 +6791,11 @@ if (window.location.href === targetCW3) {
         titleElement.textContent = "Игровая / CatWar";
         previousTime = null;
       }
-    });
-
-    observer.observe(blockMess, { childList: true, subtree: true });
+  
+      previousMessage = messageText;
+    }
+  
+    setupMutationObserver("#block_mess", updateTitle, { childList: true, subtree: true });
   }
   // ====================================================================================================================
   //   . . . ЗВУКОВЫЕ УВЕДОМЛЕНИЯ . . .
@@ -7413,17 +7503,26 @@ if (window.location.href === targetCW3) {
     const uwuFightLog = document.createElement("style");
     uwuFightLog.innerHTML = `
       #fightPanel {
-        height: auto !important;
+        height: auto;
       }
 
-      #fightLog, #uwu-Compacted-Fight-Log {
-        height: ${settings.fightPanelHeight || ""}px;
+      #fightLog {
         resize: vertical;
         overflow-y: scroll;
-      }   
+      }
+      
+      #uwu-Compacted-Fight-Log {
+        resize: vertical;
+        overflow-y: scroll;
+      } 
       `;
     document.head.appendChild(uwuFightLog);
-  }
+
+    const fightLogElement = document.getElementById("fightLog");
+    if (fightLogElement) {
+        fightLogElement.style.height = `${settings.fightPanelHeight || 70}px`;
+    }
+}
   // ====================================================================================================================
   //   . . . ВСЕГДА ДЕНЬ В ИГРОВОЙ . . .
   // ====================================================================================================================
@@ -7691,6 +7790,7 @@ if (window.location.href === targetCW3) {
             "#366899",
             "#3F709E",
             "#4374A1",
+            "#5483AB",
           ],
         },
         {
@@ -8192,27 +8292,22 @@ if (window.location.href === targetCW3) {
   }
 
   function toggleAurora() {
-    if (!settings.manualWeatherPanel) {
-      if (
-        currentWeather === "northernLights" ||
-        (currentWeather === "clear" &&
-          currentHour === "night" &&
-          (currentSeason === "autumn" || currentSeason === "winter"))
-      ) {
-        if (auroras.length === 0) {
-          const randomNumber = Math.random();
-          if (randomNumber > 0.5) {
-            createAurora("green");
-          } else {
-            createAurora("blue");
+      if (settings.manualWeatherPanel) return;
+
+      const isAuroraConditionMet = 
+          currentWeather === "northernLights" || 
+          (currentWeather === "clear" && 
+          currentHour === "night" && 
+          (currentSeason === "autumn" || currentSeason === "winter"));
+
+      if (isAuroraConditionMet) {
+          if (auroras.length === 0) {
+              const auroraColor = Math.random() > 0.5 ? "green" : "blue";
+              createAurora(auroraColor);
           }
-        }
       } else {
-        for (const auroraElement of auroras) {
-          removeAurora(auroraElement);
-        }
+          auroras.forEach(removeAurora);
       }
-    }
   }
 
   setInterval(() => {
@@ -9670,21 +9765,25 @@ function handleCiteAction(commentInfo) {
 }
 
 function handleCommentActions() {
-  const viewComments = document.getElementById('view_comments');
-  viewComments.addEventListener('click', function(event) {
-      const target = event.target;
-      if (target.classList.contains('comment-answer')) {
-          event.preventDefault();
-          const comment = target.closest('.view-comment');
-          const commentInfo = getCommentInfo(comment);
-          handleAnswerAction(commentInfo);
-      } else if (target.classList.contains('comment-cite')) {
-          event.preventDefault();
-          const comment = target.closest('.view-comment');
-          const commentInfo = getCommentInfo(comment);
-          handleCiteAction(commentInfo);
-      }
-  });
+    const viewComments = document.getElementById('view_comments');
+
+    viewComments.addEventListener('click', function(event) {
+        const target = event.target;
+        const actionMap = {
+            'comment-answer': handleAnswerAction,
+            'comment-cite': handleCiteAction
+        };
+
+        for (const className in actionMap) {
+            if (target.classList.contains(className)) {
+                event.preventDefault();
+                const comment = target.closest('.view-comment');
+                const commentInfo = getCommentInfo(comment);
+                actionMap[className](commentInfo);
+                break;
+            }
+        }
+    });
 }
 
 // ====================================================================================================================
@@ -9782,6 +9881,7 @@ function initializeTemplates() {
         background-color: #242424;
         margin-bottom: 5px;
         margin-top: 5px;
+        color: #d5d5d5;
       }
       
       #uwu-templates > h2 {
