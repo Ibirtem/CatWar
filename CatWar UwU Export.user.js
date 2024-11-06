@@ -2,7 +2,7 @@
 // @name         CatWar UwU Export
 // @namespace    http://tampermonkey.net/
 // @version      1.0
-// @description  Позволяет экспортировать настройки Мода/Скрипта UwU
+// @description  Позволяет экспортировать настройки Мода/Скрипта UwU, и ЛС Варомода.
 // @author       Ibirtem / Затменная ( https://catwar.net/cat1477928 )
 // @match        http*://*.catwar.su/*
 // @grant        none
@@ -24,6 +24,8 @@ const settingsKeys = [
   "uwu_clock",
   "uwu_templates",
   "uwu_highlightResources",
+
+  "cwmod_ls",
 ];
 
 const container = document.createElement("div");
