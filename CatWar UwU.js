@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.32.0-10.24
+// @version      v1.33.3-11.24
 // @description  Визуальное обновление CatWar'а, и не только...
-// @author       Ibirtem / Затменная ( https://catwar.su/cat1477928 )
+// @author       Ibirtem / Затменная ( https://catwar.net/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
-// @supportURL   https://catwar.su/cat1477928
+// @supportURL   https://catwar.net/cat1477928
 // @homepageURL  https://openuserjs.org/scripts/Ibirtem/CatWar_UwU
-// @match        http*://*.catwar.su/*
+// @match        http*://*.catwar.net/*
 // @updateURL    https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.js
 // @downloadURL  https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.js
 // @license      MIT
@@ -19,7 +19,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.32.0";
+const current_uwu_version = "1.33.3";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   settingsTheme: "dark",
@@ -47,6 +47,8 @@ const uwuDefaultSettings = {
   reverseChat: false, 
   newChatInput: false,
   namesForNotification: "",
+
+  redesignCostumsSettings: false,
 
   notificationPM: false,
   notificationActionEnd: false,
@@ -98,6 +100,11 @@ const uwuDefaultSettings = {
   climbingRefreshNotificationSound: "notificationSound1",
   climbingRefreshNotificationVolume: "5",
 
+  cleaningLog: false,
+  cleaningLogStyle: "smart",
+  cleaningLogShowID: false,
+  cleaningLogHeight: "120",
+
   myNameNotificationSound: "notificationSound2",
   notificationMyNameVolume: "5",
 
@@ -142,18 +149,18 @@ const uwuDefaultSettings = {
 // ====================================================================================================================
 //   . . . ТАРГЕТНЫЕ ССЫЛКИ . . .
 // ====================================================================================================================
-const targetSettings = /^https:\/\/catwar\.su\/settings/;
-const targetCW3 = "https://catwar.su/cw3/";
-const targetCW3Hunt = "https://catwar.su/cw3/jagd";
-const targetMainProfile = /^https:\/\/catwar\.su\/$/;
-const targetProfile = /^https:\/\/catwar\.su\/cat\d+$/;
-const targetLs = /^https:\/\/catwar\.su\/ls/;
-const targetLsNew = /^https:\/\/catwar\.su\/ls\?new(=.*)?$/;
-const targetChats = /^https:\/\/catwar\.su\/chat/;
-const targetBlog = /^https:\/\/catwar\.su\/(?:blog\d+|blogs)(?:$|[/?#])/i;
-const targetBlogsCreation = /^https:\/\/catwar\.su\/blogs\?creation/;
-const targetSniff = /^https:\/\/catwar\.su\/sniff(?:\d+|)(?:$|[/?#])/i;
-const targetSniffCreation = /^https:\/\/catwar\.su\/sniff\?creation/;
+const targetSettings = /^https:\/\/catwar\.net\/settings/;
+const targetCW3 = "https://catwar.net/cw3/";
+const targetCW3Hunt = "https://catwar.net/cw3/jagd";
+const targetMainProfile = /^https:\/\/catwar\.net\/$/;
+const targetProfile = /^https:\/\/catwar\.net\/cat\d+$/;
+const targetLs = /^https:\/\/catwar\.net\/ls/;
+const targetLsNew = /^https:\/\/catwar\.net\/ls\?new(=.*)?$/;
+const targetChats = /^https:\/\/catwar\.net\/chat/;
+const targetBlog = /^https:\/\/catwar\.net\/(?:blog\d+|blogs)(?:$|[/?#])/i;
+const targetBlogsCreation = /^https:\/\/catwar\.net\/blogs\?creation/;
+const targetSniff = /^https:\/\/catwar\.net\/sniff(?:\d+|)(?:$|[/?#])/i;
+const targetSniffCreation = /^https:\/\/catwar\.net\/sniff\?creation/;
 
 // ====================================================================================================================
 //   . . . СТАНДАРТНЫЕ ЦВЕТОВЫЕ ТЕМЫ . . .
@@ -358,9 +365,17 @@ const uwusettings = // html
       </div>
 
       <div>
-        <p>Позволяет быстро сменять стили в ⚙️Панели Расширенных настроек в Игровой.</p>
+        <p>Позволяет быстро сменять полезные стили в ⚙️Панели Расширенных настроек в Игровой.</p>
         <input type="checkbox" id="fast-Styles" data-setting="fastStyles" />
         <label for="fast-Styles">Быстрые стили</label>
+        <label id="uwu-what-this" title="
+            — Не показывать всплывающее окно 'О коте'
+            — Скрыть Игровое поле
+            — Скрыть фон Игрового Поля
+            — Скрыть Небо
+            — Всегда день/ярко
+            — Границы клеток
+            ">[?]</label>
       </div>
 
       <hr id="uwu-hr" class="uwu-hr">
@@ -477,6 +492,8 @@ const uwusettings = // html
       </div>
 
       <div>
+        <p>Подгрузка шрифта идёт автоматически. Для поиска возможных шрифтов, воспользуйтесь сайтом: 
+        <a href="https://fonts.google.com/?lang=ru_Cyrl" target="_blank">https://fonts.google.com/?lang=ru_Cyrl</a></p>
         <input type="text" id="font-Family-Body" placeholder="Verdana" data-font-size="fontFamilyBody" />
         <label for="font-Family-Body">Название вида шрифта</label>
       </div>
@@ -583,6 +600,16 @@ const uwusettings = // html
         <p>Скругляет края блоков в Игровой.</p>
         <input type="checkbox" id="edge-trim-blocks" data-setting="edgeTrimBlocks" />
         <label for="edge-trim-blocks">Скругление блоков</label>
+      </div>
+
+      <hr id="uwu-hr" class="uwu-hr">
+      <h2>Остальные редизайны</h2>
+      
+      <div>
+        <p>Добавляет изображение костюмов в строки для наглядного отображения и упрощённого поиска. 
+        Вы можете вытянуть высоту столбцов за их стрелочки в нижнем правом краю!</p>
+        <input type="checkbox" id="redesign-Costums-Settings" data-setting="redesignCostumsSettings" />
+        <label for="redesign-Costums-Settings">Редизайн Настройки костюмов</label>
       </div>
 
       <hr id="uwu-hr" class="uwu-hr">
@@ -1088,6 +1115,58 @@ const uwusettings = // html
     </div>
 
       <hr id="uwu-hr" class="uwu-hr">
+      <h2>BETA 🚧 Лог чистильщика 🚧 BETA</h2>
+
+      <div>
+        <p>Упрощённое и удобное дублирование блока истории для любителей чистить локации, 
+        в котором отображаются только поднятия и опускания котов.</p>
+        <input type="checkbox" id="cleaning-Log" data-setting="cleaningLog" />
+        <label for="cleaning-Log">Включить лог чистильщика</label>
+      </div>
+
+      <label>Вид отображения Лога:</label>
+      <div class="custom-select" id="cleaningLogStyle">
+        <div class="select-selected">Выберите вид Лога</div>
+        <div class="select-items">
+          <!-- Опции будут добавлены сюда -->
+        </div>
+      </div>
+      <label id="uwu-what-this" title="
+      Умный - группирование множественных действий в более удобный, краткий и читаемый вид.
+      Ещё тут был 'стандартный', более привычный старый вид, но его съели росомахи.
+      ">[?]</label>
+
+      <details>
+        <summary style="cursor: pointer; font-size: 16px; font-weight: bold;">
+        Как работает?</summary>
+        <hr id="uwu-hr" class="uwu-hr">
+        <p>1. Проверьте кота такими действиями, как:</p>
+        <p>— Потереться нос о нос</p>
+        <p>— Потереться щекой о щёку</p>
+        <p>— Помурлыкать вместе</p>
+        <p>— Обнюхать</p>
+        <p>Вам выведится, можно ли поднять кота. Если он "Проверен", можете смело...</p>
+        <p>2. Поднять кота!</p>
+        <p>Если же кот "Не спит", или перед поднятием вы его не проверили, то Лог просто не запишет его.</p>
+        <p>— Больше настроек, например подсветка надписей или игнорирование статуса кота, будет в будущем!</p>
+        <p>Если вы видите или вам кажется, что логика проверок и объединений, странны и нелогичны, или даже 
+        что-то теряется, то можете сообщить о проблеме в группу ВК!</p>
+        <hr id="uwu-hr" class="uwu-hr">
+      </details>
+
+      <div>
+        <p>При последующих проверках так же будет писаться ID кота. 
+        Не добавляет ID к уже существущему тексту в логе.</p>
+        <input type="checkbox" id="cleaning-Log" data-setting="cleaningLogShowID" />
+        <label for="cleaning-Log">Записывать ID</label>
+      </div>
+
+      <div>
+        <input type="text" id="cleaning-Log-Height" placeholder=". . ." data-setting="cleaningLogHeight" />
+        <label>px; - Начальная высота Лога</label>
+      </div>
+
+      <hr id="uwu-hr" class="uwu-hr">
       <h2>Быстрые ссылки</h2>
 
       <p>Быстрые ссылки в Игровой.</p>
@@ -1254,31 +1333,30 @@ const newsPanel = // html
 `
 <div id="news-panel">
     <button id="news-button">
-        v${current_uwu_version} - 🎃 Полировочка.
+        v${current_uwu_version} - 🎃 Лог чистильщиков и Редизайн Настройки костюмов!
     </button>
     <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>— Ба бу бэ)) Часы теперь можно вставлять в блок Погоды, это затычка на крайняк.</p>
+        <p>— Новый стиль Часов - строчный! Удобно, когда вставляешь часы в блок погоды. Так же расширилась поддержка 
+        пользовательских кастомных шрифтов благодаря автоматической их подгрузки по названию... Не лучшее решение, 
+        но главное, что работает! Даёшь пиксельные или курсивные шрифты в Игровую!</p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Внешний вид</h3>
-        <p>— Текст в информации в "О коте" сдвинута к левому краю и сделалась чуть компактнее.</p>
-        <p>— При выборе московского времени, "MSK" теперь пишется около значка откуда берётся время. 
-        Ну те самые 🌍︎ или ⌨.</p>
-        <p>— Небольшой редизайн кнопки разворачивания Минного Поля.</p>
-        <p>— Цвет текста в Шаблонах стал белым. Извените кому нравилось цветное, как нибудь потом.</p>
+        <p>— 🍤</p>
+        <p>— Добавлена всплывающая подсказка для "Быстрых стилей", чтобы игрокам было чуть понятнее, 
+        что эта функция делает.</p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Изменения кода</h3>
-        <p>— Немного почистил и чёта там поменял с высотами панели БР. 
-        Надеюсь кому-то чёта починило если нет то хихи хаха.</p>
-        <p>— Починина подсветка ресурсов в режиме "Подсветка".</p>
-        <p>— Теперь не будет использовать последний цвет из сохранения для подсветки всех ресурсов.</p>
-        <p>— Немного переписан код Дублирования действий на вкладку, а так же + ...</p>
-        <p>— ... теперь на название вкладки дублируется подняли ли вас, и кто поднял.</p>
-        <p>— Убраны console.warn от установок прослушок из-за как таковой ненадобности в общем пользовании. 
-        Консоль браузера теперь чистенькая 😊</p>
-        <p>— Чуть переписаны handleCommentActions и toggleAurora афигеть как круто сделано вау надо чаще так делать.</p>
+        <p>— Чек-проверка перед удалением северного сияния. Убрало ошибку из консоли.</p>
+        <p>— Кнопки "Ответить" и "Цитировать" теперь дополняют содержимое текстового поля, 
+        а не очищают его перед вставкой как было ранее.</p>
+        <p>— Великая битва с ломанным БР закончилась. Наверное. НАДЕЮСЬ.</p>
+        <p>— Теперь при "Обновлении команды" в БР, коты смогут автоматически вернуться в свои команды, если до 
+        этого были куда-то выбраны.</p>
+        <p>—— Release / Bump 1.33.3</p>
+        <p>—— Бамп версии, чтобы не потеряться в версиях, потому что были внутренние тестирование Лога чистильщика.</p>
         <hr id="uwu-hr" class="uwu-hr">
-        <p>Дата выпуска: 10.10.24</p>
+        <p>Дата выпуска: 06.11.24</p>
     </div>
 </div>
 `;
@@ -2778,6 +2856,8 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     "uwu_currentTheme",
     "uwu_fontSize",
     "uwu_clock",
+    "uwu_templates",
+    "uwu_highlightResources",
   ];
 
   function resetAllSaves() {
@@ -2872,6 +2952,7 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     const clockStyles = [
       { id: "compact", name: "Компактный" },
       { id: "standard", name: "Стандартный" },
+      { id: "string", name: "Строчный" },
     ]
   
     createCustomSelect("clockStyle", clockStyles);
@@ -2889,6 +2970,13 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     ]
     
     createCustomSelect("highlightResourcesStyle", highlightResourcesStyles);
+    // ==============================================================================
+    const cleaningLogStyles = [
+      { id: "smart", name: "Умный" },
+      // { id: "standart", name: "Стандартный" },
+    ]
+  
+    createCustomSelect("cleaningLogStyle", cleaningLogStyles);
   // ====================================================================================================================
   //   . . . СОЗДАНИЕ ВЫПАДАЮЩИХ СПИСКОВ . . .
   // ====================================================================================================================
@@ -3019,6 +3107,107 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
 
   loadSettings();
   updateExportField();
+  // ====================================================================================================================
+//  . . . РЕДИЗАЙН НАСТРОЕК КОСТЮМОВ . . .
+// ====================================================================================================================
+if (settings.redesignCostumsSettings) {
+  function addStyles() {
+    const style = document.createElement('style');
+    style.innerHTML = // css
+      `
+        .list-group-item {
+            display: grid !important;
+            grid-template-columns: auto 1fr;
+            grid-template-rows: auto auto;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 280px !important;
+        }
+        .list-group-item img {
+            margin-right: 10px;
+            width: 50px;
+            height: 80px;
+        }
+        .costume-image-container {
+            grid-column: 1;
+            grid-row: 1 / span 2;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .list-group {
+          resize: vertical;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100%;
+        }
+        .list-group-item span {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .costume-id {
+            font-weight: bold;
+            margin-bottom: 5px;
+            grid-column: 2;
+            grid-row: 1;
+        }
+        .costume-text {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        .col-3 {
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+        }
+
+        .col-3 > button {
+          height: 22px;
+        }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function addCostumePreview() {
+    const items = document.querySelectorAll('.list-group-item');
+    items.forEach(item => {
+        const costumeId = item.textContent.trim().split(' ')[0];
+        const imageContainer = item.querySelector('.costume-image-container');
+        const img = imageContainer ? imageContainer.querySelector('img') : null;
+
+        if (!imageContainer || !img || img.getAttribute('data-costume-id') !== costumeId) {
+            const imgUrl = `https://catwar.net/cw3/cats/0/costume/${costumeId}.png`;
+
+            if (!imageContainer) {
+                const newImageContainer = document.createElement('div');
+                newImageContainer.classList.add('costume-image-container');
+
+                const newImg = document.createElement('img');
+                newImg.src = imgUrl;
+                newImg.alt = `Costume ${costumeId}`;
+                newImg.setAttribute('data-costume-id', costumeId);
+
+                newImageContainer.appendChild(newImg);
+
+                item.insertBefore(newImageContainer, item.firstChild);
+            } else {
+                img.src = imgUrl;
+                img.setAttribute('data-costume-id', costumeId);
+            }
+        }
+    });
+  }
+
+  addStyles();
+  setupMutationObserver(".double-container", addCostumePreview, {
+    childList: true,
+    subtree: true,
+  });
+}
   // ====================================================================================================================
   //  . . . МАКЕТ КАСТОМИЗАЦИИ ИГРОВОЙ . . .
   // ====================================================================================================================
@@ -3448,7 +3637,7 @@ async function loadModuleListOnSettings() {
   const url =
     "https://raw.githubusercontent.com/Ibirtem/CatWar/main/modules/modules.txt";
 
-  const targetSettings = /^https:\/\/catwar\.su\/settings/;
+  const targetSettings = /^https:\/\/catwar\.net\/settings/;
   if (!targetSettings.test(window.location.href)) {
     return;
   }
@@ -3726,10 +3915,10 @@ if (window.location.href !== targetCW3) {
         avatarImg.classList.add("avatar-img");
 
         if (!catId) {
-          avatarImg.src = "https://e.catwar.su/avatar/0.jpg";
+          avatarImg.src = "https://e.catwar.net/avatar/0.jpg";
         } else {
           loadAvatar(catId, (avatarUrl) => {
-            avatarImg.src = avatarUrl || "https://e.catwar.su/avatar/0.jpg";
+            avatarImg.src = avatarUrl || "https://e.catwar.net/avatar/0.jpg";
           });
         }
 
@@ -3743,7 +3932,7 @@ if (window.location.href !== targetCW3) {
     let currentFormat = 0;
 
     function tryNextFormat() {
-      const url = `https://e.catwar.su/avatar/${catId}.${formats[currentFormat]}`;
+      const url = `https://e.catwar.net/avatar/${catId}.${formats[currentFormat]}`;
       const img = new Image();
 
       img.onload = () => callback(url);
@@ -3980,7 +4169,7 @@ if (window.location.href === targetCW3) {
           <p>Скрипт/Мод UwU был обновлен с версии v${
             oldVersion || "неизвестной"
           } до версии v${current_uwu_version}!</p>
-          <p>Можете посетить <a href="https://catwar.su/settings" target="_blank">Настройки</a> для ознакомления с изменениями.</p>
+          <p>Можете посетить <a href="https://catwar.net/settings" target="_blank">Настройки</a> для ознакомления с изменениями.</p>
         `;
     panel.appendChild(notificationBlock);
     const button = extendedSettingsButtonElement.querySelector("button");
@@ -4113,6 +4302,22 @@ if (window.location.href === targetCW3) {
           grid-row: 2 / 3;
           width: max-content;
         }
+
+        .string #uwu-clock {
+          column-gap: 5px;
+          grid-template-columns: auto auto;
+          grid-template-rows: auto auto;
+        }
+
+        .string #uwu-clock .date {
+          font-size: 2em;
+          grid-column: 2 / 3;
+        }
+
+        .string #uwu-clock .icon {
+          grid-column: 3 / 3;
+          grid-row: 1 / 2;
+        }
     `;
     document.head.appendChild(style);
 
@@ -4171,7 +4376,7 @@ if (window.location.href === targetCW3) {
   
       timeElement.textContent = `${hours}:${minutes}:${seconds}`;
   
-      if (settings.clockStyle === "compact") {
+      if (settings.clockStyle === "compact" || settings.clockStyle === "string") {
           dateElement.textContent = `${day}.${month}.${year.slice(-2)}`;
       } else if (settings.clockStyle === "standard") {
           const dayOfWeek = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"][timeSource.getDay()];
@@ -6158,61 +6363,82 @@ if (window.location.href === targetCW3) {
   //   . . . ПОЛЬЗОВАТЕЛЬСКИЙ ШРИФТ . . .
   // ====================================================================================================================
   let fontSize = JSON.parse(localStorage.getItem('uwu_fontSize'));
+
   function applyFonts() {
-    const newFontStyle = document.createElement("style");
-    newFontStyle.innerHTML = // css
-      `
-      body {
-        font-size: ${fontSize?.fontSizeBody}px;
-        font-family: ${fontSize?.fontFamilyBody};
+      // Создаем элемент <link> для подключения шрифта
+      const fontFamily = fontSize?.fontFamilyBody;
+      if (fontFamily) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = `https://fonts.googleapis.com/css?family=${encodeURIComponent(fontFamily)}`;
+          document.head.appendChild(link);
       }
-
-      .small {
-        font-size: ${fontSize?.fontSizeSmall}px;
-      }
-
-      #location {
-        font-size: ${fontSize?.fontSizeLocation}px !important;
-      }
-
-      .vlm0 {
-        font-size: ${fontSize?.vlm0}px; }
-
-      .vlm1 {
-        font-size: ${fontSize?.vlm1}px; }
-
-      .vlm2 {
-        font-size: ${fontSize?.vlm2}px; }
-
-      .vlm3 {
-        font-size: ${fontSize?.vlm3}px; }
-
-      .vlm4 {
-        font-size: ${fontSize?.vlm4}px; }
-
-      .vlm5 {
-        font-size: ${fontSize?.vlm5}px; }
-
-      .vlm6 {
-        font-size: ${fontSize?.vlm6}px; }
-
-      .vlm7 {
-        font-size: ${fontSize?.vlm7}px; }
-
-      .vlm8 {
-        font-size: ${fontSize?.vlm8}px; }
-
-      .vlm9 {
-        font-size: ${fontSize?.vlm9}px; }
-
-      .vlm10 {
-        font-size: ${fontSize?.vlm10}px; }
+  
+      // Создаем элемент <style> для применения стилей
+      const newFontStyle = document.createElement("style");
+      newFontStyle.innerHTML = `
+          body {
+              font-size: ${fontSize?.fontSizeBody}px;
+              font-family: ${fontFamily ? `'${fontFamily}', sans-serif` : 'sans-serif'};
+          }
+  
+          .small {
+              font-size: ${fontSize?.fontSizeSmall}px;
+          }
+  
+          #location {
+              font-size: ${fontSize?.fontSizeLocation}px !important;
+          }
+  
+          .vlm0 {
+              font-size: ${fontSize?.vlm0}px;
+          }
+  
+          .vlm1 {
+              font-size: ${fontSize?.vlm1}px;
+          }
+  
+          .vlm2 {
+              font-size: ${fontSize?.vlm2}px;
+          }
+  
+          .vlm3 {
+              font-size: ${fontSize?.vlm3}px;
+          }
+  
+          .vlm4 {
+              font-size: ${fontSize?.vlm4}px;
+          }
+  
+          .vlm5 {
+              font-size: ${fontSize?.vlm5}px;
+          }
+  
+          .vlm6 {
+              font-size: ${fontSize?.vlm6}px;
+          }
+  
+          .vlm7 {
+              font-size: ${fontSize?.vlm7}px;
+          }
+  
+          .vlm8 {
+              font-size: ${fontSize?.vlm8}px;
+          }
+  
+          .vlm9 {
+              font-size: ${fontSize?.vlm9}px;
+          }
+  
+          .vlm10 {
+              font-size: ${fontSize?.vlm10}px;
+          }
       `;
-    document.head.appendChild(newFontStyle);
+      document.head.appendChild(newFontStyle);
   }
-
+  
   if (settings.useUserFonts) {
-    applyFonts();
+      applyFonts();
   }
 
   // ====================================================================================================================
@@ -6765,16 +6991,16 @@ if (window.location.href === targetCW3) {
     const titleElement = document.querySelector("title");
     let previousTime = null;
     let previousMessage = null;
-  
+
     function updateTitle() {
       const timeElement = blockMess.querySelector("#sek");
       const messageText = blockMess.textContent.trim();
-  
+
       if (messageText === previousMessage) return;
-  
+
       const catNameMatch = messageText.match(/^(.+?)\s+держит/);
       const catName = catNameMatch ? catNameMatch[1] : "";
-  
+
       if (catName) {
         titleElement.textContent = `Поднят. Во рту | ${catName}`;
       } else if (timeElement) {
@@ -6791,11 +7017,479 @@ if (window.location.href === targetCW3) {
         titleElement.textContent = "Игровая / CatWar";
         previousTime = null;
       }
-  
+
       previousMessage = messageText;
     }
+
+    setupMutationObserver("#block_mess", updateTitle, {
+      childList: true,
+      subtree: true,
+    });
+  }
+  // ====================================================================================================================
+  //   . . . ЛОГ ЧИСТИЛЬЩИКОВ . . .
+  // ====================================================================================================================function cleaningLogUpdate(mutationsList) {
+  const relevantActions = [
+    { regex: /Потёрлись носом о нос с/, type: "check" },
+    { regex: /Потёрлись щекой о щёку/, type: "check" },
+    { regex: /Помурлыкал(а)? вместе с/, type: "check" },
+    { regex: /Обнюхал(а)? /, type: "check" },
+    { regex: /Поднял(а)? /, type: "pickup" },
+    { regex: /Опустил(а)? на землю /, type: "putdown" },
+  ];
+
+  let cleaningLogBuffer = "";
+  let catNamesAndIds = [];
+
+  function cleaningLogUpdate() {
+    const historyBlock = document.querySelector("#history");
+    const ist = historyBlock.querySelector("#ist");
+    const locationSpan = historyBlock.querySelector("#location");
+    const currentLocation = locationSpan.textContent.trim();
   
-    setupMutationObserver("#block_mess", updateTitle, { childList: true, subtree: true });
+    if (currentLocation === "[ Загружается… ]") {
+      return;
+    }
+  
+    let cleaningLogBlock = historyBlock.querySelector("#uwu-cleaningLog");
+    if (!cleaningLogBlock) {
+      createCleaningLogBlock(historyBlock);
+      cleaningLogBlock = historyBlock.querySelector("#uwu-cleaningLog");
+    }
+  
+    const istOuterHtml = ist.outerHTML;
+    const actions = istOuterHtml
+      .split(".")
+      .map((action) => action.trim())
+      .filter((action) => action);
+    const lastAction = actions[actions.length - 2];
+  
+    const cleaningLogContent = cleaningLogBlock.querySelector(
+      "#uwu-cleaningLog-content"
+    );
+  
+    if (lastAction) {
+      if (settings.cleaningLogStyle === "smart") {
+        processSmartAction(lastAction, currentLocation, cleaningLogContent);
+      } else {
+        processStandardAction(lastAction, currentLocation, cleaningLogContent);
+      }
+  
+      let storageKey;
+      switch (settings.cleaningLogStyle) {
+        case "smart":
+          storageKey = "uwu_cleaningLogSmart";
+          break;
+        default:
+          storageKey = "uwu_cleaningLogStandard";
+          break;
+      }
+  
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify({
+          log: cleaningLogBuffer,
+          catNamesAndIds,
+          counters: {
+            pickup: parseInt(document.getElementById("uwu-cleaningLog-counter-pickup").textContent),
+            putdown: parseInt(document.getElementById("uwu-cleaningLog-counter-putdown").textContent)
+          }
+        })
+      );
+      cleaningLogContent.innerHTML = addCatLinksToLog(
+        cleaningLogBuffer,
+        catNamesAndIds
+      );
+    }
+  }
+
+  function createCleaningLogBlock(historyBlock) {
+    const cleaningLogTemplate = `
+      <div id="uwu-cleaningLog">
+        <h2><a href="#" id="uwu-cleaningLog-toggle" class="toggle">Лог чистильщика</a></h2>
+        <div id="uwu-cleaningLog-content"></div>
+        <div id="uwu-cleaningLog-counters">
+          <span>Успешно поднятых: <span id="uwu-cleaningLog-counter-pickup">0</span></span>
+          <span>Опущенных: <span id="uwu-cleaningLog-counter-putdown">0</span></span>
+        </div>
+        <a href="#" id="uwu-cleaningLog-clear">Очистить лог</a>
+      </div>
+    `;
+  
+    historyBlock.insertAdjacentHTML("beforeend", cleaningLogTemplate);
+  
+    const hr = document.createElement("hr");
+    historyBlock.insertBefore(
+      hr,
+      historyBlock.querySelector("#uwu-cleaningLog")
+    );
+  
+    const cleaningLogContent = historyBlock.querySelector(
+      "#uwu-cleaningLog-content"
+    );
+    const savedLog = localStorage.getItem("uwu_cleaningLogSmart");
+    if (savedLog) {
+      const savedData = JSON.parse(savedLog);
+      cleaningLogBuffer = savedData.log;
+      catNamesAndIds = savedData.catNamesAndIds;
+      if (savedData.counters) {
+        document.getElementById("uwu-cleaningLog-counter-pickup").textContent = savedData.counters.pickup;
+        document.getElementById("uwu-cleaningLog-counter-putdown").textContent = savedData.counters.putdown;
+      }
+      cleaningLogContent.innerHTML = addCatLinksToLog(
+        cleaningLogBuffer,
+        catNamesAndIds
+      );
+    }
+  
+    const clearButton = historyBlock.querySelector("#uwu-cleaningLog-clear");
+    clearButton.addEventListener("click", () => {
+      cleaningLogBuffer = "";
+      catNamesAndIds = [];
+      document.getElementById("uwu-cleaningLog-counter-pickup").textContent = "0";
+      document.getElementById("uwu-cleaningLog-counter-putdown").textContent = "0";
+      cleaningLogContent.innerHTML = "";
+      localStorage.removeItem("uwu_cleaningLogSmart");
+    });
+  }
+
+  function addCatLinksToLog(log, catNamesAndIds) {
+    let logWithLinks = log;
+    catNamesAndIds.forEach(({ name, id }) => {
+      const regex = new RegExp(`\\[${name}( ${id})?\\]`, "g");
+      logWithLinks = logWithLinks.replace(
+        regex,
+        `[<a href="/cat${id}" target="_blank">${name}</a>${
+          settings.cleaningLogShowID ? ` ${id}` : ""
+        }]`
+      );
+    });
+    return logWithLinks;
+  }
+
+  function extractCatId(action) {
+    const match = action.match(/<a href="\/cat(\d+)">/);
+    return match ? match[1] : null;
+  }
+
+  function checkCatStatus(catId) {
+    const catTooltip = document
+      .querySelector(`#cages > tbody .cat_tooltip a[href="/cat${catId}"]`)
+      .closest(".cat_tooltip");
+    if (catTooltip) {
+      const statusSpan = catTooltip.querySelector(".online");
+      if (statusSpan) {
+        const statusText = statusSpan.textContent.trim();
+        return statusText === "[ Спит ]";
+      }
+    }
+    return false;
+  }
+
+  function processStandardAction(action, location, cleaningLogContent) {
+    for (const relevantAction of relevantActions) {
+      if (relevantAction.regex.test(action)) {
+        const catNameMatch = action.match(/<a href="\/cat\d+">([^<]+)<\/a>/);
+        if (!catNameMatch) {
+          console.error("Не удалось извлечь имя кота из действия:", action);
+          return;
+        }
+        const catName = catNameMatch[1];
+        const catId = extractCatId(action);
+        const actionText = action.replace(
+          /<a href="\/cat\d+">([^<]+)<\/a>/,
+          `[${catName}${settings.cleaningLogShowID ? ` ${catId}` : ""}]`
+        );
+        if (relevantAction.type === "action") {
+          cleaningLogBuffer += `${actionText} на локации "${location}". `;
+        } else {
+          const status = checkCatStatus(catId) ? "" : "Кот не спит. ";
+          cleaningLogBuffer += `Проверен [${catName}${
+            settings.cleaningLogShowID ? ` ${catId}` : ""
+          }] на локации "${location}". ${status}`;
+        }
+        if (!catNamesAndIds.some(cat => cat.id === catId)) {
+          catNamesAndIds.push({ name: catName, id: catId });
+        }
+        cleaningLogContent.innerHTML = addCatLinksToLog(
+          cleaningLogBuffer,
+          catNamesAndIds
+        );
+        return;
+      }
+    }
+  }
+
+  function processSmartAction(action, location, cleaningLogContent) {
+    let matched = false;
+  
+    for (const relevantAction of relevantActions) {
+      if (relevantAction.regex.test(action)) {
+        matched = true;
+        const catNameMatch = action.match(/<a href="\/cat\d+">([^<]+)<\/a>/);
+        if (!catNameMatch) {
+          console.error("Не удалось извлечь имя кота из действия:", action);
+          return;
+        }
+        const catName = catNameMatch[1];
+        const catId = extractCatId(action);
+        const logLines = cleaningLogBuffer
+          .split(".")
+          .map((line) => line.trim())
+          .filter((line) => line);
+  
+        switch (relevantAction.type) {
+          case "check":
+            processCheckAction(logLines, catName, catId, location);
+            break;
+  
+          case "putdown":
+            processPutdownAction(logLines, catName, catId, location);
+            break;
+  
+          case "pickup":
+            processPickupAction(logLines, catName, catId, location);
+            break;
+        }
+  
+        cleaningLogBuffer =
+          logLines.join(". ") + (logLines.length > 0 ? "." : "");
+        if (!catNamesAndIds.some(cat => cat.id === catId)) {
+          catNamesAndIds.push({ name: catName, id: catId });
+        }
+        cleaningLogContent.innerHTML = addCatLinksToLog(
+          cleaningLogBuffer,
+          catNamesAndIds
+        );
+        return;
+      }
+    }
+  
+    if (!matched) {
+      const logLines = cleaningLogBuffer
+        .split(".")
+        .map((line) => line.trim())
+        .filter((line) => line);
+      processUnmatchedAction(logLines, cleaningLogContent, action);
+      cleaningLogBuffer =
+        logLines.join(". ") + (logLines.length > 0 ? "." : "");
+      cleaningLogContent.innerHTML = addCatLinksToLog(
+        cleaningLogBuffer,
+        catNamesAndIds
+      );
+    }
+  
+    return null;
+  }
+
+  function processCheckAction(logLines, catName, catId, location) {
+    const lastLogIndex = logLines.length - 1;
+    const isCatSleeping = checkCatStatus(catId);
+
+    if (
+      lastLogIndex >= 0 &&
+      (logLines[lastLogIndex].includes("Проверен [") ||
+        logLines[lastLogIndex].includes("Кот не спит") ||
+        logLines[lastLogIndex].includes("Вы забыли проверить кота"))
+    ) {
+      logLines.splice(lastLogIndex, 1);
+    }
+
+    if (isCatSleeping) {
+      logLines.push(
+        `Проверен [${catName}${
+          settings.cleaningLogShowID ? ` ${catId}` : ""
+        }] на локации "${location}"`
+      );
+    } else {
+      logLines.push(
+        `Кот не спит [${catName}${
+          settings.cleaningLogShowID ? ` ${catId}` : ""
+        }]`
+      );
+    }
+    if (!catNamesAndIds.some(cat => cat.id === catId)) {
+      catNamesAndIds.push({ name: catName, id: catId });
+    }
+  }
+
+  function processPutdownAction(logLines, catName, catId, location) {
+    const catPattern = new RegExp(
+      `\\[${catName}${settings.cleaningLogShowID ? ` ${catId}` : ""}\\]`
+    );
+  
+    // 1. Ищем последнее и предпоследнее предложения.
+    const lastSentenceIndex = logLines.length - 1;
+    const penultimateSentenceIndex = lastSentenceIndex - 1;
+  
+    // 2. Проверяем последнее предложение на наличие "Опущен" без текущего имени кота.
+    const lastSentence = logLines[lastSentenceIndex];
+  
+    if (
+      lastSentence.includes(`на локации "${location}"`) &&
+      lastSentence.includes("Опущен")
+    ) {
+      const catNamesMatch = lastSentence.match(/\[([^\]]+)\]/);
+      if (catNamesMatch) {
+        const catNames = catNamesMatch[1].split(",").map((name) => name.trim());
+        const currentCatNameWithId = `${catName}${
+          settings.cleaningLogShowID ? ` ${catId}` : ""
+        }`;
+        if (catNames.includes(currentCatNameWithId)) {
+          return;
+        }
+      }
+    }
+  
+    // 3. Если есть, добавляем имя текущего кота к этому предложению.
+    if (
+      lastSentence.includes(`на локации "${location}"`) &&
+      lastSentence.includes("Опущен") &&
+      !catPattern.test(lastSentence)
+    ) {
+      logLines[lastSentenceIndex] = lastSentence.replace(
+        /]/,
+        `, ${catName}${settings.cleaningLogShowID ? ` ${catId}` : ""}]`
+      );
+    } else {
+      // 4. Если нет, добавляем новое предложение с "Опущен".
+      logLines.push(
+        `Опущен [${catName}${
+          settings.cleaningLogShowID ? ` ${catId}` : ""
+        }] на локации "${location}"`
+      );
+    }
+    if (!catNamesAndIds.some(cat => cat.id === catId)) {
+      catNamesAndIds.push({ name: catName, id: catId });
+    }
+
+    const putdownCounter = document.getElementById("uwu-cleaningLog-counter-putdown");
+    putdownCounter.textContent = parseInt(putdownCounter.textContent) + 1;
+  }
+
+  function processPickupAction(logLines, catName, catId, location) {
+    const catPattern = new RegExp(
+      `\\[${catName}${settings.cleaningLogShowID ? ` ${catId}` : ""}\\]`
+    );
+
+    // 1. Ищем последнее и предпоследнее предложения.
+    const lastSentenceIndex = logLines.length - 1;
+    const penultimateSentenceIndex = lastSentenceIndex - 1;
+
+    // 2. Проверяем последнее предложение на "Проверен и поднят" с именем кота.
+    const lastSentence = logLines[lastSentenceIndex];
+    if (
+      lastSentence.includes(`на локации "${location}"`) &&
+      lastSentence.includes("Проверен и поднят") &&
+      catPattern.test(lastSentence)
+    ) {
+      return;
+    }
+
+    // 3. Проверяем последнее предложение на "Проверен" с именем кота.
+    let lastSentenceChecked = false;
+    if (
+      logLines[lastSentenceIndex].includes("Проверен") &&
+      logLines[lastSentenceIndex].includes(
+        `[${catName}${settings.cleaningLogShowID ? ` ${catId}` : ""}]`
+      ) &&
+      logLines[lastSentenceIndex].includes(`на локации "${location}"`)
+    ) {
+      lastSentenceChecked = true;
+    }
+
+    // 4. Если последнее предложение - "Проверен", проверяем предпоследнее на "Проверен и поднят".
+    if (lastSentenceChecked) {
+      if (
+        penultimateSentenceIndex >= 0 &&
+        logLines[penultimateSentenceIndex].includes("Проверен и поднят") &&
+        logLines[penultimateSentenceIndex].includes(
+          `на локации "${location}"`
+        ) &&
+        !logLines[penultimateSentenceIndex].includes(
+          `[${catName}${settings.cleaningLogShowID ? ` ${catId}` : ""}]`
+        )
+      ) {
+        const currentCatMatch = logLines[lastSentenceIndex].match(/\[(.*?)\]/);
+        if (currentCatMatch) {
+          // Добавляем имя текущего кота к предпоследнему предложению.
+          const existingCatsMatch =
+            logLines[penultimateSentenceIndex].match(/\[(.*?)\]/);
+          if (existingCatsMatch) {
+            const existingCats = existingCatsMatch[1];
+            const newCatString = existingCats.trim()
+              ? `${existingCats}, ${catName}${
+                  settings.cleaningLogShowID ? ` ${catId}` : ""
+                }`
+              : `${catName}${settings.cleaningLogShowID ? ` ${catId}` : ""}`;
+            logLines[penultimateSentenceIndex] = logLines[
+              penultimateSentenceIndex
+            ].replace(/\[(.*?)\]/, `[${newCatString}]`);
+          }
+
+          // Удаляем последнее предложение.
+          logLines.splice(lastSentenceIndex, 1);
+        }
+      } else {
+        // 5. Создаем новое предложение "Проверен и поднят".
+        logLines[lastSentenceIndex] = logLines[lastSentenceIndex].replace(
+          "Проверен",
+          "Проверен и поднят"
+        );
+      }
+    } else {
+      // 6. Если "Проверен" с именем кота нет.
+      if (logLines[lastSentenceIndex].includes("Кот не спит")) {
+        logLines[lastSentenceIndex] = "Вы забыли проверить кота";
+      } else if (
+        !logLines[lastSentenceIndex].includes("Вы забыли проверить кота")
+      ) {
+        logLines.push("Вы забыли проверить кота");
+      }
+    }
+    if (!catNamesAndIds.some(cat => cat.id === catId)) {
+      catNamesAndIds.push({ name: catName, id: catId });
+    }
+
+    const pickupCounter = document.getElementById("uwu-cleaningLog-counter-pickup");
+    pickupCounter.textContent = parseInt(pickupCounter.textContent) + 1;
+  }
+
+  function processUnmatchedAction(logLines, cleaningLogContent, action) {
+    const lastLogIndex = logLines.length - 1;
+  
+    const isCancelAction = /Отменил(а)? /.test(action);
+  
+    if (
+      lastLogIndex >= 0 &&
+      logLines[lastLogIndex].includes("Проверен [") &&
+      !isCancelAction
+    ) {
+      logLines.splice(lastLogIndex, 1);
+      cleaningLogBuffer =
+        logLines.join(". ") + (logLines.length > 0 ? "." : "");
+      cleaningLogContent.innerHTML = addCatLinksToLog(
+        cleaningLogBuffer,
+        catNamesAndIds
+      );
+    }
+  }
+
+  if (settings.cleaningLog) {
+    setupMutationObserver("#history_block", cleaningLogUpdate, {
+      childList: true,
+      subtree: true,
+    });
+
+    const cleaningLogStyle = document.createElement("style");
+    cleaningLogStyle.innerHTML = `
+          #uwu-cleaningLog-content {
+            height: ${settings.cleaningLogHeight || 120}px;
+            overflow-y: auto;
+            resize: vertical;
+          }
+          `;
+    document.head.appendChild(cleaningLogStyle);
   }
   // ====================================================================================================================
   //   . . . ЗВУКОВЫЕ УВЕДОМЛЕНИЯ . . .
@@ -7231,6 +7925,7 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   if (settings.fightTeams) {
     const colors = settings.fightTeamsColors;
+    const uwu_fightTeamsCats = JSON.parse(localStorage.getItem('uwu_fightTeamsCats')) || {};
   
     const fightPanel = document.getElementById("fightPanel");
     const buttonHTML =
@@ -7269,18 +7964,21 @@ if (window.location.href === targetCW3) {
       const tbody = document.getElementById("teamTableBody");
       tbody.innerHTML = "";
       const cages = document.querySelectorAll("#cages .cage");
-  
+    
       cages.forEach((cage) => {
         const catName = cage.querySelector(".cat_tooltip a")?.textContent;
         const arrow = cage.querySelector(".arrow.arrow-paws");
-  
+    
         if (catName && arrow) {
           const arrowId = arrow.id;
+          const savedTeam = uwu_fightTeamsCats[arrowId];
+    
           const buttonsHTML = Object.keys(colors)
             .map((team) => {
+              const isSelected = savedTeam === team ? 'selected' : '';
               return `
                 <button 
-                  class="team-color-button"
+                  class="team-color-button ${isSelected}"
                   data-arrow-id="${arrowId}"
                   data-team="${team}"
                   style="background-color: ${colors[team][0]}; width: 21%; height: 16px;"
@@ -7288,7 +7986,7 @@ if (window.location.href === targetCW3) {
               `;
             })
             .join("");
-  
+    
           const rowHTML = `
             <tr>
               <td style="border: 1px solid #000; padding: 5px;">${catName}</td>
@@ -7296,9 +7994,13 @@ if (window.location.href === targetCW3) {
             </tr>
           `;
           tbody.insertAdjacentHTML("beforeend", rowHTML);
+    
+          if (savedTeam) {
+            applyTeamColors(arrowId, savedTeam);
+          }
         }
       });
-  
+    
       const teamColorButtons = document.querySelectorAll('.team-color-button');
       teamColorButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -7311,13 +8013,15 @@ if (window.location.href === targetCW3) {
   
     function applyTeamColors(arrowId, team) {
       const styleElement = document.createElement('style');
-      styleElement.type = 'text/css';
       const cssRule = `
         #${arrowId} .arrow_green { background-color: ${colors[team][0]} !important; }
         #${arrowId} .arrow_red { background-color: ${colors[team][1]} !important; }
       `;
       styleElement.appendChild(document.createTextNode(cssRule));
       document.head.appendChild(styleElement);
+    
+      uwu_fightTeamsCats[arrowId] = team;
+      localStorage.setItem('uwu_fightTeamsCats', JSON.stringify(uwu_fightTeamsCats));
     }
   }
   // ====================================================================================================================
@@ -7499,7 +8203,7 @@ if (window.location.href === targetCW3) {
   // ====================================================================================================================
   //   . . . ИЗМЕНЯЕМАЯ ВЫСОТА ПАНЕЛИ БОЕВОГО РЕЖИМА . . .
   // ====================================================================================================================
-  if (settings.FightPanelAdjustableHeight) {
+  if (settings.fightPanelAdjustableHeight) {
     const uwuFightLog = document.createElement("style");
     uwuFightLog.innerHTML = `
       #fightPanel {
@@ -7522,7 +8226,7 @@ if (window.location.href === targetCW3) {
     if (fightLogElement) {
         fightLogElement.style.height = `${settings.fightPanelHeight || 70}px`;
     }
-}
+  }
   // ====================================================================================================================
   //   . . . ВСЕГДА ДЕНЬ В ИГРОВОЙ . . .
   // ====================================================================================================================
@@ -8247,12 +8951,16 @@ if (window.location.href === targetCW3) {
 
   function removeAurora(auroraElement) {
     auroraElement.style.animation = "auroraFadeOut 6s ease-in-out";
-
+  
     setTimeout(() => {
-      weatherContainer.removeChild(auroraElement);
-      const index = auroras.indexOf(auroraElement);
-      if (index > -1) {
-        auroras.splice(index, 1);
+      if (weatherContainer.contains(auroraElement)) {
+        weatherContainer.removeChild(auroraElement);
+        const index = auroras.indexOf(auroraElement);
+        if (index > -1) {
+          auroras.splice(index, 1);
+        }
+      } else {
+        console.warn("Element to be removed is not a child of weatherContainer.");
       }
     }, 6000);
   }
@@ -8728,7 +9436,7 @@ if (window.location.href === targetCW3Hunt) {
   // ====================================================================================================================
   //   . . . ВИРТУАЛЬНЫЙ ДЖОЙСТИК . . .
   // ====================================================================================================================
-  // Работаем с сайтовым обработчиком нажатий: "//e.catwar.su/js/key.js?268881668"
+  // Работаем с сайтовым обработчиком нажатий: "//e.catwar.net/js/key.js?268881668"
   if (settings.huntingVirtualJoystick) {
     function createJoystick() {
       const joystickHTML = `
@@ -9133,7 +9841,7 @@ function moonCalculator() {
       const ageMoons = getMoonsFromElement("age_icon");
       const age2Moons = getMoonsFromElement("age2_icon");
 
-      const sex = document.querySelector('[src^="//e.catwar.su/avatar"]').style.borderColor;
+      const sex = document.querySelector('[src^="//e.catwar.net/avatar"]').style.borderColor;
       const isRegistrationDate = /регистрац/.test(infoElement.textContent);
       const moonsNow = age2Moons ? (isRegistrationDate ? ageMoons : age2Moons) : ageMoons;
 
@@ -9746,11 +10454,12 @@ function getCommentInfo(comment) {
 
 function handleAnswerAction(commentInfo) {
   const textarea = document.getElementById('comment');
-  if (commentInfo.authorProfile) {
-      textarea.value = `[link${commentInfo.authorProfile}] (#${commentInfo.commentNum}), `;
-  } else {
-      textarea.value = `[b][code]${commentInfo.authorName}[/code][/b] (#${commentInfo.commentNum}), `;
-  }
+  const currentText = textarea.value;
+  const newText = commentInfo.authorProfile ? 
+    `[link${commentInfo.authorProfile}] (#${commentInfo.commentNum}), ` : 
+    `[b][code]${commentInfo.authorName}[/code][/b] (#${commentInfo.commentNum}), `;
+
+  textarea.value = currentText + newText;
 }
 
 function handleCiteAction(commentInfo) {
@@ -9761,7 +10470,8 @@ function handleCiteAction(commentInfo) {
   const quote = `[table][tr][td][size=10][i]Цитата:[/i] [b]#${commentInfo.commentNum}[/b] ${commentInfo.commentTime} @ ${profileLink}[/size][/td][/tr][tr][td][table=0][tr][td]  [/td][td]${quoteText}[/td][/tr][/table][/td][/tr][/table]`;
 
   const textarea = document.getElementById('comment');
-  textarea.value = quote;
+  const currentText = textarea.value;
+  textarea.value = currentText + quote;
 }
 
 function handleCommentActions() {
@@ -10000,7 +10710,7 @@ function initializeTemplates() {
                           document.getElementById(contentElementId).value = template.content;
                       }
                       if (subjectElementId) {
-                          document.getElementById(subjectElementId).value = template.subject || "";
+                          document.getElementById(subjectElementId).value = template.netbject || "";
                       }
                   });
 
@@ -10036,7 +10746,7 @@ function initializeTemplates() {
               templates[index].content = document.getElementById(contentElementId).value;
           }
           if (subjectElementId) {
-              templates[index].subject = document.getElementById(subjectElementId).value || "";
+              templates[index].netbject = document.getElementById(subjectElementId).value || "";
           }
           localStorage.setItem('uwu_templates', JSON.stringify(templates));
           renderTemplates(pageType);
