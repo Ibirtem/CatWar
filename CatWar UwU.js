@@ -1,14 +1,13 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.34.0-11.24
+// @version      v1.33.3-11.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.net/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
 // @supportURL   https://catwar.net/cat1477928
 // @homepageURL  https://openuserjs.org/scripts/Ibirtem/CatWar_UwU
 // @match        http*://*.catwar.net/*
-// @match        http*://*.catwar.su/*
 // @updateURL    https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.js
 // @downloadURL  https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.js
 // @license      MIT
@@ -20,7 +19,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.34.0";
+const current_uwu_version = "1.33.3";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   settingsTheme: "dark",
@@ -150,20 +149,18 @@ const uwuDefaultSettings = {
 // ====================================================================================================================
 //   . . . ТАРГЕТНЫЕ ССЫЛКИ . . .
 // ====================================================================================================================
-const targetSettings = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/settings/;
+const targetSettings = /^https:\/\/catwar\.net\/settings/;
 const targetCW3 = "https://catwar.net/cw3/";
-const targetOldCW3 = "https://catwar.su/cw3/";
 const targetCW3Hunt = "https://catwar.net/cw3/jagd";
-const targetOldCW3Hunt = "https://catwar.su/cw3/jagd";
-const targetMainProfile = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/$/;
-const targetProfile = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/cat\d+$/;
-const targetLs = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/ls/;
-const targetLsNew = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/ls\?new(=.*)?$/;
-const targetChats = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/chat/;
-const targetBlog = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/(?:blog\d+|blogs)(?:$|[/?#])/i;
-const targetBlogsCreation = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/blogs\?creation/;
-const targetSniff = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/sniff(?:\d+|)(?:$|[/?#])/i;
-const targetSniffCreation = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/sniff\?creation/;
+const targetMainProfile = /^https:\/\/catwar\.net\/$/;
+const targetProfile = /^https:\/\/catwar\.net\/cat\d+$/;
+const targetLs = /^https:\/\/catwar\.net\/ls/;
+const targetLsNew = /^https:\/\/catwar\.net\/ls\?new(=.*)?$/;
+const targetChats = /^https:\/\/catwar\.net\/chat/;
+const targetBlog = /^https:\/\/catwar\.net\/(?:blog\d+|blogs)(?:$|[/?#])/i;
+const targetBlogsCreation = /^https:\/\/catwar\.net\/blogs\?creation/;
+const targetSniff = /^https:\/\/catwar\.net\/sniff(?:\d+|)(?:$|[/?#])/i;
+const targetSniffCreation = /^https:\/\/catwar\.net\/sniff\?creation/;
 
 // ====================================================================================================================
 //   . . . СТАНДАРТНЫЕ ЦВЕТОВЫЕ ТЕМЫ . . .
@@ -1336,19 +1333,30 @@ const newsPanel = // html
 `
 <div id="news-panel">
     <button id="news-button">
-        v${current_uwu_version} - Адаптация под .su и .net!
+        v${current_uwu_version} - 🎃 Лог чистильщиков и Редизайн Настройки костюмов!
     </button>
     <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>— </p>
+        <p>— Новый стиль Часов - строчный! Удобно, когда вставляешь часы в блок погоды. Так же расширилась поддержка 
+        пользовательских кастомных шрифтов благодаря автоматической их подгрузки по названию... Не лучшее решение, 
+        но главное, что работает! Даёшь пиксельные или курсивные шрифты в Игровую!</p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Внешний вид</h3>
-        <p>— </p>
+        <p>— 🍤</p>
+        <p>— Добавлена всплывающая подсказка для "Быстрых стилей", чтобы игрокам было чуть понятнее, 
+        что эта функция делает.</p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Изменения кода</h3>
-        <p>— Калькулятор лун снова работает.</p>
+        <p>— Чек-проверка перед удалением северного сияния. Убрало ошибку из консоли.</p>
+        <p>— Кнопки "Ответить" и "Цитировать" теперь дополняют содержимое текстового поля, 
+        а не очищают его перед вставкой как было ранее.</p>
+        <p>— Великая битва с ломанным БР закончилась. Наверное. НАДЕЮСЬ.</p>
+        <p>— Теперь при "Обновлении команды" в БР, коты смогут автоматически вернуться в свои команды, если до 
+        этого были куда-то выбраны.</p>
+        <p>—— Release / Bump 1.33.3</p>
+        <p>—— Бамп версии, чтобы не потеряться в версиях, потому что были внутренние тестирование Лога чистильщика.</p>
         <hr id="uwu-hr" class="uwu-hr">
-        <p>Дата выпуска: .11.24</p>
+        <p>Дата выпуска: 06.11.24</p>
     </div>
 </div>
 `;
@@ -3871,7 +3879,7 @@ loadSettings();
 // ====================================================================================================================
 //   . . . АВАТАРЫ В КОММЕНТАРИЯХ . . .
 // ====================================================================================================================
-if (window.location.href !== targetCW3 || window.location.href !== targetOldCW3) {
+if (window.location.href !== targetCW3) {
   if (settings.commentsAvatars) {
     const styleElement = document.createElement("style");
     styleElement.textContent = `
@@ -4034,7 +4042,7 @@ soundManager.loadSound(
 //  . . . ЗАГРУЗКА КОДА В ИГРОВОЙ . . .
 // ====================================================================================================================
 // Игровая ли... Я чё знаю?
-if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3) {
+if (window.location.href === targetCW3) {
   const containerElement = document.querySelector("body");
   const globalContainerElement = document.createElement("div");
   globalContainerElement.id = "uwu-global-container";
@@ -9325,7 +9333,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 // ====================================================================================================================
 //   . . . ТАРГЕТИНГ ОКНА ОХОТЫ И ПОДГОТОВКА КОНТЕЙНЕРОВ . . .
 // ====================================================================================================================
-if (window.location.href === targetCW3Hunt ||  window.location.href === targetOldCW3Hunt) {
+if (window.location.href === targetCW3Hunt) {
   amogusSus();
   const containerElement = document.querySelector("body");
   const globalContainerElement = document.createElement("div");
@@ -9833,8 +9841,7 @@ function moonCalculator() {
       const ageMoons = getMoonsFromElement("age_icon");
       const age2Moons = getMoonsFromElement("age2_icon");
 
-      const avatarElement = document.querySelector('img[src^="/avatar/"]');
-      const sex = avatarElement ? avatarElement.style.borderColor : null;
+      const sex = document.querySelector('[src^="//e.catwar.net/avatar"]').style.borderColor;
       const isRegistrationDate = /регистрац/.test(infoElement.textContent);
       const moonsNow = age2Moons ? (isRegistrationDate ? ageMoons : age2Moons) : ageMoons;
 
