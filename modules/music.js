@@ -1,8 +1,9 @@
-console.error("Ура, модуль!");
+console.log("Ура, модуль!");
 
 setupSingleCallback("#cages_div", playMusic);
 
 function playMusic() {
+    console.log("Ура, калбечек!");
     return new Promise((resolve, reject) => {
         soundManager.loadSound(
             "notificationSound1",
