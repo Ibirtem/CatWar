@@ -1,3 +1,5 @@
+console.error("Ура, модуль!");
+
 setupSingleCallback("#cages_div", playMusic);
 
 function playMusic() {
