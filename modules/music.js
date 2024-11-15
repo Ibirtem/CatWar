@@ -15,6 +15,7 @@ function playMusic() {
         );
     }).then(() => {
         soundManager.playSound("notificationSound3", "5");
+        console.error("Ура, звук!");
     }).catch((error) => {
         console.error("Ошибка:", error);
     });
