@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.33.3-11.24
+// @version      v1.34.0-11.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.net/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
 // @supportURL   https://catwar.net/cat1477928
 // @homepageURL  https://openuserjs.org/scripts/Ibirtem/CatWar_UwU
 // @match        http*://*.catwar.net/*
+// @match        http*://*.catwar.su/*
 // @updateURL    https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.js
 // @downloadURL  https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.js
 // @license      MIT
@@ -19,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.33.3";
+const current_uwu_version = "1.34.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   settingsTheme: "dark",
@@ -95,6 +96,7 @@ const uwuDefaultSettings = {
 
   climbingPanel: false,
   climbingPanelOrientation: "vertical",
+  climbingPanelInputsStyle: "keyboard",
   climbingNotificationsNumbers: false,
   climbingRefreshNotification: false,
   climbingRefreshNotificationSound: "notificationSound1",
@@ -149,18 +151,20 @@ const uwuDefaultSettings = {
 // ====================================================================================================================
 //   . . . ТАРГЕТНЫЕ ССЫЛКИ . . .
 // ====================================================================================================================
-const targetSettings = /^https:\/\/catwar\.net\/settings/;
+const targetSettings = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/settings/;
 const targetCW3 = "https://catwar.net/cw3/";
+const targetOldCW3 = "https://catwar.su/cw3/";
 const targetCW3Hunt = "https://catwar.net/cw3/jagd";
-const targetMainProfile = /^https:\/\/catwar\.net\/$/;
-const targetProfile = /^https:\/\/catwar\.net\/cat\d+$/;
-const targetLs = /^https:\/\/catwar\.net\/ls/;
-const targetLsNew = /^https:\/\/catwar\.net\/ls\?new(=.*)?$/;
-const targetChats = /^https:\/\/catwar\.net\/chat/;
-const targetBlog = /^https:\/\/catwar\.net\/(?:blog\d+|blogs)(?:$|[/?#])/i;
-const targetBlogsCreation = /^https:\/\/catwar\.net\/blogs\?creation/;
-const targetSniff = /^https:\/\/catwar\.net\/sniff(?:\d+|)(?:$|[/?#])/i;
-const targetSniffCreation = /^https:\/\/catwar\.net\/sniff\?creation/;
+const targetOldCW3Hunt = "https://catwar.su/cw3/jagd";
+const targetMainProfile = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/$/;
+const targetProfile = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/cat\d+$/;
+const targetLs = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/ls/;
+const targetLsNew = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/ls\?new(=.*)?$/;
+const targetChats = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/chat/;
+const targetBlog = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/(?:blog\d+|blogs)(?:$|[/?#])/i;
+const targetBlogsCreation = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/blogs\?creation/;
+const targetSniff = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/sniff(?:\d+|)(?:$|[/?#])/i;
+const targetSniffCreation = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/sniff\?creation/;
 
 // ====================================================================================================================
 //   . . . СТАНДАРТНЫЕ ЦВЕТОВЫЕ ТЕМЫ . . .
@@ -180,6 +184,7 @@ const defaultThemes = {
       accentColor3: "#fc872a",
       moveNameColor: "#d5d5d5",
       moveNameBackground: "#242424",
+      climbingPanelBackground: "#242424",
     },
   },
 };
@@ -439,6 +444,11 @@ const uwusettings = // html
           <input type="text" id="settingsMoveNameBackgroundField" placeholder="Вставьте HEX код"
             data-color="moveNameBackground" />
           <label>Цвет фона перехода</label>
+        </div>
+        <div id="color-picker-input">
+          <input type="text" id="settingsclimbingPanelBackgroundField" placeholder="Вставьте HEX код"
+            data-color="climbingPanelBackground" />
+          <label>Цвет фона Минного Поля</label>
         </div>
         <div id="color-picker-input">
           <input type="text" id="accentColorField1" placeholder="Вставьте HEX код"
@@ -1062,8 +1072,6 @@ const uwusettings = // html
       <h2>Минное поле</h2>
 
       <div>
-      <p>ЛКМ - выбрать клетку. С клавиатуры мины ставятся от "0" до "7". Знак "минус" ( - ) равняется красной клетке, а "равно" ( = ) ставит более яркую клетку, например для переходов,
-      которая не будет очищаться при "Очистить всё поле/таблицу". Два раза ЛКМ на ячейку, чтобы очистить её значение.</p>
         <p>Включает окно для расчерчивания минного поля в Игровой.</p>
         <input type="checkbox" id="climbing-panel" data-setting="climbingPanel" />
         <label for="climbing-panel">Минное поле</label>
@@ -1077,6 +1085,20 @@ const uwusettings = // html
       <label>Дизайн окна минного поля:</label>
       <div class="custom-select" id="climbingPanelOrientation">
         <div class="select-selected">Вертикальный</div>
+        <div class="select-items">
+          <!-- Опции будут добавлены сюда -->
+        </div>
+      </div>
+
+      <p>
+      Как вводить с клавиатуры:
+      ЛКМ - выбрать клетку. С клавиатуры мины ставятся от "0" до "7". Знак "минус" ( - ) равняется красной клетке, 
+      а "равно" ( = ) ставит более яркую клетку, например для переходов, которая не будет очищаться при 
+      "Очистить всё поле/таблицу". Два раза ЛКМ на ячейку, чтобы очистить её значение.</p>
+
+      <label>Вид ввода в минное поле:</label>
+      <div class="custom-select" id="climbingPanelInputsStyle">
+        <div class="select-selected">Клавиатура</div>
         <div class="select-items">
           <!-- Опции будут добавлены сюда -->
         </div>
@@ -1309,7 +1331,7 @@ const uwusettings = // html
       <h2>Импорт/Экспорт</h2>
 
       <div>
-        <p>Импорт/Экспорт всех настроек (Пока без расставленных блоков Компактной Игровой, Сборника Стилей и Минного поля).</p>
+        <p>Импорт/Экспорт всех настроек.</p>
         <input type="text" id="exportSettings" placeholder="Экспорт"/>
         <input type="text" id="importSettings" placeholder="Импорт"/>
         <button id="importSettingsButton" class="uwu-button install-button">Вставить</button>
@@ -1333,30 +1355,25 @@ const newsPanel = // html
 `
 <div id="news-panel">
     <button id="news-button">
-        v${current_uwu_version} - 🎃 Лог чистильщиков и Редизайн Настройки костюмов!
+        v${current_uwu_version} - 🌸 Адаптация под .su и .net! И кнопочки в минном поле!
     </button>
     <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>— Новый стиль Часов - строчный! Удобно, когда вставляешь часы в блок погоды. Так же расширилась поддержка 
-        пользовательских кастомных шрифтов благодаря автоматической их подгрузки по названию... Не лучшее решение, 
-        но главное, что работает! Даёшь пиксельные или курсивные шрифты в Игровую!</p>
+        <p>— Импорт/Экспорт в "Надстройках" теперь работает (практически) со всеми ключами! А так же 
+        в "Темы и цвета Игровой" теперь вы можете поставить Цвет фона Минного Поля! А так же Часы и Минное 
+        Поле теперь возможно перетаскивать на сенсорных устройствах!</p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Внешний вид</h3>
-        <p>— 🍤</p>
-        <p>— Добавлена всплывающая подсказка для "Быстрых стилей", чтобы игрокам было чуть понятнее, 
-        что эта функция делает.</p>
+        <p>— 🥬</p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Изменения кода</h3>
-        <p>— Чек-проверка перед удалением северного сияния. Убрало ошибку из консоли.</p>
-        <p>— Кнопки "Ответить" и "Цитировать" теперь дополняют содержимое текстового поля, 
-        а не очищают его перед вставкой как было ранее.</p>
-        <p>— Великая битва с ломанным БР закончилась. Наверное. НАДЕЮСЬ.</p>
-        <p>— Теперь при "Обновлении команды" в БР, коты смогут автоматически вернуться в свои команды, если до 
-        этого были куда-то выбраны.</p>
-        <p>—— Release / Bump 1.33.3</p>
-        <p>—— Бамп версии, чтобы не потеряться в версиях, потому что были внутренние тестирование Лога чистильщика.</p>
+        <p>— Калькулятор лун снова работает.</p>
+        <p>— Подправленны промисы воспроизведения звуков. Теперь должно быть получше и не будут теряться.</p>
+        <p>— Улучшена логика буферизации звуков. Теперь каждый уникальный звук (по ID) будет сохраняться 
+        и воспроизводиться только один раз, вместо того чтобы заменяться последним вызванным звуком.</p>
+        <p>— Незначительно поигрался с CSS стилями минного поля.</p>
         <hr id="uwu-hr" class="uwu-hr">
-        <p>Дата выпуска: 06.11.24</p>
+        <p>Дата выпуска: 16.11.24</p>
     </div>
 </div>
 `;
@@ -2977,6 +2994,13 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     ]
   
     createCustomSelect("cleaningLogStyle", cleaningLogStyles);
+    // ==============================================================================
+    const climbingPanelInputsStyles = [
+      { id: "keyboard", name: "Клавиатура" },
+      { id: "standart", name: "Галочки + Клавиатура" },
+    ]
+  
+    createCustomSelect("climbingPanelInputsStyle", climbingPanelInputsStyles);
   // ====================================================================================================================
   //   . . . СОЗДАНИЕ ВЫПАДАЮЩИХ СПИСКОВ . . .
   // ====================================================================================================================
@@ -3080,31 +3104,64 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     localStorage.setItem("uwu_clock", JSON.stringify(defaultPosition));
   });
   // ====================================================================================================================
-  //  . . . ИМПОРТ / ЭКСПОРТ НАСТРОЕК . . .
+  //  . . . ИМПОРТ / ЭКСПОРТ ВСЕХ НАСТРОЕК . . .
   // ====================================================================================================================
+  const settingsAllKeys = [
+    "uwu_settings",
+    "uwu_layoutSettings",
+    "uwu_climbingPanelState",
+    "uwu_moduleStates",
+    "uwu_fightPanelPosition",
+    "uwu_climbingPanelStatus",
+    "uwu_privateModules",
+    "uwu_colorThemes",
+    "uwu_fontSize",
+    "uwu_clock",
+    "uwu_templates",
+    "uwu_highlightResources",
+  ];
+  
   const importButton = document.getElementById("importSettingsButton");
   const importSettingsInput = document.getElementById("importSettings");
   const exportSettingsInput = document.getElementById("exportSettings");
-
+  
   importButton.addEventListener("click", () => {
     const importedSettings = importSettingsInput.value;
-
+  
     try {
       const parsedSettings = JSON.parse(importedSettings);
-      settings = { ...settings, ...parsedSettings };
-      localStorage.setItem("uwu_settings", JSON.stringify(settings));
-      console.log("Настройки импортированы:", settings);
+      settingsAllKeys.forEach(key => {
+        if (parsedSettings[key] !== undefined) {
+          localStorage.setItem(key, JSON.stringify(parsedSettings[key]));
+        }
+      });
+      console.log("Настройки импортированы:", parsedSettings);
     } catch (error) {
       console.error("Ошибка при импорте настроек:", error);
     }
     updateExportField();
   });
-
+  
   function updateExportField() {
-    const settingsToExport = JSON.stringify(settings);
+    const settingsToExport = JSON.stringify(getSpecificLocalStorageItems(), null, 2);
     exportSettingsInput.value = settingsToExport;
   }
-
+  
+  function getSpecificLocalStorageItems() {
+    const items = {};
+    settingsAllKeys.forEach(key => {
+      const value = localStorage.getItem(key);
+      if (value !== null) {
+        try {
+          items[key] = JSON.parse(value);
+        } catch (error) {
+          console.error(`Ошибка при разборе JSON для ключа ${key}:`, error);
+        }
+      }
+    });
+    return items;
+  }
+  
   loadSettings();
   updateExportField();
   // ====================================================================================================================
@@ -3879,7 +3936,7 @@ loadSettings();
 // ====================================================================================================================
 //   . . . АВАТАРЫ В КОММЕНТАРИЯХ . . .
 // ====================================================================================================================
-if (window.location.href !== targetCW3) {
+if (window.location.href !== targetCW3 || window.location.href !== targetOldCW3) {
   if (settings.commentsAvatars) {
     const styleElement = document.createElement("style");
     styleElement.textContent = `
@@ -3957,7 +4014,7 @@ if (window.location.href !== targetCW3) {
 function createSoundManager() {
   const sounds = {};
   let isUserInteracted = false;
-  let lastPendingSound = null;
+  let pendingSounds = {};
 
   function loadSound(id, url) {
     const audio = new Audio(url);
@@ -3977,8 +4034,11 @@ function createSoundManager() {
               console.warn(
                 "Политика браузера заблокировала звук. Ждём взаимодействия со стороны пользователя для новой попытки."
               );
-              lastPendingSound = { id, volume, resolve };
+              pendingSounds[id] = { id, volume, resolve };
             } else {
+              console.warn(
+                "Ошибка воспроизведения звука:", error
+              );
               reject(error);
             }
           });
@@ -4000,18 +4060,19 @@ function createSoundManager() {
 
   function handleUserInteraction() {
     isUserInteracted = true;
-    document.removeEventListener("click", handleUserInteraction);
+
+    document.removeEventListener("mousedown", handleUserInteraction);
     document.removeEventListener("touchstart", handleUserInteraction);
     document.removeEventListener("keydown", handleUserInteraction);
 
-    if (lastPendingSound) {
-      const { id, volume, resolve } = lastPendingSound;
+    for (const id in pendingSounds) {
+      const { volume, resolve } = pendingSounds[id];
       playSoundNow(id, volume, resolve);
-      lastPendingSound = null;
     }
+    pendingSounds = {};
   }
 
-  document.addEventListener("click", handleUserInteraction);
+  document.addEventListener("mousedown", handleUserInteraction);
   document.addEventListener("touchstart", handleUserInteraction);
   document.addEventListener("keydown", handleUserInteraction);
 
@@ -4042,7 +4103,7 @@ soundManager.loadSound(
 //  . . . ЗАГРУЗКА КОДА В ИГРОВОЙ . . .
 // ====================================================================================================================
 // Игровая ли... Я чё знаю?
-if (window.location.href === targetCW3) {
+if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3) {
   const containerElement = document.querySelector("body");
   const globalContainerElement = document.createElement("div");
   globalContainerElement.id = "uwu-global-container";
@@ -4442,59 +4503,83 @@ if (window.location.href === targetCW3) {
     }
 
     if (settings.clockPosition === "fly") {
-        clockElement.addEventListener("mousedown", (e) => {
-            isDragging = true;
-            offsetX = e.clientX - clockElement.offsetLeft;
-            offsetY = e.clientY - clockElement.offsetTop;
-            document.body.style.userSelect = "none";
-        });
-
-        document.addEventListener("mousemove", (e) => {
-            if (isDragging) {
-                clockElement.style.left = `${e.clientX - offsetX}px`;
-                clockElement.style.top = `${e.clientY - offsetY}px`;
-            }
-        });
-
-        document.addEventListener("mouseup", () => {
-            isDragging = false;
-            document.body.style.userSelect = "auto";
-            saveClockPosition();
-        });
+      clockElement.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        offsetX = e.clientX - clockElement.offsetLeft;
+        offsetY = e.clientY - clockElement.offsetTop;
+        document.body.style.userSelect = "none";
+      });
+    
+      clockElement.addEventListener("touchstart", (e) => {
+        e.preventDefault(); 
+        isDragging = true;
+        const touch = e.touches[0];
+        offsetX = touch.clientX - clockElement.offsetLeft;
+        offsetY = touch.clientY - clockElement.offsetTop;
+        document.body.style.userSelect = "none";
+      });
+    
+      document.addEventListener("mousemove", (e) => {
+        if (isDragging) {
+          clockElement.style.left = `${e.clientX - offsetX}px`;
+          clockElement.style.top = `${e.clientY - offsetY}px`;
+        }
+      });
+    
+      document.addEventListener("touchmove", (e) => {
+        e.preventDefault(); 
+        if (isDragging) {
+          const touch = e.touches[0];
+          clockElement.style.left = `${touch.clientX - offsetX}px`;
+          clockElement.style.top = `${touch.clientY - offsetY}px`;
+        }
+      });
+    
+      document.addEventListener("mouseup", () => {
+        isDragging = false;
+        document.body.style.userSelect = "auto";
+        saveClockPosition();
+      });
+    
+      document.addEventListener("touchend", () => {
+        isDragging = false;
+        document.body.style.userSelect = "auto";
+        saveClockPosition();
+      });
     }
-
+    
     function saveClockPosition() {
-        const clockPosition = {
-            x: clockElement.offsetLeft,
-            y: clockElement.offsetTop,
-        };
-        localStorage.setItem("uwu_clock", JSON.stringify(clockPosition));
+      const clockPosition = {
+        x: clockElement.offsetLeft,
+        y: clockElement.offsetTop,
+      };
+      localStorage.setItem("uwu_clock", JSON.stringify(clockPosition));
     }
-
+    
     function loadClockPosition() {
-        const storedPosition = localStorage.getItem("uwu_clock");
-        if (storedPosition) {
-            const clockPosition = JSON.parse(storedPosition);
-            clockElement.style.left = `${clockPosition.x}px`;
-            clockElement.style.top = `${clockPosition.y}px`;
-        }
+      const storedPosition = localStorage.getItem("uwu_clock");
+      if (storedPosition) {
+        const clockPosition = JSON.parse(storedPosition);
+        clockElement.style.left = `${clockPosition.x}px`;
+        clockElement.style.top = `${clockPosition.y}px`;
+      }
     }
-
+    
     document.addEventListener("visibilitychange", () => {
-        if (!document.hidden) {
-            fetchInternetTime();
-        }
-    });
-
-    window.addEventListener("focus", () => {
+      if (!document.hidden) {
         fetchInternetTime();
+      }
     });
-
+    
+    window.addEventListener("focus", () => {
+      fetchInternetTime();
+    });
+    
     fetchInternetTime();
     if (settings.clockPosition === "fly") {
-        loadClockPosition();
+      loadClockPosition();
     }
-
+    
     document.body.classList.add(settings.clockStyle);
 }
   // ====================================================================================================================
@@ -5269,14 +5354,20 @@ if (window.location.href === targetCW3) {
       const cell = event.target.closest("td");
       if (!cell || !cell.closest("#uwu-climbingPanel")) return;
 
-      if (lastClickedCell === cell) {
-        updateCell(cell, "");
-        saveTableData(tabManager.currentTableId);
-        transferColors();
-        lastClickedCell = null;
-      } else {
-        lastClickedCell = cell;
-      }
+        if (settings.climbingPanelInputsStyle === "standart") {
+            updateCell(cell, activeInputValue);
+            saveTableData(tabManager.currentTableId);
+            transferColors();
+        } else {
+          if (lastClickedCell === cell) {
+            updateCell(cell, "");
+            saveTableData(tabManager.currentTableId);
+            transferColors();
+            lastClickedCell = null;
+          } else {
+            lastClickedCell = cell;
+          }
+        }
     }
 
     function handleKeyDown(event) {
@@ -5319,6 +5410,8 @@ if (window.location.href === targetCW3) {
       saveClimbingPanelStatus();
     }
 
+    let activeInputValue = "0";
+
     const uwuClimbingPanelContainer = // html
     `
       <div id="uwu-climbingMainPanel">
@@ -5333,7 +5426,20 @@ if (window.location.href === targetCW3) {
       <div id="uwu-climbingPanelContainer">
           <div id="uwu-climbingPanelContent">
               <div id="uwu-buttonContainer">
-                  <h3>Вкладка</h3>
+                <div id="uwu-inputButtons" style="display: none;">
+                <button value="0">0</button>
+                <button value="1">1</button>
+                <button value="2">2</button>
+                <button value="3">3</button>
+                <button value="4">4</button>
+                <button value="5">5</button>
+                <button value="6">6</button>
+                <button value="7">7</button>
+                <button value="transit">Переход</button>
+                <button value="mine">Мина</button>
+                <button value="">Очистить</button>
+              </div>    
+              <h3>Вкладка</h3>
                   <div id="uwu-buttonRow1"></div>
                   <hr id="uwu-hr">
                   <h3>Локация</h3>
@@ -5358,8 +5464,34 @@ if (window.location.href === targetCW3) {
 
       const transferCheckbox = document.getElementById("uwu-transferCheckbox");
 
+      if (settings.climbingPanelInputsStyle === "standart") {
+        setupInputButtons();
+      }
+
       document.addEventListener("keydown", handleKeyDown);
       transferCheckbox.addEventListener("change", handleTransferCheckboxChange);
+    }
+
+    function setupInputButtons() {
+      const inputButtonsContainer = document.getElementById("uwu-inputButtons");
+      inputButtonsContainer.style.display = "flex";
+      inputButtonsContainer.style.flexWrap = "wrap";
+
+      const inputButtons = inputButtonsContainer.querySelectorAll("button");
+      inputButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          activeInputValue = button.value;
+          updateInputButtonsStyle();
+        });
+      });
+      updateInputButtonsStyle();
+    }
+
+    function updateInputButtonsStyle() {
+      const inputButtons = document.querySelectorAll('#uwu-inputButtons button');
+      inputButtons.forEach(button => {
+        button.classList.toggle('active', button.value === activeInputValue);
+      });
     }
 
     function saveTableData(tableIndex) {
@@ -5606,65 +5738,102 @@ if (window.location.href === targetCW3) {
     );
     const transferCheckbox = document.getElementById("uwu-transferCheckbox");
 
-    function dragStart(e) {
-      e.preventDefault();
-      const savedStatus = JSON.parse(
-        localStorage.getItem("uwu_climbingPanelStatus")
-      );
-      initialX =
-        e.clientX -
-        (savedStatus ? savedStatus.x : climbingMainPanel.offsetLeft);
-      initialY =
-        e.clientY - (savedStatus ? savedStatus.y : climbingMainPanel.offsetTop);
+    let touchStartTime;
+    let touchStartX;
+    let touchStartY;
+    const CLICK_THRESHOLD = 200;
+    const MOVE_THRESHOLD = 10;
 
+
+    function handleTouchStart(e) {
+      touchStartTime = Date.now();
+      const touch = e.touches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+      dragStart(e);
+  }
+
+  function handleTouchEnd(e) {
+    dragEnd(e);
+    
+    // Проверяем, был ли это клик
+    const touchEndTime = Date.now();
+    const touchDuration = touchEndTime - touchStartTime;
+    
+    if (e.changedTouches && e.changedTouches[0]) {
+        const touch = e.changedTouches[0];
+        const moveDistance = Math.sqrt(
+            Math.pow(touch.clientX - touchStartX, 2) + 
+            Math.pow(touch.clientY - touchStartY, 2)
+        );
+        
+        if (touchDuration < CLICK_THRESHOLD && moveDistance < MOVE_THRESHOLD && !wasDragging) {
+            togglePanelContainer(e);
+        }
+    }
+  }
+
+    function dragStart(e) {
+      const touch = e.touches ? e.touches[0] : e;
+    
+      const savedStatus = JSON.parse(localStorage.getItem("uwu_climbingPanelStatus"));
+      initialX = touch.clientX - (savedStatus ? savedStatus.x : climbingMainPanel.offsetLeft);
+      initialY = touch.clientY - (savedStatus ? savedStatus.y : climbingMainPanel.offsetTop);
+    
       if (e.target === climbingPanelButton) {
         isDragging = true;
         wasDragging = false;
       }
+    
+      if (e.type === 'touchstart') {
+        e.preventDefault();
+      }
     }
-
+    
     function drag(e) {
       if (isDragging) {
-        e.preventDefault();
-
-        currentX = e.clientX - initialX;
-        currentY = e.clientY - initialY;
-
+        const touch = e.touches ? e.touches[0] : e;
+    
+        currentX = touch.clientX - initialX;
+        currentY = touch.clientY - initialY;
+    
         const windowWidth = window.innerWidth;
         const windowHeight = window.innerHeight;
         const panelWidth = climbingMainPanel.offsetWidth;
         const panelHeight = climbingMainPanel.offsetHeight;
-
+    
         const maxX = windowWidth - panelWidth;
         currentX = Math.max(0, Math.min(currentX, maxX));
-
+    
         const maxY = windowHeight - panelHeight;
         currentY = Math.max(0, Math.min(currentY, maxY));
-
+    
         setPosition(currentX, currentY, climbingMainPanel);
-
+    
         wasDragging = true;
+    
+        e.preventDefault();
       }
     }
-
+    
     function dragEnd(e) {
       if (isDragging) {
         saveClimbingPanelStatus();
       }
       isDragging = false;
     }
-
+    
     function setPosition(x, y, el) {
       el.style.left = `${x}px`;
       el.style.top = `${y}px`;
     }
-
+    
     function togglePanelContainer(e) {
       if (!wasDragging) {
         const arrow = document.getElementById("uwu-arrow");
         climbingPanelContainer.classList.toggle("open");
         saveClimbingPanelStatus();
-  
+    
         if (climbingPanelContainer.classList.contains("open")) {
           arrow.textContent = "▲";
         } else {
@@ -5673,6 +5842,7 @@ if (window.location.href === targetCW3) {
       }
       wasDragging = false;
     }
+    
 
     function checkAndResetPanelPosition() {
       const windowWidth = window.innerWidth;
@@ -5709,7 +5879,32 @@ if (window.location.href === targetCW3) {
     document.addEventListener("mousemove", drag);
     climbingPanelButton.addEventListener("click", togglePanelContainer);
 
+    climbingPanelButton.addEventListener("touchstart", handleTouchStart, { passive: false });
+    document.addEventListener("touchend", handleTouchEnd);
+    document.addEventListener("touchmove", drag, { passive: false });
+
     setTimeout(loadClimbingPanelStatus, 10);
+
+    const climbingPanelContent = document.getElementById("uwu-climbingPanelContent");
+    const buttonContainer = document.getElementById("uwu-buttonContainer");
+    const inputButtonsContainer = document.getElementById("uwu-inputButtons");
+    const buttonRow1 = document.getElementById("uwu-buttonRow1");
+    const buttonRow2 = document.getElementById("uwu-buttonRow2");
+    const functionButtonsContainer = document.getElementById("uwu-functionButtonsContainer");
+    const tableContainer = document.getElementById("uwu-tableContainer");
+    const clearTableButton = document.getElementById("button-clear-table");
+
+    if (settings.climbingPanelOrientation === "horizontal" && settings.climbingPanelInputsStyle === "standart") {
+      climbingMainPanel.classList.add("horizontal-keyboard");
+      climbingPanelContent.classList.add("horizontal-keyboard");
+      buttonContainer.classList.add("horizontal-keyboard");
+      inputButtonsContainer.classList.add("horizontal-keyboard");
+      buttonRow1.classList.add("horizontal-keyboard");
+      buttonRow2.classList.add("horizontal-keyboard");
+      functionButtonsContainer.classList.add("horizontal-keyboard");
+      tableContainer.classList.add("horizontal-keyboard");
+      clearTableButton.classList.add("horizontal-keyboard");
+    }
 
     const uwuClimbingPanel = document.createElement("style");
     uwuClimbingPanel.innerHTML = // css
@@ -5729,7 +5924,7 @@ if (window.location.href === targetCW3) {
       pointer-events: auto;
       width: 260px;
       position: absolute;
-      background-color: #ffffff08;
+      background-color: ${theme?.climbingPanelBackground || "#ffffff08"};
       border: 1px solid #ffffff1a;
       backdrop-filter: blur(20px);
       border-radius: 10px;
@@ -5751,6 +5946,10 @@ if (window.location.href === targetCW3) {
       margin-right: 8px;
     }
 
+    #uwu-inputButtons button.active {
+      background-color: #abf6ffb0;
+    }
+
     #uwu-climbingPanelButton {
       cursor: grab;
       background-color: #00000026;
@@ -5770,21 +5969,37 @@ if (window.location.href === targetCW3) {
     }
 
     #uwu-climbingPanel {
-      font-size: 26px;
+      font-size: 24px;
       border-collapse: collapse;
-      width: fit-content;
+      width: 250px;
+      height: 190px;;
       background-color: #ffffff1a;
       border: 2px solid black;
+      table-layout: fixed;
     }
   
-    #uwu-climbingPanel > tr> td {
-      width: 23px;
-      height: 32px;
+    #uwu-climbingPanel > tr > td {
+      height: calc(100% / 6);
+      width: calc(100% / 10);
+      aspect-ratio: 1;
+      padding: 0;
       border: 1px solid black;
       text-align: center;
       cursor: pointer;
       pointer-events: auto;
       position: relative;
+    }
+
+    @media (max-width: 500px) {
+      #uwu-climbingPanel {
+        font-size: 20px;
+      }
+    }
+    
+    @media (max-width: 400px) {
+      #uwu-climbingPanel {
+        font-size: 16px;
+      }
     }
 
     #uwu-climbingPanelContainer h3 {
@@ -5852,9 +6067,10 @@ if (window.location.href === targetCW3) {
     }
 
     #uwu-climbingPanelContent {
-      display: grid !important;
+      display: grid;
       grid-template-columns: 1fr 2fr;
-      grid-template-rows: auto auto;
+      grid-template-rows: auto 1fr;
+      height: calc(100% - 40px);
     }
     
     #uwu-buttonContainer {
@@ -5871,6 +6087,63 @@ if (window.location.href === targetCW3) {
     #uwu-tableContainer {
       grid-column: 2 / 3;
       grid-row: 2 / 3;
+      overflow: auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Стили для горизонтальной ориентации с кнопочным вводом */
+    #uwu-climbingMainPanel.horizontal-keyboard {
+      width: 420px !important;
+    }
+
+    #uwu-climbingPanelContent.horizontal-keyboard {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      grid-template-rows: auto 1fr;
+      max-height: 250px;
+    }
+
+    #uwu-buttonContainer.horizontal-keyboard {
+      grid-column: 1 / 2;
+      grid-row: 1 / 3;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    #uwu-inputButtons.horizontal-keyboard {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    #uwu-buttonRow2.horizontal-keyboard {
+        margin-top: 10px;
+    }
+
+    #uwu-functionButtonsContainer.horizontal-keyboard {
+      grid-column: 2 / 3;
+      grid-row: 1 / 2;
+      align-self: start;
+    }
+
+    #uwu-buttonRow1.horizontal-keyboard {
+      grid-column: 2 / 3;
+      grid-row: 1 / 2;
+      margin-bottom: 10px;
+    }
+
+    #uwu-tableContainer.horizontal-keyboard {
+      grid-column: 2 / 3;
+      grid-row: 2 / 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow: hidden;
     }
     `;
 
@@ -9333,7 +9606,7 @@ if (window.location.href === targetCW3) {
 // ====================================================================================================================
 //   . . . ТАРГЕТИНГ ОКНА ОХОТЫ И ПОДГОТОВКА КОНТЕЙНЕРОВ . . .
 // ====================================================================================================================
-if (window.location.href === targetCW3Hunt) {
+if (window.location.href === targetCW3Hunt ||  window.location.href === targetOldCW3Hunt) {
   amogusSus();
   const containerElement = document.querySelector("body");
   const globalContainerElement = document.createElement("div");
@@ -9841,7 +10114,8 @@ function moonCalculator() {
       const ageMoons = getMoonsFromElement("age_icon");
       const age2Moons = getMoonsFromElement("age2_icon");
 
-      const sex = document.querySelector('[src^="//e.catwar.net/avatar"]').style.borderColor;
+      const avatarElement = document.querySelector('img[src^="/avatar/"]');
+      const sex = avatarElement ? avatarElement.style.borderColor : null;
       const isRegistrationDate = /регистрац/.test(infoElement.textContent);
       const moonsNow = age2Moons ? (isRegistrationDate ? ageMoons : age2Moons) : ageMoons;
 
