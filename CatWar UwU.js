@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.34.0-11.24
+// @version      v1.35.0-11.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.net/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.34.0";
+const current_uwu_version = "1.35.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   settingsTheme: "dark",
@@ -678,11 +678,13 @@ const uwusettings = // html
       <hr id="uwu-hr" class="uwu-hr">
       <h2>Параметры и навыки</h2>
       
+      <!--
       <div>
         <p>Параметр наглядно отображает рядом с собой свой процент.</p>
         <input type="checkbox" id="display-Parameters-Percentages" data-setting="displayParametersPercentages" />
         <label for="display-Parameters-Percentages">Отображать проценты Параметров</label>
       </div>
+      -->
 
       <div>
         <p>Заменяет стандартное оформление Параметров и Навыков на ваш.</p>
@@ -1355,25 +1357,27 @@ const newsPanel = // html
 `
 <div id="news-panel">
     <button id="news-button">
-        v${current_uwu_version} - 🌸 Адаптация под .su и .net! И кнопочки в минном поле!
+        v${current_uwu_version} - 🌸 Фиксимся под новые обновления сайта...
     </button>
     <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>— Импорт/Экспорт в "Надстройках" теперь работает (практически) со всеми ключами! А так же 
-        в "Темы и цвета Игровой" теперь вы можете поставить Цвет фона Минного Поля! А так же Часы и Минное 
-        Поле теперь возможно перетаскивать на сенсорных устройствах!</p>
+        <p>— Я голодный пилил обнову если что-то пропустил простите дофиксим потом тоже.</p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Внешний вид</h3>
         <p>— 🥬</p>
+        <p>— Чу-чуть подправили слона в классе в Редизайне Игровой, ой...</p>
+        <p>— ...выпадающий список "Действий". Автоширину ему.</p>
+        <p>— И теперь он съезжает под кнопки действий при нехватке места.</p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Изменения кода</h3>
-        <p>— Калькулятор лун снова работает.</p>
-        <p>— Подправленны промисы воспроизведения звуков. Теперь должно быть получше и не будут теряться.</p>
-        <p>— Улучшена логика буферизации звуков. Теперь каждый уникальный звук (по ID) будет сохраняться 
-        и воспроизводиться только один раз, вместо того чтобы заменяться последним вызванным звуком.</p>
-        <p>— Незначительно поигрался с CSS стилями минного поля.</p>
+        <p>— Починили Дублирование время действий на вкладку.</p>
+        <p>— Починили Звук при окончании действия.</p>
+        <p>— Починили Иконочку перетаскивания БР.</p>
+        <p>— Починили (ВРОДЕ) селекторы стилей для Параметров и Навыков.</p>
+        <p>— Починили Подробнее о Параметрах. Расчётное время могло чуть пострадать, но остаться в пределах верности.</p>
+        <p>— Скрыли UwU решение для отображения процентов навыков из-з ненадобности.</p>
         <hr id="uwu-hr" class="uwu-hr">
-        <p>Дата выпуска: 16.11.24</p>
+        <p>Дата выпуска: 18.11.24</p>
     </div>
 </div>
 `;
@@ -4989,77 +4993,77 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
   // ====================================================================================================================
   //   . . . ПРОЦЕНТЫ ПАРАМЕТРОВ . . .
   // ====================================================================================================================
-  if (settings.displayParametersPercentages) {
-    const parameterTableIds = [
-      "dream_table",
-      "hunger_table",
-      "thirst_table",
-      "need_table",
-      "health_table",
-      "clean_table",
-    ];
+  // if (settings.displayParametersPercentages) {
+  //   const parameterTableIds = [
+  //     "dream_table",
+  //     "hunger_table",
+  //     "thirst_table",
+  //     "need_table",
+  //     "health_table",
+  //     "clean_table",
+  //   ];
 
-    function updateParameterPercentages(tableId) {
-      const table = document.getElementById(tableId);
-      if (table) {
-        const row = table.querySelector("tbody tr");
-        if (!row) {
-          console.warn(`Строка не найдена в таблице с ID "${tableId}".`);
-          return;
-        }
-        const greenBar = row.querySelector(
-          "td[style*='background-color: green;']"
-        );
-        const redBar = row.querySelector("td[style*='background-color: red;']");
-        if (!greenBar || !redBar) {
-          console.warn(`Бары не найдены в строке таблицы с ID "${tableId}".`);
-          return;
-        }
-        const greenBarWidth = parseInt(greenBar.style.width, 10);
-        const redBarWidth = parseInt(redBar.style.width, 10);
-        const totalWidth = greenBarWidth + redBarWidth;
-        let percentage = (greenBarWidth / totalWidth) * 100;
-        percentage =
-          percentage % 1 !== 0 ? percentage.toFixed(2) : Math.round(percentage);
+  //   function updateParameterPercentages(tableId) {
+  //     const table = document.getElementById(tableId);
+  //     if (table) {
+  //       const row = table.querySelector("tbody tr");
+  //       if (!row) {
+  //         console.warn(`Строка не найдена в таблице с ID "${tableId}".`);
+  //         return;
+  //       }
+  //       const greenBar = row.querySelector(
+  //         "td[style*='background-color: green;']"
+  //       );
+  //       const redBar = row.querySelector("td[style*='background-color: red;']");
+  //       if (!greenBar || !redBar) {
+  //         console.warn(`Бары не найдены в строке таблицы с ID "${tableId}".`);
+  //         return;
+  //       }
+  //       const greenBarWidth = parseInt(greenBar.style.width, 10);
+  //       const redBarWidth = parseInt(redBar.style.width, 10);
+  //       const totalWidth = greenBarWidth + redBarWidth;
+  //       let percentage = (greenBarWidth / totalWidth) * 100;
+  //       percentage =
+  //         percentage % 1 !== 0 ? percentage.toFixed(2) : Math.round(percentage);
 
-        let percentageCell = row.querySelector(".percentage-cell");
-        if (!percentageCell) {
-          percentageCell = document.createElement("td");
-          percentageCell.classList.add("percentage-cell");
-          row.appendChild(percentageCell);
-        }
-        percentageCell.textContent = `${percentage}%`;
-      } else {
-        console.warn(`Таблица с ID "${tableId}" не найдена.`);
-      }
-    }
+  //       let percentageCell = row.querySelector(".percentage-cell");
+  //       if (!percentageCell) {
+  //         percentageCell = document.createElement("td");
+  //         percentageCell.classList.add("percentage-cell");
+  //         row.appendChild(percentageCell);
+  //       }
+  //       percentageCell.textContent = `${percentage}%`;
+  //     } else {
+  //       console.warn(`Таблица с ID "${tableId}" не найдена.`);
+  //     }
+  //   }
 
-    async function setupTableObservers() {
-      for (const tableId of parameterTableIds) {
-        const tableSelector = `#${tableId}`;
-        const rowSelector = `${tableSelector} tbody tr`;
-        const greenBarSelector = `${rowSelector} td[style*='background-color: green;']`;
-        const redBarSelector = `${rowSelector} td[style*='background-color: red;']`;
+  //   async function setupTableObservers() {
+  //     for (const tableId of parameterTableIds) {
+  //       const tableSelector = `#${tableId}`;
+  //       const rowSelector = `${tableSelector} tbody tr`;
+  //       const greenBarSelector = `${rowSelector} td[style*='background-color: green;']`;
+  //       const redBarSelector = `${rowSelector} td[style*='background-color: red;']`;
 
-        await setupMutationObserver(tableSelector, () =>
-          updateParameterPercentages(tableId)
-        );
-        await setupMutationObserver(greenBarSelector, () =>
-          updateParameterPercentages(tableId)
-        );
-        await setupMutationObserver(redBarSelector, () =>
-          updateParameterPercentages(tableId)
-        );
-      }
-    }
+  //       await setupMutationObserver(tableSelector, () =>
+  //         updateParameterPercentages(tableId)
+  //       );
+  //       await setupMutationObserver(greenBarSelector, () =>
+  //         updateParameterPercentages(tableId)
+  //       );
+  //       await setupMutationObserver(redBarSelector, () =>
+  //         updateParameterPercentages(tableId)
+  //       );
+  //     }
+  //   }
 
-    window.addEventListener("load", setupTableObservers);
-  }
+  //   window.addEventListener("load", setupTableObservers);
+  // }
   // ====================================================================================================================
   //   . . . ПОДРОБНЕЕ О ПАРАМЕТРАХ (И НАВЫКОВ?) . . .
   // ====================================================================================================================
   function createMoreInfoButton() {
-    const parametersBlock = document.getElementById("parameters_block");
+    const parametersBlock = document.getElementById("parameters_skills_block");
 
     const buttonContainer = document.createElement("div");
     buttonContainer.classList.add("button-container");
@@ -5070,8 +5074,8 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
     moreInfoLink.textContent = "Подробнее";
     moreInfoLink.classList.add("more-info-link");
     moreInfoLink.addEventListener("click", (event) => {
-        event.preventDefault();
-        showParameterDetails();
+      event.preventDefault();
+      showParameterDetails();
     });
 
     buttonContainer.appendChild(moreInfoLink);
@@ -5079,35 +5083,66 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
     parametersBlock.insertBefore(buttonContainer, parametersBlock.firstChild);
   }
 
+  // const parameters = [
+  //   {
+  //     id: "dream_table",
+  //     name: "Сонливость",
+  //     timePerPixel: 20,
+  //     formula: null,
+  //   },
+  //   {
+  //     id: "hunger_table",
+  //     name: "Голод",
+  //     timePerPixel: null,
+  //     formula: (red) => Math.ceil((red / 150) * 9) * 15,
+  //   },
+  //   { id: "thirst_table", name: "Жажда", timePerPixel: 60, formula: null },
+  //   { id: "need_table", name: "Нужда", timePerPixel: 30, formula: null },
+  //   {
+  //     id: "health_table",
+  //     name: "Здоровье",
+  //     timePerPixel: null,
+  //     formula: null,
+  //   },
+  //   {
+  //     id: "clean_table",
+  //     name: "Чистота",
+  //     timePerPixel: null,
+  //     formula: (red) => {
+  //       red = red % 3 ? red : red - 0.5;
+  //       return ((red - 1) / 1.5) * 100 + 100;
+  //     },
+  //   },
+  // ];
+
+  const maxWidthPx = 150;
+
   function showParameterDetails() {
     const parameters = [
       {
-        id: "dream_table",
-        name: "Сонливость",
+        id: "dream",
+        name: "Бодрость",
         timePerPixel: 20,
         formula: null,
       },
       {
-        id: "hunger_table",
+        id: "hunger",
         name: "Голод",
-        timePerPixel: null,
-        formula: (red) => Math.ceil((red / 150) * 9) * 15,
+        formula: (percentage) => Math.ceil(((100 - percentage) / 150) * 9) * 15,
       },
-      { id: "thirst_table", name: "Жажда", timePerPixel: 60, formula: null },
-      { id: "need_table", name: "Нужда", timePerPixel: 30, formula: null },
+      { id: "thirst", name: "Жажда", timePerPixel: 60, formula: null },
+      { id: "need", name: "Нужда", timePerPixel: 30, formula: null },
       {
-        id: "health_table",
+        id: "health",
         name: "Здоровье",
-        timePerPixel: null,
         formula: null,
       },
       {
-        id: "clean_table",
+        id: "clean",
         name: "Чистота",
         timePerPixel: null,
-        formula: (red) => {
-          red = red % 3 ? red : red - 0.5;
-          return ((red - 1) / 1.5) * 100 + 100;
+        formula: (redPixels) => {
+          return ((redPixels - 1) / 1.5) * 100 + 100;
         },
       },
     ];
@@ -5115,41 +5150,47 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
     let { catInfoElement, contentContainer } = createCatInfoContainer();
     contentContainer.classList.add("parameter-details-container");
 
-    parameters.forEach(({ id, name, timePerPixel, formula }) => {
-      const table = document.getElementById(id);
-      if (table) {
-        const row = table.querySelector("tbody tr");
-        if (!row) {
-          console.warn(`Строка не найдена в таблице с ID "${id}".`);
+    parameters.forEach(({ id, name, formula, timePerPixel }) => {
+      const parameterElement = document.getElementById(id);
+      if (parameterElement) {
+        const barFill = parameterElement.querySelector(".bar-fill");
+        const barData = parameterElement.querySelector(".bar-data");
+
+        if (!barFill || !barData) {
+          console.warn(`Элементы бара не найдены для параметра с ID "${id}".`);
           return;
         }
-        const greenBar = row.querySelector(
-          "td[style*='background-color: green;']"
-        );
-        const redBar = row.querySelector("td[style*='background-color: red;']");
-        if (!greenBar || !redBar) {
-          console.warn(`Бары не найдены в строке таблицы с ID "${id}".`);
+
+        const percentageString = barData.textContent.match(/\d+%$/);
+        if (!percentageString) {
+          console.warn(
+            `Не удалось извлечь процент из текста для параметра с ID "${id}".`
+          );
           return;
         }
-        const greenBarWidth = parseInt(greenBar.style.width, 10);
-        const redBarWidth = parseInt(redBar.style.width, 10);
-        const totalWidth = greenBarWidth + redBarWidth;
-        let percentage = (greenBarWidth / totalWidth) * 100;
-        percentage =
-          percentage % 1 !== 0 ? percentage.toFixed(2) : Math.round(percentage);
+
+        const percentage = parseInt(percentageString[0], 10);
+
+        const effectivePercentage = (["hunger", "thirst", "need"].includes(id)) ? (100 - percentage) : percentage;
+        const reversePercentage = 100 - effectivePercentage;
+
+        const pixelWidth = (effectivePercentage / 100) * maxWidthPx;
+        const reversePixelWidth = maxWidthPx - pixelWidth;
 
         let timeInfo = "";
         let totalTimeSeconds;
+
         if (formula) {
-          totalTimeSeconds = formula(redBarWidth);
-        } else if (timePerPixel !== null) {
-          totalTimeSeconds = redBarWidth * timePerPixel;
+          totalTimeSeconds = formula(reversePixelWidth);
+        } else if (timePerPixel) {
+          totalTimeSeconds = reversePixelWidth * timePerPixel;
         }
 
         if (totalTimeSeconds !== undefined) {
           const hours = Math.floor(totalTimeSeconds / 3600);
           const minutes = Math.floor((totalTimeSeconds % 3600) / 60);
           const seconds = totalTimeSeconds % 60;
+
           if (hours > 0) {
             timeInfo = ` (> ${hours} ч ${minutes} мин)`;
           } else if (minutes > 0) {
@@ -5158,9 +5199,9 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
             timeInfo = ` (${seconds} сек)`;
           }
         }
-
+  
         const detailLine = document.createElement("p");
-        detailLine.innerHTML = `<strong>${name}:</strong> <span style="color: #00cc00;">${greenBarWidth}px</span> / <span style="color: red;">${redBarWidth}px</span> - ${percentage}%`;
+        detailLine.innerHTML = `<strong>${name}:</strong> <span style="color: #00cc00;">${effectivePercentage}%</span> / <span style="color: red;">${reversePercentage}%</span>`;
         detailLine.style.marginBottom = "0";
         contentContainer.appendChild(detailLine);
 
@@ -5171,15 +5212,16 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
           contentContainer.appendChild(detailLineTime);
         }
       } else {
-        console.warn(`Таблица с ID "${id}" не найдена.`);
+        console.warn(`Параметр с ID "${id}" не найден.`);
       }
     });
 
     globalContainer.appendChild(catInfoElement);
   }
-
+  
+  
   if (settings.showParametersDetails) {
-    setupSingleCallback("#dream_table", createMoreInfoButton);
+    setupSingleCallback("#parameters_skills_block", createMoreInfoButton);
   }
   // ====================================================================================================================
   //   . . . ЧИСЛОВАЯ ГРОМКОСТЬ УВЕДОМЛЕНИЙ . . .
@@ -6591,20 +6633,20 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
   if (settings.userParametersTheme) {
     const defaultBackgroundImageUrl =
       "https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/parametersBackgroundImageURL.png";
-
+  
     function applyParameterColors() {
       let cssStyles = "";
-
+  
       const otherColors = settings.parametersColors.other;
       const otherFirstCellBackground = `linear-gradient(to right, ${otherColors[0]}, ${otherColors[1]})`;
       const otherLastCellBackground = `linear-gradient(to right, ${otherColors[2]}, ${otherColors[3]})`;
-
-      cssStyles += `#parameters_block .parameter td:first-child { background: ${otherFirstCellBackground}; }\n`;
-      cssStyles += `#parameters_block .parameter td:last-child { background: ${otherLastCellBackground}; }\n`;
-
+  
+      cssStyles += `#parameters_skills_block .parameter .bar-fill { background: ${otherFirstCellBackground}; }\n`;
+      cssStyles += `#parameters_skills_block .parameter .bar { background: ${otherLastCellBackground}; }\n`;
+  
       for (const paramId in settings.parametersColors) {
         if (paramId === "other") continue;
-
+  
         const colors = settings.parametersColors[paramId];
         const backgroundImageURL = settings.parametersUserBackgroundImage
           ? settings.parametersUserBackgroundImageURL
@@ -6619,17 +6661,17 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
           settings.parametersUserBackgroundImage
             ? `url(${backgroundImageURL}), linear-gradient(to right, ${colors[2]}, ${colors[3]})`
             : `linear-gradient(to right, ${colors[2]}, ${colors[3]})`;
-
-        cssStyles += `#${paramId}_table .parameter td:first-child { background: ${firstCellBackground}; }\n`;
-        cssStyles += `#${paramId}_table .parameter td:last-child { background: ${lastCellBackground}; }\n`;
+  
+        cssStyles += `#${paramId} .bar-fill { background: ${firstCellBackground} !important; }\n`;
+        cssStyles += `#${paramId} .bar { background: ${lastCellBackground} !important; }\n`;
       }
-
+  
       const styleTag = document.createElement("style");
       styleTag.id = "custom-parameter-styles";
       styleTag.innerHTML = cssStyles;
       document.head.appendChild(styleTag);
     }
-
+  
     applyParameterColors();
   }
   // ====================================================================================================================
@@ -7086,6 +7128,18 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       .other_cats_list {
         display: none;
       }
+
+      #deys {
+        width: auto !important;
+      }
+      
+      #block_deys {
+        flex-wrap: wrap;
+      }
+      
+      #mit { 
+        width: auto !important;
+      }
     `;
     document.head.appendChild(fixStyle);
     applyLayoutSettings();
@@ -7260,44 +7314,41 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
   //   . . . ДУБЛИРОВАНИЕ ДЕЙСТВИЙ НА ВКЛАДКУ БРАУЗЕРА . . .
   // ====================================================================================================================
   if (settings.duplicateTimeInBrowserTab) {
-    const blockMess = document.getElementById("block_mess");
     const titleElement = document.querySelector("title");
-    let previousTime = null;
-    let previousMessage = null;
-
+    let blockMess = null;
+  
     function updateTitle() {
-      const timeElement = blockMess.querySelector("#sek");
+  
+      if (!blockMess) {
+        blockMess = document.getElementById("block_mess");
+        if (!blockMess) {
+          titleElement.textContent = "Игровая / CatWar";
+          return;
+        }
+      }
+  
       const messageText = blockMess.textContent.trim();
-
-      if (messageText === previousMessage) return;
-
+  
       const catNameMatch = messageText.match(/^(.+?)\s+держит/);
       const catName = catNameMatch ? catNameMatch[1] : "";
-
+  
       if (catName) {
         titleElement.textContent = `Поднят. Во рту | ${catName}`;
-      } else if (timeElement) {
-        const currentTime = timeElement.textContent.trim();
-        if (currentTime !== previousTime) {
-          const actionText = messageText
-            .replace(currentTime, "")
-            .replace(/\s*\.\s*Отменить$/, "")
-            .trim();
-          titleElement.textContent = `${currentTime} | ${actionText}`;
-          previousTime = currentTime;
-        }
       } else {
-        titleElement.textContent = "Игровая / CatWar";
-        previousTime = null;
+        const timeActionMatch = messageText.match(/^(.+?)\s+(\d+\s*(?:ч\s*)?\d+\s*мин\s*\d+\s*с|\d+\s*мин\s*\d+\s*с|\d+\s*с)\.\s*(Отменить)?$/);
+  
+        if (timeActionMatch) {
+          const actionText = timeActionMatch[1].trim();
+          const currentTime = timeActionMatch[2].trim();
+  
+          titleElement.textContent = `${currentTime} | ${actionText}`;
+        } else {
+          titleElement.textContent = "Игровая / CatWar";
+        }
       }
-
-      previousMessage = messageText;
     }
-
-    setupMutationObserver("#block_mess", updateTitle, {
-      childList: true,
-      subtree: true,
-    });
+  
+    setupMutationObserver("#tr_actions", updateTitle, { childList: true, subtree: true, characterData: true });
   }
   // ====================================================================================================================
   //   . . . ЛОГ ЧИСТИЛЬЩИКОВ . . .
@@ -7807,39 +7858,36 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
   //   . . . ОКОНЧАНИЕ ДЕЙСТВИЯ . . .
   // ====================================================================================================================
   if (settings.notificationActionEnd) {
-    const blockMess = document.getElementById("block_mess");
-    let wasBlockMessEmpty = blockMess.innerHTML.trim() === "";
     let actionStartTime = null;
-
+  
     const observer = new MutationObserver(() => {
-      const isBlockMessEmptyNow = blockMess.innerHTML.trim() === "";
-
-      if (!isBlockMessEmptyNow && !actionStartTime) {
+      const blockMess = document.getElementById("block_mess");
+  
+      if (blockMess && blockMess.innerHTML.trim() !== "" && !actionStartTime) {
         actionStartTime = Date.now();
-      } else if (isBlockMessEmptyNow && actionStartTime) {
+      } else if (!blockMess && actionStartTime) {
         const actionEndTime = Date.now();
         const actionDuration = actionEndTime - actionStartTime;
-
+  
         if (actionDuration >= 6000) {
-          soundManager.playSound(
-            "notificationSound3",
-            settings.notificationMyNameVolume
-          );
+          soundManager.playSound("notificationSound3", settings.notificationMyNameVolume);
         }
         actionStartTime = null;
       }
-
-      wasBlockMessEmpty = isBlockMessEmptyNow;
     });
-
-    observer.observe(blockMess, { childList: true, subtree: true });
+  
+    const targetNode = document.getElementById("tr_actions");
+    if (targetNode) {
+      observer.observe(targetNode, { childList: true, subtree: true });
+    }
   }
   // ====================================================================================================================
   //   . . . ПОДНЯЛИ В РОТ . . .
   // ====================================================================================================================
-  if (settings.notificationInMouth) {
+  function handleInMouthNotification() {
     const blockMess = document.getElementById("block_mess");
-
+    if (!blockMess) return;
+  
     const observer = new MutationObserver(() => {
       if (blockMess.innerHTML.includes("во рту. Вы не сможете выбраться")) {
         soundManager.playSound(
@@ -7848,8 +7896,15 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         );
       }
     });
-
+  
     observer.observe(blockMess, { childList: true, subtree: true });
+  }
+  
+  if (settings.notificationInMouth) {
+    setupMutationObserver("#tr_actions", handleInMouthNotification, {
+      childList: true,
+      subtree: true,
+    });
   }
   // ====================================================================================================================
   //   . . . ВВЕЛИ В БОЕВУЮ СТОЙКУ . . .
@@ -8315,7 +8370,9 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 
     const fightPanel = document.getElementById("fightPanel");
     const firstImage = fightPanel.querySelector("img");
-    fightPanel.insertBefore(dragDiv, firstImage);
+    
+    const parentDiv = firstImage.parentElement;
+    parentDiv.insertBefore(dragDiv, firstImage);
 
     let mouseX = 0;
     let mouseY = 0;
