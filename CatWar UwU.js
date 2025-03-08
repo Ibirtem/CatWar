@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.36.0-11.24
+// @version      v1.36.1-11.24
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.net/cat1477928 )
 // @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.36.0";
+const current_uwu_version = "1.36.1";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   settingsTheme: "dark",
@@ -1357,18 +1357,18 @@ const newsPanel = // html
 `
 <div id="news-panel">
     <button id="news-button">
-        v${current_uwu_version} - 🌸
+        v${current_uwu_version} - 🌸 Я ничё не добавил извините за фальшивую обнову мне лень бэкать обнову.
     </button>
     <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>— </p>
+        <p>— Мяу</p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Внешний вид</h3>
         <p>— 🥬</p>
         <p>— </p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Изменения кода</h3>
-        <p>— </p>
+        <p>— Мяу</p>
         <hr id="uwu-hr" class="uwu-hr">
         <p>Дата выпуска: 18.11.24</p>
     </div>
