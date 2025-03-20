@@ -1,16 +1,16 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.36.1-11.24
+// @version      v1.37.0-03.25
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.net/cat1477928 )
-// @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
+// @copyright    2025, Ibirtem (https://openuserjs.org/users/Ibirtem)
 // @supportURL   https://catwar.net/cat1477928
 // @homepageURL  https://openuserjs.org/scripts/Ibirtem/CatWar_UwU
 // @match        http*://*.catwar.net/*
 // @match        http*://*.catwar.su/*
-// @updateURL    https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.js
-// @downloadURL  https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.js
+// @updateURL    https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.user.js
+// @downloadURL  https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.user.js
 // @license      MIT
 // @iconURL      https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png
 // ==/UserScript==
@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.36.1";
+const current_uwu_version = "1.37.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   settingsTheme: "dark",
@@ -45,6 +45,7 @@ const uwuDefaultSettings = {
 
   chatHeight: "275",
   newChat: false,
+  addCommaAfterNick: false,
   reverseChat: false, 
   newChatInput: false,
   namesForNotification: "",
@@ -52,9 +53,18 @@ const uwuDefaultSettings = {
   redesignCostumsSettings: false,
 
   notificationPM: false,
+  notificationPMSound: "notificationSound1",
+  notificationPMVolume: 5,
   notificationActionEnd: false,
+  notificationActionEndSound: "notificationSound1",
+  notificationActionEndVolume: 5,
   notificationInMouth: false,
+  notificationInMouthSound: "notificationSound1",
+  notificationInMouthVolume: 5,
   notificationInFightMode: false,
+  notificationInFightModeSound: "notificationSound1",
+  notificationInFightModeVolume: 5,
+
   showHintWhenToSniff: false,
   duplicateTimeInBrowserTab: false,
 
@@ -151,20 +161,19 @@ const uwuDefaultSettings = {
 // ====================================================================================================================
 //   . . . ТАРГЕТНЫЕ ССЫЛКИ . . .
 // ====================================================================================================================
-const targetSettings = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/settings/;
-const targetCW3 = "https://catwar.net/cw3/";
-const targetOldCW3 = "https://catwar.su/cw3/";
-const targetCW3Hunt = "https://catwar.net/cw3/jagd";
-const targetOldCW3Hunt = "https://catwar.su/cw3/jagd";
-const targetMainProfile = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/$/;
-const targetProfile = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/cat\d+$/;
-const targetLs = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/ls/;
-const targetLsNew = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/ls\?new(=.*)?$/;
-const targetChats = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/chat/;
-const targetBlog = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/(?:blog\d+|blogs)(?:$|[/?#])/i;
-const targetBlogsCreation = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/blogs\?creation/;
-const targetSniff = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/sniff(?:\d+|)(?:$|[/?#])/i;
-const targetSniffCreation = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/sniff\?creation/;
+const targetCW3 = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/cw3(?:\/)?(?:\?.*)?$/;
+const targetCW3Hunt = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/cw3\/jagd(?:\/)?(?:\?.*)?$/;
+
+const targetSettings = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/settings/;
+const targetMainProfile = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/$/;
+const targetProfile = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/cat\d+$/;
+const targetLs = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/ls/;
+const targetLsNew = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/ls\?new(=.*)?$/;
+const targetChats = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/chat/;
+const targetBlog = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/(?:blog\d+|blogs)(?:$|[/?#])/i;
+const targetBlogsCreation = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/blogs\?creation/;
+const targetSniff = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/sniff(?:\d+|)(?:$|[/?#])/i;
+const targetSniffCreation = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/sniff\?creation/;
 
 // ====================================================================================================================
 //   . . . СТАНДАРТНЫЕ ЦВЕТОВЫЕ ТЕМЫ . . .
@@ -580,7 +589,6 @@ const uwusettings = // html
           </ul>
         </div>
       </div>
-      <button id="SettingSaveButton4" class="uwu-button install-button">Сохранить</button>
 
       <div>
         <input type="text" id="chat-height" placeholder="Вставьте значение" data-setting="chatHeight" />
@@ -639,6 +647,12 @@ const uwusettings = // html
       </div>
 
       <div>
+        <p>При клике на имя кота в строку чата будет выставляться его имя с запятой.</p>
+        <input type="checkbox" id="add-comma-after-nick" data-setting="addCommaAfterNick" />
+        <label for="add-comma-after-nick">Обращение с запятой</label>
+      </div>
+
+      <div>
         <p>Работает только с "Современным чатом". Отображет чат снизу вверх, а так же смещает окно ввода сообщения под чат.</p>
         <input type="checkbox" id="reverse-Chat" data-setting="reverseChat" />
         <label for="reverse-Chat">Инверсия чата</label>
@@ -658,7 +672,6 @@ const uwusettings = // html
           data-setting="notificationMyNameVolume">
         <datalist id="volumeStep">
           <option value="1">10%</option>
-          <option value="5">50%</option>
           <option value="10">100%</option>
         </datalist>
       </div>
@@ -1132,7 +1145,6 @@ const uwusettings = // html
           data-setting="climbingRefreshNotificationVolume">
         <datalist id="volumeStep">
           <option value="1">10%</option>
-          <option value="5">50%</option>
           <option value="10">100%</option>
         </datalist>
       </div>
@@ -1221,30 +1233,95 @@ const uwusettings = // html
       </div>
 
       <hr id="uwu-hr" class="uwu-hr">
-      <div>
-        <h2>Уведомления</h2>
-        <p>Уведомлять звуком, когда:</p>
-      </div>
       
-      <div>
-        <input type="checkbox" id="notification-PM" data-setting="notificationPM" />
-        <label for="notification-PM">Новое Личное Сообщение</label>
-      </div>
-
-      <div>
-        <input type="checkbox" id="notification-Action-End" data-setting="notificationActionEnd" />
-        <label for="notification-Action-End">Действие закончилось</label>
-      </div>
-
-      <div>
-        <input type="checkbox" id="notification-In-Mouth" data-setting="notificationInMouth" />
-        <label for="notification-In-Mouth">Кто-то меня поднял</label>
-      </div>
-
-      <div>
-        <input type="checkbox" id="notification-In-Fight-Mode" data-setting="notificationInFightMode" />
-        <label for="notification-In-Fight-Mode">Ввели в боевую стойку через Т+2 или Т+3</label>
-      </div>
+      <h2>Уведомления</h2>
+      <p>Уведомлять звуком, когда:</p>
+      
+      <table class="notification-table">
+        <tbody>
+          <tr>
+            <td><input type="checkbox" id="notification-PM" data-setting="notificationPM" /></td>
+            <td>
+              <div class="custom-select" id="notificationPMSound">
+                <div class="select-selected">Выберите звук</div>
+                <div class="select-items"></div>
+              </div>
+            </td>
+            <td>
+              <div class="volume-control">
+                <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notificationPMVolume" list="volumeStep" data-setting="notificationPMVolume">
+                <datalist id="volumeStep">
+                  <option value="1">10%</option>
+                  <option value="10">100%</option>
+                </datalist>
+              </div>
+            </td>
+            <td id="notificationPMContainer"></td>
+            <td><label for="notification-PM">Новое ЛС</label></td>
+          </tr>
+          <tr>
+              <td><input type="checkbox" id="notification-Action-End" data-setting="notificationActionEnd" /></td>
+              <td>
+                <div class="custom-select" id="notificationActionEndSound">
+                  <div class="select-selected">Выберите звук</div>
+                  <div class="select-items"></div>
+                </div>
+              </td>
+              <td>
+                <div class="volume-control">
+                  <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notificationActionEndVolume" list="volumeStep" data-setting="notificationActionEndVolume">
+                  <datalist id="volumeStep">
+                    <option value="1">10%</option>
+                    <option value="10">100%</option>
+                  </datalist>
+                </div>
+              </td>
+              <td id="notificationActionEndContainer"></td>
+              <td><label for="notification-Action-End">Действие закончилось</label></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" id="notification-In-Mouth" data-setting="notificationInMouth" /></td>
+              <td>
+                <div class="custom-select" id="notificationInMouthSound">
+                  <div class="select-selected">Выберите звук</div>
+                  <div class="select-items"></div>
+                </div>
+              </td>
+              <td>
+                <div class="volume-control">
+                <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notificationInMouthVolume" list="volumeStep" data-setting="notificationInMouthVolume">
+                  <datalist id="volumeStep">
+                      <option value="1">10%</option>
+                      <option value="10">100%</option>
+                  </datalist>
+              </div>
+              </td>
+              <td id="notificationInMouthContainer"></td>
+              <td><label for="notification-In-Mouth">Кто-то меня поднял</label></td>
+            </tr>
+      
+            <tr>
+              <td><input type="checkbox" id="notification-In-Fight-Mode" data-setting="notificationInFightMode" /></td>
+              <td>
+              <div class="custom-select" id="notificationInFightModeSound">
+                  <div class="select-selected">Выберите звук</div>
+                  <div class="select-items"></div>
+              </div>
+              </td>
+              <td>
+              <div class="volume-control">
+                  <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notificationInFightModeVolume" list="volumeStep" data-setting="notificationInFightModeVolume">
+                  <datalist id="volumeStep">
+                      <option value="1">10%</option>
+                      <option value="10">100%</option>
+                  </datalist>
+              </div>
+              </td>
+              <td id="notificationInFightModeContainer"></td>
+              <td><label for="notification-In-Fight-Mode">Ввели в стойку (Т+2/Т+3)</label></td>
+            </tr>
+        </tbody>
+      </table>
 
       <div>
         <p>Дублирует время действий на название браузерной вкладки.</p>
@@ -1357,20 +1434,22 @@ const newsPanel = // html
 `
 <div id="news-panel">
     <button id="news-button">
-        v${current_uwu_version} - 🌸 Я ничё не добавил извините за фальшивую обнову мне лень бэкать обнову.
+        v${current_uwu_version} - 🌸 Разгребаем накопившиеся проблемы.
     </button>
     <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>— Мяу</p>
+        <p>— Возможность Обращений с автоматической запятой, прямо как в том самом классическом скрипте! Настройки звука и громкости уведомлений под определённые действия!</p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Внешний вид</h3>
-        <p>— 🥬</p>
-        <p>— </p>
+        <p>— Починились (Вроде) применения цветов к Уникальным навыкам.</p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Изменения кода</h3>
-        <p>— Мяу</p>
+        <p>— Много проверок на то, чтобы не ломало кодик, если не будут найдены погодные данные.</p>
+        <p>— Починено (Вроде) отсутствие блоков на перетаскивание в Редизайне Игровой.</p>
+        <p>— Удалена кнопка "Сохранить" в Редизайне Игровой из-за ненадобности -> Теперь всё сохраняется сразу при любом изменении вида.</p>
+        <p>— Поддержка зеркальных серверов CatWar'а + просто более адекватные и красивые проверки адреса страницы.</p>
         <hr id="uwu-hr" class="uwu-hr">
-        <p>Дата выпуска: 18.11.24</p>
+        <p>Дата выпуска: 20.03.25</p>
     </div>
 </div>
 `;
@@ -1684,6 +1763,15 @@ const css_uwu_main =
 
 #auroraPanel {
   width: 120px;
+}
+
+.notification-table {
+    border-collapse: collapse;
+}
+
+.notification-table td {
+    padding: 5px;
+    vertical-align: middle;
 }
 
 #notification-volume,
@@ -2939,6 +3027,10 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
 
   createCustomSelect("climbingRefreshNotificationSound", notificationSounds);
   createCustomSelect("myNameNotificationSound", notificationSounds);
+  createCustomSelect("notificationPMSound", notificationSounds);
+  createCustomSelect("notificationActionEndSound", notificationSounds);
+  createCustomSelect("notificationInMouthSound", notificationSounds);
+  createCustomSelect("notificationInFightModeSound", notificationSounds);
   // ==============================================================================
   const howShowOtherCatsList = [
     { name: "Не отображать", id: "1" },
@@ -3083,16 +3175,12 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     container.appendChild(testButton);
   }
 
-  addSoundTestButton(
-    "climbingRefreshNotificationSoundContainer",
-    "climbingRefreshNotificationSound",
-    "climbingRefreshNotificationVolume"
-  );
-  addSoundTestButton(
-    "myNameNotificationSoundContainer",
-    "myNameNotificationSound",
-    "notificationMyNameVolume"
-  );
+addSoundTestButton("notificationPMContainer", "notificationPMSound", "notificationPMVolume");
+addSoundTestButton("notificationActionEndContainer", "notificationActionEndSound", "notificationActionEndVolume");
+addSoundTestButton("notificationInMouthContainer", "notificationInMouthSound", "notificationInMouthVolume");
+addSoundTestButton("notificationInFightModeContainer", "notificationInFightModeSound", "notificationInFightModeVolume");
+addSoundTestButton("climbingRefreshNotificationSoundContainer", "climbingRefreshNotificationSound", "climbingRefreshNotificationVolume"); // Оставляем как было
+addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound", "notificationMyNameVolume");// Оставляем как было
   // ====================================================================================================================
   //  . . . СБРОС ПОЗИЦИИ ЧАСИКОВ . . .
   // ====================================================================================================================
@@ -3278,6 +3366,22 @@ if (settings.redesignCostumsSettings) {
     "#layout-customizer .column.right"
   );
 
+  function saveLayoutSettings() {
+    const leftBlocks = Array.from(leftColumn.querySelectorAll(".block")).map(
+        (block) => block.classList[1]
+    );
+    const rightBlocks = Array.from(rightColumn.querySelectorAll(".block")).map(
+        (block) => block.classList[1]
+    );
+
+    const layoutSettings = {
+        leftBlocks,
+        rightBlocks,
+    };
+
+    localStorage.setItem("uwu_layoutSettings", JSON.stringify(layoutSettings));
+  }
+
   function createBlockElement(blockId) {
     const blockElement = document.createElement("div");
     blockElement.classList.add("block", blockId);
@@ -3290,74 +3394,61 @@ if (settings.redesignCostumsSettings) {
     controlsWrapper.classList.add("controls");
 
     if (blockId === "tr_info") {
-      const moveInfoButton = document.createElement("button");
-      moveInfoButton.textContent = "⏪Переместить⏩";
-      moveInfoButton.classList.add("move-info", "install-button");
-      moveInfoButton.addEventListener("click", () => {
-        swapColumns(blockElement);
-      });
-      controlsWrapper.appendChild(moveInfoButton);
+        const moveInfoButton = document.createElement("button");
+        moveInfoButton.textContent = "⏪Переместить⏩";
+        moveInfoButton.classList.add("move-info", "install-button");
+        moveInfoButton.addEventListener("click", () => {
+            swapColumns(blockElement);
+            saveLayoutSettings();
+        });
+        controlsWrapper.appendChild(moveInfoButton);
     } else {
-      const moveUpButton = document.createElement("button");
-      moveUpButton.textContent = "🔼Вверх";
-      moveUpButton.classList.add("move-up", "install-button");
-      moveUpButton.addEventListener("click", () => {
-        const previousBlock = blockElement.previousElementSibling;
-        if (previousBlock) {
-          blockElement.parentNode.insertBefore(blockElement, previousBlock);
-        }
-      });
-      controlsWrapper.appendChild(moveUpButton);
+        const moveUpButton = document.createElement("button");
+        moveUpButton.textContent = "🔼Вверх";
+        moveUpButton.classList.add("move-up", "install-button");
+        moveUpButton.addEventListener("click", () => {
+            const previousBlock = blockElement.previousElementSibling;
+            if (previousBlock) {
+                blockElement.parentNode.insertBefore(blockElement, previousBlock);
+                saveLayoutSettings();
+            }
+        });
+        controlsWrapper.appendChild(moveUpButton);
 
-      const moveDownButton = document.createElement("button");
-      moveDownButton.textContent = "🔽Вниз";
-      moveDownButton.classList.add("move-down", "install-button");
-      moveDownButton.addEventListener("click", () => {
-        const nextBlock = blockElement.nextElementSibling;
-        if (nextBlock) {
-          blockElement.parentNode.insertBefore(nextBlock, blockElement);
-        }
-      });
-      controlsWrapper.appendChild(moveDownButton);
+        const moveDownButton = document.createElement("button");
+        moveDownButton.textContent = "🔽Вниз";
+        moveDownButton.classList.add("move-down", "install-button");
+        moveDownButton.addEventListener("click", () => {
+            const nextBlock = blockElement.nextElementSibling;
+            if (nextBlock) {
+                blockElement.parentNode.insertBefore(nextBlock, blockElement);
+                saveLayoutSettings();
+            }
+        });
+        controlsWrapper.appendChild(moveDownButton);
     }
 
     blockElement.appendChild(controlsWrapper);
     return blockElement;
-  }
+}
 
   function swapColumns(blockElement) {
     if (blockElement.parentNode === leftColumn) {
-      const rightColumnBlocks = Array.from(rightColumn.children);
-      rightColumn.innerHTML = "";
-      rightColumn.appendChild(blockElement);
-      rightColumnBlocks.forEach((block) => leftColumn.appendChild(block));
+        const rightColumnBlocks = Array.from(rightColumn.children);
+        rightColumn.innerHTML = "";
+        rightColumn.appendChild(blockElement);
+        rightColumnBlocks.forEach((block) => leftColumn.appendChild(block));
     } else {
-      const leftColumnBlocks = Array.from(leftColumn.children);
-      leftColumn.innerHTML = "";
-      leftColumn.appendChild(blockElement);
-      leftColumnBlocks.forEach((block) => rightColumn.appendChild(block));
+        const leftColumnBlocks = Array.from(leftColumn.children);
+        leftColumn.innerHTML = "";
+        leftColumn.appendChild(blockElement);
+        leftColumnBlocks.forEach((block) => rightColumn.appendChild(block));
     }
+    saveLayoutSettings();
   }
 
-  const saveButton = document.getElementById("SettingSaveButton4");
-
-  saveButton.addEventListener("click", () => {
-    const leftBlocks = Array.from(leftColumn.querySelectorAll(".block")).map(
-      (block) => block.classList[1]
-    );
-    const rightBlocks = Array.from(rightColumn.querySelectorAll(".block")).map(
-      (block) => block.classList[1]
-    );
-
-    const layoutSettings = {
-      leftBlocks,
-      rightBlocks,
-    };
-
-    localStorage.setItem("uwu_layoutSettings", JSON.stringify(layoutSettings));
-  });
-
   function loadLayoutSettings() {
+    try {
     const savedSettings = localStorage.getItem("uwu_layoutSettings");
     if (savedSettings) {
       const { leftBlocks, rightBlocks } = JSON.parse(savedSettings);
@@ -3400,9 +3491,12 @@ if (settings.redesignCostumsSettings) {
         JSON.stringify(layoutSettings)
       );
     }
+    } catch (error) {
+      console.error("Ошибка при загрузке настроек макета:", error);
+    }
   }
 
-  window.addEventListener("load", loadLayoutSettings);
+  loadLayoutSettings();
   // ====================================================================================================================
   //  . . . РЕДАКТОР ВКЛАДОК И ТАБЛИЦ МИННОГО ПОЛЯ . . .
   // ====================================================================================================================
@@ -3933,7 +4027,7 @@ loadSettings();
 // ====================================================================================================================
 //   . . . АВАТАРЫ В КОММЕНТАРИЯХ . . .
 // ====================================================================================================================
-if (window.location.href !== targetCW3 || window.location.href !== targetOldCW3) {
+if (targetCW3.test(window.location.href)) {
   if (settings.commentsAvatars) {
     const styleElement = document.createElement("style");
     styleElement.textContent = `
@@ -4100,7 +4194,7 @@ soundManager.loadSound(
 //  . . . ЗАГРУЗКА КОДА В ИГРОВОЙ . . .
 // ====================================================================================================================
 // Игровая ли... Я чё знаю?
-if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3) {
+if (targetCW3.test(window.location.href)) {
   const containerElement = document.querySelector("body");
   const globalContainerElement = document.createElement("div");
   globalContainerElement.id = "uwu-global-container";
@@ -6623,50 +6717,61 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
   // ====================================================================================================================
   //   . . . ПОЛЬЗОВАТЕЛЬСКИЕ ЦВЕТА НАВЫКОВ И ПАРАМЕТРОВ . . .
   // ====================================================================================================================
-  if (settings.userParametersTheme) {
-    const defaultBackgroundImageUrl =
+  const defaultBackgroundImageUrl =
       "https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/parametersBackgroundImageURL.png";
   
-    function applyParameterColors() {
-      let cssStyles = "";
-  
-      const otherColors = settings.parametersColors.other;
-      const otherFirstCellBackground = `linear-gradient(to right, ${otherColors[0]}, ${otherColors[1]})`;
-      const otherLastCellBackground = `linear-gradient(to right, ${otherColors[2]}, ${otherColors[3]})`;
-  
-      cssStyles += `#parameters_skills_block .parameter .bar-fill { background: ${otherFirstCellBackground}; }\n`;
-      cssStyles += `#parameters_skills_block .parameter .bar { background: ${otherLastCellBackground}; }\n`;
-  
-      for (const paramId in settings.parametersColors) {
-        if (paramId === "other") continue;
-  
-        const colors = settings.parametersColors[paramId];
+      function generateParameterStyles() {
+        let cssStyles = "";
+    
+        const otherColors = settings.parametersColors.other || ["#cccccc", "#cccccc", "#cccccc", "#cccccc"];
+        const otherFirstCellBackground = `linear-gradient(to right, ${otherColors[0]}, ${otherColors[1]})`;
+        const otherLastCellBackground = `linear-gradient(to right, ${otherColors[2]}, ${otherColors[3]})`;
+    
+        cssStyles += `#parameters_skills_block .bar-fill { background: ${otherFirstCellBackground}; }\n`;
+        cssStyles += `#parameters_skills_block .bar { background: ${otherLastCellBackground}; }\n`;
+    
         const backgroundImageURL = settings.parametersUserBackgroundImage
-          ? settings.parametersUserBackgroundImageURL
-          : defaultBackgroundImageUrl;
-        const firstCellBackground =
-          settings.parametersBackgroundImage ||
-          settings.parametersUserBackgroundImage
-            ? `url(${backgroundImageURL}), linear-gradient(to right, ${colors[0]}, ${colors[1]})`
-            : `linear-gradient(to right, ${colors[0]}, ${colors[1]})`;
-        const lastCellBackground =
-          settings.parametersBackgroundImage ||
-          settings.parametersUserBackgroundImage
-            ? `url(${backgroundImageURL}), linear-gradient(to right, ${colors[2]}, ${colors[3]})`
-            : `linear-gradient(to right, ${colors[2]}, ${colors[3]})`;
-  
-        cssStyles += `#${paramId} .bar-fill { background: ${firstCellBackground} !important; }\n`;
-        cssStyles += `#${paramId} .bar { background: ${lastCellBackground} !important; }\n`;
-      }
-  
-      const styleTag = document.createElement("style");
-      styleTag.id = "custom-parameter-styles";
-      styleTag.innerHTML = cssStyles;
-      document.head.appendChild(styleTag);
+            ? settings.parametersUserBackgroundImageURL
+            : defaultBackgroundImageUrl;
+        const useBackgroundImage = settings.parametersBackgroundImage || settings.parametersUserBackgroundImage;
+    
+        for (const paramId in settings.parametersColors) {
+            if (paramId === "other") continue;
+    
+            const colors = settings.parametersColors[paramId] || ["#cccccc", "#cccccc", "#cccccc", "#cccccc"];
+    
+            const firstCellBackground = useBackgroundImage
+                ? `url(${backgroundImageURL}), linear-gradient(to right, ${colors[0]}, ${colors[1]})`
+                : `linear-gradient(to right, ${colors[0]}, ${colors[1]})`;
+            const lastCellBackground = useBackgroundImage
+                ? `url(${backgroundImageURL}), linear-gradient(to right, ${colors[2]}, ${colors[3]})`
+                : `linear-gradient(to right, ${colors[2]}, ${colors[3]})`;
+    
+            cssStyles += `#${paramId} .bar-fill { background: ${firstCellBackground} !important; }\n`;
+            cssStyles += `#${paramId} .bar { background: ${lastCellBackground} !important; }\n`;
+        }
+    
+        return cssStyles;
     }
-  
-    applyParameterColors();
-  }
+    
+    
+    function applyParameterColors() {
+        const existingStyleTag = document.getElementById("custom-parameter-styles");
+        if (existingStyleTag) {
+            existingStyleTag.remove();
+        }
+    
+        const cssStyles = generateParameterStyles();
+    
+        const styleTag = document.createElement("style");
+        styleTag.id = "custom-parameter-styles";
+        styleTag.innerHTML = cssStyles;
+        document.head.appendChild(styleTag);
+    }
+    
+    if (settings.userParametersTheme) {
+        applyParameterColors();
+    }
   // ====================================================================================================================
   //   . . . ПОЛЬЗОВАТЕЛЬСКИЙ ШРИФТ . . .
   // ====================================================================================================================
@@ -7837,8 +7942,8 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 
         if (!isNaN(currentCount) && currentCount > previousCount) {
           soundManager.playSound(
-            "notificationSound1",
-            settings.notificationMyNameVolume
+            settings.notificationPMSound,
+            settings.notificationPMVolume
           );
           previousCount = currentCount;
         } else if (!isNaN(currentCount)) {
@@ -7863,7 +7968,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         const actionDuration = actionEndTime - actionStartTime;
   
         if (actionDuration >= 6000) {
-          soundManager.playSound("notificationSound3", settings.notificationMyNameVolume);
+          soundManager.playSound(settings.notificationActionEndSound, settings.notificationActionEndVolume);
         }
         actionStartTime = null;
       }
@@ -7884,8 +7989,8 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
     const observer = new MutationObserver(() => {
       if (blockMess.innerHTML.includes("во рту. Вы не сможете выбраться")) {
         soundManager.playSound(
-          "notificationSound1",
-          settings.notificationMyNameVolume
+          settings.notificationInMouthSound,
+          settings.notificationInMouthVolume
         );
       }
     });
@@ -7918,8 +8023,8 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 
         if (lastEntry !== undefined && attackRegex.test(lastEntry)) {
           soundManager.playSound(
-            "notificationSound1",
-            settings.notificationMyNameVolume
+            settings.notificationInFightModeSound,
+            settings.notificationInFightModeVolume
           );
         }
       }
@@ -7957,10 +8062,14 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       const nickElement = target.closest(".nick");
       if (nickElement) {
         const textArea = document.getElementById("text");
-        textArea.value += nickElement.textContent;
+        let nick = nickElement.textContent;
+        if (settings.addCommaAfterNick) {
+            nick += ", ";
+        }
+        textArea.value += nick;
         textArea.focus();
         return;
-      }
+    }
 
       const reportButton = target.closest(".msg_report");
       if (reportButton) {
@@ -8687,6 +8796,10 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 
   function getSkyType() {
     const skyElement = document.querySelector("#sky");
+    if (!skyElement) {
+        currentWeather = "unknown";
+        return;
+    }
     const skyStyle = skyElement.getAttribute("style");
 
     if (settings.weatherEnabled) {
@@ -8697,19 +8810,11 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         switch (skyNumber) {
           case 2:
           case 4:
-            if (settings.minecraftStyle) {
-              currentWeather = "pixelRain";
-            } else {
-              currentWeather = "rain";
-            }
+            currentWeather = settings.minecraftStyle ? "pixelRain" : "rain";
             break;
           case 7:
           case 8:
-            if (settings.minecraftStyle) {
-              currentWeather = "pixelSnow";
-            } else {
-              currentWeather = "snow";
-            }
+            currentWeather = settings.minecraftStyle ? "pixelSnow" : "snow";
             break;
           case 22:
             currentWeather = "northernLights";
@@ -8718,7 +8823,6 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
             currentWeather = "clear";
         }
       } else {
-        console.log("Потерял небо, небо найдись пж...");
         currentWeather = "unknown";
       }
     }
@@ -8726,46 +8830,79 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 
   function getTime() {
     const timeElement = document.querySelector("#hour");
-    const hourTime = timeElement.querySelector("img").getAttribute("src");
+    if (!timeElement) {
+        currentHour = "unknown";
+        return;
+    }
+    const hourImg = timeElement.querySelector("img");
+
+    if (!hourImg) {
+        currentHour = "unknown";
+        return;
+    }
+
+    const hourTime = hourImg.getAttribute("src");
+
+    if (!hourTime) {
+        currentHour = "unknown";
+        return;
+    }
+
 
     if (settings.weatherEnabled) {
-      const hourNumber = parseInt(hourTime.match(/(\d+)\.png$/)[1]);
+      const match = hourTime.match(/(\d+)\.png$/);
+      if (match) {
+          const hourNumber = parseInt(match[1]);
 
-      if (hourNumber >= 6 && hourNumber <= 12) {
-        currentHour = "morning";
-      } else if (hourNumber >= 13 && hourNumber <= 18) {
-        currentHour = "day";
-      } else if (hourNumber >= 19 && hourNumber <= 21) {
-        currentHour = "evening";
+          if (hourNumber >= 6 && hourNumber <= 12) {
+            currentHour = "morning";
+          } else if (hourNumber >= 13 && hourNumber <= 18) {
+            currentHour = "day";
+          } else if (hourNumber >= 19 && hourNumber <= 21) {
+            currentHour = "evening";
+          } else {
+            currentHour = "night";
+          }
       } else {
-        currentHour = "night";
+        currentHour = "unknown";
       }
-      // console.log("Текущий час:", hourNumber);
     }
   }
 
   function getSeason() {
     const seasonElement = document.querySelector("img[src*='symbole/season']");
-    const seasonSrc = seasonElement.getAttribute("src");
-    const match = seasonSrc.match(/season(\d+)\.png/);
+    if (!seasonElement) {
+      currentSeason = "unknown";
+      return;
+    }
 
+    const seasonSrc = seasonElement.getAttribute("src");
+    if (!seasonSrc) {
+        currentSeason = "unknown";
+        return;
+    }
+
+    const match = seasonSrc.match(/season(\d+)\.png/);
     if (match) {
-      const seasonNumber = parseInt(match[1]);
-      switch (seasonNumber) {
-        case 0:
-          currentSeason = "winter";
-          break;
-        case 1:
-          currentSeason = "spring";
-          break;
-        case 2:
-          currentSeason = "summer";
-          break;
-        case 3:
-          currentSeason = "autumn";
-          break;
-      }
-      // console.log("Текущий сезон:", currentSeason);
+        const seasonNumber = parseInt(match[1]);
+        switch (seasonNumber) {
+            case 0:
+              currentSeason = "winter";
+              break;
+            case 1:
+              currentSeason = "spring";
+              break;
+            case 2:
+              currentSeason = "summer";
+              break;
+            case 3:
+              currentSeason = "autumn";
+              break;
+            default:
+              currentSeason = "unknown";
+        }
+    } else {
+        currentSeason = "unknown";
     }
   }
 
@@ -8901,22 +9038,23 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         temperatureDisplayElement.innerHTML = `[?] Текущий модификатор: ${weatherModifier} (${temperatureDescription})`;
       }
     } else {
-      console.log("...я временно потерял бекграунд температуры🌡️...");
+      // console.log("...я временно потерял бекграунд температуры🌡️...");
     }
   }
   // ====================================================================================================================
   if (!settings.manualWeatherPanel) {
     setupMutationObserver("#sky", getSkyType);
 
+    setupSingleCallback("#hour", getTime);
     setupMutationObserver("#hour", getTime, {
-      attributes: true,
-      attributeFilter: ["src"],
-      subtree: true,
-    });
+        attributes: true,
+        attributeFilter: ["src"],
+        subtree: true,
+    }, 8, 500, 20);
 
     setupMutationObserver("img[src*='symbole/season']", getSeason, {
-      attributes: true,
-      attributeFilter: ["src"],
+        attributes: true,
+        attributeFilter: ["src"],
     });
   }
 
@@ -9656,7 +9794,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 // ====================================================================================================================
 //   . . . ТАРГЕТИНГ ОКНА ОХОТЫ И ПОДГОТОВКА КОНТЕЙНЕРОВ . . .
 // ====================================================================================================================
-if (window.location.href === targetCW3Hunt ||  window.location.href === targetOldCW3Hunt) {
+if (targetCW3Hunt.test(window.location.href)) {
   amogusSus();
   const containerElement = document.querySelector("body");
   const globalContainerElement = document.createElement("div");

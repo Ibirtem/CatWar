@@ -1,28 +1,26 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.35.0-11.24
+// @version      v1.37.0-03.25
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.net/cat1477928 )
-// @copyright    2024, Ibirtem (https://openuserjs.org/users/Ibirtem)
+// @copyright    2025, Ibirtem (https://openuserjs.org/users/Ibirtem)
 // @supportURL   https://catwar.net/cat1477928
 // @homepageURL  https://openuserjs.org/scripts/Ibirtem/CatWar_UwU
 // @match        http*://*.catwar.net/*
 // @match        http*://*.catwar.su/*
-// @updateURL    https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.js
-// @downloadURL  https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.js
+// @updateURL    https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.user.js
+// @downloadURL  https://github.com/Ibirtem/CatWar/raw/main/CatWar%20UwU.user.js
 // @license      MIT
 // @iconURL      https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png
 // ==/UserScript==
-
-// Скриптятам приветик! :3
 
 "use strict"; // Делаю вид что крутой.
 
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.35.0";
+const current_uwu_version = "1.37.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   settingsTheme: "dark",
@@ -47,16 +45,26 @@ const uwuDefaultSettings = {
 
   chatHeight: "275",
   newChat: false,
-  reverseChat: false,
+  addCommaAfterNick: false,
+  reverseChat: false, 
   newChatInput: false,
   namesForNotification: "",
 
   redesignCostumsSettings: false,
 
   notificationPM: false,
+  notificationPMSound: "notificationSound1",
+  notificationPMVolume: 5,
   notificationActionEnd: false,
+  notificationActionEndSound: "notificationSound1",
+  notificationActionEndVolume: 5,
   notificationInMouth: false,
+  notificationInMouthSound: "notificationSound1",
+  notificationInMouthVolume: 5,
   notificationInFightMode: false,
+  notificationInFightModeSound: "notificationSound1",
+  notificationInFightModeVolume: 5,
+
   showHintWhenToSniff: false,
   duplicateTimeInBrowserTab: false,
 
@@ -153,20 +161,19 @@ const uwuDefaultSettings = {
 // ====================================================================================================================
 //   . . . ТАРГЕТНЫЕ ССЫЛКИ . . .
 // ====================================================================================================================
-const targetSettings = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/settings/;
-const targetCW3 = "https://catwar.net/cw3/";
-const targetOldCW3 = "https://catwar.su/cw3/";
-const targetCW3Hunt = "https://catwar.net/cw3/jagd";
-const targetOldCW3Hunt = "https://catwar.su/cw3/jagd";
-const targetMainProfile = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/$/;
-const targetProfile = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/cat\d+$/;
-const targetLs = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/ls/;
-const targetLsNew = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/ls\?new(=.*)?$/;
-const targetChats = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/chat/;
-const targetBlog = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/(?:blog\d+|blogs)(?:$|[/?#])/i;
-const targetBlogsCreation = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/blogs\?creation/;
-const targetSniff = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/sniff(?:\d+|)(?:$|[/?#])/i;
-const targetSniffCreation = /^(https:\/\/catwar\.net|https:\/\/catwar\.su)\/sniff\?creation/;
+const targetCW3 = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/cw3(?:\/)?(?:\?.*)?$/;
+const targetCW3Hunt = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/cw3\/jagd(?:\/)?(?:\?.*)?$/;
+
+const targetSettings = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/settings/;
+const targetMainProfile = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/$/;
+const targetProfile = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/cat\d+$/;
+const targetLs = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/ls/;
+const targetLsNew = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/ls\?new(=.*)?$/;
+const targetChats = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/chat/;
+const targetBlog = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/(?:blog\d+|blogs)(?:$|[/?#])/i;
+const targetBlogsCreation = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/blogs\?creation/;
+const targetSniff = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/sniff(?:\d+|)(?:$|[/?#])/i;
+const targetSniffCreation = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/sniff\?creation/;
 
 // ====================================================================================================================
 //   . . . СТАНДАРТНЫЕ ЦВЕТОВЫЕ ТЕМЫ . . .
@@ -347,7 +354,7 @@ const uwusettings = // html
       <label for="cells-Borders-Color">Цвет границы клеток</label>
       <input type="color" id="cells-Borders-Color" data-setting="cellsBordersColor" value="#ffffff">
     </div>
-
+    
     <div>
     <p>Обозначает клетки Игрового поля числами.</p>
       <input type="checkbox" id="cells-Numbers" data-setting="cellsNumbers" />
@@ -481,7 +488,7 @@ const uwusettings = // html
 
       <hr id="uwu-hr" class="uwu-hr">
       <h2>Шрифты и текст</h2>
-
+      
       <div>
         <p>Кастомная настройка шрифтов в Игровой</p>
         <input type="checkbox" id="use-User-Fonts" data-setting="useUserFonts" />
@@ -504,7 +511,7 @@ const uwusettings = // html
       </div>
 
       <div>
-        <p>Подгрузка шрифта идёт автоматически. Для поиска возможных шрифтов, воспользуйтесь сайтом:
+        <p>Подгрузка шрифта идёт автоматически. Для поиска возможных шрифтов, воспользуйтесь сайтом: 
         <a href="https://fonts.google.com/?lang=ru_Cyrl" target="_blank">https://fonts.google.com/?lang=ru_Cyrl</a></p>
         <input type="text" id="font-Family-Body" placeholder="Verdana" data-font-size="fontFamilyBody" />
         <label for="font-Family-Body">Название вида шрифта</label>
@@ -582,7 +589,6 @@ const uwusettings = // html
           </ul>
         </div>
       </div>
-      <button id="SettingSaveButton4" class="uwu-button install-button">Сохранить</button>
 
       <div>
         <input type="text" id="chat-height" placeholder="Вставьте значение" data-setting="chatHeight" />
@@ -616,9 +622,9 @@ const uwusettings = // html
 
       <hr id="uwu-hr" class="uwu-hr">
       <h2>Остальные редизайны</h2>
-
+      
       <div>
-        <p>Добавляет изображение костюмов в строки для наглядного отображения и упрощённого поиска.
+        <p>Добавляет изображение костюмов в строки для наглядного отображения и упрощённого поиска. 
         Вы можете вытянуть высоту столбцов за их стрелочки в нижнем правом краю!</p>
         <input type="checkbox" id="redesign-Costums-Settings" data-setting="redesignCostumsSettings" />
         <label for="redesign-Costums-Settings">Редизайн Настройки костюмов</label>
@@ -641,6 +647,12 @@ const uwusettings = // html
       </div>
 
       <div>
+        <p>При клике на имя кота в строку чата будет выставляться его имя с запятой.</p>
+        <input type="checkbox" id="add-comma-after-nick" data-setting="addCommaAfterNick" />
+        <label for="add-comma-after-nick">Обращение с запятой</label>
+      </div>
+
+      <div>
         <p>Работает только с "Современным чатом". Отображет чат снизу вверх, а так же смещает окно ввода сообщения под чат.</p>
         <input type="checkbox" id="reverse-Chat" data-setting="reverseChat" />
         <label for="reverse-Chat">Инверсия чата</label>
@@ -653,14 +665,13 @@ const uwusettings = // html
             <!-- Опции будут добавлены сюда -->
         </div>
       </div>
-
+    
       <div id="notification-volume">
       <p>Громкость</p>
         <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notification-MyName-Volume" list="volumeStep"
           data-setting="notificationMyNameVolume">
         <datalist id="volumeStep">
           <option value="1">10%</option>
-          <option value="5">50%</option>
           <option value="10">100%</option>
         </datalist>
       </div>
@@ -679,7 +690,7 @@ const uwusettings = // html
 
       <hr id="uwu-hr" class="uwu-hr">
       <h2>Параметры и навыки</h2>
-
+      
       <!--
       <div>
         <p>Параметр наглядно отображает рядом с собой свой процент.</p>
@@ -977,7 +988,7 @@ const uwusettings = // html
       </tr>
     </tbody>
   </table>
-
+    
     <hr id="uwu-hr" class="uwu-hr">
     <h2>Часы</h2>
 
@@ -1096,8 +1107,8 @@ const uwusettings = // html
 
       <p>
       Как вводить с клавиатуры:
-      ЛКМ - выбрать клетку. С клавиатуры мины ставятся от "0" до "7". Знак "минус" ( - ) равняется красной клетке,
-      а "равно" ( = ) ставит более яркую клетку, например для переходов, которая не будет очищаться при
+      ЛКМ - выбрать клетку. С клавиатуры мины ставятся от "0" до "7". Знак "минус" ( - ) равняется красной клетке, 
+      а "равно" ( = ) ставит более яркую клетку, например для переходов, которая не будет очищаться при 
       "Очистить всё поле/таблицу". Два раза ЛКМ на ячейку, чтобы очистить её значение.</p>
 
       <label>Вид ввода в минное поле:</label>
@@ -1127,14 +1138,13 @@ const uwusettings = // html
           <!-- Опции будут добавлены сюда -->
         </div>
       </div>
-
+    
       <div id="notification-volume">
       <p>Громкость</p>
         <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="climbing-Refresh-Notification-Volume" list="volumeStep"
           data-setting="climbingRefreshNotificationVolume">
         <datalist id="volumeStep">
           <option value="1">10%</option>
-          <option value="5">50%</option>
           <option value="10">100%</option>
         </datalist>
       </div>
@@ -1144,7 +1154,7 @@ const uwusettings = // html
       <h2>BETA 🚧 Лог чистильщика 🚧 BETA</h2>
 
       <div>
-        <p>Упрощённое и удобное дублирование блока истории для любителей чистить локации,
+        <p>Упрощённое и удобное дублирование блока истории для любителей чистить локации, 
         в котором отображаются только поднятия и опускания котов.</p>
         <input type="checkbox" id="cleaning-Log" data-setting="cleaningLog" />
         <label for="cleaning-Log">Включить лог чистильщика</label>
@@ -1175,13 +1185,13 @@ const uwusettings = // html
         <p>2. Поднять кота!</p>
         <p>Если же кот "Не спит", или перед поднятием вы его не проверили, то Лог просто не запишет его.</p>
         <p>— Больше настроек, например подсветка надписей или игнорирование статуса кота, будет в будущем!</p>
-        <p>Если вы видите или вам кажется, что логика проверок и объединений, странны и нелогичны, или даже
+        <p>Если вы видите или вам кажется, что логика проверок и объединений, странны и нелогичны, или даже 
         что-то теряется, то можете сообщить о проблеме в группу ВК!</p>
         <hr id="uwu-hr" class="uwu-hr">
       </details>
 
       <div>
-        <p>При последующих проверках так же будет писаться ID кота.
+        <p>При последующих проверках так же будет писаться ID кота. 
         Не добавляет ID к уже существущему тексту в логе.</p>
         <input type="checkbox" id="cleaning-Log" data-setting="cleaningLogShowID" />
         <label for="cleaning-Log">Записывать ID</label>
@@ -1223,30 +1233,95 @@ const uwusettings = // html
       </div>
 
       <hr id="uwu-hr" class="uwu-hr">
-      <div>
-        <h2>Уведомления</h2>
-        <p>Уведомлять звуком, когда:</p>
-      </div>
-
-      <div>
-        <input type="checkbox" id="notification-PM" data-setting="notificationPM" />
-        <label for="notification-PM">Новое Личное Сообщение</label>
-      </div>
-
-      <div>
-        <input type="checkbox" id="notification-Action-End" data-setting="notificationActionEnd" />
-        <label for="notification-Action-End">Действие закончилось</label>
-      </div>
-
-      <div>
-        <input type="checkbox" id="notification-In-Mouth" data-setting="notificationInMouth" />
-        <label for="notification-In-Mouth">Кто-то меня поднял</label>
-      </div>
-
-      <div>
-        <input type="checkbox" id="notification-In-Fight-Mode" data-setting="notificationInFightMode" />
-        <label for="notification-In-Fight-Mode">Ввели в боевую стойку через Т+2 или Т+3</label>
-      </div>
+      
+      <h2>Уведомления</h2>
+      <p>Уведомлять звуком, когда:</p>
+      
+      <table class="notification-table">
+        <tbody>
+          <tr>
+            <td><input type="checkbox" id="notification-PM" data-setting="notificationPM" /></td>
+            <td>
+              <div class="custom-select" id="notificationPMSound">
+                <div class="select-selected">Выберите звук</div>
+                <div class="select-items"></div>
+              </div>
+            </td>
+            <td>
+              <div class="volume-control">
+                <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notificationPMVolume" list="volumeStep" data-setting="notificationPMVolume">
+                <datalist id="volumeStep">
+                  <option value="1">10%</option>
+                  <option value="10">100%</option>
+                </datalist>
+              </div>
+            </td>
+            <td id="notificationPMContainer"></td>
+            <td><label for="notification-PM">Новое ЛС</label></td>
+          </tr>
+          <tr>
+              <td><input type="checkbox" id="notification-Action-End" data-setting="notificationActionEnd" /></td>
+              <td>
+                <div class="custom-select" id="notificationActionEndSound">
+                  <div class="select-selected">Выберите звук</div>
+                  <div class="select-items"></div>
+                </div>
+              </td>
+              <td>
+                <div class="volume-control">
+                  <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notificationActionEndVolume" list="volumeStep" data-setting="notificationActionEndVolume">
+                  <datalist id="volumeStep">
+                    <option value="1">10%</option>
+                    <option value="10">100%</option>
+                  </datalist>
+                </div>
+              </td>
+              <td id="notificationActionEndContainer"></td>
+              <td><label for="notification-Action-End">Действие закончилось</label></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" id="notification-In-Mouth" data-setting="notificationInMouth" /></td>
+              <td>
+                <div class="custom-select" id="notificationInMouthSound">
+                  <div class="select-selected">Выберите звук</div>
+                  <div class="select-items"></div>
+                </div>
+              </td>
+              <td>
+                <div class="volume-control">
+                <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notificationInMouthVolume" list="volumeStep" data-setting="notificationInMouthVolume">
+                  <datalist id="volumeStep">
+                      <option value="1">10%</option>
+                      <option value="10">100%</option>
+                  </datalist>
+              </div>
+              </td>
+              <td id="notificationInMouthContainer"></td>
+              <td><label for="notification-In-Mouth">Кто-то меня поднял</label></td>
+            </tr>
+      
+            <tr>
+              <td><input type="checkbox" id="notification-In-Fight-Mode" data-setting="notificationInFightMode" /></td>
+              <td>
+              <div class="custom-select" id="notificationInFightModeSound">
+                  <div class="select-selected">Выберите звук</div>
+                  <div class="select-items"></div>
+              </div>
+              </td>
+              <td>
+              <div class="volume-control">
+                  <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notificationInFightModeVolume" list="volumeStep" data-setting="notificationInFightModeVolume">
+                  <datalist id="volumeStep">
+                      <option value="1">10%</option>
+                      <option value="10">100%</option>
+                  </datalist>
+              </div>
+              </td>
+              <td id="notificationInFightModeContainer"></td>
+              <td><label for="notification-In-Fight-Mode">Ввели в стойку (Т+2/Т+3)</label></td>
+            </tr>
+        </tbody>
+      </table>
 
       <div>
         <p>Дублирует время действий на название браузерной вкладки.</p>
@@ -1282,7 +1357,7 @@ const uwusettings = // html
       </div>
 
       <div>
-        <p>Позволяет "отвечать" и "цитировать" сообщения в лентах и блогах. При цитировании вы можете выделить кусочек
+        <p>Позволяет "отвечать" и "цитировать" сообщения в лентах и блогах. При цитировании вы можете выделить кусочек 
         текста на который хотите ответить.</p>
         <input type="checkbox" id="more-Comment-Buttons" data-setting="moreCommentButtons" />
         <label for="more-Comment-Buttons">Кнопки "Отправить" и "Цитировать"</label>
@@ -1340,7 +1415,7 @@ const uwusettings = // html
         <input type="text" id="importSettings" placeholder="Импорт"/>
         <button id="importSettingsButton" class="uwu-button install-button">Вставить</button>
       </div>
-
+      
       <div>
         <p>Удаляет все настройки. В очень редких случаях может помочь при проблемных проблемах.</p>
         <button id="resetAllSaves" class="uwu-button remove-button">Сброс сохранений</button>
@@ -1359,27 +1434,22 @@ const newsPanel = // html
 `
 <div id="news-panel">
     <button id="news-button">
-        v${current_uwu_version} - 🌸 Фиксимся под новые обновления сайта...
+        v${current_uwu_version} - 🌸 Разгребаем накопившиеся проблемы.
     </button>
     <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>— Я голодный пилил обнову если что-то пропустил простите дофиксим потом тоже.</p>
+        <p>— Возможность Обращений с автоматической запятой, прямо как в том самом классическом скрипте! Настройки звука и громкости уведомлений под определённые действия!</p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Внешний вид</h3>
-        <p>— 🥬</p>
-        <p>— Чу-чуть подправили слона в классе в Редизайне Игровой, ой...</p>
-        <p>— ...выпадающий список "Действий". Автоширину ему.</p>
-        <p>— И теперь он съезжает под кнопки действий при нехватке места.</p>
+        <p>— Починились (Вроде) применения цветов к Уникальным навыкам.</p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Изменения кода</h3>
-        <p>— Починили Дублирование время действий на вкладку.</p>
-        <p>— Починили Звук при окончании действия.</p>
-        <p>— Починили Иконочку перетаскивания БР.</p>
-        <p>— Починили (ВРОДЕ) селекторы стилей для Параметров и Навыков.</p>
-        <p>— Починили Подробнее о Параметрах. Расчётное время могло чуть пострадать, но остаться в пределах верности.</p>
-        <p>— Скрыли UwU решение для отображения процентов навыков из-з ненадобности.</p>
+        <p>— Много проверок на то, чтобы не ломало кодик, если не будут найдены погодные данные.</p>
+        <p>— Починено (Вроде) отсутствие блоков на перетаскивание в Редизайне Игровой.</p>
+        <p>— Удалена кнопка "Сохранить" в Редизайне Игровой из-за ненадобности -> Теперь всё сохраняется сразу при любом изменении вида.</p>
+        <p>— Поддержка зеркальных серверов CatWar'а + просто более адекватные и красивые проверки адреса страницы.</p>
         <hr id="uwu-hr" class="uwu-hr">
-        <p>Дата выпуска: 18.11.24</p>
+        <p>Дата выпуска: 20.03.25</p>
     </div>
 </div>
 `;
@@ -1693,6 +1763,15 @@ const css_uwu_main =
 
 #auroraPanel {
   width: 120px;
+}
+
+.notification-table {
+    border-collapse: collapse;
+}
+
+.notification-table td {
+    padding: 5px;
+    vertical-align: middle;
 }
 
 #notification-volume,
@@ -2062,7 +2141,7 @@ const css_uwu_main =
   color: white;
   background-color: #5c5c5c;
   -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px); 
   padding: 10px;
   cursor: pointer;
 }
@@ -2081,7 +2160,7 @@ const css_uwu_main =
   background-color: #5c5c5c;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px); 
   z-index: 1;
 }
 
@@ -2475,7 +2554,7 @@ function saveThemes(themes) {
     .reduce((obj, key) => {
       obj[key] = themes[key];
       return obj;
-    }, {});
+    }, {}); 
 
   localStorage.setItem("uwu_colorThemes", JSON.stringify(themesToSave));
 }
@@ -2557,7 +2636,7 @@ if (targetSettings.test(window.location.href)) {
     let css;
     const settingsBlock = document.getElementById("uwu-settings");
     const settingsHeader = document.getElementById("uwusettings-header");
-
+  
     switch (theme) {
       case "classic":
         css = css_uwu_classic;
@@ -2578,32 +2657,32 @@ if (targetSettings.test(window.location.href)) {
         css = css_uwu_classic;
         break;
     }
-
+  
     const oldStyle = document.getElementById("css-uwu-theme");
     if (oldStyle) {
       oldStyle.remove();
     }
-
+  
     document.head.insertAdjacentHTML(
       "beforeend",
       `<style id="css-uwu-theme">${css}</style>`
     );
   }
-
+  
   applySettingsTheme(settings.settingsTheme);
   // ====================================================================================================================
   //  . . . ШРИФТ ГРОМКОСТИ ЧАТА . . .
   // ====================================================================================================================
   function saveFontSettings() {
     let fontSize = {};
-
+  
     document.querySelectorAll('input[data-font-size]').forEach(input => {
       fontSize[input.dataset.fontSize] = input.value;
     });
-
+  
     localStorage.setItem('uwu_fontSize', JSON.stringify(fontSize));
   }
-
+  
   function loadFontSettings() {
     let defaultFontSize = {
       vlm0: '10',
@@ -2622,20 +2701,20 @@ if (targetSettings.test(window.location.href)) {
       fontSizeLocation: '14',
       fontFamilyBody: 'Verdana'
     };
-
+  
     let fontSize = JSON.parse(localStorage.getItem('uwu_fontSize')) || defaultFontSize;
-
+  
     document.querySelectorAll('input[data-font-size]').forEach(input => {
-      input.value = fontSize[input.dataset.fontSize] || '';
+      input.value = fontSize[input.dataset.fontSize] || ''; 
     });
 
     saveFontSettings();
   }
-
+  
   document.querySelectorAll('input[data-font-size]').forEach(input => {
-    input.addEventListener('input', saveFontSettings);
+    input.addEventListener('input', saveFontSettings); 
   });
-
+  
   loadFontSettings();
   // ====================================================================================================================
   //  . . . ТЕМЫ И ЦВЕТА ИГРОВОЙ . . .
@@ -2645,10 +2724,10 @@ if (targetSettings.test(window.location.href)) {
   const themeSelect = document.getElementById("theme-select");
   const addThemeButton = document.getElementById("addThemeButton");
   const removeThemeButton = document.getElementById("removeThemeButton");
-
+  
   let currentThemeName = getCurrentThemeName();
   let allThemes = getThemes();
-
+  
   function loadThemeToInputs(themeName) {
     const theme = allThemes[themeName]?.colors;
     colorInputs.forEach((input) => {
@@ -2656,18 +2735,18 @@ if (targetSettings.test(window.location.href)) {
       input.value = theme?.[colorKey] || "";
     });
   }
-
+  
   function saveThemeFromInputs() {
     const themeData = { colors: {} };
     colorInputs.forEach((input) => {
       const colorKey = input.dataset.color;
       themeData.colors[colorKey] = input.value;
     });
-    allThemes[currentThemeName] = themeData;
+    allThemes[currentThemeName] = themeData; 
     saveThemes(allThemes);
     console.log(`Тема "${currentThemeName}" сохранена!`);
   }
-
+  
   function updateThemeSelect() {
     themeSelect.innerHTML = "";
     Object.keys(allThemes).forEach((name) => {
@@ -2679,15 +2758,15 @@ if (targetSettings.test(window.location.href)) {
     themeSelect.value = currentThemeName;
     removeThemeButton.style.display = Object.keys(defaultThemes).includes(currentThemeName) ? "none" : "inline";
   }
-
+  
   themeSelect.addEventListener("change", (event) => {
     currentThemeName = event.target.value;
     setCurrentThemeName(currentThemeName);
     loadThemeToInputs(currentThemeName);
-    updateThemeSelect();
+    updateThemeSelect(); 
     updateSaveButtonState();
   });
-
+  
   addThemeButton.addEventListener("click", () => {
     const newThemeName = prompt("Введите название новой темы:");
     if (newThemeName && !allThemes[newThemeName]) {
@@ -2700,7 +2779,7 @@ if (targetSettings.test(window.location.href)) {
       loadThemeToInputs(currentThemeName);
     }
   });
-
+  
   removeThemeButton.addEventListener("click", () => {
     if (!Object.keys(defaultThemes).includes(currentThemeName)) {
       delete allThemes[currentThemeName];
@@ -2711,7 +2790,7 @@ if (targetSettings.test(window.location.href)) {
       loadThemeToInputs(currentThemeName);
     }
   });
-
+  
   saveThemeButton.addEventListener("click", () => {
     if (isDefaultTheme(currentThemeName)) {
       alert("Вы не можете изменять стандартные темы. Пожалуйста, создайте свою собственную тему.");
@@ -2719,18 +2798,18 @@ if (targetSettings.test(window.location.href)) {
       saveThemeFromInputs();
     }
   });
-
+  
   colorInputs.forEach((input) => {
     input.addEventListener("input", () => {
       if (isDefaultTheme(currentThemeName)) {
         alert("Вы не можете изменять стандартные темы. Пожалуйста, создайте свою собственную тему.");
-        loadThemeToInputs(currentThemeName);
+        loadThemeToInputs(currentThemeName); 
       } else {
-        saveThemeFromInputs();
+        saveThemeFromInputs(); 
       }
     });
   });
-
+  
   updateThemeSelect();
   loadThemeToInputs(currentThemeName);
   // ====================================================================================================================
@@ -2790,33 +2869,33 @@ if (targetSettings.test(window.location.href)) {
   // ====================================================================================================================
   function saveHighlightSettings() {
     const highlightResources = [];
-
+  
     document.querySelectorAll('.uwu-table-highlight-Resources tbody tr').forEach(row => {
       const resourceName = row.querySelector('.uwu-color-picker').dataset.resource;
       const colorPicker = row.querySelector('.uwu-color-picker');
       const checkbox = row.querySelector('.uwu-highlight-checkbox');
-
+  
       const resource = {
         name: resourceName,
         color: colorPicker.value,
         highlight: checkbox.checked
       };
-
+  
       highlightResources.push(resource);
     });
-
+  
     localStorage.setItem('uwu_highlightResources', JSON.stringify(highlightResources));
   }
-
+  
   function restoreHighlightSettings() {
     const savedSettings = localStorage.getItem('uwu_highlightResources');
     if (savedSettings) {
       const highlightResources = JSON.parse(savedSettings);
-
+  
       highlightResources.forEach(resource => {
         const colorPicker = document.querySelector(`.uwu-color-picker[data-resource="${resource.name}"]`);
         const checkbox = document.querySelector(`.uwu-highlight-checkbox[data-resource="${resource.name}"]`);
-
+  
         if (colorPicker) colorPicker.value = resource.color;
         if (checkbox) checkbox.checked = resource.highlight;
       });
@@ -2948,6 +3027,10 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
 
   createCustomSelect("climbingRefreshNotificationSound", notificationSounds);
   createCustomSelect("myNameNotificationSound", notificationSounds);
+  createCustomSelect("notificationPMSound", notificationSounds);
+  createCustomSelect("notificationActionEndSound", notificationSounds);
+  createCustomSelect("notificationInMouthSound", notificationSounds);
+  createCustomSelect("notificationInFightModeSound", notificationSounds);
   // ==============================================================================
   const howShowOtherCatsList = [
     { name: "Не отображать", id: "1" },
@@ -2962,7 +3045,7 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     { id: "dark", name: "Тёмная" },
     { id: "glass", name: "Стеклянная" },
   ];
-
+  
   createCustomSelect("settingsTheme", themeOptions);
   // ==============================================================================
   const climbingPanelOrientations = [
@@ -2977,45 +3060,45 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
       { id: "standard", name: "Стандартный" },
       { id: "string", name: "Строчный" },
     ]
-
+  
     createCustomSelect("clockStyle", clockStyles);
     // ==============================================================================
     const clockPositions = [
       { id: "fly", name: "Свободно" },
       { id: "tos", name: "В блоке погоды" },
     ]
-
+  
     createCustomSelect("clockPosition", clockPositions);
     // ==============================================================================
     const highlightResourcesStyles = [
       { id: "background", name: "Фон / Быстро" },
       { id: "glow", name: "Свечение / Медленно" },
     ]
-
+    
     createCustomSelect("highlightResourcesStyle", highlightResourcesStyles);
     // ==============================================================================
     const cleaningLogStyles = [
       { id: "smart", name: "Умный" },
       // { id: "standart", name: "Стандартный" },
     ]
-
+  
     createCustomSelect("cleaningLogStyle", cleaningLogStyles);
     // ==============================================================================
     const climbingPanelInputsStyles = [
       { id: "keyboard", name: "Клавиатура" },
       { id: "standart", name: "Галочки + Клавиатура" },
     ]
-
+  
     createCustomSelect("climbingPanelInputsStyle", climbingPanelInputsStyles);
   // ====================================================================================================================
   //   . . . СОЗДАНИЕ ВЫПАДАЮЩИХ СПИСКОВ . . .
   // ====================================================================================================================
   function createCustomSelect(selectId, options) {
-
+  
     const selectContainer = document.getElementById(selectId);
     const selectedElement = selectContainer.querySelector(".select-selected");
     const optionsContainer = selectContainer.querySelector(".select-items");
-
+  
     if (settings && settings[selectId] !== undefined) {
       const selectedOption = options.find(
         (option) => option.id === settings[selectId]
@@ -3024,22 +3107,22 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
         selectedElement.textContent = selectedOption.name;
       }
     }
-
+  
     options.forEach((option, index) => {
       const optionElement = document.createElement("div");
       optionElement.textContent = option.name;
       optionElement.dataset.id = option.id;
-
+  
       optionElement.addEventListener("click", () => {
         selectedElement.textContent = option.name;
         settings[selectId] = option.id;
         saveSettings();
         selectContainer.classList.remove("active");
       });
-
+  
       optionsContainer.appendChild(optionElement);
     });
-
+  
     selectedElement.addEventListener("click", () => {
       selectContainer.classList.toggle("active");
     });
@@ -3092,16 +3175,12 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     container.appendChild(testButton);
   }
 
-  addSoundTestButton(
-    "climbingRefreshNotificationSoundContainer",
-    "climbingRefreshNotificationSound",
-    "climbingRefreshNotificationVolume"
-  );
-  addSoundTestButton(
-    "myNameNotificationSoundContainer",
-    "myNameNotificationSound",
-    "notificationMyNameVolume"
-  );
+addSoundTestButton("notificationPMContainer", "notificationPMSound", "notificationPMVolume");
+addSoundTestButton("notificationActionEndContainer", "notificationActionEndSound", "notificationActionEndVolume");
+addSoundTestButton("notificationInMouthContainer", "notificationInMouthSound", "notificationInMouthVolume");
+addSoundTestButton("notificationInFightModeContainer", "notificationInFightModeSound", "notificationInFightModeVolume");
+addSoundTestButton("climbingRefreshNotificationSoundContainer", "climbingRefreshNotificationSound", "climbingRefreshNotificationVolume"); // Оставляем как было
+addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound", "notificationMyNameVolume");// Оставляем как было
   // ====================================================================================================================
   //  . . . СБРОС ПОЗИЦИИ ЧАСИКОВ . . .
   // ====================================================================================================================
@@ -3126,14 +3205,14 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     "uwu_templates",
     "uwu_highlightResources",
   ];
-
+  
   const importButton = document.getElementById("importSettingsButton");
   const importSettingsInput = document.getElementById("importSettings");
   const exportSettingsInput = document.getElementById("exportSettings");
-
+  
   importButton.addEventListener("click", () => {
     const importedSettings = importSettingsInput.value;
-
+  
     try {
       const parsedSettings = JSON.parse(importedSettings);
       settingsAllKeys.forEach(key => {
@@ -3147,12 +3226,12 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     }
     updateExportField();
   });
-
+  
   function updateExportField() {
     const settingsToExport = JSON.stringify(getSpecificLocalStorageItems(), null, 2);
     exportSettingsInput.value = settingsToExport;
   }
-
+  
   function getSpecificLocalStorageItems() {
     const items = {};
     settingsAllKeys.forEach(key => {
@@ -3167,7 +3246,7 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     });
     return items;
   }
-
+  
   loadSettings();
   updateExportField();
   // ====================================================================================================================
@@ -3287,6 +3366,22 @@ if (settings.redesignCostumsSettings) {
     "#layout-customizer .column.right"
   );
 
+  function saveLayoutSettings() {
+    const leftBlocks = Array.from(leftColumn.querySelectorAll(".block")).map(
+        (block) => block.classList[1]
+    );
+    const rightBlocks = Array.from(rightColumn.querySelectorAll(".block")).map(
+        (block) => block.classList[1]
+    );
+
+    const layoutSettings = {
+        leftBlocks,
+        rightBlocks,
+    };
+
+    localStorage.setItem("uwu_layoutSettings", JSON.stringify(layoutSettings));
+  }
+
   function createBlockElement(blockId) {
     const blockElement = document.createElement("div");
     blockElement.classList.add("block", blockId);
@@ -3299,74 +3394,61 @@ if (settings.redesignCostumsSettings) {
     controlsWrapper.classList.add("controls");
 
     if (blockId === "tr_info") {
-      const moveInfoButton = document.createElement("button");
-      moveInfoButton.textContent = "⏪Переместить⏩";
-      moveInfoButton.classList.add("move-info", "install-button");
-      moveInfoButton.addEventListener("click", () => {
-        swapColumns(blockElement);
-      });
-      controlsWrapper.appendChild(moveInfoButton);
+        const moveInfoButton = document.createElement("button");
+        moveInfoButton.textContent = "⏪Переместить⏩";
+        moveInfoButton.classList.add("move-info", "install-button");
+        moveInfoButton.addEventListener("click", () => {
+            swapColumns(blockElement);
+            saveLayoutSettings();
+        });
+        controlsWrapper.appendChild(moveInfoButton);
     } else {
-      const moveUpButton = document.createElement("button");
-      moveUpButton.textContent = "🔼Вверх";
-      moveUpButton.classList.add("move-up", "install-button");
-      moveUpButton.addEventListener("click", () => {
-        const previousBlock = blockElement.previousElementSibling;
-        if (previousBlock) {
-          blockElement.parentNode.insertBefore(blockElement, previousBlock);
-        }
-      });
-      controlsWrapper.appendChild(moveUpButton);
+        const moveUpButton = document.createElement("button");
+        moveUpButton.textContent = "🔼Вверх";
+        moveUpButton.classList.add("move-up", "install-button");
+        moveUpButton.addEventListener("click", () => {
+            const previousBlock = blockElement.previousElementSibling;
+            if (previousBlock) {
+                blockElement.parentNode.insertBefore(blockElement, previousBlock);
+                saveLayoutSettings();
+            }
+        });
+        controlsWrapper.appendChild(moveUpButton);
 
-      const moveDownButton = document.createElement("button");
-      moveDownButton.textContent = "🔽Вниз";
-      moveDownButton.classList.add("move-down", "install-button");
-      moveDownButton.addEventListener("click", () => {
-        const nextBlock = blockElement.nextElementSibling;
-        if (nextBlock) {
-          blockElement.parentNode.insertBefore(nextBlock, blockElement);
-        }
-      });
-      controlsWrapper.appendChild(moveDownButton);
+        const moveDownButton = document.createElement("button");
+        moveDownButton.textContent = "🔽Вниз";
+        moveDownButton.classList.add("move-down", "install-button");
+        moveDownButton.addEventListener("click", () => {
+            const nextBlock = blockElement.nextElementSibling;
+            if (nextBlock) {
+                blockElement.parentNode.insertBefore(nextBlock, blockElement);
+                saveLayoutSettings();
+            }
+        });
+        controlsWrapper.appendChild(moveDownButton);
     }
 
     blockElement.appendChild(controlsWrapper);
     return blockElement;
-  }
+}
 
   function swapColumns(blockElement) {
     if (blockElement.parentNode === leftColumn) {
-      const rightColumnBlocks = Array.from(rightColumn.children);
-      rightColumn.innerHTML = "";
-      rightColumn.appendChild(blockElement);
-      rightColumnBlocks.forEach((block) => leftColumn.appendChild(block));
+        const rightColumnBlocks = Array.from(rightColumn.children);
+        rightColumn.innerHTML = "";
+        rightColumn.appendChild(blockElement);
+        rightColumnBlocks.forEach((block) => leftColumn.appendChild(block));
     } else {
-      const leftColumnBlocks = Array.from(leftColumn.children);
-      leftColumn.innerHTML = "";
-      leftColumn.appendChild(blockElement);
-      leftColumnBlocks.forEach((block) => rightColumn.appendChild(block));
+        const leftColumnBlocks = Array.from(leftColumn.children);
+        leftColumn.innerHTML = "";
+        leftColumn.appendChild(blockElement);
+        leftColumnBlocks.forEach((block) => rightColumn.appendChild(block));
     }
+    saveLayoutSettings();
   }
 
-  const saveButton = document.getElementById("SettingSaveButton4");
-
-  saveButton.addEventListener("click", () => {
-    const leftBlocks = Array.from(leftColumn.querySelectorAll(".block")).map(
-      (block) => block.classList[1]
-    );
-    const rightBlocks = Array.from(rightColumn.querySelectorAll(".block")).map(
-      (block) => block.classList[1]
-    );
-
-    const layoutSettings = {
-      leftBlocks,
-      rightBlocks,
-    };
-
-    localStorage.setItem("uwu_layoutSettings", JSON.stringify(layoutSettings));
-  });
-
   function loadLayoutSettings() {
+    try {
     const savedSettings = localStorage.getItem("uwu_layoutSettings");
     if (savedSettings) {
       const { leftBlocks, rightBlocks } = JSON.parse(savedSettings);
@@ -3409,9 +3491,12 @@ if (settings.redesignCostumsSettings) {
         JSON.stringify(layoutSettings)
       );
     }
+    } catch (error) {
+      console.error("Ошибка при загрузке настроек макета:", error);
+    }
   }
 
-  window.addEventListener("load", loadLayoutSettings);
+  loadLayoutSettings();
   // ====================================================================================================================
   //  . . . РЕДАКТОР ВКЛАДОК И ТАБЛИЦ МИННОГО ПОЛЯ . . .
   // ====================================================================================================================
@@ -3419,19 +3504,19 @@ if (settings.redesignCostumsSettings) {
   const tabManager = {
     tabs: [],
     currentTabIndex: 0,
-
+  
     createTab(name) {
       const newTab = {
         name: name,
         tables: [],
         currentTableId: 0,
       };
-
+  
       this.tabs.push(newTab);
       this.render();
       this.switchTab(this.tabs.length - 1);
     },
-
+  
     createTable(
       tableName = `Локация ${this.tabs[this.currentTabIndex].tables.length + 1}`
     ) {
@@ -3440,7 +3525,7 @@ if (settings.redesignCostumsSettings) {
       this.saveState();
       this.render();
     },
-
+  
     removeTable(tableIndex) {
       const currentTab = this.tabs[this.currentTabIndex];
       if (currentTab && currentTab.tables[tableIndex]) {
@@ -3455,7 +3540,7 @@ if (settings.redesignCostumsSettings) {
         this.render();
       }
     },
-
+  
     removeTab(index) {
       this.tabs.splice(index, 1);
       if (index === this.currentTabIndex) {
@@ -3464,12 +3549,12 @@ if (settings.redesignCostumsSettings) {
       this.saveState();
       this.render();
     },
-
+  
     switchTab(index) {
       this.currentTabIndex = index;
       this.render();
     },
-
+  
     switchTable(tableIndex) {
       const currentTab = this.tabs[this.currentTabIndex];
       if (currentTab) {
@@ -3478,7 +3563,7 @@ if (settings.redesignCostumsSettings) {
         this.render();
       }
     },
-
+  
     renameTab(index) {
       const newName = prompt("Введите новое имя вкладки:", this.tabs[index].name);
       if (newName) {
@@ -3487,7 +3572,7 @@ if (settings.redesignCostumsSettings) {
         this.render();
       }
     },
-
+  
     renameTable(tableIndex) {
       const currentTab = this.tabs[this.currentTabIndex];
       if (currentTab) {
@@ -3499,52 +3584,52 @@ if (settings.redesignCostumsSettings) {
         }
       }
     },
-
+  
     saveState() {
       localStorage.setItem("uwu_climbingPanelState", JSON.stringify(this));
     },
-
+  
     render() {
       this.renderTabs();
       this.renderTables();
     },
-
+  
     renderTabs() {
       const tabRow = document.getElementById("uwu-buttonRow1-settings");
       tabRow.innerHTML = "";
-
+  
       this.tabs.forEach((tab, index) => {
         const tabButton = document.createElement("button");
         tabButton.textContent = tab.name;
         tabButton.classList.add("tab-button");
-
+  
         if (index === this.currentTabIndex) {
           tabButton.classList.add("active");
         }
-
+  
         tabButton.addEventListener("click", () => this.switchTab(index));
-
+  
         const removeButton = document.createElement("button");
         removeButton.textContent = "X";
         removeButton.classList.add("remove-button");
-
+  
         removeButton.addEventListener("click", () => this.removeTab(index));
-
+  
         const renameButton = document.createElement("button");
         renameButton.textContent = "✎";
         renameButton.classList.add("rename-button");
-
+  
         renameButton.addEventListener("click", () => this.renameTab(index));
-
+  
         const tabContainer = document.createElement("div");
         tabContainer.classList.add("tab-container");
         tabContainer.appendChild(tabButton);
         tabContainer.appendChild(renameButton);
         tabContainer.appendChild(removeButton);
-
+  
         tabRow.appendChild(tabContainer);
       });
-
+  
       const addTabButton = document.createElement("button");
       addTabButton.textContent = "+";
       addTabButton.classList.add("add-button");
@@ -3556,76 +3641,76 @@ if (settings.redesignCostumsSettings) {
       });
       tabRow.appendChild(addTabButton);
     },
-
+  
     renderTables() {
       const tableRow = document.getElementById("uwu-buttonRow2-settings");
       tableRow.innerHTML = "";
-
+  
       const currentTab = this.tabs[this.currentTabIndex];
-
+  
       if (currentTab) {
         currentTab.tables.forEach((table, index) => {
           const tableButton = document.createElement("button");
           tableButton.textContent = table.name;
           tableButton.classList.add("table-button");
-
+  
           tableButton.addEventListener("click", () => this.switchTable(index));
-
+  
           const removeButton = document.createElement("button");
           removeButton.textContent = "X";
           removeButton.classList.add("remove-button");
-
+  
           removeButton.addEventListener("click", () => this.removeTable(index));
-
+  
           const renameButton = document.createElement("button");
           renameButton.textContent = "✎";
           renameButton.classList.add("rename-button");
-
+  
           renameButton.addEventListener("click", () => this.renameTable(index));
-
+  
           const tableContainer = document.createElement("div");
           tableContainer.classList.add("table-container");
           tableContainer.appendChild(tableButton);
           tableContainer.appendChild(renameButton);
           tableContainer.appendChild(removeButton);
-
+  
           tableRow.appendChild(tableContainer);
         });
-
+  
         const addTableButton = document.createElement("button");
         addTableButton.textContent = "+";
         addTableButton.classList.add("add-button");
-
+  
         addTableButton.addEventListener("click", () => {
           const tableName = prompt("Введите имя поля:");
           if (tableName) {
             this.createTable(tableName);
           }
         });
-
+  
         tableRow.appendChild(addTableButton);
       }
     },
   };
-
+  
   const savedState = localStorage.getItem("uwu_climbingPanelState");
   if (!savedState) {
     tabManager.createTab("Вкладка 1");
     for (let i = 0; i < 5; i++) {
       tabManager.createTable(`Поле ${i + 1}`);
     }
-
+  
     tabManager.createTab("Вкладка 2");
     for (let i = 0; i < 5; i++) {
       tabManager.createTable(`Поле ${i + 1}`);
     }
-
+  
     tabManager.saveState();
   } else {
     const state = JSON.parse(savedState);
     Object.assign(tabManager, state);
   }
-
+  
   tabManager.render();
 }
 // ====================================================================================================================
@@ -3942,7 +4027,7 @@ loadSettings();
 // ====================================================================================================================
 //   . . . АВАТАРЫ В КОММЕНТАРИЯХ . . .
 // ====================================================================================================================
-if (window.location.href !== targetCW3 || window.location.href !== targetOldCW3) {
+if (targetCW3.test(window.location.href)) {
   if (settings.commentsAvatars) {
     const styleElement = document.createElement("style");
     styleElement.textContent = `
@@ -4109,7 +4194,7 @@ soundManager.loadSound(
 //  . . . ЗАГРУЗКА КОДА В ИГРОВОЙ . . .
 // ====================================================================================================================
 // Игровая ли... Я чё знаю?
-if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3) {
+if (targetCW3.test(window.location.href)) {
   const containerElement = document.querySelector("body");
   const globalContainerElement = document.createElement("div");
   globalContainerElement.id = "uwu-global-container";
@@ -4394,7 +4479,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         position: relative;
       }
     `;
-
+    
     const flyStyle = document.createElement("style");
     flyStyle.textContent = `
 
@@ -4440,9 +4525,9 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       const day = String(timeSource.getDate()).padStart(2, "0");
       const month = String(timeSource.getMonth() + 1).padStart(2, "0");
       const year = String(timeSource.getFullYear());
-
+  
       timeElement.textContent = `${hours}:${minutes}:${seconds}`;
-
+  
       if (settings.clockStyle === "compact" || settings.clockStyle === "string") {
           dateElement.textContent = `${day}.${month}.${year.slice(-2)}`;
       } else if (settings.clockStyle === "standard") {
@@ -4451,7 +4536,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
           const monthName = monthNames[timeSource.getMonth()];
           dateElement.textContent = `${day} (${dayOfWeek}), ${monthName}, ${year}`;
       }
-
+  
       if (useInternetTime) {
           iconElement.textContent = "🌍︎";
           iconElement.title = "Точное онлайн время";
@@ -4515,45 +4600,45 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         offsetY = e.clientY - clockElement.offsetTop;
         document.body.style.userSelect = "none";
       });
-
+    
       clockElement.addEventListener("touchstart", (e) => {
-        e.preventDefault();
+        e.preventDefault(); 
         isDragging = true;
         const touch = e.touches[0];
         offsetX = touch.clientX - clockElement.offsetLeft;
         offsetY = touch.clientY - clockElement.offsetTop;
         document.body.style.userSelect = "none";
       });
-
+    
       document.addEventListener("mousemove", (e) => {
         if (isDragging) {
           clockElement.style.left = `${e.clientX - offsetX}px`;
           clockElement.style.top = `${e.clientY - offsetY}px`;
         }
       });
-
+    
       document.addEventListener("touchmove", (e) => {
-        e.preventDefault();
+        e.preventDefault(); 
         if (isDragging) {
           const touch = e.touches[0];
           clockElement.style.left = `${touch.clientX - offsetX}px`;
           clockElement.style.top = `${touch.clientY - offsetY}px`;
         }
       });
-
+    
       document.addEventListener("mouseup", () => {
         isDragging = false;
         document.body.style.userSelect = "auto";
         saveClockPosition();
       });
-
+    
       document.addEventListener("touchend", () => {
         isDragging = false;
         document.body.style.userSelect = "auto";
         saveClockPosition();
       });
     }
-
+    
     function saveClockPosition() {
       const clockPosition = {
         x: clockElement.offsetLeft,
@@ -4561,7 +4646,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       };
       localStorage.setItem("uwu_clock", JSON.stringify(clockPosition));
     }
-
+    
     function loadClockPosition() {
       const storedPosition = localStorage.getItem("uwu_clock");
       if (storedPosition) {
@@ -4570,22 +4655,22 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         clockElement.style.top = `${clockPosition.y}px`;
       }
     }
-
+    
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden) {
         fetchInternetTime();
       }
     });
-
+    
     window.addEventListener("focus", () => {
       fetchInternetTime();
     });
-
+    
     fetchInternetTime();
     if (settings.clockPosition === "fly") {
       loadClockPosition();
     }
-
+    
     document.body.classList.add(settings.clockStyle);
 }
   // ====================================================================================================================
@@ -4728,15 +4813,15 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       display: grid;
       grid-template-columns: 1fr 2fr;
       }
-
+    
       .close-info-container {
         text-align: right;
       }
-
+    
       .close-info {
         cursor: pointer;
       }
-
+    
       .more-info-container {
         cursor: pointer;
       }
@@ -4958,24 +5043,24 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       `
         #cages_div { position: relative; }
         #cages > tbody > tr > td { position: relative; }
-        #cages > tbody > tr > td::before {
+        #cages > tbody > tr > td::before { 
           content: attr(data-cell-num);
-          position: absolute;
-          z-index: 0;
-          top: 5px;
+          position: absolute; 
+          z-index: 0; 
+          top: 5px; 
           right: 5px;
-          color: ${style.color || "#000"};
-          opacity: ${style.opacity || 0.4};
-          font-size: 16px;
+          color: ${style.color || "#000"}; 
+          opacity: ${style.opacity || 0.4}; 
+          font-size: 16px; 
           font-weight: bold;
         }
       `;
-
+  
       let cagesNums = document.createElement("style");
       cagesNums.id = "cages_nums";
       cagesNums.innerHTML = css;
       document.head.appendChild(cagesNums);
-
+  
       let table = document.getElementById("cages");
       if (!table) return;
       let rows = table.querySelectorAll("tbody > tr");
@@ -4986,7 +5071,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         }
       }
     }
-
+  
     createCellNumbers({
       color: "white",
       opacity: 0.8,
@@ -5201,7 +5286,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
             timeInfo = ` (${seconds} сек)`;
           }
         }
-
+  
         const detailLine = document.createElement("p");
         detailLine.innerHTML = `<strong>${name}:</strong> <span style="color: #00cc00;">${effectivePercentage}%</span> / <span style="color: red;">${reversePercentage}%</span>`;
         detailLine.style.marginBottom = "0";
@@ -5220,8 +5305,8 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 
     globalContainer.appendChild(catInfoElement);
   }
-
-
+  
+  
   if (settings.showParametersDetails) {
     setupSingleCallback("#parameters_skills_block", createMoreInfoButton);
   }
@@ -5482,7 +5567,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
                 <button value="transit">Переход</button>
                 <button value="mine">Мина</button>
                 <button value="">Очистить</button>
-              </div>
+              </div>    
               <h3>Вкладка</h3>
                   <div id="uwu-buttonRow1"></div>
                   <hr id="uwu-hr">
@@ -5799,18 +5884,18 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 
   function handleTouchEnd(e) {
     dragEnd(e);
-
+    
     // Проверяем, был ли это клик
     const touchEndTime = Date.now();
     const touchDuration = touchEndTime - touchStartTime;
-
+    
     if (e.changedTouches && e.changedTouches[0]) {
         const touch = e.changedTouches[0];
         const moveDistance = Math.sqrt(
-            Math.pow(touch.clientX - touchStartX, 2) +
+            Math.pow(touch.clientX - touchStartX, 2) + 
             Math.pow(touch.clientY - touchStartY, 2)
         );
-
+        
         if (touchDuration < CLICK_THRESHOLD && moveDistance < MOVE_THRESHOLD && !wasDragging) {
             togglePanelContainer(e);
         }
@@ -5819,65 +5904,65 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 
     function dragStart(e) {
       const touch = e.touches ? e.touches[0] : e;
-
+    
       const savedStatus = JSON.parse(localStorage.getItem("uwu_climbingPanelStatus"));
       initialX = touch.clientX - (savedStatus ? savedStatus.x : climbingMainPanel.offsetLeft);
       initialY = touch.clientY - (savedStatus ? savedStatus.y : climbingMainPanel.offsetTop);
-
+    
       if (e.target === climbingPanelButton) {
         isDragging = true;
         wasDragging = false;
       }
-
+    
       if (e.type === 'touchstart') {
         e.preventDefault();
       }
     }
-
+    
     function drag(e) {
       if (isDragging) {
         const touch = e.touches ? e.touches[0] : e;
-
+    
         currentX = touch.clientX - initialX;
         currentY = touch.clientY - initialY;
-
+    
         const windowWidth = window.innerWidth;
         const windowHeight = window.innerHeight;
         const panelWidth = climbingMainPanel.offsetWidth;
         const panelHeight = climbingMainPanel.offsetHeight;
-
+    
         const maxX = windowWidth - panelWidth;
         currentX = Math.max(0, Math.min(currentX, maxX));
-
+    
         const maxY = windowHeight - panelHeight;
         currentY = Math.max(0, Math.min(currentY, maxY));
-
+    
         setPosition(currentX, currentY, climbingMainPanel);
-
+    
         wasDragging = true;
-
+    
         e.preventDefault();
       }
     }
-
+    
     function dragEnd(e) {
       if (isDragging) {
         saveClimbingPanelStatus();
       }
       isDragging = false;
     }
-
+    
     function setPosition(x, y, el) {
       el.style.left = `${x}px`;
       el.style.top = `${y}px`;
     }
-
+    
     function togglePanelContainer(e) {
       if (!wasDragging) {
         const arrow = document.getElementById("uwu-arrow");
         climbingPanelContainer.classList.toggle("open");
         saveClimbingPanelStatus();
-
+    
         if (climbingPanelContainer.classList.contains("open")) {
           arrow.textContent = "▲";
         } else {
@@ -5886,7 +5971,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       }
       wasDragging = false;
     }
-
+    
 
     function checkAndResetPanelPosition() {
       const windowWidth = window.innerWidth;
@@ -5958,7 +6043,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       display: none;
       padding: 5px;
     }
-
+    
     #uwu-climbingPanelContainer.open {
       display: block;
     }
@@ -6021,7 +6106,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       border: 2px solid black;
       table-layout: fixed;
     }
-
+  
     #uwu-climbingPanel > tr > td {
       height: calc(100% / 6);
       width: calc(100% / 10);
@@ -6039,7 +6124,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         font-size: 20px;
       }
     }
-
+    
     @media (max-width: 400px) {
       #uwu-climbingPanel {
         font-size: 16px;
@@ -6078,7 +6163,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       display: inline-block;
       margin-right: 10px;
     }
-
+  
     #uwu-climbingPanelContainer button {
       background-color: #ffffff4d;
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -6116,18 +6201,18 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       grid-template-rows: auto 1fr;
       height: calc(100% - 40px);
     }
-
+    
     #uwu-buttonContainer {
       overflow-y: auto;
       grid-column: 1 / 2;
       grid-row: 1 / 3;
     }
-
+    
     #uwu-functionButtonsContainer {
       grid-column: 2 / 3;
       grid-row: 1 / 2;
     }
-
+    
     #uwu-tableContainer {
       grid-column: 2 / 3;
       grid-row: 2 / 3;
@@ -6434,7 +6519,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       const b = parseInt(hex.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, ${alpha})`;
     }
-
+  
     const ITEM_MAP = {
       'Травы': ['13', '15', '17', '19', '21', '23', '25', '26', '106', '108', '109', '110', '111', '112', '115', '116', '119', '655'],
       'Мох': ['75', '78', '95'],
@@ -6443,80 +6528,80 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       'Ветки, вьюнки, костоправы': ['565', '566', '562', '563', '3993'],
       'Травящие предметы': ['985', '986', '987', '988', '989', '44', '180', '77', '7801', '7802', '7803', '7804', '7805', '7806']
     };
-
+  
     function generateHighlightStyles(cageItem) {
       const savedSettings = localStorage.getItem('uwu_highlightResources');
       if (!savedSettings) return;
-
+    
       const uwu_highlightResources = JSON.parse(savedSettings);
-
+    
       if (settings.highlightResourcesStyle === "background") {
         const styleElement = document.getElementById('resourcesStyle') || document.createElement('style');
         styleElement.id = 'resourcesStyle';
         styleElement.textContent = '';
-
+    
         uwu_highlightResources.forEach(resource => {
           if (resource.highlight) {
             const rgbaColor = hexToRGBA(resource.color, 0.4);
             let cssRules = '';
-
+    
             const items = ITEM_MAP[resource.name];
             if (!items) {
               console.warn("Неизвестный ресурс:", resource.name);
               return;
             }
-
+    
             items.forEach(itemName => {
               cssRules += `
                 .cage_items[style*='things/${itemName}.png'] {
                   background-color: ${rgbaColor} !important;
                 }`;
             });
-
+    
             if (cssRules) {
               styleElement.textContent += cssRules;
             }
           }
         });
-
+    
         document.head.appendChild(styleElement);
       } else if (settings.highlightResourcesStyle === "glow") {
         const style = cageItem.getAttribute("style");
         if (!style) return;
-
+    
         const oldHighlights = cageItem.querySelectorAll("style.uwu_itemHighlight");
         oldHighlights.forEach(oldHighlight => oldHighlight.remove());
-
+    
         cageItem.style.position = 'relative';
-
+    
         uwu_highlightResources.forEach((resource) => {
           if (resource.highlight) {
             const rgbaColor = hexToRGBA(resource.color, 1);
             let highlightedItems = [];
-
+    
             const items = ITEM_MAP[resource.name];
             if (!items) {
               console.warn("Неизвестный ресурс:", resource.name);
               return;
             }
-
+    
             items.forEach((itemName) => {
               const backgroundImages = style.match(/url\("things\/(.*?)\.png"\) (\d+)% (\d+)% no-repeat/g) || [];
-
+    
               backgroundImages.forEach((backgroundImage) => {
                 if (backgroundImage.includes(`things/${itemName}.png`)) {
                   const positionMatch = backgroundImage.match(/(url\("things\/(.*?)\.png"\)) (\d+)% (\d+)% no-repeat/);
                   const imageUrl = positionMatch ? positionMatch[1] : "";
                   const positionX = positionMatch ? positionMatch[3] : "0";
                   const positionY = positionMatch ? positionMatch[4] : "0";
-
+    
                   highlightedItems.push(
                     `${imageUrl} ${positionX}% ${positionY}% no-repeat`
                   );
                 }
               });
             });
-
+    
             if (highlightedItems.length > 0) {
               const styleBody = `
                 content: '';
@@ -6529,7 +6614,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
                 background: ${highlightedItems.join(", ")};
                 filter: drop-shadow(0 0 8px ${rgbaColor}) drop-shadow(0 0 8px ${rgbaColor});
               `;
-
+    
               const styleElement = document.createElement('style');
               styleElement.classList.add('uwu_itemHighlight');
               styleElement.textContent = `
@@ -6543,7 +6628,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         });
       }
     }
-
+  
     function setupMutationObserver(targetNode, callback, config) {
       const observer = new MutationObserver((mutationsList, observer) => {
         for (let mutation of mutationsList) {
@@ -6552,10 +6637,10 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
           }
         }
       });
-
+  
       observer.observe(targetNode, config);
     }
-
+  
     document.querySelectorAll(".cage_items").forEach((cageItem) => {
       generateHighlightStyles(cageItem);
       setupMutationObserver(cageItem, generateHighlightStyles, {
@@ -6632,50 +6717,61 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
   // ====================================================================================================================
   //   . . . ПОЛЬЗОВАТЕЛЬСКИЕ ЦВЕТА НАВЫКОВ И ПАРАМЕТРОВ . . .
   // ====================================================================================================================
-  if (settings.userParametersTheme) {
-    const defaultBackgroundImageUrl =
+  const defaultBackgroundImageUrl =
       "https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/parametersBackgroundImageURL.png";
-
-    function applyParameterColors() {
-      let cssStyles = "";
-
-      const otherColors = settings.parametersColors.other;
-      const otherFirstCellBackground = `linear-gradient(to right, ${otherColors[0]}, ${otherColors[1]})`;
-      const otherLastCellBackground = `linear-gradient(to right, ${otherColors[2]}, ${otherColors[3]})`;
-
-      cssStyles += `#parameters_skills_block .parameter .bar-fill { background: ${otherFirstCellBackground}; }\n`;
-      cssStyles += `#parameters_skills_block .parameter .bar { background: ${otherLastCellBackground}; }\n`;
-
-      for (const paramId in settings.parametersColors) {
-        if (paramId === "other") continue;
-
-        const colors = settings.parametersColors[paramId];
+  
+      function generateParameterStyles() {
+        let cssStyles = "";
+    
+        const otherColors = settings.parametersColors.other || ["#cccccc", "#cccccc", "#cccccc", "#cccccc"];
+        const otherFirstCellBackground = `linear-gradient(to right, ${otherColors[0]}, ${otherColors[1]})`;
+        const otherLastCellBackground = `linear-gradient(to right, ${otherColors[2]}, ${otherColors[3]})`;
+    
+        cssStyles += `#parameters_skills_block .bar-fill { background: ${otherFirstCellBackground}; }\n`;
+        cssStyles += `#parameters_skills_block .bar { background: ${otherLastCellBackground}; }\n`;
+    
         const backgroundImageURL = settings.parametersUserBackgroundImage
-          ? settings.parametersUserBackgroundImageURL
-          : defaultBackgroundImageUrl;
-        const firstCellBackground =
-          settings.parametersBackgroundImage ||
-          settings.parametersUserBackgroundImage
-            ? `url(${backgroundImageURL}), linear-gradient(to right, ${colors[0]}, ${colors[1]})`
-            : `linear-gradient(to right, ${colors[0]}, ${colors[1]})`;
-        const lastCellBackground =
-          settings.parametersBackgroundImage ||
-          settings.parametersUserBackgroundImage
-            ? `url(${backgroundImageURL}), linear-gradient(to right, ${colors[2]}, ${colors[3]})`
-            : `linear-gradient(to right, ${colors[2]}, ${colors[3]})`;
-
-        cssStyles += `#${paramId} .bar-fill { background: ${firstCellBackground} !important; }\n`;
-        cssStyles += `#${paramId} .bar { background: ${lastCellBackground} !important; }\n`;
-      }
-
-      const styleTag = document.createElement("style");
-      styleTag.id = "custom-parameter-styles";
-      styleTag.innerHTML = cssStyles;
-      document.head.appendChild(styleTag);
+            ? settings.parametersUserBackgroundImageURL
+            : defaultBackgroundImageUrl;
+        const useBackgroundImage = settings.parametersBackgroundImage || settings.parametersUserBackgroundImage;
+    
+        for (const paramId in settings.parametersColors) {
+            if (paramId === "other") continue;
+    
+            const colors = settings.parametersColors[paramId] || ["#cccccc", "#cccccc", "#cccccc", "#cccccc"];
+    
+            const firstCellBackground = useBackgroundImage
+                ? `url(${backgroundImageURL}), linear-gradient(to right, ${colors[0]}, ${colors[1]})`
+                : `linear-gradient(to right, ${colors[0]}, ${colors[1]})`;
+            const lastCellBackground = useBackgroundImage
+                ? `url(${backgroundImageURL}), linear-gradient(to right, ${colors[2]}, ${colors[3]})`
+                : `linear-gradient(to right, ${colors[2]}, ${colors[3]})`;
+    
+            cssStyles += `#${paramId} .bar-fill { background: ${firstCellBackground} !important; }\n`;
+            cssStyles += `#${paramId} .bar { background: ${lastCellBackground} !important; }\n`;
+        }
+    
+        return cssStyles;
     }
-
-    applyParameterColors();
-  }
+    
+    
+    function applyParameterColors() {
+        const existingStyleTag = document.getElementById("custom-parameter-styles");
+        if (existingStyleTag) {
+            existingStyleTag.remove();
+        }
+    
+        const cssStyles = generateParameterStyles();
+    
+        const styleTag = document.createElement("style");
+        styleTag.id = "custom-parameter-styles";
+        styleTag.innerHTML = cssStyles;
+        document.head.appendChild(styleTag);
+    }
+    
+    if (settings.userParametersTheme) {
+        applyParameterColors();
+    }
   // ====================================================================================================================
   //   . . . ПОЛЬЗОВАТЕЛЬСКИЙ ШРИФТ . . .
   // ====================================================================================================================
@@ -6690,7 +6786,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
           link.href = `https://fonts.googleapis.com/css?family=${encodeURIComponent(fontFamily)}`;
           document.head.appendChild(link);
       }
-
+  
       // Создаем элемент <style> для применения стилей
       const newFontStyle = document.createElement("style");
       newFontStyle.innerHTML = `
@@ -6698,62 +6794,62 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
               font-size: ${fontSize?.fontSizeBody}px;
               font-family: ${fontFamily ? `'${fontFamily}', sans-serif` : 'sans-serif'};
           }
-
+  
           .small {
               font-size: ${fontSize?.fontSizeSmall}px;
           }
-
+  
           #location {
               font-size: ${fontSize?.fontSizeLocation}px !important;
           }
-
+  
           .vlm0 {
               font-size: ${fontSize?.vlm0}px;
           }
-
+  
           .vlm1 {
               font-size: ${fontSize?.vlm1}px;
           }
-
+  
           .vlm2 {
               font-size: ${fontSize?.vlm2}px;
           }
-
+  
           .vlm3 {
               font-size: ${fontSize?.vlm3}px;
           }
-
+  
           .vlm4 {
               font-size: ${fontSize?.vlm4}px;
           }
-
+  
           .vlm5 {
               font-size: ${fontSize?.vlm5}px;
           }
-
+  
           .vlm6 {
               font-size: ${fontSize?.vlm6}px;
           }
-
+  
           .vlm7 {
               font-size: ${fontSize?.vlm7}px;
           }
-
+  
           .vlm8 {
               font-size: ${fontSize?.vlm8}px;
           }
-
+  
           .vlm9 {
               font-size: ${fontSize?.vlm9}px;
           }
-
+  
           .vlm10 {
               font-size: ${fontSize?.vlm10}px;
           }
       `;
       document.head.appendChild(newFontStyle);
   }
-
+  
   if (settings.useUserFonts) {
       applyFonts();
   }
@@ -6771,7 +6867,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 
       #cages_overflow {
         background: black;
-      }
+      } 
 
       #tr_actions > td, #tr_mouth > td, #location, .small {
         background-color: ${theme?.blocksColor || ""};
@@ -6785,15 +6881,15 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         background-color: unset;
         background: none;
       }
-
+    
       #tr_chat {
         background-color: ${theme?.chatColor || ""};
       }
-
+    
       body, input, select, .ui-slider-handle {
         color: ${theme?.textColor || ""};
       }
-
+    
       input, select, .ui-slider-horizontal {
         background-color: ${theme?.accentColor1 || ""};
         background: ${theme?.accentColor1 || ""};
@@ -6803,7 +6899,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       .ui-widget-content .ui-state-default {
         background: ${theme?.accentColor2 || ""};
         border: solid 1px ${theme?.accentColor2 || ""};
-      }
+      } 
 
       hr {
         border: solid 1px ${theme?.accentColor2 || ""};
@@ -6818,21 +6914,21 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         background: ${theme?.catTooltipBackground || ""} !important;
         color: ${theme?.textColor || ""} !important;
         border: 2px solid ${theme?.accentColor2 || ""} !important;
-      }
+      } 
 
       span.cat_tooltip > span.online {
         filter: brightness(2) contrast(150%);
       }
-
-      .cat:hover .cat_tooltip a, .other_cats_list > a {
-        color: ${theme?.linkColor || ""};
+      
+      .cat:hover .cat_tooltip a, .other_cats_list > a { 
+        color: ${theme?.linkColor || ""}; 
       }
 
       .move_name {
         color: ${theme?.moveNameColor || ""};
         background-color: ${theme?.moveNameBackground || ""} !important;
       }
-
+    
       a, a:hover {
         color: ${theme?.linkColor || ""};
       }
@@ -7021,24 +7117,24 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         width: 100%;
         height: 100%;
       }
-
+      
       #chat_msg, #cws_chat_msg {
         height: ${settings.chatHeight}px;
         width: auto;
       }
 
-      #history_block > div {
-        visibility: hidden;
+      #history_block > div { 
+        visibility: hidden; 
       }
 
       #history_block {
         display: block;
-        height: ${settings.historyHeight}px;
+        height: ${settings.historyHeight}px; 
         overflow-y: auto;
         resize: vertical;
       }
 
-      #family {
+      #family { 
         display: block;
         overflow-y: auto;
         resize: vertical;
@@ -7134,12 +7230,12 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       #deys {
         width: auto !important;
       }
-
+      
       #block_deys {
         flex-wrap: wrap;
       }
-
-      #mit {
+      
+      #mit { 
         width: auto !important;
       }
     `;
@@ -7178,7 +7274,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
     let firstNote = "";
     let timerStartTime = null;
     let initialTimerValue = 0;
-
+    
     const smellTimer = {
       0: 3600,
       1: 3600,
@@ -7191,7 +7287,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       8: 600,
       9: 0,
     };
-
+    
     function formatTime(seconds) {
       const hours = Math.floor(seconds / 3600);
       const minutes = Math.floor((seconds % 3600) / 60);
@@ -7200,11 +7296,11 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         minutes ? `${minutes} мин ` : ""
       }${remainingSeconds} с`;
     }
-
+    
     function updateSmellTimer() {
       const timerElement = document.getElementById("uwu_sniff_timer");
       if (!timerElement) return;
-
+    
       if (timerStartTime !== null) {
         const isActive = document.querySelector('#dein a[data-id="14"]') !== null;
         if (isActive) {
@@ -7215,30 +7311,30 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
           soundManager.playSound("notificationSound3", settings.notificationMyNameVolume);
           return;
         }
-
+    
         const currentTime = Date.now();
         const elapsedTime = Math.floor((currentTime - timerStartTime) / 1000);
         let remainingTime = initialTimerValue - elapsedTime;
-
+    
         if (remainingTime <= 0) {
           remainingTime = 0;
           timerStartTime = null;
           initialTimerValue = 0;
           soundManager.playSound("notificationSound3", settings.notificationMyNameVolume);
         }
-
+    
         timerElement.setAttribute("value", remainingTime);
         timerElement.textContent = remainingTime > 0 ? ` | Нюх через: ${formatTime(remainingTime)}` : "";
       }
     }
-
+    
     setInterval(updateSmellTimer, 1000);
-
+    
     function smellIconClick() {
       firstNote = document.getElementById("error").innerHTML;
       document.getElementById("smell_icon").click();
     }
-
+    
     function errorObserver() {
       const errorElement = document.getElementById("error");
       const html = errorElement.innerHTML;
@@ -7272,11 +7368,11 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         firstNote = "";
       }
     }
-
+    
     function messObserver() {
       const blockMessElement = document.getElementById("block_mess");
       if (!blockMessElement) return;
-
+    
       const isActive = document.querySelector('#dein a[data-id="14"]') !== null;
       if (!isActive && blockMessElement.children.length === 0 && timerStartTime === null) {
         const smellLevel = document.querySelector("#smell b").textContent;
@@ -7288,7 +7384,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         initialTimerValue = smellTime;
       }
     }
-
+    
     function timerElement() {
       const smallElement = document.querySelector(".small");
       if (smallElement) {
@@ -7298,7 +7394,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         );
       }
     }
-
+    
     window.addEventListener("load", function () {
       setupSingleCallback(".small", timerElement);
       setupSingleCallback("#smell_icon", smellIconClick);
@@ -7318,9 +7414,9 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
   if (settings.duplicateTimeInBrowserTab) {
     const titleElement = document.querySelector("title");
     let blockMess = null;
-
+  
     function updateTitle() {
-
+  
       if (!blockMess) {
         blockMess = document.getElementById("block_mess");
         if (!blockMess) {
@@ -7328,28 +7424,28 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
           return;
         }
       }
-
+  
       const messageText = blockMess.textContent.trim();
-
+  
       const catNameMatch = messageText.match(/^(.+?)\s+держит/);
       const catName = catNameMatch ? catNameMatch[1] : "";
-
+  
       if (catName) {
         titleElement.textContent = `Поднят. Во рту | ${catName}`;
       } else {
         const timeActionMatch = messageText.match(/^(.+?)\s+(\d+\s*(?:ч\s*)?\d+\s*мин\s*\d+\s*с|\d+\s*мин\s*\d+\s*с|\d+\s*с)\.\s*(Отменить)?$/);
-
+  
         if (timeActionMatch) {
           const actionText = timeActionMatch[1].trim();
           const currentTime = timeActionMatch[2].trim();
-
+  
           titleElement.textContent = `${currentTime} | ${actionText}`;
         } else {
           titleElement.textContent = "Игровая / CatWar";
         }
       }
     }
-
+  
     setupMutationObserver("#tr_actions", updateTitle, { childList: true, subtree: true, characterData: true });
   }
   // ====================================================================================================================
@@ -7372,35 +7468,35 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
     const ist = historyBlock.querySelector("#ist");
     const locationSpan = historyBlock.querySelector("#location");
     const currentLocation = locationSpan.textContent.trim();
-
+  
     if (currentLocation === "[ Загружается… ]") {
       return;
     }
-
+  
     let cleaningLogBlock = historyBlock.querySelector("#uwu-cleaningLog");
     if (!cleaningLogBlock) {
       createCleaningLogBlock(historyBlock);
       cleaningLogBlock = historyBlock.querySelector("#uwu-cleaningLog");
     }
-
+  
     const istOuterHtml = ist.outerHTML;
     const actions = istOuterHtml
       .split(".")
       .map((action) => action.trim())
       .filter((action) => action);
     const lastAction = actions[actions.length - 2];
-
+  
     const cleaningLogContent = cleaningLogBlock.querySelector(
       "#uwu-cleaningLog-content"
     );
-
+  
     if (lastAction) {
       if (settings.cleaningLogStyle === "smart") {
         processSmartAction(lastAction, currentLocation, cleaningLogContent);
       } else {
         processStandardAction(lastAction, currentLocation, cleaningLogContent);
       }
-
+  
       let storageKey;
       switch (settings.cleaningLogStyle) {
         case "smart":
@@ -7410,7 +7506,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
           storageKey = "uwu_cleaningLogStandard";
           break;
       }
-
+  
       localStorage.setItem(
         storageKey,
         JSON.stringify({
@@ -7441,15 +7537,15 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         <a href="#" id="uwu-cleaningLog-clear">Очистить лог</a>
       </div>
     `;
-
+  
     historyBlock.insertAdjacentHTML("beforeend", cleaningLogTemplate);
-
+  
     const hr = document.createElement("hr");
     historyBlock.insertBefore(
       hr,
       historyBlock.querySelector("#uwu-cleaningLog")
     );
-
+  
     const cleaningLogContent = historyBlock.querySelector(
       "#uwu-cleaningLog-content"
     );
@@ -7467,7 +7563,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         catNamesAndIds
       );
     }
-
+  
     const clearButton = historyBlock.querySelector("#uwu-cleaningLog-clear");
     clearButton.addEventListener("click", () => {
       cleaningLogBuffer = "";
@@ -7548,7 +7644,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 
   function processSmartAction(action, location, cleaningLogContent) {
     let matched = false;
-
+  
     for (const relevantAction of relevantActions) {
       if (relevantAction.regex.test(action)) {
         matched = true;
@@ -7563,21 +7659,21 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
           .split(".")
           .map((line) => line.trim())
           .filter((line) => line);
-
+  
         switch (relevantAction.type) {
           case "check":
             processCheckAction(logLines, catName, catId, location);
             break;
-
+  
           case "putdown":
             processPutdownAction(logLines, catName, catId, location);
             break;
-
+  
           case "pickup":
             processPickupAction(logLines, catName, catId, location);
             break;
         }
-
+  
         cleaningLogBuffer =
           logLines.join(". ") + (logLines.length > 0 ? "." : "");
         if (!catNamesAndIds.some(cat => cat.id === catId)) {
@@ -7590,7 +7686,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         return;
       }
     }
-
+  
     if (!matched) {
       const logLines = cleaningLogBuffer
         .split(".")
@@ -7604,7 +7700,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         catNamesAndIds
       );
     }
-
+  
     return null;
   }
 
@@ -7643,14 +7739,14 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
     const catPattern = new RegExp(
       `\\[${catName}${settings.cleaningLogShowID ? ` ${catId}` : ""}\\]`
     );
-
+  
     // 1. Ищем последнее и предпоследнее предложения.
     const lastSentenceIndex = logLines.length - 1;
     const penultimateSentenceIndex = lastSentenceIndex - 1;
-
+  
     // 2. Проверяем последнее предложение на наличие "Опущен" без текущего имени кота.
     const lastSentence = logLines[lastSentenceIndex];
-
+  
     if (
       lastSentence.includes(`на локации "${location}"`) &&
       lastSentence.includes("Опущен")
@@ -7666,7 +7762,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         }
       }
     }
-
+  
     // 3. Если есть, добавляем имя текущего кота к этому предложению.
     if (
       lastSentence.includes(`на локации "${location}"`) &&
@@ -7783,9 +7879,9 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 
   function processUnmatchedAction(logLines, cleaningLogContent, action) {
     const lastLogIndex = logLines.length - 1;
-
+  
     const isCancelAction = /Отменил(а)? /.test(action);
-
+  
     if (
       lastLogIndex >= 0 &&
       logLines[lastLogIndex].includes("Проверен [") &&
@@ -7846,8 +7942,8 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 
         if (!isNaN(currentCount) && currentCount > previousCount) {
           soundManager.playSound(
-            "notificationSound1",
-            settings.notificationMyNameVolume
+            settings.notificationPMSound,
+            settings.notificationPMVolume
           );
           previousCount = currentCount;
         } else if (!isNaN(currentCount)) {
@@ -7861,23 +7957,23 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
   // ====================================================================================================================
   if (settings.notificationActionEnd) {
     let actionStartTime = null;
-
+  
     const observer = new MutationObserver(() => {
       const blockMess = document.getElementById("block_mess");
-
+  
       if (blockMess && blockMess.innerHTML.trim() !== "" && !actionStartTime) {
         actionStartTime = Date.now();
       } else if (!blockMess && actionStartTime) {
         const actionEndTime = Date.now();
         const actionDuration = actionEndTime - actionStartTime;
-
+  
         if (actionDuration >= 6000) {
-          soundManager.playSound("notificationSound3", settings.notificationMyNameVolume);
+          soundManager.playSound(settings.notificationActionEndSound, settings.notificationActionEndVolume);
         }
         actionStartTime = null;
       }
     });
-
+  
     const targetNode = document.getElementById("tr_actions");
     if (targetNode) {
       observer.observe(targetNode, { childList: true, subtree: true });
@@ -7889,19 +7985,19 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
   function handleInMouthNotification() {
     const blockMess = document.getElementById("block_mess");
     if (!blockMess) return;
-
+  
     const observer = new MutationObserver(() => {
       if (blockMess.innerHTML.includes("во рту. Вы не сможете выбраться")) {
         soundManager.playSound(
-          "notificationSound1",
-          settings.notificationMyNameVolume
+          settings.notificationInMouthSound,
+          settings.notificationInMouthVolume
         );
       }
     });
-
+  
     observer.observe(blockMess, { childList: true, subtree: true });
   }
-
+  
   if (settings.notificationInMouth) {
     setupMutationObserver("#tr_actions", handleInMouthNotification, {
       childList: true,
@@ -7927,8 +8023,8 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 
         if (lastEntry !== undefined && attackRegex.test(lastEntry)) {
           soundManager.playSound(
-            "notificationSound1",
-            settings.notificationMyNameVolume
+            settings.notificationInFightModeSound,
+            settings.notificationInFightModeVolume
           );
         }
       }
@@ -7966,10 +8062,14 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       const nickElement = target.closest(".nick");
       if (nickElement) {
         const textArea = document.getElementById("text");
-        textArea.value += nickElement.textContent;
+        let nick = nickElement.textContent;
+        if (settings.addCommaAfterNick) {
+            nick += ", ";
+        }
+        textArea.value += nick;
         textArea.focus();
         return;
-      }
+    }
 
       const reportButton = target.closest(".msg_report");
       if (reportButton) {
@@ -8087,11 +8187,11 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
           display: flex;
           flex-direction: ${settings.reverseChat ? "column-reverse" : "column"};
         }
-
+  
         #chat_msg {
           display: none;
         }
-
+  
         #msg {
           display: flex;
           justify-content: space-between;
@@ -8223,14 +8323,14 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       border-radius: 10px;
       margin-bottom: 10px;
     }
-
+    
     #info_main,
     #tos,
     #cages_overflow,
     #cages_div {
       border-radius: 10px;
     }
-
+    
     #main_table > tbody > #tr_actions,
     #main_table > tbody > #tr_mouth,
     #main_table > tbody > #tr_chat,
@@ -8238,7 +8338,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
     #main_table > tbody > #tr_info {
       margin: 0px 10px 10px 10px;
     }
-
+    
     #tr_chat,
     #tr_actions > td,
     #tr_mouth > td,
@@ -8256,19 +8356,19 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
   if (settings.fightTeams) {
     const colors = settings.fightTeamsColors;
     const uwu_fightTeamsCats = JSON.parse(localStorage.getItem('uwu_fightTeamsCats')) || {};
-
+  
     const fightPanel = document.getElementById("fightPanel");
     const buttonHTML =
       '<button id="updateTableButton" style="width: 100%;">Обновить команды</button>';
     fightPanel.insertAdjacentHTML("beforeend", buttonHTML);
-
+  
     document.getElementById("updateTableButton").onclick = () => {
       if (!document.getElementById("uwu-team-settings")) {
         createTeamTable();
       }
       updateTeamTable();
     };
-
+  
     function createTeamTable() {
       const tableHTML = // html
       `
@@ -8289,25 +8389,25 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       const updateButton = document.getElementById("updateTableButton");
       updateButton.insertAdjacentHTML("beforebegin", tableHTML);
     }
-
+  
     function updateTeamTable() {
       const tbody = document.getElementById("teamTableBody");
       tbody.innerHTML = "";
       const cages = document.querySelectorAll("#cages .cage");
-
+    
       cages.forEach((cage) => {
         const catName = cage.querySelector(".cat_tooltip a")?.textContent;
         const arrow = cage.querySelector(".arrow.arrow-paws");
-
+    
         if (catName && arrow) {
           const arrowId = arrow.id;
           const savedTeam = uwu_fightTeamsCats[arrowId];
-
+    
           const buttonsHTML = Object.keys(colors)
             .map((team) => {
               const isSelected = savedTeam === team ? 'selected' : '';
               return `
-                <button
+                <button 
                   class="team-color-button ${isSelected}"
                   data-arrow-id="${arrowId}"
                   data-team="${team}"
@@ -8316,7 +8416,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
               `;
             })
             .join("");
-
+    
           const rowHTML = `
             <tr>
               <td style="border: 1px solid #000; padding: 5px;">${catName}</td>
@@ -8324,13 +8424,13 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
             </tr>
           `;
           tbody.insertAdjacentHTML("beforeend", rowHTML);
-
+    
           if (savedTeam) {
             applyTeamColors(arrowId, savedTeam);
           }
         }
       });
-
+    
       const teamColorButtons = document.querySelectorAll('.team-color-button');
       teamColorButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -8340,7 +8440,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         });
       });
     }
-
+  
     function applyTeamColors(arrowId, team) {
       const styleElement = document.createElement('style');
       const cssRule = `
@@ -8349,7 +8449,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       `;
       styleElement.appendChild(document.createTextNode(cssRule));
       document.head.appendChild(styleElement);
-
+    
       uwu_fightTeamsCats[arrowId] = team;
       localStorage.setItem('uwu_fightTeamsCats', JSON.stringify(uwu_fightTeamsCats));
     }
@@ -8372,7 +8472,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 
     const fightPanel = document.getElementById("fightPanel");
     const firstImage = fightPanel.querySelector("img");
-
+    
     const parentDiv = firstImage.parentElement;
     parentDiv.insertBefore(dragDiv, firstImage);
 
@@ -8546,11 +8646,11 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         resize: vertical;
         overflow-y: scroll;
       }
-
+      
       #uwu-Compacted-Fight-Log {
         resize: vertical;
         overflow-y: scroll;
-      }
+      } 
       `;
     document.head.appendChild(uwuFightLog);
 
@@ -8567,7 +8667,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
     const alwaysDayStyle = `
       #cages_div {
         opacity: 1 !important;
-      }
+      }   
     `;
 
     const styles = document.head.querySelectorAll("style");
@@ -8619,8 +8719,8 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
       #skyDuplicate {
         height: 15%;
         width: 100%;
-        mask-image: linear-gradient(to bottom,
-          rgba(0, 0, 0, 1),
+        mask-image: linear-gradient(to bottom, 
+          rgba(0, 0, 0, 1), 
           rgba(0, 0, 0, 0.40) 50%,
           rgba(0, 0, 0, 0)
         );
@@ -8696,6 +8796,10 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 
   function getSkyType() {
     const skyElement = document.querySelector("#sky");
+    if (!skyElement) {
+        currentWeather = "unknown";
+        return;
+    }
     const skyStyle = skyElement.getAttribute("style");
 
     if (settings.weatherEnabled) {
@@ -8706,19 +8810,11 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         switch (skyNumber) {
           case 2:
           case 4:
-            if (settings.minecraftStyle) {
-              currentWeather = "pixelRain";
-            } else {
-              currentWeather = "rain";
-            }
+            currentWeather = settings.minecraftStyle ? "pixelRain" : "rain";
             break;
           case 7:
           case 8:
-            if (settings.minecraftStyle) {
-              currentWeather = "pixelSnow";
-            } else {
-              currentWeather = "snow";
-            }
+            currentWeather = settings.minecraftStyle ? "pixelSnow" : "snow";
             break;
           case 22:
             currentWeather = "northernLights";
@@ -8727,7 +8823,6 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
             currentWeather = "clear";
         }
       } else {
-        console.log("Потерял небо, небо найдись пж...");
         currentWeather = "unknown";
       }
     }
@@ -8735,46 +8830,79 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 
   function getTime() {
     const timeElement = document.querySelector("#hour");
-    const hourTime = timeElement.querySelector("img").getAttribute("src");
+    if (!timeElement) {
+        currentHour = "unknown";
+        return;
+    }
+    const hourImg = timeElement.querySelector("img");
+
+    if (!hourImg) {
+        currentHour = "unknown";
+        return;
+    }
+
+    const hourTime = hourImg.getAttribute("src");
+
+    if (!hourTime) {
+        currentHour = "unknown";
+        return;
+    }
+
 
     if (settings.weatherEnabled) {
-      const hourNumber = parseInt(hourTime.match(/(\d+)\.png$/)[1]);
+      const match = hourTime.match(/(\d+)\.png$/);
+      if (match) {
+          const hourNumber = parseInt(match[1]);
 
-      if (hourNumber >= 6 && hourNumber <= 12) {
-        currentHour = "morning";
-      } else if (hourNumber >= 13 && hourNumber <= 18) {
-        currentHour = "day";
-      } else if (hourNumber >= 19 && hourNumber <= 21) {
-        currentHour = "evening";
+          if (hourNumber >= 6 && hourNumber <= 12) {
+            currentHour = "morning";
+          } else if (hourNumber >= 13 && hourNumber <= 18) {
+            currentHour = "day";
+          } else if (hourNumber >= 19 && hourNumber <= 21) {
+            currentHour = "evening";
+          } else {
+            currentHour = "night";
+          }
       } else {
-        currentHour = "night";
+        currentHour = "unknown";
       }
-      // console.log("Текущий час:", hourNumber);
     }
   }
 
   function getSeason() {
     const seasonElement = document.querySelector("img[src*='symbole/season']");
-    const seasonSrc = seasonElement.getAttribute("src");
-    const match = seasonSrc.match(/season(\d+)\.png/);
+    if (!seasonElement) {
+      currentSeason = "unknown";
+      return;
+    }
 
+    const seasonSrc = seasonElement.getAttribute("src");
+    if (!seasonSrc) {
+        currentSeason = "unknown";
+        return;
+    }
+
+    const match = seasonSrc.match(/season(\d+)\.png/);
     if (match) {
-      const seasonNumber = parseInt(match[1]);
-      switch (seasonNumber) {
-        case 0:
-          currentSeason = "winter";
-          break;
-        case 1:
-          currentSeason = "spring";
-          break;
-        case 2:
-          currentSeason = "summer";
-          break;
-        case 3:
-          currentSeason = "autumn";
-          break;
-      }
-      // console.log("Текущий сезон:", currentSeason);
+        const seasonNumber = parseInt(match[1]);
+        switch (seasonNumber) {
+            case 0:
+              currentSeason = "winter";
+              break;
+            case 1:
+              currentSeason = "spring";
+              break;
+            case 2:
+              currentSeason = "summer";
+              break;
+            case 3:
+              currentSeason = "autumn";
+              break;
+            default:
+              currentSeason = "unknown";
+        }
+    } else {
+        currentSeason = "unknown";
     }
   }
 
@@ -8910,22 +9038,23 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
         temperatureDisplayElement.innerHTML = `[?] Текущий модификатор: ${weatherModifier} (${temperatureDescription})`;
       }
     } else {
-      console.log("...я временно потерял бекграунд температуры🌡️...");
+      // console.log("...я временно потерял бекграунд температуры🌡️...");
     }
   }
   // ====================================================================================================================
   if (!settings.manualWeatherPanel) {
     setupMutationObserver("#sky", getSkyType);
 
+    setupSingleCallback("#hour", getTime);
     setupMutationObserver("#hour", getTime, {
-      attributes: true,
-      attributeFilter: ["src"],
-      subtree: true,
-    });
+        attributes: true,
+        attributeFilter: ["src"],
+        subtree: true,
+    }, 8, 500, 20);
 
     setupMutationObserver("img[src*='symbole/season']", getSeason, {
-      attributes: true,
-      attributeFilter: ["src"],
+        attributes: true,
+        attributeFilter: ["src"],
     });
   }
 
@@ -9283,7 +9412,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 
   function removeAurora(auroraElement) {
     auroraElement.style.animation = "auroraFadeOut 6s ease-in-out";
-
+  
     setTimeout(() => {
       if (weatherContainer.contains(auroraElement)) {
         weatherContainer.removeChild(auroraElement);
@@ -9334,10 +9463,10 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
   function toggleAurora() {
       if (settings.manualWeatherPanel) return;
 
-      const isAuroraConditionMet =
-          currentWeather === "northernLights" ||
-          (currentWeather === "clear" &&
-          currentHour === "night" &&
+      const isAuroraConditionMet = 
+          currentWeather === "northernLights" || 
+          (currentWeather === "clear" && 
+          currentHour === "night" && 
           (currentSeason === "autumn" || currentSeason === "winter"));
 
       if (isAuroraConditionMet) {
@@ -9665,7 +9794,7 @@ if (window.location.href === targetCW3 ||  window.location.href === targetOldCW3
 // ====================================================================================================================
 //   . . . ТАРГЕТИНГ ОКНА ОХОТЫ И ПОДГОТОВКА КОНТЕЙНЕРОВ . . .
 // ====================================================================================================================
-if (window.location.href === targetCW3Hunt ||  window.location.href === targetOldCW3Hunt) {
+if (targetCW3Hunt.test(window.location.href)) {
   amogusSus();
   const containerElement = document.querySelector("body");
   const globalContainerElement = document.createElement("div");
@@ -9751,7 +9880,7 @@ if (window.location.href === targetCW3Hunt ||  window.location.href === targetOl
     z-index: 3;
     bottom: 60px;
   }
-
+  
   #smellTimer {
     font-size: 18px;
     background: white;
@@ -9760,7 +9889,7 @@ if (window.location.href === targetCW3Hunt ||  window.location.href === targetOl
     width: 100px;
     position: absolute;
     z-index: 3;
-    bottom: 40px;
+    bottom: 40px; 
   }
   `;
     document.head.appendChild(describeHuntingSmell);
@@ -9787,17 +9916,17 @@ if (window.location.href === targetCW3Hunt ||  window.location.href === targetOl
         #nav_buttons_wrapper {
           display: none;
         }
-
+  
         #joystick-container {
           pointer-events: auto;
           position: fixed;
           bottom: 20px;
           right: 20px;
-          width: ${settings.sizeHuntingVirtualJoystick}px;
+          width: ${settings.sizeHuntingVirtualJoystick}px; 
           height: ${settings.sizeHuntingVirtualJoystick}px;
-          z-index: 10;
+          z-index: 10; 
         }
-
+  
         #joystick-base {
           width: 100%;
           height: 100%;
@@ -9805,7 +9934,7 @@ if (window.location.href === targetCW3Hunt ||  window.location.href === targetOl
           background-color: rgba(128, 128, 128, 0.5);
           position: relative;
         }
-
+  
         #joystick-head {
           position: absolute;
           top: 50%;
@@ -9815,7 +9944,7 @@ if (window.location.href === targetCW3Hunt ||  window.location.href === targetOl
           height: ${settings.sizeHuntingVirtualJoystick / 2}px;
           border-radius: 50%;
           background-color: #808080;
-          touch-action: none;
+          touch-action: none; 
         }
       `;
       const style = document.createElement("style");
@@ -10098,7 +10227,7 @@ if (targetProfile.test(window.location.href)) {
   // ====================================================================================================================
   if (settings.moreProfileInfo) {
     setupSingleCallback("tr:has(img[src='img/icon_kraft.png'])", addKraftLevel);
-
+    
     function addKraftLevel() {
       const kraftLevels = {
         "блоха": 0,
@@ -10112,7 +10241,7 @@ if (targetProfile.test(window.location.href)) {
         "достоин Львиного племени": 8,
         "идеальная": 9
       };
-
+    
         const kraftRow = document.querySelector('tr:has(img[src="img/icon_kraft.png"])');
         const kraftTextElement = kraftRow.querySelector('b');
         const kraftText = kraftTextElement.textContent.trim();
@@ -10122,7 +10251,7 @@ if (targetProfile.test(window.location.href)) {
         }
     }
   }
-
+  
   if (settings.calculators) {
     setupSingleCallback("#info", moonCalculator);
   }
@@ -10460,7 +10589,7 @@ function setupActivityCalc() {
 
   if (currentStage) {
     progress.doneFromZero = currentStage.fromZero + Number(activity[1].split("/")[0]);
-    progress.stage = activityStages.indexOf(currentStage);
+    progress.stage = activityStages.indexOf(currentStage); 
   }
 
   const activityInfoHTML = // html
@@ -10634,7 +10763,7 @@ function setupActivityCalc() {
   function updateHourWord(hours) {
     document.getElementById("hour-word").textContent = declensionOfNumber(hours, ["час", "часа", "часов"]);
   }
-
+  
   function updateMinusWord(minusValue) {
     document.getElementById("minus-word").textContent = declensionOfNumber(minusValue, ["секунду", "секунды", "секунд"]);
   }
@@ -10648,7 +10777,7 @@ if (targetLs.test(window.location.href)) {
     setupMutationObserver("#main", setupPreviewButton, {
       childList: true,
       subtree: true,
-    });
+    }); 
   }
 
 }
@@ -10658,7 +10787,7 @@ if (targetLs.test(window.location.href)) {
 if (targetBlog.test(window.location.href)) {
 
   if (settings.commentPreview) {
-    setupMutationObserver("#site_table", addCommentPreview);
+    setupMutationObserver("#site_table", addCommentPreview); 
   }
 
   if (settings.moreCommentButtons) {
@@ -10675,9 +10804,9 @@ if (targetBlog.test(window.location.href)) {
 //   . . . ЛЕНТА . . .
 // ====================================================================================================================
 if (targetSniff.test(window.location.href)) {
-
+  
   if (settings.commentPreview) {
-    setupMutationObserver("#site_table", addCommentPreview);
+    setupMutationObserver("#site_table", addCommentPreview); 
   }
 
   if (settings.moreCommentButtons) {
@@ -10700,7 +10829,7 @@ function addCommentPreview() {
   const lastParagraph = form.querySelector("p:last-child");
   lastParagraph.insertAdjacentHTML( "afterbegin",
     `
-    <input type="button" id="comment-preview" value="Предпросмотр">
+    <input type="button" id="comment-preview" value="Предпросмотр"> 
     `
   );
 
@@ -10788,8 +10917,8 @@ function getCommentInfo(comment) {
 function handleAnswerAction(commentInfo) {
   const textarea = document.getElementById('comment');
   const currentText = textarea.value;
-  const newText = commentInfo.authorProfile ?
-    `[link${commentInfo.authorProfile}] (#${commentInfo.commentNum}), ` :
+  const newText = commentInfo.authorProfile ? 
+    `[link${commentInfo.authorProfile}] (#${commentInfo.commentNum}), ` : 
     `[b][code]${commentInfo.authorName}[/code][/b] (#${commentInfo.commentNum}), `;
 
   textarea.value = currentText + newText;
@@ -10926,7 +11055,7 @@ function initializeTemplates() {
         margin-top: 5px;
         color: #d5d5d5;
       }
-
+      
       #uwu-templates > h2 {
         font-size: 2em;
         text-align: center;
@@ -10974,7 +11103,7 @@ function initializeTemplates() {
         cursor: pointer;
         transition: background-color 0.3s ease;
       }
-
+      
       .uwu-button:hover {
         background-color: rgba(255, 255, 255, 0.2);
       }
