@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.38.0-03.25
+// @version      v1.37.0-03.25
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.net/cat1477928 )
 // @copyright    2025, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.38.0";
+const current_uwu_version = "1.37.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   settingsTheme: "dark",
@@ -40,7 +40,6 @@ const uwuDefaultSettings = {
   gameFieldBackgroundUser: false,
   gameFieldBackgroundUserImageURL: "",
   userTheme: false,
-  userThemeKns: false,
   showOtherCatsList: "2",
   commentsAvatars: false,
 
@@ -65,9 +64,6 @@ const uwuDefaultSettings = {
   notificationInFightMode: false,
   notificationInFightModeSound: "notificationSound1",
   notificationInFightModeVolume: 5,
-  notificationBlock: false,
-  notificationBlockSound: "notificationBlockSound1",
-  notificationBlockVolume: 5,
 
   showHintWhenToSniff: false,
   duplicateTimeInBrowserTab: false,
@@ -165,20 +161,19 @@ const uwuDefaultSettings = {
 // ====================================================================================================================
 //   . . . ТАРГЕТНЫЕ ССЫЛКИ . . .
 // ====================================================================================================================
-const targetCW3 = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/cw3(?:\/)?(?:\?.*)?$/;
-const targetCW3Hunt = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/cw3\/jagd(?:\/)?(?:\?.*)?$/;
-const targetCW3Kns = /^https?:\/\/(\w+\.)?catwar\.(net|su)\/cw3\/kns\/?(\?.*)?$/;
+const targetCW3 = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/cw3(?:\/)?(?:\?.*)?$/;
+const targetCW3Hunt = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/cw3\/jagd(?:\/)?(?:\?.*)?$/;
 
-const targetSettings = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/settings/;
-const targetMainProfile = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/$/;
-const targetProfile = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/cat\d+$/;
-const targetLs = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/ls/;
-const targetLsNew = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/ls\?new(=.*)?$/;
-const targetChats = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/chat/;
-const targetBlog = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/(?:blog\d+|blogs)(?:$|[/?#])/i;
-const targetBlogsCreation = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/blogs\?creation/;
-const targetSniff = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/sniff(?:\d+|)(?:$|[/?#])/i;
-const targetSniffCreation = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/sniff\?creation/;
+const targetSettings = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/settings/;
+const targetMainProfile = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/$/;
+const targetProfile = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/cat\d+$/;
+const targetLs = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/ls/;
+const targetLsNew = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/ls\?new(=.*)?$/;
+const targetChats = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/chat/;
+const targetBlog = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/(?:blog\d+|blogs)(?:$|[/?#])/i;
+const targetBlogsCreation = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/blogs\?creation/;
+const targetSniff = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/sniff(?:\d+|)(?:$|[/?#])/i;
+const targetSniffCreation = /^(https?:\/\/)(?:[a-z]\.)?catwar\.(?:net|su)\/sniff\?creation/;
 
 // ====================================================================================================================
 //   . . . СТАНДАРТНЫЕ ЦВЕТОВЫЕ ТЕМЫ . . .
@@ -491,12 +486,6 @@ const uwusettings = // html
         </div>
       </div>
 
-      <div>
-        <p>Применяет вашу тему и на конструктор окрасов.</p>
-        <input type="checkbox" id="user-theme" data-setting="userThemeKns" />
-        <label for="user-theme-enabled">Цвета в конструкторе окрасов</label>
-      </div>
-
       <hr id="uwu-hr" class="uwu-hr">
       <h2>Шрифты и текст</h2>
       
@@ -599,7 +588,6 @@ const uwusettings = // html
             <!-- Элементы списка блоков -->
           </ul>
         </div>
-        <button id="reset-layout-button" class="uwu-button remove-button">Сбросить</button>
       </div>
 
       <div>
@@ -968,27 +956,6 @@ const uwusettings = // html
         <input type="text" id="fightTeamsPanelHightField" placeholder=". . ." data-setting="fightTeamsPanelHight" />
         <label>px; - Начальная высота панели Командного Боя</label>
       </div>
-
-      <div>
-      <p>Звуковое уведомление при нажатии/отжатии кнопки блокировании удара.</p>
-      <input type="checkbox" id="notification-Block" data-setting="notificationBlock" />
-      <label for="notification-Block">Звук блокирования</label>
-      <div id="notificationBlockSoundContainer">
-        <div class="custom-select" id="notificationBlockSound">
-          <div class="select-selected">Выберите звук</div>
-          <div class="select-items"></div>
-        </div>
-        <div id="notification-volume">
-          <p>Громкость</p>
-          <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notificationBlockVolume" list="volumeStep" data-setting="notificationBlockVolume">
-          <datalist id="volumeStep">
-            <option value="1">10%</option>
-            <option value="10">100%</option>
-          </datalist>
-        </div>
-        <div id="notificationBlockContainer"></div>
-      </div>
-    </div>
 
   <table id="colorSettingsTable">
     <thead>
@@ -1467,25 +1434,23 @@ const newsPanel = // html
 `
 <div id="news-panel">
     <button id="news-button">
-        v${current_uwu_version} - 🌸 Продолжаем разгребать проблемы и недоделки.
+        v${current_uwu_version} - 🌸 Разгребаем накопившиеся проблемы.
     </button>
     <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>— Кнопка "Сбросить" Редизайна игровой, у кого всё там с ним плохо. Возможность применить Цветовую тему в Конструктор окрасов!</p>
+        <p>— Возможность Обращений с автоматической запятой, прямо как в том самом классическом скрипте! Настройки звука и громкости уведомлений под определённые действия!</p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Внешний вид</h3>
-        <p>— Аватарки в блогах и лентах снова работают.</p>
-        <p>— Немного поменял блок Действий. Он будет кататься, но хотя бы не так странно выглядеть.</p>
-        <p>— Чуть переработал стили Редизайна Игровой. Теперь расстояние Игровой от верха окна динамичней. Не должно быть странных пробелов или наоборот прилипаний.</p>
+        <p>— Починились (Вроде) применения цветов к Уникальным навыкам.</p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Изменения кода</h3>
-        <p>— Переписан и улучшен Таймер Нюха. Он снова работает (Вроде).</p>
-        <p>— Немного стало получше коду редактора Редизайна игровой.</p>
-        <p>— Перешли на user.js ссылку (В прошлой версии мода), в теории может помочь с автообновами и автоустановками.</p>
-        <p>— Ещё чуть более красивое и правильное писание таргетных ссылок.</p>
+        <p>— Много проверок на то, чтобы не ломало кодик, если не будут найдены погодные данные.</p>
+        <p>— Починено (Вроде) отсутствие блоков на перетаскивание в Редизайне Игровой.</p>
+        <p>— Удалена кнопка "Сохранить" в Редизайне Игровой из-за ненадобности -> Теперь всё сохраняется сразу при любом изменении вида.</p>
+        <p>— Поддержка зеркальных серверов CatWar'а + просто более адекватные и красивые проверки адреса страницы.</p>
         <hr id="uwu-hr" class="uwu-hr">
-        <p>Дата выпуска: ??.03.25</p>
-    </div> 
+        <p>Дата выпуска: 20.03.25</p>
+    </div>
 </div>
 `;
 // ====================================================================================================================
@@ -3058,7 +3023,6 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     { name: "Звук 1", id: "notificationSound1" },
     { name: "Звук 2", id: "notificationSound2" },
     { name: "Звук 3", id: "notificationSound3" },
-    { name: "Блокирование", id: "notificationBlockSound1" },
   ];
 
   createCustomSelect("climbingRefreshNotificationSound", notificationSounds);
@@ -3067,7 +3031,6 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
   createCustomSelect("notificationActionEndSound", notificationSounds);
   createCustomSelect("notificationInMouthSound", notificationSounds);
   createCustomSelect("notificationInFightModeSound", notificationSounds);
-  createCustomSelect("notificationBlockSound", notificationSounds);
   // ==============================================================================
   const howShowOtherCatsList = [
     { name: "Не отображать", id: "1" },
@@ -3212,13 +3175,12 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     container.appendChild(testButton);
   }
 
-  addSoundTestButton("notificationPMContainer", "notificationPMSound", "notificationPMVolume");
-  addSoundTestButton("notificationActionEndContainer", "notificationActionEndSound", "notificationActionEndVolume");
-  addSoundTestButton("notificationInMouthContainer", "notificationInMouthSound", "notificationInMouthVolume");
-  addSoundTestButton("notificationInFightModeContainer", "notificationInFightModeSound", "notificationInFightModeVolume");
-  addSoundTestButton("climbingRefreshNotificationSoundContainer", "climbingRefreshNotificationSound", "climbingRefreshNotificationVolume");
-  addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound", "notificationMyNameVolume");
-  addSoundTestButton("notificationBlockContainer", "notificationBlockSound", "notificationBlockVolume");
+addSoundTestButton("notificationPMContainer", "notificationPMSound", "notificationPMVolume");
+addSoundTestButton("notificationActionEndContainer", "notificationActionEndSound", "notificationActionEndVolume");
+addSoundTestButton("notificationInMouthContainer", "notificationInMouthSound", "notificationInMouthVolume");
+addSoundTestButton("notificationInFightModeContainer", "notificationInFightModeSound", "notificationInFightModeVolume");
+addSoundTestButton("climbingRefreshNotificationSoundContainer", "climbingRefreshNotificationSound", "climbingRefreshNotificationVolume"); // Оставляем как было
+addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound", "notificationMyNameVolume");// Оставляем как было
   // ====================================================================================================================
   //  . . . СБРОС ПОЗИЦИИ ЧАСИКОВ . . .
   // ====================================================================================================================
@@ -3468,7 +3430,7 @@ if (settings.redesignCostumsSettings) {
 
     blockElement.appendChild(controlsWrapper);
     return blockElement;
-  }
+}
 
   function swapColumns(blockElement) {
     if (blockElement.parentNode === leftColumn) {
@@ -3485,58 +3447,54 @@ if (settings.redesignCostumsSettings) {
     saveLayoutSettings();
   }
 
-  const resetLayoutButton = document.getElementById("reset-layout-button");
-  resetLayoutButton.addEventListener("click", () => {
-    const confirmReset = confirm("Вы уверены, что хотите сбросить расположение блоков?");
-    if(confirmReset) {
-      const defaultSettings = getDefaultLayoutSettings();
-      localStorage.setItem("uwu_layoutSettings", JSON.stringify(defaultSettings));
-      location.reload();
-    }
-  });
-
-  function getDefaultLayoutSettings() {
-    return {
-    leftBlocks: ["tr_info"],
-    rightBlocks: ["tr_tos", "tr_chat", "tr_actions", "tr_mouth"],
-    };
-    }
-
   function loadLayoutSettings() {
     try {
-        const savedSettings = localStorage.getItem("uwu_layoutSettings");
-        if (savedSettings) {
-            const { leftBlocks, rightBlocks } = JSON.parse(savedSettings);
+    const savedSettings = localStorage.getItem("uwu_layoutSettings");
+    if (savedSettings) {
+      const { leftBlocks, rightBlocks } = JSON.parse(savedSettings);
 
-            leftColumn.innerHTML = "";
-            rightColumn.innerHTML = "";
+      leftColumn.innerHTML = "";
+      rightColumn.innerHTML = "";
 
-            leftBlocks.forEach((blockId) => {
-                const blockElement = createBlockElement(blockId);
-                leftColumn.appendChild(blockElement);
-            });
+      leftBlocks.forEach((blockId) => {
+        const blockElement = createBlockElement(blockId);
+        leftColumn.appendChild(blockElement);
+      });
 
-            rightBlocks.forEach((blockId) => {
-                const blockElement = createBlockElement(blockId);
-                rightColumn.appendChild(blockElement);
-            });
-        } else {
-            const defaultSettings = getDefaultLayoutSettings();
-            localStorage.setItem("uwu_layoutSettings", JSON.stringify(defaultSettings));
+      rightBlocks.forEach((blockId) => {
+        const blockElement = createBlockElement(blockId);
+        rightColumn.appendChild(blockElement);
+      });
+    } else {
+      const defaultLeftBlocks = ["tr_info"];
+      const defaultRightBlocks = [
+        "tr_tos",
+        "tr_chat",
+        "tr_actions",
+        "tr_mouth",
+      ];
 
-            defaultSettings.leftBlocks.forEach((blockId) => {
-                leftColumn.appendChild(createBlockElement(blockId));
-            });
+      defaultLeftBlocks.forEach((blockId) => {
+        leftColumn.appendChild(createBlockElement(blockId));
+      });
 
-            defaultSettings.rightBlocks.forEach((blockId) => {
-                rightColumn.appendChild(createBlockElement(blockId));
-            });
+      defaultRightBlocks.forEach((blockId) => {
+        rightColumn.appendChild(createBlockElement(blockId));
+      });
 
-        }
-    } catch (error) {
-        console.error("Ошибка при загрузке настроек макета:", error);
+      const layoutSettings = {
+        leftBlocks: defaultLeftBlocks,
+        rightBlocks: defaultRightBlocks,
+      };
+      localStorage.setItem(
+        "uwu_layoutSettings",
+        JSON.stringify(layoutSettings)
+      );
     }
-}
+    } catch (error) {
+      console.error("Ошибка при загрузке настроек макета:", error);
+    }
+  }
 
   loadLayoutSettings();
   // ====================================================================================================================
@@ -4069,7 +4027,7 @@ loadSettings();
 // ====================================================================================================================
 //   . . . АВАТАРЫ В КОММЕНТАРИЯХ . . .
 // ====================================================================================================================
-if (!targetCW3.test(window.location.href)) {
+if (targetCW3.test(window.location.href)) {
   if (settings.commentsAvatars) {
     const styleElement = document.createElement("style");
     styleElement.textContent = `
@@ -4231,77 +4189,6 @@ soundManager.loadSound(
   "notificationSound3",
   "https://github.com/Ibirtem/CatWar/raw/main/sounds/notification_3.mp3"
 );
-soundManager.loadSound(
-  "notificationBlockSound1",
-  "https://github.com/Ibirtem/CatWar/raw/main/sounds/block_1.mp3"
-);
-
-if (targetCW3Kns.test(window.location.href)) {
-  // ====================================================================================================================
-  //  . . . ПОДГРУЗКА ЦВЕТОВЫХ ТЕМ . . .
-  // ====================================================================================================================
-  const currentThemeName = getCurrentThemeName();
-  const allThemes = getThemes();
-  const theme = allThemes[currentThemeName]?.colors || {};
-
-  // ====================================================================================================================
-  //   . . . ПОЛЬЗОВАТЕЛЬСКИЕ ТЕМЫ / ЦВЕТА . . .
-  // ====================================================================================================================
-  function applyTheme() {
-    const newStyle = document.createElement("style");
-    newStyle.innerHTML = // css
-    `
-      body {
-        background: ${theme?.backgroundColor || ""};
-      }
-
-      #cages_overflow {
-        background: black;
-      } 
-
-      #blocks {
-        background-color: ${theme?.blocksColor || ""};
-      }
-
-      ::-webkit-scrollbar-track {
-        background-color: ${theme?.blocksColor || ""};
-      }
-
-      ::-webkit-scrollbar-thumb {
-        background-color: ${theme?.accentColor3 || ""};
-    }
-    
-      body, input, select, .ui-slider-handle {
-        color: ${theme?.textColor || ""};
-      }
-    
-      input, select, .ui-slider-horizontal {
-        background-color: ${theme?.accentColor1 || ""};
-        background: ${theme?.accentColor1 || ""};
-        border: solid 1px ${theme?.accentColor2 || ""};
-      }
-
-      .ui-widget-content .ui-state-default {
-        background: ${theme?.accentColor2 || ""};
-        border: solid 1px ${theme?.accentColor2 || ""};
-      } 
-
-      hr {
-        border: solid 1px ${theme?.accentColor2 || ""};
-      }
-    
-      a, a:hover {
-        color: ${theme?.linkColor || ""};
-      }
-
-      `;
-    document.head.appendChild(newStyle);
-  }
-
-  if (settings.userThemeKns) {
-    applyTheme();
-  }
-}
 
 // ====================================================================================================================
 //  . . . ЗАГРУЗКА КОДА В ИГРОВОЙ . . .
@@ -4323,110 +4210,6 @@ if (targetCW3.test(window.location.href)) {
   const currentThemeName = getCurrentThemeName();
   const allThemes = getThemes();
   const theme = allThemes[currentThemeName]?.colors || {};
-
-  // ====================================================================================================================
-  //   . . . ПОЛЬЗОВАТЕЛЬСКИЕ ТЕМЫ / ЦВЕТА . . .
-  // ====================================================================================================================
-  function applyTheme() {
-    const newStyle = document.createElement("style");
-    newStyle.innerHTML = // css
-    `
-      body {
-        background: ${theme?.backgroundColor || ""};
-      }
-
-      #cages_overflow {
-        background: black;
-      } 
-
-      #tr_actions > td, #tr_mouth > td, #location, .small {
-        background-color: ${theme?.blocksColor || ""};
-      }
-
-      #history_block > div {
-        background-color: unset !important;
-      }
-
-      #main_table, #tr_mouth, #tr_actions, #info_main {
-        background-color: unset;
-        background: none;
-      }
-    
-      #tr_chat {
-        background-color: ${theme?.chatColor || ""};
-      }
-    
-      body, input, select, .ui-slider-handle {
-        color: ${theme?.textColor || ""};
-      }
-    
-      input, select, .ui-slider-horizontal {
-        background-color: ${theme?.accentColor1 || ""};
-        background: ${theme?.accentColor1 || ""};
-        border: solid 1px ${theme?.accentColor2 || ""};
-      }
-
-      .ui-widget-content .ui-state-default {
-        background: ${theme?.accentColor2 || ""};
-        border: solid 1px ${theme?.accentColor2 || ""};
-      } 
-
-      hr {
-        border: solid 1px ${theme?.accentColor2 || ""};
-      }
-
-      .myname {
-        color: ${theme?.accentColor1 || ""};
-        background: ${theme?.accentColor3 || ""};
-      }
-
-      span.cat_tooltip {
-        background: ${theme?.catTooltipBackground || ""} !important;
-        color: ${theme?.textColor || ""} !important;
-        border: 2px solid ${theme?.accentColor2 || ""} !important;
-      } 
-
-      span.cat_tooltip > span.online {
-        filter: brightness(2) contrast(150%);
-      }
-      
-      .cat:hover .cat_tooltip a, .other_cats_list > a { 
-        color: ${theme?.linkColor || ""}; 
-      }
-
-      .move_name {
-        color: ${theme?.moveNameColor || ""};
-        background-color: ${theme?.moveNameBackground || ""} !important;
-      }
-    
-      a, a:hover {
-        color: ${theme?.linkColor || ""};
-      }
-
-      #fightPanel {
-        background-color: ${theme?.fightPanelBackground || ""};
-      }
-
-      .hotkey {
-        background-color: ${theme?.accentColor1 || ""};
-      }
-
-      #newchat, #newls {
-        color: ${theme?.accentColor3 || ""};
-      }
-
-      .cat-info {
-      background-color: ${theme?.catTooltipBackground || ""} !important;
-      color: ${theme?.textColor || ""} !important;
-      }
-      `;
-    document.head.appendChild(newStyle);
-  }
-
-  if (settings.userTheme) {
-    applyTheme();
-  }
-
   // ====================================================================================================================
   //  . . . РАСШИРЕННЫЕ НАСТРОЙКИ . . .
   // ====================================================================================================================
@@ -7070,6 +6853,109 @@ if (targetCW3.test(window.location.href)) {
   if (settings.useUserFonts) {
       applyFonts();
   }
+
+  // ====================================================================================================================
+  //   . . . ПОЛЬЗОВАТЕЛЬСКИЕ ТЕМЫ / ЦВЕТА . . .
+  // ====================================================================================================================
+  function applyTheme() {
+    const newStyle = document.createElement("style");
+    newStyle.innerHTML = // css
+    `
+      body {
+        background: ${theme?.backgroundColor || ""};
+      }
+
+      #cages_overflow {
+        background: black;
+      } 
+
+      #tr_actions > td, #tr_mouth > td, #location, .small {
+        background-color: ${theme?.blocksColor || ""};
+      }
+
+      #history_block > div {
+        background-color: unset !important;
+      }
+
+      #main_table, #tr_mouth, #tr_actions, #info_main {
+        background-color: unset;
+        background: none;
+      }
+    
+      #tr_chat {
+        background-color: ${theme?.chatColor || ""};
+      }
+    
+      body, input, select, .ui-slider-handle {
+        color: ${theme?.textColor || ""};
+      }
+    
+      input, select, .ui-slider-horizontal {
+        background-color: ${theme?.accentColor1 || ""};
+        background: ${theme?.accentColor1 || ""};
+        border: solid 1px ${theme?.accentColor2 || ""};
+      }
+
+      .ui-widget-content .ui-state-default {
+        background: ${theme?.accentColor2 || ""};
+        border: solid 1px ${theme?.accentColor2 || ""};
+      } 
+
+      hr {
+        border: solid 1px ${theme?.accentColor2 || ""};
+      }
+
+      .myname {
+        color: ${theme?.accentColor1 || ""};
+        background: ${theme?.accentColor3 || ""};
+      }
+
+      span.cat_tooltip {
+        background: ${theme?.catTooltipBackground || ""} !important;
+        color: ${theme?.textColor || ""} !important;
+        border: 2px solid ${theme?.accentColor2 || ""} !important;
+      } 
+
+      span.cat_tooltip > span.online {
+        filter: brightness(2) contrast(150%);
+      }
+      
+      .cat:hover .cat_tooltip a, .other_cats_list > a { 
+        color: ${theme?.linkColor || ""}; 
+      }
+
+      .move_name {
+        color: ${theme?.moveNameColor || ""};
+        background-color: ${theme?.moveNameBackground || ""} !important;
+      }
+    
+      a, a:hover {
+        color: ${theme?.linkColor || ""};
+      }
+
+      #fightPanel {
+        background-color: ${theme?.fightPanelBackground || ""};
+      }
+
+      .hotkey {
+        background-color: ${theme?.accentColor1 || ""};
+      }
+
+      #newchat, #newls {
+        color: ${theme?.accentColor3 || ""};
+      }
+
+      .cat-info {
+      background-color: ${theme?.catTooltipBackground || ""} !important;
+      color: ${theme?.textColor || ""} !important;
+      }
+      `;
+    document.head.appendChild(newStyle);
+  }
+
+  if (settings.userTheme) {
+    applyTheme();
+  }
   // ====================================================================================================================
   //   . . . РЕДИЗАЙН ИГРОВОЙ . . .
   // ====================================================================================================================
@@ -7127,6 +7013,7 @@ if (targetCW3.test(window.location.href)) {
 
     setupSingleCallback(".other_cats_list", prependOtherCatsListContent);
     // ==================================================================
+
     function applyLayoutSettings() {
       const savedSettings = localStorage.getItem("uwu_layoutSettings");
       if (savedSettings) {
@@ -7220,19 +7107,15 @@ if (targetCW3.test(window.location.href)) {
 
         background: none;
         border-spacing: 0px !important;
-        margin-top: 0px !important;
       }
 
-      #app > br {
-        display: none;
+      #main_table > tbody {
+        margin-top: 10px;
       }
 
       #app {
         width: 100%;
         height: 100%;
-        display: flex !important;
-        flex-direction: column;
-        gap: 5px;
       }
       
       #chat_msg, #cws_chat_msg {
@@ -7308,8 +7191,7 @@ if (targetCW3.test(window.location.href)) {
       }
 
       .small {
-        width: fit-content;
-        position: relative;
+        position: fixed;
         left: 0px;
         top: 0px;
         font-size: ${fontSize?.fontSizeSmall || 16}px;
@@ -7351,11 +7233,6 @@ if (targetCW3.test(window.location.href)) {
       
       #block_deys {
         flex-wrap: wrap;
-        justify-content: space-between;
-      }
-
-      #deys_mit {
-        width: min-content !important;
       }
       
       #mit { 
@@ -7394,221 +7271,142 @@ if (targetCW3.test(window.location.href)) {
   //   . . . ПОДСКАЗЫВАТЬ ОСТАВШЕЕСЯ ВРЕМЯ ДО НЮХА . . .
   // ====================================================================================================================
   if (settings.showHintWhenToSniff) {
-    let smellTimerInterval = null;
-    let visualTimerStartTime = null;
-    let visualInitialTimerValue = 0;
-
-    const sniffCheckpointKey = "uwu_sniffCheckpoint";
-    const visualTimerStateKey = "uwu_sniffVisualTimerState";
-
-    const smellCooldowns = {
-        0: 3600, 1: 3600, 2: 3600, 3: 3600, 4: 1800,
-        5: 1200, 6: 900, 7: 720, 8: 600, 9: 0,
+    let firstNote = "";
+    let timerStartTime = null;
+    let initialTimerValue = 0;
+    
+    const smellTimer = {
+      0: 3600,
+      1: 3600,
+      2: 3600,
+      3: 3600,
+      4: 1800,
+      5: 1200,
+      6: 900,
+      7: 720,
+      8: 600,
+      9: 0,
     };
-
+    
     function formatTime(seconds) {
-        if (seconds <= 0) return "";
-        const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
-        const remainingSeconds = Math.ceil(seconds % 60);
-        return `${hours ? `${hours} ч ` : ""}${minutes ? `${minutes} мин ` : ""}${remainingSeconds} с`;
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const remainingSeconds = seconds % 60;
+      return `${hours ? `${hours} ч ` : ""}${
+        minutes ? `${minutes} мин ` : ""
+      }${remainingSeconds} с`;
     }
-
-    function updateVisualTimerDisplay() {
-        const timerElement = document.getElementById("uwu_sniff_timer");
-        if (!timerElement || visualTimerStartTime === null) return;
-
+    
+    function updateSmellTimer() {
+      const timerElement = document.getElementById("uwu_sniff_timer");
+      if (!timerElement) return;
+    
+      if (timerStartTime !== null) {
+        const isActive = document.querySelector('#dein a[data-id="14"]') !== null;
+        if (isActive) {
+          timerStartTime = null;
+          initialTimerValue = 0;
+          timerElement.setAttribute("value", 0);
+          timerElement.textContent = "";
+          soundManager.playSound("notificationSound3", settings.notificationMyNameVolume);
+          return;
+        }
+    
         const currentTime = Date.now();
-        const elapsedTime = (currentTime - visualTimerStartTime) / 1000;
-        let remainingTime = visualInitialTimerValue - elapsedTime;
-
+        const elapsedTime = Math.floor((currentTime - timerStartTime) / 1000);
+        let remainingTime = initialTimerValue - elapsedTime;
+    
         if (remainingTime <= 0) {
-            stopVisualTimer();
-            timerElement.textContent = "";
-        } else {
-            timerElement.setAttribute("value", Math.ceil(remainingTime));
-            timerElement.textContent = ` | Нюх через: ${formatTime(remainingTime)}`;
-            saveVisualTimerState();
+          remainingTime = 0;
+          timerStartTime = null;
+          initialTimerValue = 0;
+          soundManager.playSound("notificationSound3", settings.notificationMyNameVolume);
         }
-    }
-
-    function stopVisualTimer() {
-        if (smellTimerInterval) {
-            clearInterval(smellTimerInterval);
-            smellTimerInterval = null;
-        }
-        visualTimerStartTime = null;
-        visualInitialTimerValue = 0;
-        localStorage.removeItem(visualTimerStateKey);
-        localStorage.removeItem(sniffCheckpointKey);
-
-        const timerElement = document.getElementById("uwu_sniff_timer");
-        if (timerElement) {
-            timerElement.setAttribute("value", "0");
-            timerElement.textContent = "";
-        }
-    }
-
-    function saveVisualTimerState() {
-        if (visualTimerStartTime !== null && visualInitialTimerValue > 0) {
-            const remainingTime = visualInitialTimerValue - (Date.now() - visualTimerStartTime) / 1000;
-            if (remainingTime > 0) {
-                 const timerState = {
-                    startTime: visualTimerStartTime,
-                    initialValue: visualInitialTimerValue,
-                };
-                localStorage.setItem(visualTimerStateKey, JSON.stringify(timerState));
-            } else {
-                localStorage.removeItem(visualTimerStateKey);
-            }
-        } else {
-            localStorage.removeItem(visualTimerStateKey);
-        }
-    }
-
-    function tryRestoreTimerFromCheckpointOrState() {
-        if (visualTimerStartTime !== null) {
-            return;
-        }
-
-        const checkpointTimestampStr = localStorage.getItem(sniffCheckpointKey);
-        if (checkpointTimestampStr) {
-            const checkpointTimestamp = parseInt(checkpointTimestampStr, 10);
-            if (!isNaN(checkpointTimestamp)) {
-                const smellLevelElement = document.querySelector("#smell .level");
-                if (smellLevelElement) {
-                    const smellLevel = parseInt(smellLevelElement.textContent, 10);
-                    if (smellCooldowns.hasOwnProperty(smellLevel)) {
-                        const totalCooldownSeconds = smellCooldowns[smellLevel];
-                        if (totalCooldownSeconds > 0) {
-                            const elapsedTimeSeconds = (Date.now() - checkpointTimestamp) / 1000;
-                            const remainingTimeSeconds = totalCooldownSeconds - elapsedTimeSeconds;
-
-                            if (remainingTimeSeconds > 0) {
-                                visualInitialTimerValue = remainingTimeSeconds;
-                                visualTimerStartTime = Date.now();
-                                if (smellTimerInterval) clearInterval(smellTimerInterval);
-                                updateVisualTimerDisplay();
-                                smellTimerInterval = setInterval(updateVisualTimerDisplay, 1000);
-                                saveVisualTimerState();
-                                return;
-                            } else {
-                                stopVisualTimer();
-                                return;
-                            }
-                        } else {
-                             stopVisualTimer();
-                             return;
-                        }
-                    }
-                }
-            } else {
-                 localStorage.removeItem(sniffCheckpointKey);
-            }
-        }
-
-        const savedVisualStateStr = localStorage.getItem(visualTimerStateKey);
-        if (savedVisualStateStr) {
-            try {
-                const savedVisualState = JSON.parse(savedVisualStateStr);
-                const elapsedTimeSinceSave = (Date.now() - savedVisualState.startTime) / 1000;
-                const remainingTimeFromSave = savedVisualState.initialValue - elapsedTimeSinceSave;
-
-                if (remainingTimeFromSave > 0) {
-                    visualTimerStartTime = savedVisualState.startTime;
-                    visualInitialTimerValue = savedVisualState.initialValue;
-                    if (smellTimerInterval) clearInterval(smellTimerInterval);
-                    updateVisualTimerDisplay();
-                    smellTimerInterval = setInterval(updateVisualTimerDisplay, 1000);
-                    return;
-                } else {
-                    localStorage.removeItem(visualTimerStateKey);
-                }
-            } catch (e) {
-                console.error("Ошибка разбора сохраненного состояния визуального таймера:", e);
-                localStorage.removeItem(visualTimerStateKey);
-            }
-        }
-    }
-
-    function handleBlockMessChange() {
-        const blockMess = document.getElementById("block_mess");
-        if (blockMess && blockMess.textContent.includes("Принюхиваться")) {
-            stopVisualTimer();
-            localStorage.setItem(sniffCheckpointKey, Date.now().toString());
-        }
-    }
-
-    function checkActionAvailability() {
-        const trActions = document.getElementById('tr_actions');
-        if (!trActions) return;
-        const sniffActionLink = trActions.querySelector('a[data-id="13"]');
-
-        if (sniffActionLink) {
-            stopVisualTimer();
-        } else {
-            tryRestoreTimerFromCheckpointOrState();
-        }
-    }
-
-    function handleErrorChange() {
-      const errorElement = document.getElementById("error");
-      if (!errorElement || !errorElement.textContent) return;
-
-      const htmlContent = errorElement.innerHTML;
-      const smellCooldownMatch = htmlContent.match(/Следующее обнюхивание будет доступно через (.*?)(\.|<br|$)/);
-      const cooldownExpiredMatch = htmlContent.includes("Час уже прошёл");
-
-      if (smellCooldownMatch) {
-        const timeString = smellCooldownMatch[1];
-        let totalSeconds = 0;
-        const minutesMatch = timeString.match(/(\d+)\s*мин/);
-        const secondsMatch = timeString.match(/(\d+)\s*с/);
-
-        if (minutesMatch) totalSeconds += parseInt(minutesMatch[1], 10) * 60;
-        if (secondsMatch) totalSeconds += parseInt(secondsMatch[1], 10);
-
-        stopVisualTimer();
-
-        if (totalSeconds > 0) {
-            visualInitialTimerValue = totalSeconds;
-            visualTimerStartTime = Date.now();
-
-            if (smellTimerInterval) clearInterval(smellTimerInterval);
-            updateVisualTimerDisplay();
-            smellTimerInterval = setInterval(updateVisualTimerDisplay, 1000);
-            saveVisualTimerState();
-        }
-
-      } else if (cooldownExpiredMatch) {
-          stopVisualTimer();
+    
+        timerElement.setAttribute("value", remainingTime);
+        timerElement.textContent = remainingTime > 0 ? ` | Нюх через: ${formatTime(remainingTime)}` : "";
       }
     }
-
-    function createTimerElement() {
-      const smallElement = document.querySelector(".small");
-        if (smallElement && !document.getElementById("uwu_sniff_timer")) {
-          smallElement.insertAdjacentHTML(
-            "beforeend",
-            '<span id="uwu_sniff_timer" value="0"></span>'
-          );
-        }
+    
+    setInterval(updateSmellTimer, 1000);
+    
+    function smellIconClick() {
+      firstNote = document.getElementById("error").innerHTML;
+      document.getElementById("smell_icon").click();
     }
-
-    setupSingleCallback(".small", createTimerElement);
-
-    setupMutationObserver("#tr_actions", checkActionAvailability, {
-        childList: true, subtree: true
-    }, 8, 500);
-
-     setupMutationObserver("#block_mess", handleBlockMessChange, {
-         childList: true, subtree: true, characterData: true
-     }, 8, 500);
-
-    setupMutationObserver("#error", handleErrorChange, {
-       childList: true, subtree: true, characterData: true
-    }, 8, 500);
-
+    
+    function errorObserver() {
+      const errorElement = document.getElementById("error");
+      const html = errorElement.innerHTML;
+      if (html && html.includes("Следующее обнюхивание")) {
+        const text = html.replace(
+          "Следующее обнюхивание будет доступно через ",
+          ""
+        );
+        const smellMin =
+          (text.match(/(\d+) мин/g) || [])
+            .map((num) => parseInt(num.replace(/\D/g, ""), 10))
+            .shift() || 0;
+        const smellSec = parseInt(
+          (text.match(/(\d+) с/g) || [])
+            .map((num) => num.replace(/\D/g, ""))
+            .shift(),
+          10
+        );
+        const totalSec = smellMin * 60 + smellSec;
+        const timerElement = document.getElementById("uwu_sniff_timer");
+        timerElement.setAttribute("value", totalSec);
+        timerElement.textContent = ` | Нюх через: ${smellMin} мин ${smellSec} с`;
+        timerStartTime = Date.now();
+        initialTimerValue = totalSec;
+        if (firstNote !== "") {
+          errorElement.innerHTML = firstNote;
+          firstNote = "";
+        }
+      } else if (html.includes("Час уже прошёл") && firstNote !== "") {
+        errorElement.innerHTML = firstNote;
+        firstNote = "";
+      }
+    }
+    
+    function messObserver() {
+      const blockMessElement = document.getElementById("block_mess");
+      if (!blockMessElement) return;
+    
+      const isActive = document.querySelector('#dein a[data-id="14"]') !== null;
+      if (!isActive && blockMessElement.children.length === 0 && timerStartTime === null) {
+        const smellLevel = document.querySelector("#smell b").textContent;
+        const smellTime = smellTimer[smellLevel];
+        const timerElement = document.getElementById("uwu_sniff_timer");
+        timerElement.setAttribute("value", smellTime);
+        timerElement.textContent = ` | Нюх через: ${formatTime(smellTime)}`;
+        timerStartTime = Date.now();
+        initialTimerValue = smellTime;
+      }
+    }
+    
+    function timerElement() {
+      const smallElement = document.querySelector(".small");
+      if (smallElement) {
+        smallElement.insertAdjacentHTML(
+          "beforeend",
+          '<span id="uwu_sniff_timer" value="0"></span>'
+        );
+      }
+    }
+    
+    window.addEventListener("load", function () {
+      setupSingleCallback(".small", timerElement);
+      setupSingleCallback("#smell_icon", smellIconClick);
+      setupMutationObserver("#error", errorObserver, {
+        childList: true,
+        subtree: true,
+      });
+      setupMutationObserver("#block_mess", messObserver, {
+        childList: true,
+        subtree: true,
+      }, 8, 500, 20);
+    });
   }
   // ====================================================================================================================
   //   . . . ДУБЛИРОВАНИЕ ДЕЙСТВИЙ НА ВКЛАДКУ БРАУЗЕРА . . .
@@ -8545,48 +8343,12 @@ if (targetCW3.test(window.location.href)) {
     #tr_actions > td,
     #tr_mouth > td,
     #location,
+    .small,
     #tr_info > td {
       border-radius: 10px;
     }
-
-    .small {
-      border-top-left-radius: 0px;
-      border-top-right-radius: 0px;
-      border-bottom-right-radius: 10px;
-      border-bottom-left-radius: 10px;
-    }
     `;
     document.head.appendChild(edgeTrimBlocksStyle);
-  }
-
-  // ====================================================================================================================
-  //  . . . ЗВУК БЛОКИРОВАНИЯ . . .
-  // ====================================================================================================================
-  if (settings.notificationBlock) {
-    let previousBlockText = "";
-
-    function handleBlockChange() {
-      const blockElement = document.getElementById("block");
-      if (!blockElement) return;
-
-      const currentBlockText = blockElement.textContent.trim();
-
-      if (currentBlockText !== previousBlockText) {
-        previousBlockText = currentBlockText;
-        if (currentBlockText !== "") {
-          soundManager.playSound(
-            settings.notificationBlockSound,
-            settings.notificationBlockVolume
-          );
-        }
-      }
-    }
-
-    setupMutationObserver("#block", handleBlockChange, {
-      childList: true,
-      subtree: true,
-      characterData: true,
-    });
   }
   // ====================================================================================================================
   //  . . . КОМАНДЫ В БОЕВОМ РЕЖИМЕ . . .
