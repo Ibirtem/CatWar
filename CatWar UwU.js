@@ -263,7 +263,7 @@ const uwusettings = // html
         <button id="personal-costumes-button">
           <h2>
             Личные костюмы
-            <img src="https://raw.githubusercontent.com/Arisamiga/CatWar/main/images/costumes.png" alt="Иконка" width="24"
+            <img src="https://raw.githubusercontent.com/Arisamiga/CatWar/refs/heads/Personal-Costumes/images/costumes.png" alt="Иконка" width="24"
               height="24" />
           </h2>
         </button>
