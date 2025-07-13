@@ -2849,7 +2849,7 @@ if (targetSettings.test(window.location.href)) {
     data = JSON.parse(data);
     document.getElementById("cat-image-preview")?.remove();
 
-    if (!data || !data.costumes || !data.costumes.base) {
+    if (!data || !data.catImg || !data.costumes || !data.costumes.base) {
       // Нет данных для костюма или изображение не найдено
       return;
     }
@@ -2918,6 +2918,7 @@ if (targetSettings.test(window.location.href)) {
           img.src = e.target.result;
         };
         reader.readAsDataURL(file);
+        alert("Костюм успешно изменён! Вы можете увидеть его в игре.");
       }
       else {
         alert("Пожалуйста, выберите изображение для костюма.");
@@ -2928,6 +2929,13 @@ if (targetSettings.test(window.location.href)) {
     removeButton.addEventListener("click", () => {
       let data = localStorage.getItem("uwu_personal") || "{}";
       data = JSON.parse(data);
+      if (!data.costumes || !data.costumes.base) {
+        alert("Нет костюма для удаления.");
+        return;
+      }
+      if (!confirm("Вы уверены, что хотите удалить костюм?")) {
+        return;
+      }
       data.costumes = {
         base: "",
       };
