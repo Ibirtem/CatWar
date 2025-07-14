@@ -4787,7 +4787,7 @@ if (targetCW3.test(window.location.href)) {
       }
 
       function setupOwnCat() {
-        if (!document.getElementById("cages")) {
+        if (!document.getElementById("cages") || !document.getElementById("cages").querySelectorAll("a[href='/cat" + items.id + "']")[0]) {
           return setTimeout(setupOwnCat, 10);
         }
         const items = JSON.parse(localStorage.getItem("uwu_personal") ?? "{}")
