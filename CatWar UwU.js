@@ -4791,9 +4791,21 @@ if (targetCW3.test(window.location.href)) {
         }
       }
 
+      const observer = new MutationObserver((mutationsList) => {
+        for (const mutation of mutationsList) {
+          if (
+            mutation.target.querySelector("a[href='/cat" + items.id + "']")
+          ) {
+            setupOwnCat();
+            break;
+          }
+        }
+      });
+
       if (items.costumes && items.costumes.base){
         setupOwnCat();
-        setupMutationObserver("#cages", setupOwnCat, {
+        const targetElement = document.getElementById("cages");
+        observer.observe(targetElement, {
           childList: true,
           subtree: true,
         });
