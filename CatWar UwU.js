@@ -2896,29 +2896,40 @@ if (targetSettings.test(window.location.href)) {
       const file = imgInput.files[0];
       if (file) {
         const reader = new FileReader();
+        reader.onerror = function() {
+          alert("Ошибка при чтении файла. Попробуйте еще раз.");
+        };
         reader.onload = function (e) {
           if (!e.target.result.startsWith("data:image/")) {
             alert("Пожалуйста, выберите изображение для костюма.");
             return;
           }
           const img = new Image();
+          img.onerror = function() {
+            alert("Ошибка при загрузке изображения. Убедитесь, что файл является корректным PNG изображением.");
+          };
           img.onload = function () {
-            let data = localStorage.getItem("uwu_personal") || "{}";
-            data = JSON.parse(data);
-            const canvas = document.createElement("canvas");
-            canvas.width = 100;
-            canvas.height = 150;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, 100, 150);
+            try {
+              let data = localStorage.getItem("uwu_personal") || "{}";
+              data = JSON.parse(data);
+              const canvas = document.createElement("canvas");
+              canvas.width = 100;
+              canvas.height = 150;
+              const ctx = canvas.getContext("2d");
+              ctx.drawImage(img, 0, 0, 100, 150);
 
-            const resizedDataUrl = canvas.toDataURL("image/png");
+              const resizedDataUrl = canvas.toDataURL("image/png");
 
-            data.costumes = {
-              base: resizedDataUrl,
-            };
-            localStorage.setItem("uwu_personal", JSON.stringify(data));
-            alert("Костюм успешно изменён! Вы можете увидеть его в игре.");
-            loadCostume()
+              data.costumes = {
+                base: resizedDataUrl,
+              };
+              localStorage.setItem("uwu_personal", JSON.stringify(data));
+              alert("Костюм успешно изменён! Вы можете увидеть его в игре.");
+              loadCostume()
+            } catch (error) {
+              console.error("Ошибка при сохранении костюма:", error);
+              alert("Ошибка при сохранении костюма.");
+            }
           };
           img.src = e.target.result;
         };
