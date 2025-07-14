@@ -4787,10 +4787,10 @@ if (targetCW3.test(window.location.href)) {
       }
 
       function setupOwnCat() {
+        const items = JSON.parse(localStorage.getItem("uwu_personal") ?? "{}")
         if (!document.getElementById("cages") || !document.getElementById("cages").querySelectorAll("a[href='/cat" + items.id + "']")[0]) {
           return setTimeout(setupOwnCat, 10);
         }
-        const items = JSON.parse(localStorage.getItem("uwu_personal") ?? "{}")
         const catInit = document.getElementById("cages").querySelectorAll("a[href='/cat" + items.id + "']")[0].closest(".cat").querySelector(".first");
         const catPos = catInit.parentElement;
         if (!catPos.querySelector("div[data-v-59afe5e8]:not(.first)")){
