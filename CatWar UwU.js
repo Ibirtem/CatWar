@@ -2897,6 +2897,10 @@ if (targetSettings.test(window.location.href)) {
       if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
+          if (!e.target.result.startsWith("data:image/")) {
+            alert("Пожалуйста, выберите изображение для костюма.");
+            return;
+          }
           const img = new Image();
           img.onload = function () {
             let data = localStorage.getItem("uwu_personal") || "{}";
@@ -2913,12 +2917,12 @@ if (targetSettings.test(window.location.href)) {
               base: resizedDataUrl,
             };
             localStorage.setItem("uwu_personal", JSON.stringify(data));
+            alert("Костюм успешно изменён! Вы можете увидеть его в игре.");
             loadCostume()
           };
           img.src = e.target.result;
         };
         reader.readAsDataURL(file);
-        alert("Костюм успешно изменён! Вы можете увидеть его в игре.");
       }
       else {
         alert("Пожалуйста, выберите изображение для костюма.");
@@ -4755,10 +4759,16 @@ if (targetCW3.test(window.location.href)) {
 
       // Сделай кошку стильной
       function costumeCreate(catSize, costumeURL, catPos) {
+
         var costume = document.createElement("div");
         costume.setAttribute("data-v-59afe5e8", "");
         costume.style.backgroundSize = catSize;
-        costume.style.backgroundImage = "url('"+ costumeURL +"')"
+        if (costumeURL && (costumeURL.startsWith('data:image/'))) {
+          costume.style.backgroundImage = `url('${costumeURL}')`;
+        } else {
+          console.error("Неверный URL-адрес костюма");
+          return null;
+        }
         costume.className = ""
         costume.style.position = "absolute";
 
@@ -4778,14 +4788,12 @@ if (targetCW3.test(window.location.href)) {
 
       function setupOwnCat() {
         if (!document.getElementById("cages")) {
-          console.log("Reeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
           return setTimeout(setupOwnCat, 10);
         }
         const items = JSON.parse(localStorage.getItem("uwu_personal") ?? "{}")
         const catInit = document.getElementById("cages").querySelectorAll("a[href='/cat" + items.id + "']")[0].closest(".cat").querySelector(".first");
         const catPos = catInit.parentElement;
         if (!catPos.querySelector("div[data-v-59afe5e8]:not(.first)")){
-          // console.log("Detected movement: ", catPos);
           var costume = costumeCreate(items.catImg.size, items.costumes.base, catPos)
           catPos.appendChild(costume);
         }
