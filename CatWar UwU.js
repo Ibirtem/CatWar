@@ -47,7 +47,7 @@ const uwuDefaultSettings = {
   chatHeight: "275",
   newChat: false,
   addCommaAfterNick: false,
-  reverseChat: false, 
+  reverseChat: false,
   newChatInput: false,
   namesForNotification: "",
 
@@ -71,7 +71,6 @@ const uwuDefaultSettings = {
 
   showHintWhenToSniff: false,
   duplicateTimeInBrowserTab: false,
-
 
   cellsBorders: false,
   cellsBordersThickness: "1",
@@ -167,8 +166,10 @@ const uwuDefaultSettings = {
 //   . . . ТАРГЕТНЫЕ ССЫЛКИ . . .
 // ====================================================================================================================
 const targetCW3 = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/cw3(?:\/)?(?:\?.*)?$/;
-const targetCW3Hunt = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/cw3\/jagd(?:\/)?(?:\?.*)?$/;
-const targetCW3Kns = /^https?:\/\/(\w+\.)?catwar\.(net|su)\/cw3\/kns\/?(\?.*)?$/;
+const targetCW3Hunt =
+  /^https?:\/\/\w?\.?catwar\.(?:net|su)\/cw3\/jagd(?:\/)?(?:\?.*)?$/;
+const targetCW3Kns =
+  /^https?:\/\/(\w+\.)?catwar\.(net|su)\/cw3\/kns\/?(\?.*)?$/;
 
 const targetSettings = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/settings/;
 const targetMainProfile = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/$/;
@@ -176,10 +177,14 @@ const targetProfile = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/cat\d+$/;
 const targetLs = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/ls/;
 const targetLsNew = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/ls\?new(=.*)?$/;
 const targetChats = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/chat/;
-const targetBlog = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/(?:blog\d+|blogs)(?:$|[/?#])/i;
-const targetBlogsCreation = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/blogs\?creation/;
-const targetSniff = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/sniff(?:\d+|)(?:$|[/?#])/i;
-const targetSniffCreation = /^https?:\/\/\w?\.?catwar\.(?:net|su)\/sniff\?creation/;
+const targetBlog =
+  /^https?:\/\/\w?\.?catwar\.(?:net|su)\/(?:blog\d+|blogs)(?:$|[/?#])/i;
+const targetBlogsCreation =
+  /^https?:\/\/\w?\.?catwar\.(?:net|su)\/blogs\?creation/;
+const targetSniff =
+  /^https?:\/\/\w?\.?catwar\.(?:net|su)\/sniff(?:\d+|)(?:$|[/?#])/i;
+const targetSniffCreation =
+  /^https?:\/\/\w?\.?catwar\.(?:net|su)\/sniff\?creation/;
 
 // ====================================================================================================================
 //   . . . СТАНДАРТНЫЕ ЦВЕТОВЫЕ ТЕМЫ . . .
@@ -207,8 +212,9 @@ const defaultThemes = {
 // ====================================================================================================================
 //   . . . HTML ПАНЕЛЬ НАСТРОЕК . . .
 // ====================================================================================================================
-const uwusettings = // html
-`
+const uwusettings =
+  // html
+  `
 <div id="uwusettings">
 
   <div id="uwusettings-header">
@@ -1501,8 +1507,9 @@ const uwusettings = // html
 // ====================================================================================================================
 //   . . . HTML БЛОК НОВОСТЕЙ . . .
 // ====================================================================================================================
-const newsPanel = // html
-`
+const newsPanel =
+  // html
+  `
 <div id="news-panel">
     <button id="news-button">
         v${current_uwu_version} - 🌿 
@@ -1524,8 +1531,9 @@ const newsPanel = // html
 // ====================================================================================================================
 //   . . . HTML ПАНЕЛЬ РАСШИРЕННЫХ НАСТРОЕК . . .
 // ====================================================================================================================
-const extendedSettingsButton = // html
-`
+const extendedSettingsButton =
+  // html
+  `
 <div id="uwu-extended-settings">
   <button type="button" id="extended-settings-button">
     <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png" alt="Иконка"
@@ -1541,8 +1549,9 @@ const extendedSettingsButton = // html
 // ====================================================================================================================
 //   . . . HTML БЛОК РУЧНОГО УПРАВЛЕНИЯ ПОГОДЫ . . .
 // ====================================================================================================================
-const manualWeatherPanel = // html
-`
+const manualWeatherPanel =
+  // html
+  `
 <div id="manual-weather-panel">
 <p>Изменения, сделанные в этой панели, носят временный характер и не сохраняются.</p>
 <h3>Переключить погоду</h3>
@@ -1597,8 +1606,7 @@ const manualWeatherPanel = // html
 //   . . . ГЛАВНЫЙ CSS СТИЛЬ . . .
 // ====================================================================================================================
 // TODO - Унифицировать шрифты, цвета текстов, прозрачность, закруглённость штучек ну кароче всё как надо чтобы не сделать в итоге лабиринт.
-const css_uwu_main =
-`
+const css_uwu_main = `
 #uwu-settings {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -2338,8 +2346,9 @@ document.head.insertAdjacentHTML(
 //   . . . ПРОЗРАЧНЫЙ CSS СТИЛЬ . . .
 // ====================================================================================================================
 // Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд Glassmorphism вперёд
-const css_uwu_glass = // css
-`
+const css_uwu_glass =
+  // css
+  `
 #uwusettings {
   backdrop-filter: blur(16px);
   background-color: rgba(255, 255, 255, 0.03);
@@ -2441,8 +2450,9 @@ const css_uwu_glass = // css
 // ====================================================================================================================
 //   . . . ТЁМНАЯ ТЕМА . . .
 // ====================================================================================================================
-const css_uwu_dark = // css
-`
+const css_uwu_dark =
+  // css
+  `
 #uwusettings {
   background-color: #242424;
   color: #dddddd;
@@ -2559,9 +2569,9 @@ const css_uwu_classic = `
 // ====================================================================================================================
 //   . . . топовой шрифт кто не согласен тому в глаз 👅👅👅👅👅👅бе бе бе мяу мяу мяу мяу мяу мяу . . .
 // ====================================================================================================================
-var link = document.createElement('link');
-link.rel = 'stylesheet';
-link.href = 'https://fonts.googleapis.com/css?family=Montserrat';
+var link = document.createElement("link");
+link.rel = "stylesheet";
+link.href = "https://fonts.googleapis.com/css?family=Montserrat";
 document.head.appendChild(link);
 // TODO - автоматически подкачивать шрифты нужные пользователю по названию в "Название вида шрифта" в Настройках
 // ====================================================================================================================
@@ -2606,7 +2616,7 @@ async function setupMutationObserver(
   options = { attributes: true, attributeFilter: ["style"] },
   maxAttempts = 8,
   delay = 500,
-  debounceTime = 100,
+  debounceTime = 100
 ) {
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const element = document.querySelector(selector);
@@ -2629,7 +2639,7 @@ async function setupSingleCallback(
   selector,
   callback,
   maxAttempts = 8,
-  delay = 500,
+  delay = 500
 ) {
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const element = document.querySelector(selector);
@@ -2654,11 +2664,11 @@ function getThemes() {
 
 function saveThemes(themes) {
   const themesToSave = Object.keys(themes)
-    .filter(themeName => !isDefaultTheme(themeName))
+    .filter((themeName) => !isDefaultTheme(themeName))
     .reduce((obj, key) => {
       obj[key] = themes[key];
       return obj;
-    }, {}); 
+    }, {});
 
   localStorage.setItem("uwu_colorThemes", JSON.stringify(themesToSave));
 }
@@ -2740,20 +2750,24 @@ if (targetSettings.test(window.location.href)) {
     let css;
     const settingsBlock = document.getElementById("uwu-settings");
     const settingsHeader = document.getElementById("uwusettings-header");
-  
+
     switch (theme) {
       case "classic":
         css = css_uwu_classic;
         break;
       case "dark":
         css = css_uwu_dark;
-        const backgroundImageDark = window.getComputedStyle(document.body).backgroundImage;
+        const backgroundImageDark = window.getComputedStyle(
+          document.body
+        ).backgroundImage;
         applyBackgroundImage(settingsHeader, backgroundImageDark);
         settingsHeader.classList.add("header-rounded-image");
         break;
       case "glass":
         css = css_uwu_glass;
-        const backgroundImageGlass = window.getComputedStyle(document.body).backgroundImage;
+        const backgroundImageGlass = window.getComputedStyle(
+          document.body
+        ).backgroundImage;
         applyBackgroundImage(settingsBlock, backgroundImageGlass);
         settingsBlock.classList.add("main-rounded-image");
         break;
@@ -2761,64 +2775,65 @@ if (targetSettings.test(window.location.href)) {
         css = css_uwu_classic;
         break;
     }
-  
+
     const oldStyle = document.getElementById("css-uwu-theme");
     if (oldStyle) {
       oldStyle.remove();
     }
-  
+
     document.head.insertAdjacentHTML(
       "beforeend",
       `<style id="css-uwu-theme">${css}</style>`
     );
   }
-  
+
   applySettingsTheme(settings.settingsTheme);
   // ====================================================================================================================
   //  . . . ШРИФТ ГРОМКОСТИ ЧАТА . . .
   // ====================================================================================================================
   function saveFontSettings() {
     let fontSize = {};
-  
-    document.querySelectorAll('input[data-font-size]').forEach(input => {
+
+    document.querySelectorAll("input[data-font-size]").forEach((input) => {
       fontSize[input.dataset.fontSize] = input.value;
     });
-  
-    localStorage.setItem('uwu_fontSize', JSON.stringify(fontSize));
+
+    localStorage.setItem("uwu_fontSize", JSON.stringify(fontSize));
   }
-  
+
   function loadFontSettings() {
     let defaultFontSize = {
-      vlm0: '10',
-      vlm1: '11',
-      vlm2: '11.5',
-      vlm3: '12',
-      vlm4: '12.5',
-      vlm5: '13',
-      vlm6: '15',
-      vlm7: '17',
-      vlm8: '19',
-      vlm9: '21',
-      vlm10: '23',
-      fontSizeBody: '14',
-      fontSizeSmall: '12',
-      fontSizeLocation: '14',
-      fontFamilyBody: 'Verdana'
+      vlm0: "10",
+      vlm1: "11",
+      vlm2: "11.5",
+      vlm3: "12",
+      vlm4: "12.5",
+      vlm5: "13",
+      vlm6: "15",
+      vlm7: "17",
+      vlm8: "19",
+      vlm9: "21",
+      vlm10: "23",
+      fontSizeBody: "14",
+      fontSizeSmall: "12",
+      fontSizeLocation: "14",
+      fontFamilyBody: "Verdana",
     };
-  
-    let fontSize = JSON.parse(localStorage.getItem('uwu_fontSize')) || defaultFontSize;
-  
-    document.querySelectorAll('input[data-font-size]').forEach(input => {
-      input.value = fontSize[input.dataset.fontSize] || ''; 
+
+    let fontSize =
+      JSON.parse(localStorage.getItem("uwu_fontSize")) || defaultFontSize;
+
+    document.querySelectorAll("input[data-font-size]").forEach((input) => {
+      input.value = fontSize[input.dataset.fontSize] || "";
     });
 
     saveFontSettings();
   }
-  
-  document.querySelectorAll('input[data-font-size]').forEach(input => {
-    input.addEventListener('input', saveFontSettings); 
+
+  document.querySelectorAll("input[data-font-size]").forEach((input) => {
+    input.addEventListener("input", saveFontSettings);
   });
-  
+
   loadFontSettings();
   // ====================================================================================================================
   //  . . . ПАРАМЕТРЫ КОСТЮМА . . .
@@ -2839,7 +2854,7 @@ if (targetSettings.test(window.location.href)) {
 
   updateCostumeFlexBoxState();
 
-  function loadCostume(){
+  function loadCostume() {
     let data = localStorage.getItem("uwu_personal") || "{}";
     data = JSON.parse(data);
     document.getElementById("cat-image-preview")?.remove();
@@ -2867,17 +2882,17 @@ if (targetSettings.test(window.location.href)) {
     const costumeImg = document.getElementById("cat-image");
     var data = localStorage.getItem("uwu_personal") || "{}";
     data = JSON.parse(data);
-    if (data && data.id && data.catImg){
-      costumeImg.innerHTML = "Предпросмотр: "
-      const container = document.createElement("div")
-      container.id = "cat-image-container"
-      container.style.display = "flex"
+    if (data && data.id && data.catImg) {
+      costumeImg.innerHTML = "Предпросмотр: ";
+      const container = document.createElement("div");
+      container.id = "cat-image-container";
+      container.style.display = "flex";
       const img = document.createElement("img");
       img.style.backgroundImage = `url(${data.catImg.src})`;
       img.style.backgroundColor = "transparent";
       img.style.backgroundPosition = "center";
       img.style.backgroundRepeat = "no-repeat";
-      img.style.backgroundSize = data.catImg.size
+      img.style.backgroundSize = data.catImg.size;
       img.style.width = "100px";
       img.style.height = "150px";
 
@@ -2891,7 +2906,7 @@ if (targetSettings.test(window.location.href)) {
       const file = imgInput.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onerror = function() {
+        reader.onerror = function () {
           alert("Ошибка при чтении файла. Попробуйте еще раз.");
         };
         reader.onload = function (e) {
@@ -2900,8 +2915,10 @@ if (targetSettings.test(window.location.href)) {
             return;
           }
           const img = new Image();
-          img.onerror = function() {
-            alert("Ошибка при загрузке изображения. Убедитесь, что файл является корректным PNG изображением.");
+          img.onerror = function () {
+            alert(
+              "Ошибка при загрузке изображения. Убедитесь, что файл является корректным PNG изображением."
+            );
           };
           img.onload = function () {
             try {
@@ -2920,7 +2937,7 @@ if (targetSettings.test(window.location.href)) {
               };
               localStorage.setItem("uwu_personal", JSON.stringify(data));
               alert("Костюм успешно изменён! Вы можете увидеть его в игре.");
-              loadCostume()
+              loadCostume();
             } catch (error) {
               console.error("Ошибка при сохранении костюма:", error);
               alert("Ошибка при сохранении костюма.");
@@ -2929,8 +2946,7 @@ if (targetSettings.test(window.location.href)) {
           img.src = e.target.result;
         };
         reader.readAsDataURL(file);
-      }
-      else {
+      } else {
         alert("Пожалуйста, выберите изображение для костюма.");
       }
     });
@@ -2953,22 +2969,23 @@ if (targetSettings.test(window.location.href)) {
       loadCostume();
     });
 
-    loadCostume()
+    loadCostume();
   }
-
 
   // ====================================================================================================================
   //  . . . ТЕМЫ И ЦВЕТА ИГРОВОЙ . . .
   // ====================================================================================================================
-  const colorInputs = document.querySelectorAll("#color-picker input[type='text']");
+  const colorInputs = document.querySelectorAll(
+    "#color-picker input[type='text']"
+  );
   const saveThemeButton = document.getElementById("saveThemeButton");
   const themeSelect = document.getElementById("theme-select");
   const addThemeButton = document.getElementById("addThemeButton");
   const removeThemeButton = document.getElementById("removeThemeButton");
-  
+
   let currentThemeName = getCurrentThemeName();
   let allThemes = getThemes();
-  
+
   function loadThemeToInputs(themeName) {
     const theme = allThemes[themeName]?.colors;
     colorInputs.forEach((input) => {
@@ -2976,18 +2993,18 @@ if (targetSettings.test(window.location.href)) {
       input.value = theme?.[colorKey] || "";
     });
   }
-  
+
   function saveThemeFromInputs() {
     const themeData = { colors: {} };
     colorInputs.forEach((input) => {
       const colorKey = input.dataset.color;
       themeData.colors[colorKey] = input.value;
     });
-    allThemes[currentThemeName] = themeData; 
+    allThemes[currentThemeName] = themeData;
     saveThemes(allThemes);
     console.log(`Тема "${currentThemeName}" сохранена!`);
   }
-  
+
   function updateThemeSelect() {
     themeSelect.innerHTML = "";
     Object.keys(allThemes).forEach((name) => {
@@ -2997,17 +3014,21 @@ if (targetSettings.test(window.location.href)) {
       themeSelect.appendChild(option);
     });
     themeSelect.value = currentThemeName;
-    removeThemeButton.style.display = Object.keys(defaultThemes).includes(currentThemeName) ? "none" : "inline";
+    removeThemeButton.style.display = Object.keys(defaultThemes).includes(
+      currentThemeName
+    )
+      ? "none"
+      : "inline";
   }
-  
+
   themeSelect.addEventListener("change", (event) => {
     currentThemeName = event.target.value;
     setCurrentThemeName(currentThemeName);
     loadThemeToInputs(currentThemeName);
-    updateThemeSelect(); 
+    updateThemeSelect();
     updateSaveButtonState();
   });
-  
+
   addThemeButton.addEventListener("click", () => {
     const newThemeName = prompt("Введите название новой темы:");
     if (newThemeName && !allThemes[newThemeName]) {
@@ -3020,7 +3041,7 @@ if (targetSettings.test(window.location.href)) {
       loadThemeToInputs(currentThemeName);
     }
   });
-  
+
   removeThemeButton.addEventListener("click", () => {
     if (!Object.keys(defaultThemes).includes(currentThemeName)) {
       delete allThemes[currentThemeName];
@@ -3031,26 +3052,30 @@ if (targetSettings.test(window.location.href)) {
       loadThemeToInputs(currentThemeName);
     }
   });
-  
+
   saveThemeButton.addEventListener("click", () => {
     if (isDefaultTheme(currentThemeName)) {
-      alert("Вы не можете изменять стандартные темы. Пожалуйста, создайте свою собственную тему.");
+      alert(
+        "Вы не можете изменять стандартные темы. Пожалуйста, создайте свою собственную тему."
+      );
     } else {
       saveThemeFromInputs();
     }
   });
-  
+
   colorInputs.forEach((input) => {
     input.addEventListener("input", () => {
       if (isDefaultTheme(currentThemeName)) {
-        alert("Вы не можете изменять стандартные темы. Пожалуйста, создайте свою собственную тему.");
-        loadThemeToInputs(currentThemeName); 
+        alert(
+          "Вы не можете изменять стандартные темы. Пожалуйста, создайте свою собственную тему."
+        );
+        loadThemeToInputs(currentThemeName);
       } else {
-        saveThemeFromInputs(); 
+        saveThemeFromInputs();
       }
     });
   });
-  
+
   updateThemeSelect();
   loadThemeToInputs(currentThemeName);
   // ====================================================================================================================
@@ -3110,48 +3135,58 @@ if (targetSettings.test(window.location.href)) {
   // ====================================================================================================================
   function saveHighlightSettings() {
     const highlightResources = [];
-  
-    document.querySelectorAll('.uwu-table-highlight-Resources tbody tr').forEach(row => {
-      const resourceName = row.querySelector('.uwu-color-picker').dataset.resource;
-      const colorPicker = row.querySelector('.uwu-color-picker');
-      const checkbox = row.querySelector('.uwu-highlight-checkbox');
-  
-      const resource = {
-        name: resourceName,
-        color: colorPicker.value,
-        highlight: checkbox.checked
-      };
-  
-      highlightResources.push(resource);
-    });
-  
-    localStorage.setItem('uwu_highlightResources', JSON.stringify(highlightResources));
+
+    document
+      .querySelectorAll(".uwu-table-highlight-Resources tbody tr")
+      .forEach((row) => {
+        const resourceName =
+          row.querySelector(".uwu-color-picker").dataset.resource;
+        const colorPicker = row.querySelector(".uwu-color-picker");
+        const checkbox = row.querySelector(".uwu-highlight-checkbox");
+
+        const resource = {
+          name: resourceName,
+          color: colorPicker.value,
+          highlight: checkbox.checked,
+        };
+
+        highlightResources.push(resource);
+      });
+
+    localStorage.setItem(
+      "uwu_highlightResources",
+      JSON.stringify(highlightResources)
+    );
   }
-  
+
   function restoreHighlightSettings() {
-    const savedSettings = localStorage.getItem('uwu_highlightResources');
+    const savedSettings = localStorage.getItem("uwu_highlightResources");
     if (savedSettings) {
       const highlightResources = JSON.parse(savedSettings);
-  
-      highlightResources.forEach(resource => {
-        const colorPicker = document.querySelector(`.uwu-color-picker[data-resource="${resource.name}"]`);
-        const checkbox = document.querySelector(`.uwu-highlight-checkbox[data-resource="${resource.name}"]`);
-  
+
+      highlightResources.forEach((resource) => {
+        const colorPicker = document.querySelector(
+          `.uwu-color-picker[data-resource="${resource.name}"]`
+        );
+        const checkbox = document.querySelector(
+          `.uwu-highlight-checkbox[data-resource="${resource.name}"]`
+        );
+
         if (colorPicker) colorPicker.value = resource.color;
         if (checkbox) checkbox.checked = resource.highlight;
       });
     }
   }
 
-restoreHighlightSettings();
+  restoreHighlightSettings();
 
-document.querySelectorAll('.uwu-color-picker').forEach(element => {
-  element.addEventListener('input', saveHighlightSettings);
-});
+  document.querySelectorAll(".uwu-color-picker").forEach((element) => {
+    element.addEventListener("input", saveHighlightSettings);
+  });
 
-document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
-  element.addEventListener('change', saveHighlightSettings);
-});
+  document.querySelectorAll(".uwu-highlight-checkbox").forEach((element) => {
+    element.addEventListener("change", saveHighlightSettings);
+  });
 
   // ====================================================================================================================
   //  . . . ЦВЕТА КОМАНДНЫХ БОЁВ . . .
@@ -3288,60 +3323,59 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     { id: "dark", name: "Тёмная" },
     { id: "glass", name: "Стеклянная" },
   ];
-  
+
   createCustomSelect("settingsTheme", themeOptions);
   // ==============================================================================
   const climbingPanelOrientations = [
     { id: "vertical", name: "Вертикальный" },
     { id: "horizontal", name: "Горизонтальный" },
-  ]
+  ];
 
   createCustomSelect("climbingPanelOrientation", climbingPanelOrientations);
-    // ==============================================================================
-    const clockStyles = [
-      { id: "compact", name: "Компактный" },
-      { id: "standard", name: "Стандартный" },
-      { id: "string", name: "Строчный" },
-    ]
-  
-    createCustomSelect("clockStyle", clockStyles);
-    // ==============================================================================
-    const clockPositions = [
-      { id: "fly", name: "Свободно" },
-      { id: "tos", name: "В блоке погоды" },
-    ]
-  
-    createCustomSelect("clockPosition", clockPositions);
-    // ==============================================================================
-    const highlightResourcesStyles = [
-      { id: "background", name: "Фон / Быстро" },
-      { id: "glow", name: "Свечение / Медленно" },
-    ]
-    
-    createCustomSelect("highlightResourcesStyle", highlightResourcesStyles);
-    // ==============================================================================
-    const cleaningLogStyles = [
-      { id: "smart", name: "Умный" },
-      // { id: "standart", name: "Стандартный" },
-    ]
-  
-    createCustomSelect("cleaningLogStyle", cleaningLogStyles);
-    // ==============================================================================
-    const climbingPanelInputsStyles = [
-      { id: "keyboard", name: "Клавиатура" },
-      { id: "standart", name: "Галочки + Клавиатура" },
-    ]
-  
-    createCustomSelect("climbingPanelInputsStyle", climbingPanelInputsStyles);
+  // ==============================================================================
+  const clockStyles = [
+    { id: "compact", name: "Компактный" },
+    { id: "standard", name: "Стандартный" },
+    { id: "string", name: "Строчный" },
+  ];
+
+  createCustomSelect("clockStyle", clockStyles);
+  // ==============================================================================
+  const clockPositions = [
+    { id: "fly", name: "Свободно" },
+    { id: "tos", name: "В блоке погоды" },
+  ];
+
+  createCustomSelect("clockPosition", clockPositions);
+  // ==============================================================================
+  const highlightResourcesStyles = [
+    { id: "background", name: "Фон / Быстро" },
+    { id: "glow", name: "Свечение / Медленно" },
+  ];
+
+  createCustomSelect("highlightResourcesStyle", highlightResourcesStyles);
+  // ==============================================================================
+  const cleaningLogStyles = [
+    { id: "smart", name: "Умный" },
+    // { id: "standart", name: "Стандартный" },
+  ];
+
+  createCustomSelect("cleaningLogStyle", cleaningLogStyles);
+  // ==============================================================================
+  const climbingPanelInputsStyles = [
+    { id: "keyboard", name: "Клавиатура" },
+    { id: "standart", name: "Галочки + Клавиатура" },
+  ];
+
+  createCustomSelect("climbingPanelInputsStyle", climbingPanelInputsStyles);
   // ====================================================================================================================
   //   . . . СОЗДАНИЕ ВЫПАДАЮЩИХ СПИСКОВ . . .
   // ====================================================================================================================
   function createCustomSelect(selectId, options) {
-  
     const selectContainer = document.getElementById(selectId);
     const selectedElement = selectContainer.querySelector(".select-selected");
     const optionsContainer = selectContainer.querySelector(".select-items");
-  
+
     if (settings && settings[selectId] !== undefined) {
       const selectedOption = options.find(
         (option) => option.id === settings[selectId]
@@ -3350,22 +3384,22 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
         selectedElement.textContent = selectedOption.name;
       }
     }
-  
+
     options.forEach((option, index) => {
       const optionElement = document.createElement("div");
       optionElement.textContent = option.name;
       optionElement.dataset.id = option.id;
-  
+
       optionElement.addEventListener("click", () => {
         selectedElement.textContent = option.name;
         settings[selectId] = option.id;
         saveSettings();
         selectContainer.classList.remove("active");
       });
-  
+
       optionsContainer.appendChild(optionElement);
     });
-  
+
     selectedElement.addEventListener("click", () => {
       selectContainer.classList.toggle("active");
     });
@@ -3418,20 +3452,50 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     container.appendChild(testButton);
   }
 
-  addSoundTestButton("notificationPMContainer", "notificationPMSound", "notificationPMVolume");
-  addSoundTestButton("notificationActionEndContainer", "notificationActionEndSound", "notificationActionEndVolume");
-  addSoundTestButton("notificationInMouthContainer", "notificationInMouthSound", "notificationInMouthVolume");
-  addSoundTestButton("notificationInFightModeContainer", "notificationInFightModeSound", "notificationInFightModeVolume");
-  addSoundTestButton("climbingRefreshNotificationSoundContainer", "climbingRefreshNotificationSound", "climbingRefreshNotificationVolume");
-  addSoundTestButton("myNameNotificationSoundContainer", "myNameNotificationSound", "notificationMyNameVolume");
-  addSoundTestButton("notificationBlockContainer", "notificationBlockSound", "notificationBlockVolume");
+  addSoundTestButton(
+    "notificationPMContainer",
+    "notificationPMSound",
+    "notificationPMVolume"
+  );
+  addSoundTestButton(
+    "notificationActionEndContainer",
+    "notificationActionEndSound",
+    "notificationActionEndVolume"
+  );
+  addSoundTestButton(
+    "notificationInMouthContainer",
+    "notificationInMouthSound",
+    "notificationInMouthVolume"
+  );
+  addSoundTestButton(
+    "notificationInFightModeContainer",
+    "notificationInFightModeSound",
+    "notificationInFightModeVolume"
+  );
+  addSoundTestButton(
+    "climbingRefreshNotificationSoundContainer",
+    "climbingRefreshNotificationSound",
+    "climbingRefreshNotificationVolume"
+  );
+  addSoundTestButton(
+    "myNameNotificationSoundContainer",
+    "myNameNotificationSound",
+    "notificationMyNameVolume"
+  );
+  addSoundTestButton(
+    "notificationBlockContainer",
+    "notificationBlockSound",
+    "notificationBlockVolume"
+  );
   // ====================================================================================================================
   //  . . . СБРОС ПОЗИЦИИ ЧАСИКОВ . . .
   // ====================================================================================================================
-  document.getElementById('resetClockPosition').addEventListener('click', () => {
-    const defaultPosition = { x: 10, y: 10 };
-    localStorage.setItem("uwu_clock", JSON.stringify(defaultPosition));
-  });
+  document
+    .getElementById("resetClockPosition")
+    .addEventListener("click", () => {
+      const defaultPosition = { x: 10, y: 10 };
+      localStorage.setItem("uwu_clock", JSON.stringify(defaultPosition));
+    });
   // ====================================================================================================================
   //  . . . ИМПОРТ / ЭКСПОРТ ВСЕХ НАСТРОЕК . . .
   // ====================================================================================================================
@@ -3449,17 +3513,17 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     "uwu_templates",
     "uwu_highlightResources",
   ];
-  
+
   const importButton = document.getElementById("importSettingsButton");
   const importSettingsInput = document.getElementById("importSettings");
   const exportSettingsInput = document.getElementById("exportSettings");
-  
+
   importButton.addEventListener("click", () => {
     const importedSettings = importSettingsInput.value;
-  
+
     try {
       const parsedSettings = JSON.parse(importedSettings);
-      settingsAllKeys.forEach(key => {
+      settingsAllKeys.forEach((key) => {
         if (parsedSettings[key] !== undefined) {
           localStorage.setItem(key, JSON.stringify(parsedSettings[key]));
         }
@@ -3470,15 +3534,19 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     }
     updateExportField();
   });
-  
+
   function updateExportField() {
-    const settingsToExport = JSON.stringify(getSpecificLocalStorageItems(), null, 2);
+    const settingsToExport = JSON.stringify(
+      getSpecificLocalStorageItems(),
+      null,
+      2
+    );
     exportSettingsInput.value = settingsToExport;
   }
-  
+
   function getSpecificLocalStorageItems() {
     const items = {};
-    settingsAllKeys.forEach(key => {
+    settingsAllKeys.forEach((key) => {
       const value = localStorage.getItem(key);
       if (value !== null) {
         try {
@@ -3490,17 +3558,18 @@ document.querySelectorAll('.uwu-highlight-checkbox').forEach(element => {
     });
     return items;
   }
-  
+
   loadSettings();
   updateExportField();
   // ====================================================================================================================
-//  . . . РЕДИЗАЙН НАСТРОЕК КОСТЮМОВ . . .
-// ====================================================================================================================
-if (settings.redesignCostumsSettings) {
-  function addStyles() {
-    const style = document.createElement('style');
-    style.innerHTML = // css
-      `
+  //  . . . РЕДИЗАЙН НАСТРОЕК КОСТЮМОВ . . .
+  // ====================================================================================================================
+  if (settings.redesignCostumsSettings) {
+    function addStyles() {
+      const style = document.createElement("style");
+      style.innerHTML =
+        // css
+        `
         .list-group-item {
             display: grid !important;
             grid-template-columns: auto 1fr;
@@ -3555,45 +3624,49 @@ if (settings.redesignCostumsSettings) {
           height: 22px;
         }
     `;
-    document.head.appendChild(style);
-  }
+      document.head.appendChild(style);
+    }
 
-  function addCostumePreview() {
-    const items = document.querySelectorAll('.list-group-item');
-    items.forEach(item => {
-        const costumeId = item.textContent.trim().split(' ')[0];
-        const imageContainer = item.querySelector('.costume-image-container');
-        const img = imageContainer ? imageContainer.querySelector('img') : null;
+    function addCostumePreview() {
+      const items = document.querySelectorAll(".list-group-item");
+      items.forEach((item) => {
+        const costumeId = item.textContent.trim().split(" ")[0];
+        const imageContainer = item.querySelector(".costume-image-container");
+        const img = imageContainer ? imageContainer.querySelector("img") : null;
 
-        if (!imageContainer || !img || img.getAttribute('data-costume-id') !== costumeId) {
-            const imgUrl = `https://catwar.net/cw3/cats/0/costume/${costumeId}.png`;
+        if (
+          !imageContainer ||
+          !img ||
+          img.getAttribute("data-costume-id") !== costumeId
+        ) {
+          const imgUrl = `https://catwar.net/cw3/cats/0/costume/${costumeId}.png`;
 
-            if (!imageContainer) {
-                const newImageContainer = document.createElement('div');
-                newImageContainer.classList.add('costume-image-container');
+          if (!imageContainer) {
+            const newImageContainer = document.createElement("div");
+            newImageContainer.classList.add("costume-image-container");
 
-                const newImg = document.createElement('img');
-                newImg.src = imgUrl;
-                newImg.alt = `Costume ${costumeId}`;
-                newImg.setAttribute('data-costume-id', costumeId);
+            const newImg = document.createElement("img");
+            newImg.src = imgUrl;
+            newImg.alt = `Costume ${costumeId}`;
+            newImg.setAttribute("data-costume-id", costumeId);
 
-                newImageContainer.appendChild(newImg);
+            newImageContainer.appendChild(newImg);
 
-                item.insertBefore(newImageContainer, item.firstChild);
-            } else {
-                img.src = imgUrl;
-                img.setAttribute('data-costume-id', costumeId);
-            }
+            item.insertBefore(newImageContainer, item.firstChild);
+          } else {
+            img.src = imgUrl;
+            img.setAttribute("data-costume-id", costumeId);
+          }
         }
+      });
+    }
+
+    addStyles();
+    setupMutationObserver(".double-container", addCostumePreview, {
+      childList: true,
+      subtree: true,
     });
   }
-
-  addStyles();
-  setupMutationObserver(".double-container", addCostumePreview, {
-    childList: true,
-    subtree: true,
-  });
-}
   // ====================================================================================================================
   //  . . . МАКЕТ КАСТОМИЗАЦИИ ИГРОВОЙ . . .
   // ====================================================================================================================
@@ -3612,15 +3685,15 @@ if (settings.redesignCostumsSettings) {
 
   function saveLayoutSettings() {
     const leftBlocks = Array.from(leftColumn.querySelectorAll(".block")).map(
-        (block) => block.classList[1]
+      (block) => block.classList[1]
     );
     const rightBlocks = Array.from(rightColumn.querySelectorAll(".block")).map(
-        (block) => block.classList[1]
+      (block) => block.classList[1]
     );
 
     const layoutSettings = {
-        leftBlocks,
-        rightBlocks,
+      leftBlocks,
+      rightBlocks,
     };
 
     localStorage.setItem("uwu_layoutSettings", JSON.stringify(layoutSettings));
@@ -3638,38 +3711,38 @@ if (settings.redesignCostumsSettings) {
     controlsWrapper.classList.add("controls");
 
     if (blockId === "tr_info") {
-        const moveInfoButton = document.createElement("button");
-        moveInfoButton.textContent = "⏪Переместить⏩";
-        moveInfoButton.classList.add("move-info", "install-button");
-        moveInfoButton.addEventListener("click", () => {
-            swapColumns(blockElement);
-            saveLayoutSettings();
-        });
-        controlsWrapper.appendChild(moveInfoButton);
+      const moveInfoButton = document.createElement("button");
+      moveInfoButton.textContent = "⏪Переместить⏩";
+      moveInfoButton.classList.add("move-info", "install-button");
+      moveInfoButton.addEventListener("click", () => {
+        swapColumns(blockElement);
+        saveLayoutSettings();
+      });
+      controlsWrapper.appendChild(moveInfoButton);
     } else {
-        const moveUpButton = document.createElement("button");
-        moveUpButton.textContent = "🔼Вверх";
-        moveUpButton.classList.add("move-up", "install-button");
-        moveUpButton.addEventListener("click", () => {
-            const previousBlock = blockElement.previousElementSibling;
-            if (previousBlock) {
-                blockElement.parentNode.insertBefore(blockElement, previousBlock);
-                saveLayoutSettings();
-            }
-        });
-        controlsWrapper.appendChild(moveUpButton);
+      const moveUpButton = document.createElement("button");
+      moveUpButton.textContent = "🔼Вверх";
+      moveUpButton.classList.add("move-up", "install-button");
+      moveUpButton.addEventListener("click", () => {
+        const previousBlock = blockElement.previousElementSibling;
+        if (previousBlock) {
+          blockElement.parentNode.insertBefore(blockElement, previousBlock);
+          saveLayoutSettings();
+        }
+      });
+      controlsWrapper.appendChild(moveUpButton);
 
-        const moveDownButton = document.createElement("button");
-        moveDownButton.textContent = "🔽Вниз";
-        moveDownButton.classList.add("move-down", "install-button");
-        moveDownButton.addEventListener("click", () => {
-            const nextBlock = blockElement.nextElementSibling;
-            if (nextBlock) {
-                blockElement.parentNode.insertBefore(nextBlock, blockElement);
-                saveLayoutSettings();
-            }
-        });
-        controlsWrapper.appendChild(moveDownButton);
+      const moveDownButton = document.createElement("button");
+      moveDownButton.textContent = "🔽Вниз";
+      moveDownButton.classList.add("move-down", "install-button");
+      moveDownButton.addEventListener("click", () => {
+        const nextBlock = blockElement.nextElementSibling;
+        if (nextBlock) {
+          blockElement.parentNode.insertBefore(nextBlock, blockElement);
+          saveLayoutSettings();
+        }
+      });
+      controlsWrapper.appendChild(moveDownButton);
     }
 
     blockElement.appendChild(controlsWrapper);
@@ -3678,71 +3751,78 @@ if (settings.redesignCostumsSettings) {
 
   function swapColumns(blockElement) {
     if (blockElement.parentNode === leftColumn) {
-        const rightColumnBlocks = Array.from(rightColumn.children);
-        rightColumn.innerHTML = "";
-        rightColumn.appendChild(blockElement);
-        rightColumnBlocks.forEach((block) => leftColumn.appendChild(block));
+      const rightColumnBlocks = Array.from(rightColumn.children);
+      rightColumn.innerHTML = "";
+      rightColumn.appendChild(blockElement);
+      rightColumnBlocks.forEach((block) => leftColumn.appendChild(block));
     } else {
-        const leftColumnBlocks = Array.from(leftColumn.children);
-        leftColumn.innerHTML = "";
-        leftColumn.appendChild(blockElement);
-        leftColumnBlocks.forEach((block) => rightColumn.appendChild(block));
+      const leftColumnBlocks = Array.from(leftColumn.children);
+      leftColumn.innerHTML = "";
+      leftColumn.appendChild(blockElement);
+      leftColumnBlocks.forEach((block) => rightColumn.appendChild(block));
     }
     saveLayoutSettings();
   }
 
   const resetLayoutButton = document.getElementById("reset-layout-button");
   resetLayoutButton.addEventListener("click", () => {
-    const confirmReset = confirm("Вы уверены, что хотите сбросить расположение блоков?");
-    if(confirmReset) {
+    const confirmReset = confirm(
+      "Вы уверены, что хотите сбросить расположение блоков?"
+    );
+    if (confirmReset) {
       const defaultSettings = getDefaultLayoutSettings();
-      localStorage.setItem("uwu_layoutSettings", JSON.stringify(defaultSettings));
+      localStorage.setItem(
+        "uwu_layoutSettings",
+        JSON.stringify(defaultSettings)
+      );
       location.reload();
     }
   });
 
   function getDefaultLayoutSettings() {
     return {
-    leftBlocks: ["tr_info"],
-    rightBlocks: ["tr_tos", "tr_chat", "tr_actions", "tr_mouth"],
+      leftBlocks: ["tr_info"],
+      rightBlocks: ["tr_tos", "tr_chat", "tr_actions", "tr_mouth"],
     };
-    }
+  }
 
   function loadLayoutSettings() {
     try {
-        const savedSettings = localStorage.getItem("uwu_layoutSettings");
-        if (savedSettings) {
-            const { leftBlocks, rightBlocks } = JSON.parse(savedSettings);
+      const savedSettings = localStorage.getItem("uwu_layoutSettings");
+      if (savedSettings) {
+        const { leftBlocks, rightBlocks } = JSON.parse(savedSettings);
 
-            leftColumn.innerHTML = "";
-            rightColumn.innerHTML = "";
+        leftColumn.innerHTML = "";
+        rightColumn.innerHTML = "";
 
-            leftBlocks.forEach((blockId) => {
-                const blockElement = createBlockElement(blockId);
-                leftColumn.appendChild(blockElement);
-            });
+        leftBlocks.forEach((blockId) => {
+          const blockElement = createBlockElement(blockId);
+          leftColumn.appendChild(blockElement);
+        });
 
-            rightBlocks.forEach((blockId) => {
-                const blockElement = createBlockElement(blockId);
-                rightColumn.appendChild(blockElement);
-            });
-        } else {
-            const defaultSettings = getDefaultLayoutSettings();
-            localStorage.setItem("uwu_layoutSettings", JSON.stringify(defaultSettings));
+        rightBlocks.forEach((blockId) => {
+          const blockElement = createBlockElement(blockId);
+          rightColumn.appendChild(blockElement);
+        });
+      } else {
+        const defaultSettings = getDefaultLayoutSettings();
+        localStorage.setItem(
+          "uwu_layoutSettings",
+          JSON.stringify(defaultSettings)
+        );
 
-            defaultSettings.leftBlocks.forEach((blockId) => {
-                leftColumn.appendChild(createBlockElement(blockId));
-            });
+        defaultSettings.leftBlocks.forEach((blockId) => {
+          leftColumn.appendChild(createBlockElement(blockId));
+        });
 
-            defaultSettings.rightBlocks.forEach((blockId) => {
-                rightColumn.appendChild(createBlockElement(blockId));
-            });
-
-        }
+        defaultSettings.rightBlocks.forEach((blockId) => {
+          rightColumn.appendChild(createBlockElement(blockId));
+        });
+      }
     } catch (error) {
-        console.error("Ошибка при загрузке настроек макета:", error);
+      console.error("Ошибка при загрузке настроек макета:", error);
     }
-}
+  }
 
   loadLayoutSettings();
   // ====================================================================================================================
@@ -3752,19 +3832,19 @@ if (settings.redesignCostumsSettings) {
   const tabManager = {
     tabs: [],
     currentTabIndex: 0,
-  
+
     createTab(name) {
       const newTab = {
         name: name,
         tables: [],
         currentTableId: 0,
       };
-  
+
       this.tabs.push(newTab);
       this.render();
       this.switchTab(this.tabs.length - 1);
     },
-  
+
     createTable(
       tableName = `Локация ${this.tabs[this.currentTabIndex].tables.length + 1}`
     ) {
@@ -3773,7 +3853,7 @@ if (settings.redesignCostumsSettings) {
       this.saveState();
       this.render();
     },
-  
+
     removeTable(tableIndex) {
       const currentTab = this.tabs[this.currentTabIndex];
       if (currentTab && currentTab.tables[tableIndex]) {
@@ -3788,7 +3868,7 @@ if (settings.redesignCostumsSettings) {
         this.render();
       }
     },
-  
+
     removeTab(index) {
       this.tabs.splice(index, 1);
       if (index === this.currentTabIndex) {
@@ -3797,12 +3877,12 @@ if (settings.redesignCostumsSettings) {
       this.saveState();
       this.render();
     },
-  
+
     switchTab(index) {
       this.currentTabIndex = index;
       this.render();
     },
-  
+
     switchTable(tableIndex) {
       const currentTab = this.tabs[this.currentTabIndex];
       if (currentTab) {
@@ -3811,20 +3891,26 @@ if (settings.redesignCostumsSettings) {
         this.render();
       }
     },
-  
+
     renameTab(index) {
-      const newName = prompt("Введите новое имя вкладки:", this.tabs[index].name);
+      const newName = prompt(
+        "Введите новое имя вкладки:",
+        this.tabs[index].name
+      );
       if (newName) {
         this.tabs[index].name = newName;
         this.saveState();
         this.render();
       }
     },
-  
+
     renameTable(tableIndex) {
       const currentTab = this.tabs[this.currentTabIndex];
       if (currentTab) {
-        const newName = prompt("Введите новое имя поля:", currentTab.tables[tableIndex].name);
+        const newName = prompt(
+          "Введите новое имя поля:",
+          currentTab.tables[tableIndex].name
+        );
         if (newName) {
           currentTab.tables[tableIndex].name = newName;
           this.saveState();
@@ -3832,52 +3918,52 @@ if (settings.redesignCostumsSettings) {
         }
       }
     },
-  
+
     saveState() {
       localStorage.setItem("uwu_climbingPanelState", JSON.stringify(this));
     },
-  
+
     render() {
       this.renderTabs();
       this.renderTables();
     },
-  
+
     renderTabs() {
       const tabRow = document.getElementById("uwu-buttonRow1-settings");
       tabRow.innerHTML = "";
-  
+
       this.tabs.forEach((tab, index) => {
         const tabButton = document.createElement("button");
         tabButton.textContent = tab.name;
         tabButton.classList.add("tab-button");
-  
+
         if (index === this.currentTabIndex) {
           tabButton.classList.add("active");
         }
-  
+
         tabButton.addEventListener("click", () => this.switchTab(index));
-  
+
         const removeButton = document.createElement("button");
         removeButton.textContent = "X";
         removeButton.classList.add("remove-button");
-  
+
         removeButton.addEventListener("click", () => this.removeTab(index));
-  
+
         const renameButton = document.createElement("button");
         renameButton.textContent = "✎";
         renameButton.classList.add("rename-button");
-  
+
         renameButton.addEventListener("click", () => this.renameTab(index));
-  
+
         const tabContainer = document.createElement("div");
         tabContainer.classList.add("tab-container");
         tabContainer.appendChild(tabButton);
         tabContainer.appendChild(renameButton);
         tabContainer.appendChild(removeButton);
-  
+
         tabRow.appendChild(tabContainer);
       });
-  
+
       const addTabButton = document.createElement("button");
       addTabButton.textContent = "+";
       addTabButton.classList.add("add-button");
@@ -3889,76 +3975,76 @@ if (settings.redesignCostumsSettings) {
       });
       tabRow.appendChild(addTabButton);
     },
-  
+
     renderTables() {
       const tableRow = document.getElementById("uwu-buttonRow2-settings");
       tableRow.innerHTML = "";
-  
+
       const currentTab = this.tabs[this.currentTabIndex];
-  
+
       if (currentTab) {
         currentTab.tables.forEach((table, index) => {
           const tableButton = document.createElement("button");
           tableButton.textContent = table.name;
           tableButton.classList.add("table-button");
-  
+
           tableButton.addEventListener("click", () => this.switchTable(index));
-  
+
           const removeButton = document.createElement("button");
           removeButton.textContent = "X";
           removeButton.classList.add("remove-button");
-  
+
           removeButton.addEventListener("click", () => this.removeTable(index));
-  
+
           const renameButton = document.createElement("button");
           renameButton.textContent = "✎";
           renameButton.classList.add("rename-button");
-  
+
           renameButton.addEventListener("click", () => this.renameTable(index));
-  
+
           const tableContainer = document.createElement("div");
           tableContainer.classList.add("table-container");
           tableContainer.appendChild(tableButton);
           tableContainer.appendChild(renameButton);
           tableContainer.appendChild(removeButton);
-  
+
           tableRow.appendChild(tableContainer);
         });
-  
+
         const addTableButton = document.createElement("button");
         addTableButton.textContent = "+";
         addTableButton.classList.add("add-button");
-  
+
         addTableButton.addEventListener("click", () => {
           const tableName = prompt("Введите имя поля:");
           if (tableName) {
             this.createTable(tableName);
           }
         });
-  
+
         tableRow.appendChild(addTableButton);
       }
     },
   };
-  
+
   const savedState = localStorage.getItem("uwu_climbingPanelState");
   if (!savedState) {
     tabManager.createTab("Вкладка 1");
     for (let i = 0; i < 5; i++) {
       tabManager.createTable(`Поле ${i + 1}`);
     }
-  
+
     tabManager.createTab("Вкладка 2");
     for (let i = 0; i < 5; i++) {
       tabManager.createTable(`Поле ${i + 1}`);
     }
-  
+
     tabManager.saveState();
   } else {
     const state = JSON.parse(savedState);
     Object.assign(tabManager, state);
   }
-  
+
   tabManager.render();
 }
 // ====================================================================================================================
@@ -4225,7 +4311,7 @@ async function loadModule(moduleName, description, version) {
 }
 
 function addStyle(css) {
-  const style = document.createElement('style');
+  const style = document.createElement("style");
   style.appendChild(document.createTextNode(css));
   document.head.appendChild(style);
 }
@@ -4302,9 +4388,11 @@ if (!targetCW3.test(window.location.href)) {
   function insertAvatars() {
     const comments = document.querySelectorAll(".view-comment");
     comments.forEach((comment) => {
-      if (!comment.querySelector('.avatar-img')) {
+      if (!comment.querySelector(".avatar-img")) {
         const authorLink = comment.querySelector(".author");
-        const catId = authorLink ? authorLink.getAttribute("href").match(/\/cat(\d+)/)?.[1] : null;
+        const catId = authorLink
+          ? authorLink.getAttribute("href").match(/\/cat(\d+)/)?.[1]
+          : null;
 
         const avatarImg = document.createElement("img");
         avatarImg.alt = "Аватар пользователя";
@@ -4375,9 +4463,7 @@ function createSoundManager() {
               );
               pendingSounds[id] = { id, volume, resolve };
             } else {
-              console.warn(
-                "Ошибка воспроизведения звука:", error
-              );
+              console.warn("Ошибка воспроизведения звука:", error);
               reject(error);
             }
           });
@@ -4455,8 +4541,9 @@ if (targetCW3Kns.test(window.location.href)) {
   // ====================================================================================================================
   function applyTheme() {
     const newStyle = document.createElement("style");
-    newStyle.innerHTML = // css
-    `
+    newStyle.innerHTML =
+      // css
+      `
       body {
         background: ${theme?.backgroundColor || ""};
       }
@@ -4535,8 +4622,9 @@ if (targetCW3.test(window.location.href)) {
   // ====================================================================================================================
   function applyTheme() {
     const newStyle = document.createElement("style");
-    newStyle.innerHTML = // css
-    `
+    newStyle.innerHTML =
+      // css
+      `
       body {
         background: ${theme?.backgroundColor || ""};
       }
@@ -4742,79 +4830,66 @@ if (targetCW3.test(window.location.href)) {
       let items = JSON.parse(localStorage.getItem("uwu_personal") ?? "{}");
       if (match && !items.catImg) {
         const fullDomain = `catwar.${match[1]}`;
-        // console.log("uwu_personal", items);
         if (!items.id) {
           await fetch(`https://${fullDomain}/`)
-          .then(response => response.text())
-          .then(text => {
+            .then((response) => response.text())
+            .then((text) => {
               const parser = new DOMParser();
               const htmlDocument = parser.parseFromString(text, "text/html");
-              items.id = htmlDocument.getElementById("id_val").innerText;;
-          });
+              items.id = htmlDocument.getElementById("id_val").innerText;
+            });
           localStorage.setItem("uwu_personal", JSON.stringify(items));
         }
 
-        
         if (!items.catImg && items.id) {
-          const img = document.getElementById("cages").querySelectorAll("a[href='/cat" + items.id + "']")[0].closest(".cat").querySelector(".first");
-          items.catImg = { src: img.style.backgroundImage.slice(5, -2), size: img.style.backgroundSize }
+          const img = document
+            .getElementById("cages")
+            .querySelectorAll("a[href='/cat" + items.id + "']")[0]
+            .closest(".cat")
+            .querySelector(".first");
+          items.catImg = {
+            src: img.style.backgroundImage.slice(5, -2),
+            size: img.style.backgroundSize,
+          };
           localStorage.setItem("uwu_personal", JSON.stringify(items));
         }
-        
       }
 
-      // Сделай кошку стильной
-      function costumeCreate(catSize, costumeURL, catPos) {
-
-        var costume = document.createElement("div");
-        costume.setAttribute("data-v-59afe5e8", "");
-        costume.style.backgroundSize = catSize;
-        if (costumeURL && (costumeURL.startsWith('data:image/'))) {
-          costume.style.backgroundImage = `url('${costumeURL}')`;
-        } else {
-          console.error("Неверный URL-адрес костюма");
-          return null;
+      function applyCostumeStyle() {
+        if (!items.id || !items.costumes?.base || !items.catImg?.size) {
+          return;
         }
-        costume.className = ""
-        costume.style.position = "absolute";
 
-        var selector = `div[data-v-59afe5e8]`;
-        var existingElements = catPos.querySelectorAll(selector);
+        let styleElement = document.getElementById(
+          "uwu-personal-costume-style"
+        );
+        if (!styleElement) {
+          styleElement = document.createElement("style");
+          styleElement.id = "uwu-personal-costume-style";
+          document.head.appendChild(styleElement);
+        }
 
-        Array.from(existingElements).forEach(element => {
-            if (element.style.backgroundImage.includes(costumeURL)) {
-                element.remove();
-            }
-        });
+        const cssRule = `
+          .cat:has(a[href='/cat${items.id}']) .d::after {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background-image: url('${items.costumes.base}');
+              background-size: ${items.catImg.size};
+              background-position: center;
+              background-repeat: no-repeat;
+              pointer-events: none;
+          }
+      `;
 
-        return costume
+        styleElement.innerHTML = cssRule;
       }
 
-      function setupOwnCat() {
-        const items = JSON.parse(localStorage.getItem("uwu_personal") ?? "{}")
-        if (!document.getElementById("cages") || !document.getElementById("cages").querySelectorAll("a[href='/cat" + items.id + "']")[0]) {
-          return setTimeout(setupOwnCat, 10);
-        }
-        const catInit = document.getElementById("cages").querySelectorAll("a[href='/cat" + items.id + "']")[0].closest(".cat").querySelector(".first");
-        const catPos = catInit.parentElement;
-        if (!catPos.querySelector("div[data-v-59afe5e8]:not(.first)")){
-          var costume = costumeCreate(items.catImg.size, items.costumes.base, catPos)
-          catPos.appendChild(costume);
-        }
-      }
-
-      if (items.costumes && items.costumes.base){
-        setupOwnCat();
-
-        setupMutationObserver("#cages", setupOwnCat, {
-          childList: true,
-          subtree: true,
-        });
-
-        setupMutationObserver("#cages_div", setupOwnCat, { 
-          attributes: true, 
-          attributeFilter: ["style"] 
-        });
+      if (items.costumes && items.costumes.base) {
+        applyCostumeStyle();
       }
     }
   }
@@ -4889,8 +4964,9 @@ if (targetCW3.test(window.location.href)) {
   // ====================================================================================================================
   if (settings.showClock) {
     const style = document.createElement("style");
-    style.textContent = // css
-    `
+    style.textContent =
+      // css
+      `
         #uwu-clock {
           border-radius: 10px;
           width: min-content;
@@ -4989,7 +5065,7 @@ if (targetCW3.test(window.location.href)) {
         position: relative;
       }
     `;
-    
+
     const flyStyle = document.createElement("style");
     flyStyle.textContent = `
 
@@ -5014,13 +5090,13 @@ if (targetCW3.test(window.location.href)) {
     if (settings.clockPosition === "fly") {
       container.appendChild(clockElement);
       document.head.appendChild(flyStyle);
-  } else if (settings.clockPosition === "tos") {
+    } else if (settings.clockPosition === "tos") {
       const trTos = document.getElementById("tr_tos").querySelector("tbody tr");
       const newTd = document.createElement("td");
       newTd.appendChild(clockElement);
       trTos.appendChild(newTd);
       document.head.appendChild(tosStyle);
-  }
+    }
 
     let useInternetTime = false;
     let isDragging = false;
@@ -5035,72 +5111,93 @@ if (targetCW3.test(window.location.href)) {
       const day = String(timeSource.getDate()).padStart(2, "0");
       const month = String(timeSource.getMonth() + 1).padStart(2, "0");
       const year = String(timeSource.getFullYear());
-  
+
       timeElement.textContent = `${hours}:${minutes}:${seconds}`;
-  
-      if (settings.clockStyle === "compact" || settings.clockStyle === "string") {
-          dateElement.textContent = `${day}.${month}.${year.slice(-2)}`;
+
+      if (
+        settings.clockStyle === "compact" ||
+        settings.clockStyle === "string"
+      ) {
+        dateElement.textContent = `${day}.${month}.${year.slice(-2)}`;
       } else if (settings.clockStyle === "standard") {
-          const dayOfWeek = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"][timeSource.getDay()];
-          const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
-          const monthName = monthNames[timeSource.getMonth()];
-          dateElement.textContent = `${day} (${dayOfWeek}), ${monthName}, ${year}`;
+        const dayOfWeek = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"][
+          timeSource.getDay()
+        ];
+        const monthNames = [
+          "Январь",
+          "Февраль",
+          "Март",
+          "Апрель",
+          "Май",
+          "Июнь",
+          "Июль",
+          "Август",
+          "Сентябрь",
+          "Октябрь",
+          "Ноябрь",
+          "Декабрь",
+        ];
+        const monthName = monthNames[timeSource.getMonth()];
+        dateElement.textContent = `${day} (${dayOfWeek}), ${monthName}, ${year}`;
       }
-  
+
       if (useInternetTime) {
-          iconElement.textContent = "🌍︎";
-          iconElement.title = "Точное онлайн время";
-          if (settings.clockMoscowTime) {
-              iconElement.textContent += " MSK";
-          }
+        iconElement.textContent = "🌍︎";
+        iconElement.title = "Точное онлайн время";
+        if (settings.clockMoscowTime) {
+          iconElement.textContent += " MSK";
+        }
       } else {
-          iconElement.textContent = "⌨";
-          iconElement.title =
-              "Не удалось получить точное онлайн время! Используется локальное время устройства";
+        iconElement.textContent = "⌨";
+        iconElement.title =
+          "Не удалось получить точное онлайн время! Используется локальное время устройства";
       }
-  }
+    }
 
     async function fetchInternetTime() {
-        try {
-            const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            const url = settings.clockMoscowTime
-                ? "https://timeapi.io/api/Time/current/zone?timeZone=Europe/Moscow"
-                : `https://timeapi.io/api/Time/current/zone?timeZone=${userTimezone}`;
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`Онлайн ответ выдал ошибку: ${response.status} ${response.statusText}`);
-            const data = await response.json();
-            internetTime = new Date(data.dateTime);
-            useInternetTime = true;
-            updateClockWithInternetTime();
-        } catch (error) {
-            console.error('Ошибка при получении онлайн времени:', error);
-            useInternetTime = false;
-            updateClock();
-        }
-        startTimer();
+      try {
+        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const url = settings.clockMoscowTime
+          ? "https://timeapi.io/api/Time/current/zone?timeZone=Europe/Moscow"
+          : `https://timeapi.io/api/Time/current/zone?timeZone=${userTimezone}`;
+        const response = await fetch(url);
+        if (!response.ok)
+          throw new Error(
+            `Онлайн ответ выдал ошибку: ${response.status} ${response.statusText}`
+          );
+        const data = await response.json();
+        internetTime = new Date(data.dateTime);
+        useInternetTime = true;
+        updateClockWithInternetTime();
+      } catch (error) {
+        console.error("Ошибка при получении онлайн времени:", error);
+        useInternetTime = false;
+        updateClock();
+      }
+      startTimer();
     }
 
     function updateClockWithInternetTime() {
       if (internetTime) {
-          internetTime.setSeconds(internetTime.getSeconds() + 1);
-          updateClock(internetTime);
-          if (settings.clockMoscowTime) {
-              iconElement.textContent = "🌍︎ MSK";
-          }
+        internetTime.setSeconds(internetTime.getSeconds() + 1);
+        updateClock(internetTime);
+        if (settings.clockMoscowTime) {
+          iconElement.textContent = "🌍︎ MSK";
+        }
       }
-  }
+    }
 
     function startTimer() {
-        if (timerInterval) {
-            clearInterval(timerInterval);
+      if (timerInterval) {
+        clearInterval(timerInterval);
+      }
+      timerInterval = setInterval(() => {
+        if (useInternetTime) {
+          updateClockWithInternetTime();
+        } else {
+          updateClock();
         }
-        timerInterval = setInterval(() => {
-            if (useInternetTime) {
-                updateClockWithInternetTime();
-            } else {
-                updateClock();
-            }
-        }, 1000);
+      }, 1000);
     }
 
     if (settings.clockPosition === "fly") {
@@ -5110,45 +5207,45 @@ if (targetCW3.test(window.location.href)) {
         offsetY = e.clientY - clockElement.offsetTop;
         document.body.style.userSelect = "none";
       });
-    
+
       clockElement.addEventListener("touchstart", (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
         isDragging = true;
         const touch = e.touches[0];
         offsetX = touch.clientX - clockElement.offsetLeft;
         offsetY = touch.clientY - clockElement.offsetTop;
         document.body.style.userSelect = "none";
       });
-    
+
       document.addEventListener("mousemove", (e) => {
         if (isDragging) {
           clockElement.style.left = `${e.clientX - offsetX}px`;
           clockElement.style.top = `${e.clientY - offsetY}px`;
         }
       });
-    
+
       document.addEventListener("touchmove", (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
         if (isDragging) {
           const touch = e.touches[0];
           clockElement.style.left = `${touch.clientX - offsetX}px`;
           clockElement.style.top = `${touch.clientY - offsetY}px`;
         }
       });
-    
+
       document.addEventListener("mouseup", () => {
         isDragging = false;
         document.body.style.userSelect = "auto";
         saveClockPosition();
       });
-    
+
       document.addEventListener("touchend", () => {
         isDragging = false;
         document.body.style.userSelect = "auto";
         saveClockPosition();
       });
     }
-    
+
     function saveClockPosition() {
       const clockPosition = {
         x: clockElement.offsetLeft,
@@ -5156,7 +5253,7 @@ if (targetCW3.test(window.location.href)) {
       };
       localStorage.setItem("uwu_clock", JSON.stringify(clockPosition));
     }
-    
+
     function loadClockPosition() {
       const storedPosition = localStorage.getItem("uwu_clock");
       if (storedPosition) {
@@ -5165,24 +5262,24 @@ if (targetCW3.test(window.location.href)) {
         clockElement.style.top = `${clockPosition.y}px`;
       }
     }
-    
+
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden) {
         fetchInternetTime();
       }
     });
-    
+
     window.addEventListener("focus", () => {
       fetchInternetTime();
     });
-    
+
     fetchInternetTime();
     if (settings.clockPosition === "fly") {
       loadClockPosition();
     }
-    
+
     document.body.classList.add(settings.clockStyle);
-}
+  }
   // ====================================================================================================================
   //  . . . ДЕЙСТВИЯ ПРИ НАВОДКЕ НА .cat . . .
   // ====================================================================================================================
@@ -5300,8 +5397,9 @@ if (targetCW3.test(window.location.href)) {
     catInfoElement.appendChild(closeButton);
 
     const css_catDefects = document.createElement("style");
-    css_catDefects.innerHTML = // css
-    `
+    css_catDefects.innerHTML =
+      // css
+      `
       .cat-info {
         pointer-events: auto;
         position: fixed;
@@ -5465,8 +5563,9 @@ if (targetCW3.test(window.location.href)) {
 
     let { catInfoElement, contentContainer } = createCatInfoContainer();
 
-    contentContainer.innerHTML = // html
-    `
+    contentContainer.innerHTML =
+      // html
+      `
       <h2>${catName}</h2>
       <div class="other-cat-info-container">
         <div>
@@ -5549,8 +5648,9 @@ if (targetCW3.test(window.location.href)) {
   // ====================================================================================================================
   if (settings.cellsNumbers) {
     function createCellNumbers(style) {
-      let css = // css
-      `
+      let css =
+        // css
+        `
         #cages_div { position: relative; }
         #cages > tbody > tr > td { position: relative; }
         #cages > tbody > tr > td::before { 
@@ -5565,12 +5665,12 @@ if (targetCW3.test(window.location.href)) {
           font-weight: bold;
         }
       `;
-  
+
       let cagesNums = document.createElement("style");
       cagesNums.id = "cages_nums";
       cagesNums.innerHTML = css;
       document.head.appendChild(cagesNums);
-  
+
       let table = document.getElementById("cages");
       if (!table) return;
       let rows = table.querySelectorAll("tbody > tr");
@@ -5581,7 +5681,7 @@ if (targetCW3.test(window.location.href)) {
         }
       }
     }
-  
+
     createCellNumbers({
       color: "white",
       opacity: 0.8,
@@ -5768,7 +5868,9 @@ if (targetCW3.test(window.location.href)) {
 
         const percentage = parseInt(percentageString[0], 10);
 
-        const effectivePercentage = (["hunger", "thirst", "need"].includes(id)) ? (100 - percentage) : percentage;
+        const effectivePercentage = ["hunger", "thirst", "need"].includes(id)
+          ? 100 - percentage
+          : percentage;
         const reversePercentage = 100 - effectivePercentage;
 
         const pixelWidth = (effectivePercentage / 100) * maxWidthPx;
@@ -5796,7 +5898,7 @@ if (targetCW3.test(window.location.href)) {
             timeInfo = ` (${seconds} сек)`;
           }
         }
-  
+
         const detailLine = document.createElement("p");
         detailLine.innerHTML = `<strong>${name}:</strong> <span style="color: #00cc00;">${effectivePercentage}%</span> / <span style="color: red;">${reversePercentage}%</span>`;
         detailLine.style.marginBottom = "0";
@@ -5815,8 +5917,7 @@ if (targetCW3.test(window.location.href)) {
 
     globalContainer.appendChild(catInfoElement);
   }
-  
-  
+
   if (settings.showParametersDetails) {
     setupSingleCallback("#parameters_skills_block", createMoreInfoButton);
   }
@@ -5993,20 +6094,20 @@ if (targetCW3.test(window.location.href)) {
       const cell = event.target.closest("td");
       if (!cell || !cell.closest("#uwu-climbingPanel")) return;
 
-        if (settings.climbingPanelInputsStyle === "standart") {
-            updateCell(cell, activeInputValue);
-            saveTableData(tabManager.currentTableId);
-            transferColors();
+      if (settings.climbingPanelInputsStyle === "standart") {
+        updateCell(cell, activeInputValue);
+        saveTableData(tabManager.currentTableId);
+        transferColors();
+      } else {
+        if (lastClickedCell === cell) {
+          updateCell(cell, "");
+          saveTableData(tabManager.currentTableId);
+          transferColors();
+          lastClickedCell = null;
         } else {
-          if (lastClickedCell === cell) {
-            updateCell(cell, "");
-            saveTableData(tabManager.currentTableId);
-            transferColors();
-            lastClickedCell = null;
-          } else {
-            lastClickedCell = cell;
-          }
+          lastClickedCell = cell;
         }
+      }
     }
 
     function handleKeyDown(event) {
@@ -6051,8 +6152,9 @@ if (targetCW3.test(window.location.href)) {
 
     let activeInputValue = "0";
 
-    const uwuClimbingPanelContainer = // html
-    `
+    const uwuClimbingPanelContainer =
+      // html
+      `
       <div id="uwu-climbingMainPanel">
         <div id="uwu-climbingPanelButton">
             <div class="left-content">
@@ -6127,9 +6229,11 @@ if (targetCW3.test(window.location.href)) {
     }
 
     function updateInputButtonsStyle() {
-      const inputButtons = document.querySelectorAll('#uwu-inputButtons button');
-      inputButtons.forEach(button => {
-        button.classList.toggle('active', button.value === activeInputValue);
+      const inputButtons = document.querySelectorAll(
+        "#uwu-inputButtons button"
+      );
+      inputButtons.forEach((button) => {
+        button.classList.toggle("active", button.value === activeInputValue);
       });
     }
 
@@ -6383,96 +6487,105 @@ if (targetCW3.test(window.location.href)) {
     const CLICK_THRESHOLD = 200;
     const MOVE_THRESHOLD = 10;
 
-
     function handleTouchStart(e) {
       touchStartTime = Date.now();
       const touch = e.touches[0];
       touchStartX = touch.clientX;
       touchStartY = touch.clientY;
       dragStart(e);
-  }
+    }
 
-  function handleTouchEnd(e) {
-    dragEnd(e);
-    
-    // Проверяем, был ли это клик
-    const touchEndTime = Date.now();
-    const touchDuration = touchEndTime - touchStartTime;
-    
-    if (e.changedTouches && e.changedTouches[0]) {
+    function handleTouchEnd(e) {
+      dragEnd(e);
+
+      // Проверяем, был ли это клик
+      const touchEndTime = Date.now();
+      const touchDuration = touchEndTime - touchStartTime;
+
+      if (e.changedTouches && e.changedTouches[0]) {
         const touch = e.changedTouches[0];
         const moveDistance = Math.sqrt(
-            Math.pow(touch.clientX - touchStartX, 2) + 
+          Math.pow(touch.clientX - touchStartX, 2) +
             Math.pow(touch.clientY - touchStartY, 2)
         );
-        
-        if (touchDuration < CLICK_THRESHOLD && moveDistance < MOVE_THRESHOLD && !wasDragging) {
-            togglePanelContainer(e);
+
+        if (
+          touchDuration < CLICK_THRESHOLD &&
+          moveDistance < MOVE_THRESHOLD &&
+          !wasDragging
+        ) {
+          togglePanelContainer(e);
         }
+      }
     }
-  }
 
     function dragStart(e) {
       const touch = e.touches ? e.touches[0] : e;
-    
-      const savedStatus = JSON.parse(localStorage.getItem("uwu_climbingPanelStatus"));
-      initialX = touch.clientX - (savedStatus ? savedStatus.x : climbingMainPanel.offsetLeft);
-      initialY = touch.clientY - (savedStatus ? savedStatus.y : climbingMainPanel.offsetTop);
-    
+
+      const savedStatus = JSON.parse(
+        localStorage.getItem("uwu_climbingPanelStatus")
+      );
+      initialX =
+        touch.clientX -
+        (savedStatus ? savedStatus.x : climbingMainPanel.offsetLeft);
+      initialY =
+        touch.clientY -
+        (savedStatus ? savedStatus.y : climbingMainPanel.offsetTop);
+
       if (e.target === climbingPanelButton) {
         isDragging = true;
         wasDragging = false;
       }
-    
-      if (e.type === 'touchstart') {
+
+      if (e.type === "touchstart") {
         e.preventDefault();
       }
     }
-    
+
     function drag(e) {
       if (isDragging) {
         const touch = e.touches ? e.touches[0] : e;
-    
+
         currentX = touch.clientX - initialX;
         currentY = touch.clientY - initialY;
-    
+
         const windowWidth = window.innerWidth;
         const windowHeight = window.innerHeight;
         const panelWidth = climbingMainPanel.offsetWidth;
         const panelHeight = climbingMainPanel.offsetHeight;
-    
+
         const maxX = windowWidth - panelWidth;
         currentX = Math.max(0, Math.min(currentX, maxX));
-    
+
         const maxY = windowHeight - panelHeight;
         currentY = Math.max(0, Math.min(currentY, maxY));
-    
+
         setPosition(currentX, currentY, climbingMainPanel);
-    
+
         wasDragging = true;
-    
+
         e.preventDefault();
       }
     }
-    
+
     function dragEnd(e) {
       if (isDragging) {
         saveClimbingPanelStatus();
       }
       isDragging = false;
     }
-    
+
     function setPosition(x, y, el) {
       el.style.left = `${x}px`;
       el.style.top = `${y}px`;
     }
-    
+
     function togglePanelContainer(e) {
       if (!wasDragging) {
         const arrow = document.getElementById("uwu-arrow");
         climbingPanelContainer.classList.toggle("open");
         saveClimbingPanelStatus();
-    
+
         if (climbingPanelContainer.classList.contains("open")) {
           arrow.textContent = "▲";
         } else {
@@ -6481,7 +6594,6 @@ if (targetCW3.test(window.location.href)) {
       }
       wasDragging = false;
     }
-    
 
     function checkAndResetPanelPosition() {
       const windowWidth = window.innerWidth;
@@ -6518,22 +6630,31 @@ if (targetCW3.test(window.location.href)) {
     document.addEventListener("mousemove", drag);
     climbingPanelButton.addEventListener("click", togglePanelContainer);
 
-    climbingPanelButton.addEventListener("touchstart", handleTouchStart, { passive: false });
+    climbingPanelButton.addEventListener("touchstart", handleTouchStart, {
+      passive: false,
+    });
     document.addEventListener("touchend", handleTouchEnd);
     document.addEventListener("touchmove", drag, { passive: false });
 
     setTimeout(loadClimbingPanelStatus, 10);
 
-    const climbingPanelContent = document.getElementById("uwu-climbingPanelContent");
+    const climbingPanelContent = document.getElementById(
+      "uwu-climbingPanelContent"
+    );
     const buttonContainer = document.getElementById("uwu-buttonContainer");
     const inputButtonsContainer = document.getElementById("uwu-inputButtons");
     const buttonRow1 = document.getElementById("uwu-buttonRow1");
     const buttonRow2 = document.getElementById("uwu-buttonRow2");
-    const functionButtonsContainer = document.getElementById("uwu-functionButtonsContainer");
+    const functionButtonsContainer = document.getElementById(
+      "uwu-functionButtonsContainer"
+    );
     const tableContainer = document.getElementById("uwu-tableContainer");
     const clearTableButton = document.getElementById("button-clear-table");
 
-    if (settings.climbingPanelOrientation === "horizontal" && settings.climbingPanelInputsStyle === "standart") {
+    if (
+      settings.climbingPanelOrientation === "horizontal" &&
+      settings.climbingPanelInputsStyle === "standart"
+    ) {
       climbingMainPanel.classList.add("horizontal-keyboard");
       climbingPanelContent.classList.add("horizontal-keyboard");
       buttonContainer.classList.add("horizontal-keyboard");
@@ -6546,8 +6667,9 @@ if (targetCW3.test(window.location.href)) {
     }
 
     const uwuClimbingPanel = document.createElement("style");
-    uwuClimbingPanel.innerHTML = // css
-    `
+    uwuClimbingPanel.innerHTML =
+      // css
+      `
     #uwu-climbingPanelContainer {
       background-color: "";
       display: none;
@@ -6699,8 +6821,9 @@ if (targetCW3.test(window.location.href)) {
     document.head.appendChild(uwuClimbingPanel);
 
     const uwuClimbingPanelHorizontal = document.createElement("style");
-    uwuClimbingPanelHorizontal.innerHTML = // css
-    `
+    uwuClimbingPanelHorizontal.innerHTML =
+      // css
+      `
     #uwu-climbingMainPanel {
       width: 390px !important;
     }
@@ -7029,89 +7152,132 @@ if (targetCW3.test(window.location.href)) {
       const b = parseInt(hex.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, ${alpha})`;
     }
-  
+
     const ITEM_MAP = {
-      'Травы': ['13', '15', '17', '19', '21', '23', '25', '26', '106', '108', '109', '110', '111', '112', '115', '116', '119', '655'],
-      'Мох': ['75', '78', '95'],
-      'Паутина': ['20'],
-      'Пыль': ['94', '385', '386', '387', '388', '389', '390', '391', '392'],
-      'Ветки, вьюнки, костоправы': ['565', '566', '562', '563', '3993'],
-      'Травящие предметы': ['985', '986', '987', '988', '989', '44', '180', '77', '7801', '7802', '7803', '7804', '7805', '7806']
+      Травы: [
+        "13",
+        "15",
+        "17",
+        "19",
+        "21",
+        "23",
+        "25",
+        "26",
+        "106",
+        "108",
+        "109",
+        "110",
+        "111",
+        "112",
+        "115",
+        "116",
+        "119",
+        "655",
+      ],
+      Мох: ["75", "78", "95"],
+      Паутина: ["20"],
+      Пыль: ["94", "385", "386", "387", "388", "389", "390", "391", "392"],
+      "Ветки, вьюнки, костоправы": ["565", "566", "562", "563", "3993"],
+      "Травящие предметы": [
+        "985",
+        "986",
+        "987",
+        "988",
+        "989",
+        "44",
+        "180",
+        "77",
+        "7801",
+        "7802",
+        "7803",
+        "7804",
+        "7805",
+        "7806",
+      ],
     };
-  
+
     function generateHighlightStyles(cageItem) {
-      const savedSettings = localStorage.getItem('uwu_highlightResources');
+      const savedSettings = localStorage.getItem("uwu_highlightResources");
       if (!savedSettings) return;
-    
+
       const uwu_highlightResources = JSON.parse(savedSettings);
-    
+
       if (settings.highlightResourcesStyle === "background") {
-        const styleElement = document.getElementById('resourcesStyle') || document.createElement('style');
-        styleElement.id = 'resourcesStyle';
-        styleElement.textContent = '';
-    
-        uwu_highlightResources.forEach(resource => {
+        const styleElement =
+          document.getElementById("resourcesStyle") ||
+          document.createElement("style");
+        styleElement.id = "resourcesStyle";
+        styleElement.textContent = "";
+
+        uwu_highlightResources.forEach((resource) => {
           if (resource.highlight) {
             const rgbaColor = hexToRGBA(resource.color, 0.4);
-            let cssRules = '';
-    
+            let cssRules = "";
+
             const items = ITEM_MAP[resource.name];
             if (!items) {
               console.warn("Неизвестный ресурс:", resource.name);
               return;
             }
-    
-            items.forEach(itemName => {
+
+            items.forEach((itemName) => {
               cssRules += `
                 .cage_items[style*='things/${itemName}.png'] {
                   background-color: ${rgbaColor} !important;
                 }`;
             });
-    
+
             if (cssRules) {
               styleElement.textContent += cssRules;
             }
           }
         });
-    
+
         document.head.appendChild(styleElement);
       } else if (settings.highlightResourcesStyle === "glow") {
         const style = cageItem.getAttribute("style");
         if (!style) return;
-    
-        const oldHighlights = cageItem.querySelectorAll("style.uwu_itemHighlight");
-        oldHighlights.forEach(oldHighlight => oldHighlight.remove());
-    
-        cageItem.style.position = 'relative';
-    
+
+        const oldHighlights = cageItem.querySelectorAll(
+          "style.uwu_itemHighlight"
+        );
+        oldHighlights.forEach((oldHighlight) => oldHighlight.remove());
+
+        cageItem.style.position = "relative";
+
         uwu_highlightResources.forEach((resource) => {
           if (resource.highlight) {
             const rgbaColor = hexToRGBA(resource.color, 1);
             let highlightedItems = [];
-    
+
             const items = ITEM_MAP[resource.name];
             if (!items) {
               console.warn("Неизвестный ресурс:", resource.name);
               return;
             }
-    
+
             items.forEach((itemName) => {
-              const backgroundImages = style.match(/url\("things\/(.*?)\.png"\) (\d+)% (\d+)% no-repeat/g) || [];
-    
+              const backgroundImages =
+                style.match(
+                  /url\("things\/(.*?)\.png"\) (\d+)% (\d+)% no-repeat/g
+                ) || [];
+
               backgroundImages.forEach((backgroundImage) => {
                 if (backgroundImage.includes(`things/${itemName}.png`)) {
-                  const positionMatch = backgroundImage.match(/(url\("things\/(.*?)\.png"\)) (\d+)% (\d+)% no-repeat/);
+                  const positionMatch = backgroundImage.match(
+                    /(url\("things\/(.*?)\.png"\)) (\d+)% (\d+)% no-repeat/
+                  );
                   const imageUrl = positionMatch ? positionMatch[1] : "";
                   const positionX = positionMatch ? positionMatch[3] : "0";
                   const positionY = positionMatch ? positionMatch[4] : "0";
-    
+
                   highlightedItems.push(
                     `${imageUrl} ${positionX}% ${positionY}% no-repeat`
                   );
                 }
               });
             });
-    
+
             if (highlightedItems.length > 0) {
               const styleBody = `
                 content: '';
@@ -7124,9 +7290,9 @@ if (targetCW3.test(window.location.href)) {
                 background: ${highlightedItems.join(", ")};
                 filter: drop-shadow(0 0 8px ${rgbaColor}) drop-shadow(0 0 8px ${rgbaColor});
               `;
-    
-              const styleElement = document.createElement('style');
-              styleElement.classList.add('uwu_itemHighlight');
+
+              const styleElement = document.createElement("style");
+              styleElement.classList.add("uwu_itemHighlight");
               styleElement.textContent = `
                 .cage_items[style*='${style}']::before {
                   ${styleBody}
@@ -7138,19 +7304,22 @@ if (targetCW3.test(window.location.href)) {
         });
       }
     }
-  
+
     function setupMutationObserver(targetNode, callback, config) {
       const observer = new MutationObserver((mutationsList, observer) => {
         for (let mutation of mutationsList) {
-          if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+          if (
+            mutation.type === "attributes" &&
+            mutation.attributeName === "style"
+          ) {
             callback(targetNode);
           }
         }
       });
-  
+
       observer.observe(targetNode, config);
     }
-  
+
     document.querySelectorAll(".cage_items").forEach((cageItem) => {
       generateHighlightStyles(cageItem);
       setupMutationObserver(cageItem, generateHighlightStyles, {
@@ -7228,81 +7397,96 @@ if (targetCW3.test(window.location.href)) {
   //   . . . ПОЛЬЗОВАТЕЛЬСКИЕ ЦВЕТА НАВЫКОВ И ПАРАМЕТРОВ . . .
   // ====================================================================================================================
   const defaultBackgroundImageUrl =
-      "https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/parametersBackgroundImageURL.png";
-  
-      function generateParameterStyles() {
-        let cssStyles = "";
-    
-        const otherColors = settings.parametersColors.other || ["#cccccc", "#cccccc", "#cccccc", "#cccccc"];
-        const otherFirstCellBackground = `linear-gradient(to right, ${otherColors[0]}, ${otherColors[1]})`;
-        const otherLastCellBackground = `linear-gradient(to right, ${otherColors[2]}, ${otherColors[3]})`;
-    
-        cssStyles += `#parameters_skills_block .bar-fill { background: ${otherFirstCellBackground}; }\n`;
-        cssStyles += `#parameters_skills_block .bar { background: ${otherLastCellBackground}; }\n`;
-    
-        const backgroundImageURL = settings.parametersUserBackgroundImage
-            ? settings.parametersUserBackgroundImageURL
-            : defaultBackgroundImageUrl;
-        const useBackgroundImage = settings.parametersBackgroundImage || settings.parametersUserBackgroundImage;
-    
-        for (const paramId in settings.parametersColors) {
-            if (paramId === "other") continue;
-    
-            const colors = settings.parametersColors[paramId] || ["#cccccc", "#cccccc", "#cccccc", "#cccccc"];
-    
-            const firstCellBackground = useBackgroundImage
-                ? `url(${backgroundImageURL}), linear-gradient(to right, ${colors[0]}, ${colors[1]})`
-                : `linear-gradient(to right, ${colors[0]}, ${colors[1]})`;
-            const lastCellBackground = useBackgroundImage
-                ? `url(${backgroundImageURL}), linear-gradient(to right, ${colors[2]}, ${colors[3]})`
-                : `linear-gradient(to right, ${colors[2]}, ${colors[3]})`;
-    
-            cssStyles += `#${paramId} .bar-fill { background: ${firstCellBackground} !important; }\n`;
-            cssStyles += `#${paramId} .bar { background: ${lastCellBackground} !important; }\n`;
-        }
-    
-        return cssStyles;
+    "https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/parametersBackgroundImageURL.png";
+
+  function generateParameterStyles() {
+    let cssStyles = "";
+
+    const otherColors = settings.parametersColors.other || [
+      "#cccccc",
+      "#cccccc",
+      "#cccccc",
+      "#cccccc",
+    ];
+    const otherFirstCellBackground = `linear-gradient(to right, ${otherColors[0]}, ${otherColors[1]})`;
+    const otherLastCellBackground = `linear-gradient(to right, ${otherColors[2]}, ${otherColors[3]})`;
+
+    cssStyles += `#parameters_skills_block .bar-fill { background: ${otherFirstCellBackground}; }\n`;
+    cssStyles += `#parameters_skills_block .bar { background: ${otherLastCellBackground}; }\n`;
+
+    const backgroundImageURL = settings.parametersUserBackgroundImage
+      ? settings.parametersUserBackgroundImageURL
+      : defaultBackgroundImageUrl;
+    const useBackgroundImage =
+      settings.parametersBackgroundImage ||
+      settings.parametersUserBackgroundImage;
+
+    for (const paramId in settings.parametersColors) {
+      if (paramId === "other") continue;
+
+      const colors = settings.parametersColors[paramId] || [
+        "#cccccc",
+        "#cccccc",
+        "#cccccc",
+        "#cccccc",
+      ];
+
+      const firstCellBackground = useBackgroundImage
+        ? `url(${backgroundImageURL}), linear-gradient(to right, ${colors[0]}, ${colors[1]})`
+        : `linear-gradient(to right, ${colors[0]}, ${colors[1]})`;
+      const lastCellBackground = useBackgroundImage
+        ? `url(${backgroundImageURL}), linear-gradient(to right, ${colors[2]}, ${colors[3]})`
+        : `linear-gradient(to right, ${colors[2]}, ${colors[3]})`;
+
+      cssStyles += `#${paramId} .bar-fill { background: ${firstCellBackground} !important; }\n`;
+      cssStyles += `#${paramId} .bar { background: ${lastCellBackground} !important; }\n`;
     }
-    
-    
-    function applyParameterColors() {
-        const existingStyleTag = document.getElementById("custom-parameter-styles");
-        if (existingStyleTag) {
-            existingStyleTag.remove();
-        }
-    
-        const cssStyles = generateParameterStyles();
-    
-        const styleTag = document.createElement("style");
-        styleTag.id = "custom-parameter-styles";
-        styleTag.innerHTML = cssStyles;
-        document.head.appendChild(styleTag);
+
+    return cssStyles;
+  }
+
+  function applyParameterColors() {
+    const existingStyleTag = document.getElementById("custom-parameter-styles");
+    if (existingStyleTag) {
+      existingStyleTag.remove();
     }
-    
-    if (settings.userParametersTheme) {
-        applyParameterColors();
-    }
+
+    const cssStyles = generateParameterStyles();
+
+    const styleTag = document.createElement("style");
+    styleTag.id = "custom-parameter-styles";
+    styleTag.innerHTML = cssStyles;
+    document.head.appendChild(styleTag);
+  }
+
+  if (settings.userParametersTheme) {
+    applyParameterColors();
+  }
   // ====================================================================================================================
   //   . . . ПОЛЬЗОВАТЕЛЬСКИЙ ШРИФТ . . .
   // ====================================================================================================================
-  let fontSize = JSON.parse(localStorage.getItem('uwu_fontSize'));
+  let fontSize = JSON.parse(localStorage.getItem("uwu_fontSize"));
 
   function applyFonts() {
-      // Создаем элемент <link> для подключения шрифта
-      const fontFamily = fontSize?.fontFamilyBody;
-      if (fontFamily) {
-          const link = document.createElement('link');
-          link.rel = 'stylesheet';
-          link.href = `https://fonts.googleapis.com/css?family=${encodeURIComponent(fontFamily)}`;
-          document.head.appendChild(link);
-      }
-  
-      // Создаем элемент <style> для применения стилей
-      const newFontStyle = document.createElement("style");
-      newFontStyle.innerHTML = `
+    // Создаем элемент <link> для подключения шрифта
+    const fontFamily = fontSize?.fontFamilyBody;
+    if (fontFamily) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = `https://fonts.googleapis.com/css?family=${encodeURIComponent(
+        fontFamily
+      )}`;
+      document.head.appendChild(link);
+    }
+
+    // Создаем элемент <style> для применения стилей
+    const newFontStyle = document.createElement("style");
+    newFontStyle.innerHTML = `
           body {
               font-size: ${fontSize?.fontSizeBody}px;
-              font-family: ${fontFamily ? `'${fontFamily}', sans-serif` : 'sans-serif'};
+              font-family: ${
+                fontFamily ? `'${fontFamily}', sans-serif` : "sans-serif"
+              };
           }
   
           .small {
@@ -7357,11 +7541,11 @@ if (targetCW3.test(window.location.href)) {
               font-size: ${fontSize?.vlm10}px;
           }
       `;
-      document.head.appendChild(newFontStyle);
+    document.head.appendChild(newFontStyle);
   }
-  
+
   if (settings.useUserFonts) {
-      applyFonts();
+    applyFonts();
   }
   // ====================================================================================================================
   //   . . . РЕДИЗАЙН ИГРОВОЙ . . .
@@ -7504,8 +7688,9 @@ if (targetCW3.test(window.location.href)) {
 
     // Больше фикс стилей.
     const fixStyle = document.createElement("style");
-    fixStyle.innerHTML = // css
-    `
+    fixStyle.innerHTML =
+      // css
+      `
       #main_table {
         width: 100%;
         max-width: unset;
@@ -7695,153 +7880,174 @@ if (targetCW3.test(window.location.href)) {
     const visualTimerStateKey = "uwu_sniffVisualTimerState";
 
     const smellCooldowns = {
-        0: 3600, 1: 3600, 2: 3600, 3: 3600, 4: 1800,
-        5: 1200, 6: 900, 7: 720, 8: 600, 9: 0,
+      0: 3600,
+      1: 3600,
+      2: 3600,
+      3: 3600,
+      4: 1800,
+      5: 1200,
+      6: 900,
+      7: 720,
+      8: 600,
+      9: 0,
     };
 
     function formatTime(seconds) {
-        if (seconds <= 0) return "";
-        const hours = Math.floor(seconds / 3600);
-        const minutes = Math.floor((seconds % 3600) / 60);
-        const remainingSeconds = Math.ceil(seconds % 60);
-        return `${hours ? `${hours} ч ` : ""}${minutes ? `${minutes} мин ` : ""}${remainingSeconds} с`;
+      if (seconds <= 0) return "";
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const remainingSeconds = Math.ceil(seconds % 60);
+      return `${hours ? `${hours} ч ` : ""}${
+        minutes ? `${minutes} мин ` : ""
+      }${remainingSeconds} с`;
     }
 
     function updateVisualTimerDisplay() {
-        const timerElement = document.getElementById("uwu_sniff_timer");
-        if (!timerElement || visualTimerStartTime === null) return;
+      const timerElement = document.getElementById("uwu_sniff_timer");
+      if (!timerElement || visualTimerStartTime === null) return;
 
-        const currentTime = Date.now();
-        const elapsedTime = (currentTime - visualTimerStartTime) / 1000;
-        let remainingTime = visualInitialTimerValue - elapsedTime;
+      const currentTime = Date.now();
+      const elapsedTime = (currentTime - visualTimerStartTime) / 1000;
+      let remainingTime = visualInitialTimerValue - elapsedTime;
 
-        if (remainingTime <= 0) {
-            stopVisualTimer();
-            timerElement.textContent = "";
-        } else {
-            timerElement.setAttribute("value", Math.ceil(remainingTime));
-            timerElement.textContent = ` | Нюх через: ${formatTime(remainingTime)}`;
-            saveVisualTimerState();
-        }
+      if (remainingTime <= 0) {
+        stopVisualTimer();
+        timerElement.textContent = "";
+      } else {
+        timerElement.setAttribute("value", Math.ceil(remainingTime));
+        timerElement.textContent = ` | Нюх через: ${formatTime(remainingTime)}`;
+        saveVisualTimerState();
+      }
     }
 
     function stopVisualTimer() {
-        if (smellTimerInterval) {
-            clearInterval(smellTimerInterval);
-            smellTimerInterval = null;
-        }
-        visualTimerStartTime = null;
-        visualInitialTimerValue = 0;
-        localStorage.removeItem(visualTimerStateKey);
-        localStorage.removeItem(sniffCheckpointKey);
+      if (smellTimerInterval) {
+        clearInterval(smellTimerInterval);
+        smellTimerInterval = null;
+      }
+      visualTimerStartTime = null;
+      visualInitialTimerValue = 0;
+      localStorage.removeItem(visualTimerStateKey);
+      localStorage.removeItem(sniffCheckpointKey);
 
-        const timerElement = document.getElementById("uwu_sniff_timer");
-        if (timerElement) {
-            timerElement.setAttribute("value", "0");
-            timerElement.textContent = "";
-        }
+      const timerElement = document.getElementById("uwu_sniff_timer");
+      if (timerElement) {
+        timerElement.setAttribute("value", "0");
+        timerElement.textContent = "";
+      }
     }
 
     function saveVisualTimerState() {
-        if (visualTimerStartTime !== null && visualInitialTimerValue > 0) {
-            const remainingTime = visualInitialTimerValue - (Date.now() - visualTimerStartTime) / 1000;
-            if (remainingTime > 0) {
-                 const timerState = {
-                    startTime: visualTimerStartTime,
-                    initialValue: visualInitialTimerValue,
-                };
-                localStorage.setItem(visualTimerStateKey, JSON.stringify(timerState));
-            } else {
-                localStorage.removeItem(visualTimerStateKey);
-            }
+      if (visualTimerStartTime !== null && visualInitialTimerValue > 0) {
+        const remainingTime =
+          visualInitialTimerValue - (Date.now() - visualTimerStartTime) / 1000;
+        if (remainingTime > 0) {
+          const timerState = {
+            startTime: visualTimerStartTime,
+            initialValue: visualInitialTimerValue,
+          };
+          localStorage.setItem(visualTimerStateKey, JSON.stringify(timerState));
         } else {
-            localStorage.removeItem(visualTimerStateKey);
+          localStorage.removeItem(visualTimerStateKey);
         }
+      } else {
+        localStorage.removeItem(visualTimerStateKey);
+      }
     }
 
     function tryRestoreTimerFromCheckpointOrState() {
-        if (visualTimerStartTime !== null) {
-            return;
-        }
+      if (visualTimerStartTime !== null) {
+        return;
+      }
 
-        const checkpointTimestampStr = localStorage.getItem(sniffCheckpointKey);
-        if (checkpointTimestampStr) {
-            const checkpointTimestamp = parseInt(checkpointTimestampStr, 10);
-            if (!isNaN(checkpointTimestamp)) {
-                const smellLevelElement = document.querySelector("#smell .level");
-                if (smellLevelElement) {
-                    const smellLevel = parseInt(smellLevelElement.textContent, 10);
-                    if (smellCooldowns.hasOwnProperty(smellLevel)) {
-                        const totalCooldownSeconds = smellCooldowns[smellLevel];
-                        if (totalCooldownSeconds > 0) {
-                            const elapsedTimeSeconds = (Date.now() - checkpointTimestamp) / 1000;
-                            const remainingTimeSeconds = totalCooldownSeconds - elapsedTimeSeconds;
+      const checkpointTimestampStr = localStorage.getItem(sniffCheckpointKey);
+      if (checkpointTimestampStr) {
+        const checkpointTimestamp = parseInt(checkpointTimestampStr, 10);
+        if (!isNaN(checkpointTimestamp)) {
+          const smellLevelElement = document.querySelector("#smell .level");
+          if (smellLevelElement) {
+            const smellLevel = parseInt(smellLevelElement.textContent, 10);
+            if (smellCooldowns.hasOwnProperty(smellLevel)) {
+              const totalCooldownSeconds = smellCooldowns[smellLevel];
+              if (totalCooldownSeconds > 0) {
+                const elapsedTimeSeconds =
+                  (Date.now() - checkpointTimestamp) / 1000;
+                const remainingTimeSeconds =
+                  totalCooldownSeconds - elapsedTimeSeconds;
 
-                            if (remainingTimeSeconds > 0) {
-                                visualInitialTimerValue = remainingTimeSeconds;
-                                visualTimerStartTime = Date.now();
-                                if (smellTimerInterval) clearInterval(smellTimerInterval);
-                                updateVisualTimerDisplay();
-                                smellTimerInterval = setInterval(updateVisualTimerDisplay, 1000);
-                                saveVisualTimerState();
-                                return;
-                            } else {
-                                stopVisualTimer();
-                                return;
-                            }
-                        } else {
-                             stopVisualTimer();
-                             return;
-                        }
-                    }
-                }
-            } else {
-                 localStorage.removeItem(sniffCheckpointKey);
-            }
-        }
-
-        const savedVisualStateStr = localStorage.getItem(visualTimerStateKey);
-        if (savedVisualStateStr) {
-            try {
-                const savedVisualState = JSON.parse(savedVisualStateStr);
-                const elapsedTimeSinceSave = (Date.now() - savedVisualState.startTime) / 1000;
-                const remainingTimeFromSave = savedVisualState.initialValue - elapsedTimeSinceSave;
-
-                if (remainingTimeFromSave > 0) {
-                    visualTimerStartTime = savedVisualState.startTime;
-                    visualInitialTimerValue = savedVisualState.initialValue;
-                    if (smellTimerInterval) clearInterval(smellTimerInterval);
-                    updateVisualTimerDisplay();
-                    smellTimerInterval = setInterval(updateVisualTimerDisplay, 1000);
-                    return;
+                if (remainingTimeSeconds > 0) {
+                  visualInitialTimerValue = remainingTimeSeconds;
+                  visualTimerStartTime = Date.now();
+                  if (smellTimerInterval) clearInterval(smellTimerInterval);
+                  updateVisualTimerDisplay();
+                  smellTimerInterval = setInterval(
+                    updateVisualTimerDisplay,
+                    1000
+                  );
+                  saveVisualTimerState();
+                  return;
                 } else {
-                    localStorage.removeItem(visualTimerStateKey);
+                  stopVisualTimer();
+                  return;
                 }
-            } catch (e) {
-                console.error("Ошибка разбора сохраненного состояния визуального таймера:", e);
-                localStorage.removeItem(visualTimerStateKey);
+              } else {
+                stopVisualTimer();
+                return;
+              }
             }
+          }
+        } else {
+          localStorage.removeItem(sniffCheckpointKey);
         }
+      }
+
+      const savedVisualStateStr = localStorage.getItem(visualTimerStateKey);
+      if (savedVisualStateStr) {
+        try {
+          const savedVisualState = JSON.parse(savedVisualStateStr);
+          const elapsedTimeSinceSave =
+            (Date.now() - savedVisualState.startTime) / 1000;
+          const remainingTimeFromSave =
+            savedVisualState.initialValue - elapsedTimeSinceSave;
+
+          if (remainingTimeFromSave > 0) {
+            visualTimerStartTime = savedVisualState.startTime;
+            visualInitialTimerValue = savedVisualState.initialValue;
+            if (smellTimerInterval) clearInterval(smellTimerInterval);
+            updateVisualTimerDisplay();
+            smellTimerInterval = setInterval(updateVisualTimerDisplay, 1000);
+            return;
+          } else {
+            localStorage.removeItem(visualTimerStateKey);
+          }
+        } catch (e) {
+          console.error(
+            "Ошибка разбора сохраненного состояния визуального таймера:",
+            e
+          );
+          localStorage.removeItem(visualTimerStateKey);
+        }
+      }
     }
 
     function handleBlockMessChange() {
-        const blockMess = document.getElementById("block_mess");
-        if (blockMess && blockMess.textContent.includes("Принюхиваться")) {
-            stopVisualTimer();
-            localStorage.setItem(sniffCheckpointKey, Date.now().toString());
-        }
+      const blockMess = document.getElementById("block_mess");
+      if (blockMess && blockMess.textContent.includes("Принюхиваться")) {
+        stopVisualTimer();
+        localStorage.setItem(sniffCheckpointKey, Date.now().toString());
+      }
     }
 
     function checkActionAvailability() {
-        const trActions = document.getElementById('tr_actions');
-        if (!trActions) return;
-        const sniffActionLink = trActions.querySelector('a[data-id="13"]');
+      const trActions = document.getElementById("tr_actions");
+      if (!trActions) return;
+      const sniffActionLink = trActions.querySelector('a[data-id="13"]');
 
-        if (sniffActionLink) {
-            stopVisualTimer();
-        } else {
-            tryRestoreTimerFromCheckpointOrState();
-        }
+      if (sniffActionLink) {
+        stopVisualTimer();
+      } else {
+        tryRestoreTimerFromCheckpointOrState();
+      }
     }
 
     function handleErrorChange() {
@@ -7849,7 +8055,9 @@ if (targetCW3.test(window.location.href)) {
       if (!errorElement || !errorElement.textContent) return;
 
       const htmlContent = errorElement.innerHTML;
-      const smellCooldownMatch = htmlContent.match(/Следующее обнюхивание будет доступно через (.*?)(\.|<br|$)/);
+      const smellCooldownMatch = htmlContent.match(
+        /Следующее обнюхивание будет доступно через (.*?)(\.|<br|$)/
+      );
       const cooldownExpiredMatch = htmlContent.includes("Час уже прошёл");
 
       if (smellCooldownMatch) {
@@ -7864,44 +8072,65 @@ if (targetCW3.test(window.location.href)) {
         stopVisualTimer();
 
         if (totalSeconds > 0) {
-            visualInitialTimerValue = totalSeconds;
-            visualTimerStartTime = Date.now();
+          visualInitialTimerValue = totalSeconds;
+          visualTimerStartTime = Date.now();
 
-            if (smellTimerInterval) clearInterval(smellTimerInterval);
-            updateVisualTimerDisplay();
-            smellTimerInterval = setInterval(updateVisualTimerDisplay, 1000);
-            saveVisualTimerState();
+          if (smellTimerInterval) clearInterval(smellTimerInterval);
+          updateVisualTimerDisplay();
+          smellTimerInterval = setInterval(updateVisualTimerDisplay, 1000);
+          saveVisualTimerState();
         }
-
       } else if (cooldownExpiredMatch) {
-          stopVisualTimer();
+        stopVisualTimer();
       }
     }
 
     function createTimerElement() {
       const smallElement = document.querySelector(".small");
-        if (smallElement && !document.getElementById("uwu_sniff_timer")) {
-          smallElement.insertAdjacentHTML(
-            "beforeend",
-            '<span id="uwu_sniff_timer" value="0"></span>'
-          );
-        }
+      if (smallElement && !document.getElementById("uwu_sniff_timer")) {
+        smallElement.insertAdjacentHTML(
+          "beforeend",
+          '<span id="uwu_sniff_timer" value="0"></span>'
+        );
+      }
     }
 
     setupSingleCallback(".small", createTimerElement);
 
-    setupMutationObserver("#tr_actions", checkActionAvailability, {
-        childList: true, subtree: true
-    }, 8, 500);
+    setupMutationObserver(
+      "#tr_actions",
+      checkActionAvailability,
+      {
+        childList: true,
+        subtree: true,
+      },
+      8,
+      500
+    );
 
-     setupMutationObserver("#block_mess", handleBlockMessChange, {
-         childList: true, subtree: true, characterData: true
-     }, 8, 500);
+    setupMutationObserver(
+      "#block_mess",
+      handleBlockMessChange,
+      {
+        childList: true,
+        subtree: true,
+        characterData: true,
+      },
+      8,
+      500
+    );
 
-    setupMutationObserver("#error", handleErrorChange, {
-       childList: true, subtree: true, characterData: true
-    }, 8, 500);
-
+    setupMutationObserver(
+      "#error",
+      handleErrorChange,
+      {
+        childList: true,
+        subtree: true,
+        characterData: true,
+      },
+      8,
+      500
+    );
   }
   // ====================================================================================================================
   //   . . . ДУБЛИРОВАНИЕ ДЕЙСТВИЙ НА ВКЛАДКУ БРАУЗЕРА . . .
@@ -7909,9 +8138,8 @@ if (targetCW3.test(window.location.href)) {
   if (settings.duplicateTimeInBrowserTab) {
     const titleElement = document.querySelector("title");
     let blockMess = null;
-  
+
     function updateTitle() {
-  
       if (!blockMess) {
         blockMess = document.getElementById("block_mess");
         if (!blockMess) {
@@ -7919,29 +8147,35 @@ if (targetCW3.test(window.location.href)) {
           return;
         }
       }
-  
+
       const messageText = blockMess.textContent.trim();
-  
+
       const catNameMatch = messageText.match(/^(.+?)\s+держит/);
       const catName = catNameMatch ? catNameMatch[1] : "";
-  
+
       if (catName) {
         titleElement.textContent = `Поднят. Во рту | ${catName}`;
       } else {
-        const timeActionMatch = messageText.match(/^(.+?)\s+(\d+\s*(?:ч\s*)?\d+\s*мин\s*\d+\s*с|\d+\s*мин\s*\d+\s*с|\d+\s*с)\.\s*(Отменить)?$/);
-  
+        const timeActionMatch = messageText.match(
+          /^(.+?)\s+(\d+\s*(?:ч\s*)?\d+\s*мин\s*\d+\s*с|\d+\s*мин\s*\d+\s*с|\d+\s*с)\.\s*(Отменить)?$/
+        );
+
         if (timeActionMatch) {
           const actionText = timeActionMatch[1].trim();
           const currentTime = timeActionMatch[2].trim();
-  
+
           titleElement.textContent = `${currentTime} | ${actionText}`;
         } else {
           titleElement.textContent = "Игровая / CatWar";
         }
       }
     }
-  
-    setupMutationObserver("#tr_actions", updateTitle, { childList: true, subtree: true, characterData: true });
+
+    setupMutationObserver("#tr_actions", updateTitle, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
   }
   // ====================================================================================================================
   //   . . . ЛОГ ЧИСТИЛЬЩИКОВ . . .
@@ -7963,35 +8197,35 @@ if (targetCW3.test(window.location.href)) {
     const ist = historyBlock.querySelector("#ist");
     const locationSpan = historyBlock.querySelector("#location");
     const currentLocation = locationSpan.textContent.trim();
-  
+
     if (currentLocation === "[ Загружается… ]") {
       return;
     }
-  
+
     let cleaningLogBlock = historyBlock.querySelector("#uwu-cleaningLog");
     if (!cleaningLogBlock) {
       createCleaningLogBlock(historyBlock);
       cleaningLogBlock = historyBlock.querySelector("#uwu-cleaningLog");
     }
-  
+
     const istOuterHtml = ist.outerHTML;
     const actions = istOuterHtml
       .split(".")
       .map((action) => action.trim())
       .filter((action) => action);
     const lastAction = actions[actions.length - 2];
-  
+
     const cleaningLogContent = cleaningLogBlock.querySelector(
       "#uwu-cleaningLog-content"
     );
-  
+
     if (lastAction) {
       if (settings.cleaningLogStyle === "smart") {
         processSmartAction(lastAction, currentLocation, cleaningLogContent);
       } else {
         processStandardAction(lastAction, currentLocation, cleaningLogContent);
       }
-  
+
       let storageKey;
       switch (settings.cleaningLogStyle) {
         case "smart":
@@ -8001,16 +8235,22 @@ if (targetCW3.test(window.location.href)) {
           storageKey = "uwu_cleaningLogStandard";
           break;
       }
-  
+
       localStorage.setItem(
         storageKey,
         JSON.stringify({
           log: cleaningLogBuffer,
           catNamesAndIds,
           counters: {
-            pickup: parseInt(document.getElementById("uwu-cleaningLog-counter-pickup").textContent),
-            putdown: parseInt(document.getElementById("uwu-cleaningLog-counter-putdown").textContent)
-          }
+            pickup: parseInt(
+              document.getElementById("uwu-cleaningLog-counter-pickup")
+                .textContent
+            ),
+            putdown: parseInt(
+              document.getElementById("uwu-cleaningLog-counter-putdown")
+                .textContent
+            ),
+          },
         })
       );
       cleaningLogContent.innerHTML = addCatLinksToLog(
@@ -8032,15 +8272,15 @@ if (targetCW3.test(window.location.href)) {
         <a href="#" id="uwu-cleaningLog-clear">Очистить лог</a>
       </div>
     `;
-  
+
     historyBlock.insertAdjacentHTML("beforeend", cleaningLogTemplate);
-  
+
     const hr = document.createElement("hr");
     historyBlock.insertBefore(
       hr,
       historyBlock.querySelector("#uwu-cleaningLog")
     );
-  
+
     const cleaningLogContent = historyBlock.querySelector(
       "#uwu-cleaningLog-content"
     );
@@ -8050,21 +8290,25 @@ if (targetCW3.test(window.location.href)) {
       cleaningLogBuffer = savedData.log;
       catNamesAndIds = savedData.catNamesAndIds;
       if (savedData.counters) {
-        document.getElementById("uwu-cleaningLog-counter-pickup").textContent = savedData.counters.pickup;
-        document.getElementById("uwu-cleaningLog-counter-putdown").textContent = savedData.counters.putdown;
+        document.getElementById("uwu-cleaningLog-counter-pickup").textContent =
+          savedData.counters.pickup;
+        document.getElementById("uwu-cleaningLog-counter-putdown").textContent =
+          savedData.counters.putdown;
       }
       cleaningLogContent.innerHTML = addCatLinksToLog(
         cleaningLogBuffer,
         catNamesAndIds
       );
     }
-  
+
     const clearButton = historyBlock.querySelector("#uwu-cleaningLog-clear");
     clearButton.addEventListener("click", () => {
       cleaningLogBuffer = "";
       catNamesAndIds = [];
-      document.getElementById("uwu-cleaningLog-counter-pickup").textContent = "0";
-      document.getElementById("uwu-cleaningLog-counter-putdown").textContent = "0";
+      document.getElementById("uwu-cleaningLog-counter-pickup").textContent =
+        "0";
+      document.getElementById("uwu-cleaningLog-counter-putdown").textContent =
+        "0";
       cleaningLogContent.innerHTML = "";
       localStorage.removeItem("uwu_cleaningLogSmart");
     });
@@ -8125,7 +8369,7 @@ if (targetCW3.test(window.location.href)) {
             settings.cleaningLogShowID ? ` ${catId}` : ""
           }] на локации "${location}". ${status}`;
         }
-        if (!catNamesAndIds.some(cat => cat.id === catId)) {
+        if (!catNamesAndIds.some((cat) => cat.id === catId)) {
           catNamesAndIds.push({ name: catName, id: catId });
         }
         cleaningLogContent.innerHTML = addCatLinksToLog(
@@ -8139,7 +8383,7 @@ if (targetCW3.test(window.location.href)) {
 
   function processSmartAction(action, location, cleaningLogContent) {
     let matched = false;
-  
+
     for (const relevantAction of relevantActions) {
       if (relevantAction.regex.test(action)) {
         matched = true;
@@ -8154,24 +8398,24 @@ if (targetCW3.test(window.location.href)) {
           .split(".")
           .map((line) => line.trim())
           .filter((line) => line);
-  
+
         switch (relevantAction.type) {
           case "check":
             processCheckAction(logLines, catName, catId, location);
             break;
-  
+
           case "putdown":
             processPutdownAction(logLines, catName, catId, location);
             break;
-  
+
           case "pickup":
             processPickupAction(logLines, catName, catId, location);
             break;
         }
-  
+
         cleaningLogBuffer =
           logLines.join(". ") + (logLines.length > 0 ? "." : "");
-        if (!catNamesAndIds.some(cat => cat.id === catId)) {
+        if (!catNamesAndIds.some((cat) => cat.id === catId)) {
           catNamesAndIds.push({ name: catName, id: catId });
         }
         cleaningLogContent.innerHTML = addCatLinksToLog(
@@ -8181,7 +8425,7 @@ if (targetCW3.test(window.location.href)) {
         return;
       }
     }
-  
+
     if (!matched) {
       const logLines = cleaningLogBuffer
         .split(".")
@@ -8195,7 +8439,7 @@ if (targetCW3.test(window.location.href)) {
         catNamesAndIds
       );
     }
-  
+
     return null;
   }
 
@@ -8225,7 +8469,7 @@ if (targetCW3.test(window.location.href)) {
         }]`
       );
     }
-    if (!catNamesAndIds.some(cat => cat.id === catId)) {
+    if (!catNamesAndIds.some((cat) => cat.id === catId)) {
       catNamesAndIds.push({ name: catName, id: catId });
     }
   }
@@ -8234,14 +8478,14 @@ if (targetCW3.test(window.location.href)) {
     const catPattern = new RegExp(
       `\\[${catName}${settings.cleaningLogShowID ? ` ${catId}` : ""}\\]`
     );
-  
+
     // 1. Ищем последнее и предпоследнее предложения.
     const lastSentenceIndex = logLines.length - 1;
     const penultimateSentenceIndex = lastSentenceIndex - 1;
-  
+
     // 2. Проверяем последнее предложение на наличие "Опущен" без текущего имени кота.
     const lastSentence = logLines[lastSentenceIndex];
-  
+
     if (
       lastSentence.includes(`на локации "${location}"`) &&
       lastSentence.includes("Опущен")
@@ -8257,7 +8501,7 @@ if (targetCW3.test(window.location.href)) {
         }
       }
     }
-  
+
     // 3. Если есть, добавляем имя текущего кота к этому предложению.
     if (
       lastSentence.includes(`на локации "${location}"`) &&
@@ -8276,11 +8520,13 @@ if (targetCW3.test(window.location.href)) {
         }] на локации "${location}"`
       );
     }
-    if (!catNamesAndIds.some(cat => cat.id === catId)) {
+    if (!catNamesAndIds.some((cat) => cat.id === catId)) {
       catNamesAndIds.push({ name: catName, id: catId });
     }
 
-    const putdownCounter = document.getElementById("uwu-cleaningLog-counter-putdown");
+    const putdownCounter = document.getElementById(
+      "uwu-cleaningLog-counter-putdown"
+    );
     putdownCounter.textContent = parseInt(putdownCounter.textContent) + 1;
   }
 
@@ -8364,19 +8610,21 @@ if (targetCW3.test(window.location.href)) {
         logLines.push("Вы забыли проверить кота");
       }
     }
-    if (!catNamesAndIds.some(cat => cat.id === catId)) {
+    if (!catNamesAndIds.some((cat) => cat.id === catId)) {
       catNamesAndIds.push({ name: catName, id: catId });
     }
 
-    const pickupCounter = document.getElementById("uwu-cleaningLog-counter-pickup");
+    const pickupCounter = document.getElementById(
+      "uwu-cleaningLog-counter-pickup"
+    );
     pickupCounter.textContent = parseInt(pickupCounter.textContent) + 1;
   }
 
   function processUnmatchedAction(logLines, cleaningLogContent, action) {
     const lastLogIndex = logLines.length - 1;
-  
+
     const isCancelAction = /Отменил(а)? /.test(action);
-  
+
     if (
       lastLogIndex >= 0 &&
       logLines[lastLogIndex].includes("Проверен [") &&
@@ -8452,23 +8700,26 @@ if (targetCW3.test(window.location.href)) {
   // ====================================================================================================================
   if (settings.notificationActionEnd) {
     let actionStartTime = null;
-  
+
     const observer = new MutationObserver(() => {
       const blockMess = document.getElementById("block_mess");
-  
+
       if (blockMess && blockMess.innerHTML.trim() !== "" && !actionStartTime) {
         actionStartTime = Date.now();
       } else if (!blockMess && actionStartTime) {
         const actionEndTime = Date.now();
         const actionDuration = actionEndTime - actionStartTime;
-  
+
         if (actionDuration >= 6000) {
-          soundManager.playSound(settings.notificationActionEndSound, settings.notificationActionEndVolume);
+          soundManager.playSound(
+            settings.notificationActionEndSound,
+            settings.notificationActionEndVolume
+          );
         }
         actionStartTime = null;
       }
     });
-  
+
     const targetNode = document.getElementById("tr_actions");
     if (targetNode) {
       observer.observe(targetNode, { childList: true, subtree: true });
@@ -8480,7 +8731,7 @@ if (targetCW3.test(window.location.href)) {
   function handleInMouthNotification() {
     const blockMess = document.getElementById("block_mess");
     if (!blockMess) return;
-  
+
     const observer = new MutationObserver(() => {
       if (blockMess.innerHTML.includes("во рту. Вы не сможете выбраться")) {
         soundManager.playSound(
@@ -8489,10 +8740,10 @@ if (targetCW3.test(window.location.href)) {
         );
       }
     });
-  
+
     observer.observe(blockMess, { childList: true, subtree: true });
   }
-  
+
   if (settings.notificationInMouth) {
     setupMutationObserver("#tr_actions", handleInMouthNotification, {
       childList: true,
@@ -8559,12 +8810,12 @@ if (targetCW3.test(window.location.href)) {
         const textArea = document.getElementById("text");
         let nick = nickElement.textContent;
         if (settings.addCommaAfterNick) {
-            nick += ", ";
+          nick += ", ";
         }
         textArea.value += nick;
         textArea.focus();
         return;
-    }
+      }
 
       const reportButton = target.closest(".msg_report");
       if (reportButton) {
@@ -8659,8 +8910,9 @@ if (targetCW3.test(window.location.href)) {
       const reportLink = chatMessage.querySelector(".msg_report");
       const dataId = reportLink ? reportLink.getAttribute("data-id") : "";
 
-      const newChatMessageHTML = // html
-      `
+      const newChatMessageHTML =
+        // html
+        `
         <hr>
         <div id="msg">
           <div class="${chatTextClasses}">${processedText} - <b class="nick" style="${nickStyle}">${nickName}</b> <i>[${catId}]</i></div>
@@ -8811,8 +9063,9 @@ if (targetCW3.test(window.location.href)) {
 
   const edgeTrimBlocksStyle = document.createElement("style");
   if (settings.edgeTrimBlocks) {
-    edgeTrimBlocksStyle.innerHTML = // css
-    `
+    edgeTrimBlocksStyle.innerHTML =
+      // css
+      `
     #info_main > tbody > tr > td {
       width: fit-content;
       border-radius: 10px;
@@ -8856,56 +9109,59 @@ if (targetCW3.test(window.location.href)) {
   //  . . . ЗВУК БЛОКИРОВАНИЯ / ОТЖАТИЯ . . .
   // ====================================================================================================================
   if (settings.notificationBlock) {
-
     function playSoundOnSrcAttributeChange() {
-        soundManager.playSound(
-            settings.notificationBlockSound,
-            settings.notificationBlockVolume
-        );
+      soundManager.playSound(
+        settings.notificationBlockSound,
+        settings.notificationBlockVolume
+      );
     }
 
     setupMutationObserver(
-        "#block",
-        () => {
-            const blockElement = document.querySelector('#block');
+      "#block",
+      () => {
+        const blockElement = document.querySelector("#block");
 
-            if (blockElement) {
-                const srcObserver = new MutationObserver(playSoundOnSrcAttributeChange);
-                srcObserver.observe(blockElement, {
-                    attributes: true,
-                    attributeFilter: ['src']
-                });
-            } else {
-                console.warn("Элемент #block не найден.");
-            }
-        },
-        { attributes: true },
-        8,
-        500
+        if (blockElement) {
+          const srcObserver = new MutationObserver(
+            playSoundOnSrcAttributeChange
+          );
+          srcObserver.observe(blockElement, {
+            attributes: true,
+            attributeFilter: ["src"],
+          });
+        } else {
+          console.warn("Элемент #block не найден.");
+        }
+      },
+      { attributes: true },
+      8,
+      500
     );
-}
+  }
   // ====================================================================================================================
   //  . . . КОМАНДЫ В БОЕВОМ РЕЖИМЕ . . .
   // ====================================================================================================================
   if (settings.fightTeams) {
     const colors = settings.fightTeamsColors;
-    const uwu_fightTeamsCats = JSON.parse(localStorage.getItem('uwu_fightTeamsCats')) || {};
-  
+    const uwu_fightTeamsCats =
+      JSON.parse(localStorage.getItem("uwu_fightTeamsCats")) || {};
+
     const fightPanel = document.getElementById("fightPanel");
     const buttonHTML =
       '<button id="updateTableButton" style="width: 100%;">Обновить команды</button>';
     fightPanel.insertAdjacentHTML("beforeend", buttonHTML);
-  
+
     document.getElementById("updateTableButton").onclick = () => {
       if (!document.getElementById("uwu-team-settings")) {
         createTeamTable();
       }
       updateTeamTable();
     };
-  
+
     function createTeamTable() {
-      const tableHTML = // html
-      `
+      const tableHTML =
+        // html
+        `
         <div id="uwu-team-settings" style="height: ${
           settings.fightTeamsPanelHight || "auto"
         }px; overflow-y: scroll; resize: vertical;">
@@ -8923,23 +9179,23 @@ if (targetCW3.test(window.location.href)) {
       const updateButton = document.getElementById("updateTableButton");
       updateButton.insertAdjacentHTML("beforebegin", tableHTML);
     }
-  
+
     function updateTeamTable() {
       const tbody = document.getElementById("teamTableBody");
       tbody.innerHTML = "";
       const cages = document.querySelectorAll("#cages .cage");
-    
+
       cages.forEach((cage) => {
         const catName = cage.querySelector(".cat_tooltip a")?.textContent;
         const arrow = cage.querySelector(".arrow.arrow-paws");
-    
+
         if (catName && arrow) {
           const arrowId = arrow.id;
           const savedTeam = uwu_fightTeamsCats[arrowId];
-    
+
           const buttonsHTML = Object.keys(colors)
             .map((team) => {
-              const isSelected = savedTeam === team ? 'selected' : '';
+              const isSelected = savedTeam === team ? "selected" : "";
               return `
                 <button 
                   class="team-color-button ${isSelected}"
@@ -8950,7 +9206,7 @@ if (targetCW3.test(window.location.href)) {
               `;
             })
             .join("");
-    
+
           const rowHTML = `
             <tr>
               <td style="border: 1px solid #000; padding: 5px;">${catName}</td>
@@ -8958,34 +9214,37 @@ if (targetCW3.test(window.location.href)) {
             </tr>
           `;
           tbody.insertAdjacentHTML("beforeend", rowHTML);
-    
+
           if (savedTeam) {
             applyTeamColors(arrowId, savedTeam);
           }
         }
       });
-    
-      const teamColorButtons = document.querySelectorAll('.team-color-button');
-      teamColorButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          const arrowId = button.getAttribute('data-arrow-id');
-          const team = button.getAttribute('data-team');
+
+      const teamColorButtons = document.querySelectorAll(".team-color-button");
+      teamColorButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const arrowId = button.getAttribute("data-arrow-id");
+          const team = button.getAttribute("data-team");
           applyTeamColors(arrowId, team);
         });
       });
     }
-  
+
     function applyTeamColors(arrowId, team) {
-      const styleElement = document.createElement('style');
+      const styleElement = document.createElement("style");
       const cssRule = `
         #${arrowId} .arrow_green { background-color: ${colors[team][0]} !important; }
         #${arrowId} .arrow_red { background-color: ${colors[team][1]} !important; }
       `;
       styleElement.appendChild(document.createTextNode(cssRule));
       document.head.appendChild(styleElement);
-    
+
       uwu_fightTeamsCats[arrowId] = team;
-      localStorage.setItem('uwu_fightTeamsCats', JSON.stringify(uwu_fightTeamsCats));
+      localStorage.setItem(
+        "uwu_fightTeamsCats",
+        JSON.stringify(uwu_fightTeamsCats)
+      );
     }
   }
   // ====================================================================================================================
@@ -9006,7 +9265,7 @@ if (targetCW3.test(window.location.href)) {
 
     const fightPanel = document.getElementById("fightPanel");
     const firstImage = fightPanel.querySelector("img");
-    
+
     const parentDiv = firstImage.parentElement;
     parentDiv.insertBefore(dragDiv, firstImage);
 
@@ -9190,7 +9449,7 @@ if (targetCW3.test(window.location.href)) {
 
     const fightLogElement = document.getElementById("fightLog");
     if (fightLogElement) {
-        fightLogElement.style.height = `${settings.fightPanelHeight || 70}px`;
+      fightLogElement.style.height = `${settings.fightPanelHeight || 70}px`;
     }
   }
   // ====================================================================================================================
@@ -9331,8 +9590,8 @@ if (targetCW3.test(window.location.href)) {
   function getSkyType() {
     const skyElement = document.querySelector("#sky");
     if (!skyElement) {
-        currentWeather = "unknown";
-        return;
+      currentWeather = "unknown";
+      return;
     }
     const skyStyle = skyElement.getAttribute("style");
 
@@ -9365,38 +9624,37 @@ if (targetCW3.test(window.location.href)) {
   function getTime() {
     const timeElement = document.querySelector("#hour");
     if (!timeElement) {
-        currentHour = "unknown";
-        return;
+      currentHour = "unknown";
+      return;
     }
     const hourImg = timeElement.querySelector("img");
 
     if (!hourImg) {
-        currentHour = "unknown";
-        return;
+      currentHour = "unknown";
+      return;
     }
 
     const hourTime = hourImg.getAttribute("src");
 
     if (!hourTime) {
-        currentHour = "unknown";
-        return;
+      currentHour = "unknown";
+      return;
     }
-
 
     if (settings.weatherEnabled) {
       const match = hourTime.match(/(\d+)\.png$/);
       if (match) {
-          const hourNumber = parseInt(match[1]);
+        const hourNumber = parseInt(match[1]);
 
-          if (hourNumber >= 6 && hourNumber <= 12) {
-            currentHour = "morning";
-          } else if (hourNumber >= 13 && hourNumber <= 18) {
-            currentHour = "day";
-          } else if (hourNumber >= 19 && hourNumber <= 21) {
-            currentHour = "evening";
-          } else {
-            currentHour = "night";
-          }
+        if (hourNumber >= 6 && hourNumber <= 12) {
+          currentHour = "morning";
+        } else if (hourNumber >= 13 && hourNumber <= 18) {
+          currentHour = "day";
+        } else if (hourNumber >= 19 && hourNumber <= 21) {
+          currentHour = "evening";
+        } else {
+          currentHour = "night";
+        }
       } else {
         currentHour = "unknown";
       }
@@ -9412,31 +9670,31 @@ if (targetCW3.test(window.location.href)) {
 
     const seasonSrc = seasonElement.getAttribute("src");
     if (!seasonSrc) {
-        currentSeason = "unknown";
-        return;
+      currentSeason = "unknown";
+      return;
     }
 
     const match = seasonSrc.match(/season(\d+)\.png/);
     if (match) {
-        const seasonNumber = parseInt(match[1]);
-        switch (seasonNumber) {
-            case 0:
-              currentSeason = "winter";
-              break;
-            case 1:
-              currentSeason = "spring";
-              break;
-            case 2:
-              currentSeason = "summer";
-              break;
-            case 3:
-              currentSeason = "autumn";
-              break;
-            default:
-              currentSeason = "unknown";
-        }
+      const seasonNumber = parseInt(match[1]);
+      switch (seasonNumber) {
+        case 0:
+          currentSeason = "winter";
+          break;
+        case 1:
+          currentSeason = "spring";
+          break;
+        case 2:
+          currentSeason = "summer";
+          break;
+        case 3:
+          currentSeason = "autumn";
+          break;
+        default:
+          currentSeason = "unknown";
+      }
     } else {
-        currentSeason = "unknown";
+      currentSeason = "unknown";
     }
   }
 
@@ -9580,15 +9838,22 @@ if (targetCW3.test(window.location.href)) {
     setupMutationObserver("#sky", getSkyType);
 
     setupSingleCallback("#hour", getTime);
-    setupMutationObserver("#hour", getTime, {
+    setupMutationObserver(
+      "#hour",
+      getTime,
+      {
         attributes: true,
         attributeFilter: ["src"],
         subtree: true,
-    }, 8, 500, 20);
+      },
+      8,
+      500,
+      20
+    );
 
     setupMutationObserver("img[src*='symbole/season']", getSeason, {
-        attributes: true,
-        attributeFilter: ["src"],
+      attributes: true,
+      attributeFilter: ["src"],
     });
   }
 
@@ -9946,7 +10211,7 @@ if (targetCW3.test(window.location.href)) {
 
   function removeAurora(auroraElement) {
     auroraElement.style.animation = "auroraFadeOut 6s ease-in-out";
-  
+
     setTimeout(() => {
       if (weatherContainer.contains(auroraElement)) {
         weatherContainer.removeChild(auroraElement);
@@ -9955,7 +10220,9 @@ if (targetCW3.test(window.location.href)) {
           auroras.splice(index, 1);
         }
       } else {
-        console.warn("Element to be removed is not a child of weatherContainer.");
+        console.warn(
+          "Element to be removed is not a child of weatherContainer."
+        );
       }
     }, 6000);
   }
@@ -9995,22 +10262,22 @@ if (targetCW3.test(window.location.href)) {
   }
 
   function toggleAurora() {
-      if (settings.manualWeatherPanel) return;
+    if (settings.manualWeatherPanel) return;
 
-      const isAuroraConditionMet = 
-          currentWeather === "northernLights" || 
-          (currentWeather === "clear" && 
-          currentHour === "night" && 
-          (currentSeason === "autumn" || currentSeason === "winter"));
+    const isAuroraConditionMet =
+      currentWeather === "northernLights" ||
+      (currentWeather === "clear" &&
+        currentHour === "night" &&
+        (currentSeason === "autumn" || currentSeason === "winter"));
 
-      if (isAuroraConditionMet) {
-          if (auroras.length === 0) {
-              const auroraColor = Math.random() > 0.5 ? "green" : "blue";
-              createAurora(auroraColor);
-          }
-      } else {
-          auroras.forEach(removeAurora);
+    if (isAuroraConditionMet) {
+      if (auroras.length === 0) {
+        const auroraColor = Math.random() > 0.5 ? "green" : "blue";
+        createAurora(auroraColor);
       }
+    } else {
+      auroras.forEach(removeAurora);
+    }
   }
 
   setInterval(() => {
@@ -10321,7 +10588,7 @@ if (targetCW3.test(window.location.href)) {
       }
     }
   }
-// ====================================================================================================================
+  // ====================================================================================================================
 } // Конец грандиозного, но и начало чево то нового... Зогдачно......
 // ====================================================================================================================
 // 🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨🦐✨
@@ -10445,8 +10712,9 @@ if (targetCW3Hunt.test(window.location.href)) {
       const uwuContainer = document.getElementById("uwu-main-container");
       uwuContainer.insertAdjacentHTML("beforeend", joystickHTML);
 
-      const css = // css
-      `
+      const css =
+        // css
+        `
         #nav_buttons_wrapper {
           display: none;
         }
@@ -10704,8 +10972,9 @@ if (settings.moreBBCodes) {
   function addBBCodeButtons() {
     const bbCodeContainers = document.querySelectorAll(".bbcode");
 
-    const commonButtonsHTML = // html
-    `
+    const commonButtonsHTML =
+      // html
+      `
       <button class="bbcode" title="Абзац" data-code="p">p</button>
       <button class="bbcode" title="Перенос" data-code="br" data-parameter="0">br</button>
       <button class="bbcode" title="Таблица" data-code="table">table</button>
@@ -10744,48 +11013,47 @@ if (settings.moreBBCodes) {
 //   . . . ПРОФИЛЬ ИГРОКА . . .
 // ====================================================================================================================
 if (targetMainProfile.test(window.location.href)) {
-
   if (settings.calculators) {
     setupSingleCallback("#info", setupActivityCalc);
     setupSingleCallback("#info", moonCalculator);
   }
-
 }
 // ====================================================================================================================
 //   . . . ПРОФИЛЯ ДРУГИХ ПОЛЬЗОВАТЕЛЕЙ . . .
 // ====================================================================================================================
 if (targetProfile.test(window.location.href)) {
-
   // ====================================================================================================================
   //   . . . БУ И ПРОЧЕЕ . . .
   // ====================================================================================================================
   if (settings.moreProfileInfo) {
     setupSingleCallback("tr:has(img[src='img/icon_kraft.png'])", addKraftLevel);
-    
+
     function addKraftLevel() {
       const kraftLevels = {
-        "блоха": 0,
-        "котёночек": 1,
-        "задира": 2,
+        блоха: 0,
+        котёночек: 1,
+        задира: 2,
         "гроза детской": 3,
         "страх барсуков": 4,
         "победитель псов": 5,
         "защитник племени": 6,
         "великий воин": 7,
         "достоин Львиного племени": 8,
-        "идеальная": 9
+        идеальная: 9,
       };
-    
-        const kraftRow = document.querySelector('tr:has(img[src="img/icon_kraft.png"])');
-        const kraftTextElement = kraftRow.querySelector('b');
-        const kraftText = kraftTextElement.textContent.trim();
-        const kraftLevel = kraftLevels[kraftText];
-        if (kraftLevel !== undefined) {
-            kraftTextElement.textContent = `${kraftText} (${kraftLevel})`;
-        }
+
+      const kraftRow = document.querySelector(
+        'tr:has(img[src="img/icon_kraft.png"])'
+      );
+      const kraftTextElement = kraftRow.querySelector("b");
+      const kraftText = kraftTextElement.textContent.trim();
+      const kraftLevel = kraftLevels[kraftText];
+      if (kraftLevel !== undefined) {
+        kraftTextElement.textContent = `${kraftText} (${kraftLevel})`;
+      }
     }
   }
-  
+
   if (settings.calculators) {
     setupSingleCallback("#info", moonCalculator);
   }
@@ -10798,8 +11066,18 @@ if (targetProfile.test(window.location.href)) {
 // ====================================================================================================================
 function moonCalculator() {
   const months = [
-    "января", "февраля", "марта", "апреля", "мая", "июня",
-    "июля", "августа", "сентября", "октября", "ноября", "декабря"
+    "января",
+    "февраля",
+    "марта",
+    "апреля",
+    "мая",
+    "июня",
+    "июля",
+    "августа",
+    "сентября",
+    "октября",
+    "ноября",
+    "декабря",
   ];
 
   const catTimeStart = 1200000000000;
@@ -10817,7 +11095,10 @@ function moonCalculator() {
 
   let calculatorAgeElement = document.getElementById("calculator-age");
   if (!calculatorAgeElement) {
-    infoElement.insertAdjacentHTML('afterend', `<div id="calculator-age" class="calculator-style hidden"></div>`);
+    infoElement.insertAdjacentHTML(
+      "afterend",
+      `<div id="calculator-age" class="calculator-style hidden"></div>`
+    );
     calculatorAgeElement = document.getElementById("calculator-age");
   }
 
@@ -10830,7 +11111,9 @@ function moonCalculator() {
 
       calculatorAgeElement.classList.remove("hidden");
 
-      const birthDateString = infoElement.textContent.match(/\d{4}-\d\d-\d\d \d\d:\d\d/)[0].replace(" ", "T");
+      const birthDateString = infoElement.textContent
+        .match(/\d{4}-\d\d-\d\d \d\d:\d\d/)[0]
+        .replace(" ", "T");
       const nowDateString = formatDate(new Date());
 
       const ageMoons = getMoonsFromElement("age_icon");
@@ -10839,10 +11122,17 @@ function moonCalculator() {
       const avatarElement = document.querySelector('img[src^="/avatar/"]');
       const sex = avatarElement ? avatarElement.style.borderColor : null;
       const isRegistrationDate = /регистрац/.test(infoElement.textContent);
-      const moonsNow = age2Moons ? (isRegistrationDate ? ageMoons : age2Moons) : ageMoons;
+      const moonsNow = age2Moons
+        ? isRegistrationDate
+          ? ageMoons
+          : age2Moons
+        : ageMoons;
 
       const bornWord = getBornWord(sex, isRegistrationDate);
-      const catTimeString = formatCatTime(Date.parse(birthDateString), moonsNow);
+      const catTimeString = formatCatTime(
+        Date.parse(birthDateString),
+        moonsNow
+      );
 
       calculatorAgeElement.innerHTML = `
         <p><b>Калькулятор возраста</b></p>
@@ -10855,7 +11145,8 @@ function moonCalculator() {
       updateMoonWord(moonsNow);
 
       const calculatorDateElement = document.getElementById("calculator-date");
-      const calculatorMoonsElement = document.getElementById("calculator-moons");
+      const calculatorMoonsElement =
+        document.getElementById("calculator-moons");
 
       calculatorDateElement.addEventListener("input", function () {
         handleDateInput.call(this, birthDateString);
@@ -10872,7 +11163,9 @@ function moonCalculator() {
   function getMoonsFromElement(iconId) {
     const iconElement = document.querySelector(`img[id="${iconId}"]`);
     if (!iconElement) return 0;
-    const ageElement = iconElement.closest("tr").querySelector("td:nth-child(2) b");
+    const ageElement = iconElement
+      .closest("tr")
+      .querySelector("td:nth-child(2) b");
     return parseFloat(ageElement.textContent);
   }
 
@@ -10882,19 +11175,29 @@ function moonCalculator() {
       blue: ["Зарегистрировался", "Родился"],
       default: ["Зарегистрировалось", "Родилось"],
     };
-    return isRegistrationDate ? (sexWords[sex] ? sexWords[sex][0] : sexWords.default[0]) : (sexWords[sex] ? sexWords[sex][1] : sexWords.default[1]);
+    return isRegistrationDate
+      ? sexWords[sex]
+        ? sexWords[sex][0]
+        : sexWords.default[0]
+      : sexWords[sex]
+      ? sexWords[sex][1]
+      : sexWords.default[1];
   }
 
   function formatDate(date) {
     const pad = (num) => String(num).padStart(2, "0");
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+      date.getDate()
+    )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
   }
 
   function formatCatTime(birthTimestamp, moons) {
     const daysToAdd = moons * 4;
-    const targetDate = new Date(birthTimestamp + daysToAdd * 24 * 60 * 60 * 1000);
+    const targetDate = new Date(
+      birthTimestamp + daysToAdd * 24 * 60 * 60 * 1000
+    );
     const ms = birthTimestamp - catTimeStart;
-    let time = Math.round(ms / 1000 * 7);
+    let time = Math.round((ms / 1000) * 7);
     const secInYear = 12 * 28 * 24 * 60 * 60;
     const secInMonth = 28 * 24 * 60 * 60;
     const year = Math.floor(time / secInYear);
@@ -10927,7 +11230,9 @@ function moonCalculator() {
       calcMoonsElement.value = moons;
       updateMoonWord(moons);
       const catTimeString = formatCatTime(Date.parse(birthDateString), moons);
-      document.querySelector("br").nextSibling.textContent = `${catTimeString} по кошачьему времени.`;
+      document.querySelector(
+        "br"
+      ).nextSibling.textContent = `${catTimeString} по кошачьему времени.`;
     }
     updateMoonWord(moons);
   }
@@ -10947,7 +11252,9 @@ function moonCalculator() {
       calcDateElement.value = getDateStringFromMoons(birthDateString, moons);
       updateMoonWord(moons);
       const catTimeString = formatCatTime(Date.parse(birthDateString), moons);
-      document.querySelector("br").nextSibling.textContent = `${catTimeString} по кошачьему времени.`;
+      document.querySelector(
+        "br"
+      ).nextSibling.textContent = `${catTimeString} по кошачьему времени.`;
     }
     updateMoonWord(moons);
   }
@@ -10955,7 +11262,8 @@ function moonCalculator() {
   function getMoonsFromDate(birthDateString, dateString) {
     const birthday = Date.parse(birthDateString);
     const date = Date.parse(dateString);
-    const moons = Math.floor((date - birthday) / (1000 * 60 * 60 * 24 * 4) * 10) / 10;
+    const moons =
+      Math.floor(((date - birthday) / (1000 * 60 * 60 * 24 * 4)) * 10) / 10;
     return moons;
   }
 
@@ -10967,12 +11275,20 @@ function moonCalculator() {
 
   function updateMoonWord(moons) {
     const integerMoons = Math.floor(moons);
-    document.getElementById("moon-word").textContent = declOfNum(integerMoons, ['луна', 'луны', 'лун']);
+    document.getElementById("moon-word").textContent = declOfNum(integerMoons, [
+      "луна",
+      "луны",
+      "лун",
+    ]);
   }
 
   function declOfNum(number, titles) {
     const cases = [2, 0, 1, 1, 1, 2];
-    return titles[(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number % 10 < 5) ? number % 10 : 5]];
+    return titles[
+      number % 100 > 4 && number % 100 < 20
+        ? 2
+        : cases[number % 10 < 5 ? number % 10 : 5]
+    ];
   }
 }
 // ====================================================================================================================
@@ -11015,8 +11331,18 @@ function setupActivityCalc() {
   ];
 
   const months = [
-    "января", "февраля", "марта", "апреля", "мая", "июня",
-    "июля", "августа", "сентября", "октября", "ноября", "декабря"
+    "января",
+    "февраля",
+    "марта",
+    "апреля",
+    "мая",
+    "июня",
+    "июля",
+    "августа",
+    "сентября",
+    "октября",
+    "ноября",
+    "декабря",
   ];
 
   const activitySettings = JSON.parse(
@@ -11119,22 +11445,32 @@ function setupActivityCalc() {
     .textContent.split(" (");
   const progress = {};
 
-  const currentStage = activityStages.find(stage => stage.name === activity[0]);
+  const currentStage = activityStages.find(
+    (stage) => stage.name === activity[0]
+  );
 
   if (currentStage) {
-    progress.doneFromZero = currentStage.fromZero + Number(activity[1].split("/")[0]);
-    progress.stage = activityStages.indexOf(currentStage); 
+    progress.doneFromZero =
+      currentStage.fromZero + Number(activity[1].split("/")[0]);
+    progress.stage = activityStages.indexOf(currentStage);
   }
 
-  const activityInfoHTML = // html
+  const activityInfoHTML =
+    // html
     `
       <details id="calculator-activity" class="calculator-style">
         <summary id="open-calculator"><b>Калькулятор активности</b></summary>
         <div id="calculator-content" style="margin-top: 10px;">
           <p id="congratulations" style="display:none"></p>
-          <div id="activity-length"><b>Переход</b>: ${secondsToTime(calculateActivityLength(progress.doneFromZero))}</div>
-          <div>Мой переход изменён на <input id="minus" type="number" value="${activitySettings[catId].minus || 0}" min="-60" max="10" step="1" style="width: 50px;"> <span id="minus-word"></span></nobr></div>
-          <div>Я качаю активность <input id="hours-per-day" type="number" step="0.25" min="0" max="24" value="${activitySettings[catId].hours}" style="width: 60px"> <span id="hour-word"></span> в сутки</div>
+          <div id="activity-length"><b>Переход</b>: ${secondsToTime(
+            calculateActivityLength(progress.doneFromZero)
+          )}</div>
+          <div>Мой переход изменён на <input id="minus" type="number" value="${
+            activitySettings[catId].minus || 0
+          }" min="-60" max="10" step="1" style="width: 50px;"> <span id="minus-word"></span></nobr></div>
+          <div>Я качаю активность <input id="hours-per-day" type="number" step="0.25" min="0" max="24" value="${
+            activitySettings[catId].hours
+          }" style="width: 60px"> <span id="hour-word"></span> в сутки</div>
           <div id="goal-progress">
             <b>Цель: <select style="display: inline" id="activity-list"></select></b>:
             <ul style="margin: 0.5em"></ul>
@@ -11160,10 +11496,12 @@ function setupActivityCalc() {
   }
 
   function showCongratulations() {
-
-    document.getElementById("congratulations").innerHTML = // html
-    `
-      Цель <b>«${activityStages[activitySettings[catId].goal].name}»</b> достигнута!
+    document.getElementById("congratulations").innerHTML =
+      // html
+      `
+      Цель <b>«${
+        activityStages[activitySettings[catId].goal].name
+      }»</b> достигнута!
       <center><img src="/img/stickers/systempaw3/6.png"></center>
       <input id="congratulations-button" type="button" value="Скрыть">
       <br><input id="never-show-congratulations" type="checkbox"> Больше не поздравлять на этом персонаже
@@ -11184,7 +11522,10 @@ function setupActivityCalc() {
       });
   }
 
-  if (activitySettings[catId].goal > progress.stage || activitySettings[catId].noGrats) {
+  if (
+    activitySettings[catId].goal > progress.stage ||
+    activitySettings[catId].noGrats
+  ) {
     document.querySelector(
       `#activity-list > [value="${activitySettings[catId].goal}"]`
     ).selected = true;
@@ -11230,11 +11571,13 @@ function setupActivityCalc() {
     updateMinusWord(this.value);
   });
 
-  document.getElementById("activity-list").addEventListener("change", function () {
-    activitySettings[catId].goal = Number(this.value);
-    saveData(activitySettings);
-    updateGoalProgress();
-  });
+  document
+    .getElementById("activity-list")
+    .addEventListener("change", function () {
+      activitySettings[catId].goal = Number(this.value);
+      saveData(activitySettings);
+      updateGoalProgress();
+    });
 
   document
     .getElementById("hours-per-day")
@@ -11250,10 +11593,14 @@ function setupActivityCalc() {
       updateGoalProgress();
     });
 
-  document.getElementById("open-calculator").addEventListener("click", function () {
-    activitySettings[catId].opened = !document.getElementById("calculator-activity").open;
-    saveData(activitySettings);
-  });
+  document
+    .getElementById("open-calculator")
+    .addEventListener("click", function () {
+      activitySettings[catId].opened = !document.getElementById(
+        "calculator-activity"
+      ).open;
+      saveData(activitySettings);
+    });
 
   function saveData(data) {
     window.localStorage.setItem("uwu_activity", JSON.stringify(data));
@@ -11295,33 +11642,36 @@ function setupActivityCalc() {
   }
 
   function updateHourWord(hours) {
-    document.getElementById("hour-word").textContent = declensionOfNumber(hours, ["час", "часа", "часов"]);
+    document.getElementById("hour-word").textContent = declensionOfNumber(
+      hours,
+      ["час", "часа", "часов"]
+    );
   }
-  
+
   function updateMinusWord(minusValue) {
-    document.getElementById("minus-word").textContent = declensionOfNumber(minusValue, ["секунду", "секунды", "секунд"]);
+    document.getElementById("minus-word").textContent = declensionOfNumber(
+      minusValue,
+      ["секунду", "секунды", "секунд"]
+    );
   }
 }
 // ====================================================================================================================
 //   . . . ПИСЬМА . . .
 // ====================================================================================================================
 if (targetLs.test(window.location.href)) {
-
   if (settings.lsWrapPreview) {
     setupMutationObserver("#main", setupPreviewButton, {
       childList: true,
       subtree: true,
-    }); 
+    });
   }
-
 }
 // ====================================================================================================================
 //   . . . БЛОГИ . . .
 // ====================================================================================================================
 if (targetBlog.test(window.location.href)) {
-
   if (settings.commentPreview) {
-    setupMutationObserver("#site_table", addCommentPreview); 
+    setupMutationObserver("#site_table", addCommentPreview);
   }
 
   if (settings.moreCommentButtons) {
@@ -11331,16 +11681,14 @@ if (targetBlog.test(window.location.href)) {
     });
     setupSingleCallback("#view_comments", handleCommentActions);
   }
-
 }
 
 // ====================================================================================================================
 //   . . . ЛЕНТА . . .
 // ====================================================================================================================
 if (targetSniff.test(window.location.href)) {
-  
   if (settings.commentPreview) {
-    setupMutationObserver("#site_table", addCommentPreview); 
+    setupMutationObserver("#site_table", addCommentPreview);
   }
 
   if (settings.moreCommentButtons) {
@@ -11350,7 +11698,6 @@ if (targetSniff.test(window.location.href)) {
     });
     setupSingleCallback("#view_comments", handleCommentActions);
   }
-
 }
 
 // ====================================================================================================================
@@ -11361,13 +11708,15 @@ function addCommentPreview() {
   if (!form || document.getElementById("comment-preview")) return;
 
   const lastParagraph = form.querySelector("p:last-child");
-  lastParagraph.insertAdjacentHTML( "afterbegin",
+  lastParagraph.insertAdjacentHTML(
+    "afterbegin",
     `
     <input type="button" id="comment-preview" value="Предпросмотр"> 
     `
   );
 
-  form.insertAdjacentHTML( "afterend",
+  form.insertAdjacentHTML(
+    "afterend",
     `
     <p id="comment-preview-hide" style="display: none; margin: 0.5em 0;"><a href="#">Скрыть предпросмотр</a></p>
     <div id="comment-preview-div" style="display: none;"></div>
@@ -11384,15 +11733,15 @@ function addCommentPreview() {
     reconnectionDelayMax: 20000,
   });
 
-  ws.on('creation preview', (data) => {
+  ws.on("creation preview", (data) => {
     previewDiv.innerHTML = data;
-    previewDiv.style.display = 'block';
-    hideParagraph.style.display = 'block';
+    previewDiv.style.display = "block";
+    hideParagraph.style.display = "block";
   });
 
-  previewButton.addEventListener('click', function() {
-    const commentText = document.getElementById('comment').value;
-    ws.emit('creation preview', commentText);
+  previewButton.addEventListener("click", function () {
+    const commentText = document.getElementById("comment").value;
+    ws.emit("creation preview", commentText);
   });
 
   form
@@ -11408,35 +11757,46 @@ function addCommentPreview() {
     previewDiv.innerHTML = "";
     previewDiv.style.display = "none";
   }
-};
+}
 // ====================================================================================================================
 //   . . . КНОПКИ ОТВЕТИТЬ И ЦИТИРОВАТЬ . . .
 // ====================================================================================================================
 function addCommentButtons() {
-  const comments = document.querySelectorAll('#view_comments .view-comment');
-  comments.forEach(comment => {
-      if (!comment.querySelector('.comment-answer-buttons')) {
-          comment.insertAdjacentHTML('beforeend', // html
-            `
+  const comments = document.querySelectorAll("#view_comments .view-comment");
+  comments.forEach((comment) => {
+    if (!comment.querySelector(".comment-answer-buttons")) {
+      comment.insertAdjacentHTML(
+        "beforeend", // html
+        `
               <p class="comment-answer-buttons">
                   <a class="comment-answer" href="#">Ответить</a>
                   <span class="comment-cite-wrap"> | <a class="comment-cite" href="#">Цитировать</a></span>
               </p>
-          `);
-      }
+          `
+      );
+    }
   });
 }
 
 function getCommentInfo(comment) {
-  const commentId = comment.getAttribute('data-id');
-  const commentNum = comment.querySelector('.num').textContent;
-  const authorLink = comment.querySelector('.comment-info a.author');
-  const authorSpan = comment.querySelector('.comment-info span[data-id]');
-  const authorName = authorLink ? authorLink.textContent : (authorSpan ? authorSpan.textContent : '...');
-  const authorProfile = authorLink ? authorLink.getAttribute('href').replace('/cat', '') : null;
-  const commentText = comment.querySelector('.comment-text .parsed').innerText;
-  const commentInfo = comment.querySelector('.comment-info');
-  const commentTime = commentInfo.innerHTML.split('</b>')[1].split(' @')[0].trim();
+  const commentId = comment.getAttribute("data-id");
+  const commentNum = comment.querySelector(".num").textContent;
+  const authorLink = comment.querySelector(".comment-info a.author");
+  const authorSpan = comment.querySelector(".comment-info span[data-id]");
+  const authorName = authorLink
+    ? authorLink.textContent
+    : authorSpan
+    ? authorSpan.textContent
+    : "...";
+  const authorProfile = authorLink
+    ? authorLink.getAttribute("href").replace("/cat", "")
+    : null;
+  const commentText = comment.querySelector(".comment-text .parsed").innerText;
+  const commentInfo = comment.querySelector(".comment-info");
+  const commentTime = commentInfo.innerHTML
+    .split("</b>")[1]
+    .split(" @")[0]
+    .trim();
 
   return {
     commentId,
@@ -11444,16 +11804,16 @@ function getCommentInfo(comment) {
     authorName,
     authorProfile,
     commentText,
-    commentTime
+    commentTime,
   };
 }
 
 function handleAnswerAction(commentInfo) {
-  const textarea = document.getElementById('comment');
+  const textarea = document.getElementById("comment");
   const currentText = textarea.value;
-  const newText = commentInfo.authorProfile ? 
-    `[link${commentInfo.authorProfile}] (#${commentInfo.commentNum}), ` : 
-    `[b][code]${commentInfo.authorName}[/code][/b] (#${commentInfo.commentNum}), `;
+  const newText = commentInfo.authorProfile
+    ? `[link${commentInfo.authorProfile}] (#${commentInfo.commentNum}), `
+    : `[b][code]${commentInfo.authorName}[/code][/b] (#${commentInfo.commentNum}), `;
 
   textarea.value = currentText + newText;
 }
@@ -11461,70 +11821,73 @@ function handleAnswerAction(commentInfo) {
 function handleCiteAction(commentInfo) {
   const selectedText = window.getSelection().toString().trim();
   const quoteText = selectedText ? selectedText : commentInfo.commentText;
-  const profileLink = commentInfo.authorProfile ? `[link${commentInfo.authorProfile}]` : commentInfo.authorName;
+  const profileLink = commentInfo.authorProfile
+    ? `[link${commentInfo.authorProfile}]`
+    : commentInfo.authorName;
 
   const quote = `[table][tr][td][size=10][i]Цитата:[/i] [b]#${commentInfo.commentNum}[/b] ${commentInfo.commentTime} @ ${profileLink}[/size][/td][/tr][tr][td][table=0][tr][td]  [/td][td]${quoteText}[/td][/tr][/table][/td][/tr][/table]`;
 
-  const textarea = document.getElementById('comment');
+  const textarea = document.getElementById("comment");
   const currentText = textarea.value;
   textarea.value = currentText + quote;
 }
 
 function handleCommentActions() {
-    const viewComments = document.getElementById('view_comments');
+  const viewComments = document.getElementById("view_comments");
 
-    viewComments.addEventListener('click', function(event) {
-        const target = event.target;
-        const actionMap = {
-            'comment-answer': handleAnswerAction,
-            'comment-cite': handleCiteAction
-        };
+  viewComments.addEventListener("click", function (event) {
+    const target = event.target;
+    const actionMap = {
+      "comment-answer": handleAnswerAction,
+      "comment-cite": handleCiteAction,
+    };
 
-        for (const className in actionMap) {
-            if (target.classList.contains(className)) {
-                event.preventDefault();
-                const comment = target.closest('.view-comment');
-                const commentInfo = getCommentInfo(comment);
-                actionMap[className](commentInfo);
-                break;
-            }
-        }
-    });
+    for (const className in actionMap) {
+      if (target.classList.contains(className)) {
+        event.preventDefault();
+        const comment = target.closest(".view-comment");
+        const commentInfo = getCommentInfo(comment);
+        actionMap[className](commentInfo);
+        break;
+      }
+    }
+  });
 }
 
 // ====================================================================================================================
 //   . . . КРАСИВЫЙ ПРЕДПРОСМОТР ПИСЬМА . . .
 // ====================================================================================================================
 function setupPreviewButton() {
-  const previewButton = document.getElementById('preview');
+  const previewButton = document.getElementById("preview");
   if (previewButton) {
-      previewButton.addEventListener('click', wrapPreviewInTable);
+    previewButton.addEventListener("click", wrapPreviewInTable);
   }
 }
 
 function wrapPreviewInTable() {
-  const previewDiv = document.getElementById('preview_div');
+  const previewDiv = document.getElementById("preview_div");
   if (!previewDiv) return;
 
-  const mainElement = document.getElementById('main');
-  const senderId = mainElement.getAttribute('data-id');
-  const senderLogin = mainElement.getAttribute('data-login');
-  const subject = document.getElementById('subject').value;
-  const currentDate = new Date().toLocaleString('ru-RU', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+  const mainElement = document.getElementById("main");
+  const senderId = mainElement.getAttribute("data-id");
+  const senderLogin = mainElement.getAttribute("data-login");
+  const subject = document.getElementById("subject").value;
+  const currentDate = new Date().toLocaleString("ru-RU", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 
-  const newTable = document.createElement('table');
+  const newTable = document.createElement("table");
   newTable.border = "1";
   newTable.style.width = "90%";
   newTable.style.maxWidth = "500px";
 
-  newTable.innerHTML = // html
-  `
+  newTable.innerHTML =
+    // html
+    `
       <tbody>
           <tr><td id="preview-subject" colspan="2">${subject}</td></tr>
           <tr>
@@ -11538,12 +11901,12 @@ function wrapPreviewInTable() {
       </tbody>
   `;
 
-  const existingTable = document.querySelector('table');
+  const existingTable = document.querySelector("table");
   if (existingTable) {
-      existingTable.parentNode.replaceChild(newTable, existingTable);
+    existingTable.parentNode.replaceChild(newTable, existingTable);
   } else {
-      previewDiv.parentNode.insertBefore(newTable, previewDiv);
-      previewDiv.style.display = 'none';
+    previewDiv.parentNode.insertBefore(newTable, previewDiv);
+    previewDiv.style.display = "none";
   }
 }
 
@@ -11553,8 +11916,9 @@ function wrapPreviewInTable() {
 function initializeTemplates() {
   if (!settings.showTemplates) return;
 
-  const templateContainer = // html
-  `
+  const templateContainer =
+    // html
+    `
       <div id="uwu-templates">
           <h2>ШАБЛОНЫ</h2>
           <div id="uwu-templates-list"></div>
@@ -11564,8 +11928,9 @@ function initializeTemplates() {
       </div>
   `;
 
-  const templateItem = // html
-  `
+  const templateItem =
+    // html
+    `
       <div class="uwu-template-item">
           <div class="template-name-container">
               <span class="template-name"></span>
@@ -11578,8 +11943,9 @@ function initializeTemplates() {
       </div>
   `;
 
-  const cssStyles = // css
-  `
+  const cssStyles =
+    // css
+    `
       #uwu-templates {
         font-family: Montserrat;
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -11643,142 +12009,183 @@ function initializeTemplates() {
       }
   `;
 
-  document.head.insertAdjacentHTML('beforeend', `<style>${cssStyles}</style>`);
+  document.head.insertAdjacentHTML("beforeend", `<style>${cssStyles}</style>`);
 
-  function setupTemplates(targetElementId, contentElementId, subjectElementId = null, pageType) {
+  function setupTemplates(
+    targetElementId,
+    contentElementId,
+    subjectElementId = null,
+    pageType
+  ) {
     const targetElement = document.getElementById(targetElementId);
 
-    if (!document.getElementById('uwu-templates')) {
-        if (targetElementId === 'mess_form') {
-            targetElement.insertAdjacentHTML('beforeend', templateContainer);
-        } else {
-            targetElement.insertAdjacentHTML('afterbegin', templateContainer);
-        }
+    if (!document.getElementById("uwu-templates")) {
+      if (targetElementId === "mess_form") {
+        targetElement.insertAdjacentHTML("beforeend", templateContainer);
+      } else {
+        targetElement.insertAdjacentHTML("afterbegin", templateContainer);
+      }
     }
 
-      const templatesList = document.getElementById('uwu-templates-list');
-      const createButton = document.getElementById('create-template-button');
+    const templatesList = document.getElementById("uwu-templates-list");
+    const createButton = document.getElementById("create-template-button");
 
-      createButton.addEventListener('click', (event) => {
-          event.preventDefault();
-          createTemplate(contentElementId, subjectElementId, pageType);
-      });
+    createButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      createTemplate(contentElementId, subjectElementId, pageType);
+    });
 
-      function createTemplate(contentElementId, subjectElementId, pageType) {
-          const templateName = prompt('Введите название шаблона:');
-          if (templateName) {
-              const template = {
-                  name: templateName,
-                  content: document.getElementById(contentElementId).innerText || document.getElementById(contentElementId).value,
-                  subject: subjectElementId ? document.getElementById(subjectElementId).value || "" : "",
-                  pageType: pageType
-              };
-              saveTemplate(template);
-              renderTemplates(pageType);
-          }
+    function createTemplate(contentElementId, subjectElementId, pageType) {
+      const templateName = prompt("Введите название шаблона:");
+      if (templateName) {
+        const template = {
+          name: templateName,
+          content:
+            document.getElementById(contentElementId).innerText ||
+            document.getElementById(contentElementId).value,
+          subject: subjectElementId
+            ? document.getElementById(subjectElementId).value || ""
+            : "",
+          pageType: pageType,
+        };
+        saveTemplate(template);
+        renderTemplates(pageType);
       }
+    }
 
-      function saveTemplate(template) {
-          if (!localStorage.getItem('uwu_templates')) {
-              localStorage.setItem('uwu_templates', JSON.stringify([]));
-          }
-          const templates = JSON.parse(localStorage.getItem('uwu_templates'));
-          templates.push(template);
-          localStorage.setItem('uwu_templates', JSON.stringify(templates));
+    function saveTemplate(template) {
+      if (!localStorage.getItem("uwu_templates")) {
+        localStorage.setItem("uwu_templates", JSON.stringify([]));
       }
+      const templates = JSON.parse(localStorage.getItem("uwu_templates"));
+      templates.push(template);
+      localStorage.setItem("uwu_templates", JSON.stringify(templates));
+    }
 
-      function renderTemplates(pageType) {
-          const templates = JSON.parse(localStorage.getItem('uwu_templates')) || [];
-          templatesList.innerHTML = '';
+    function renderTemplates(pageType) {
+      const templates = JSON.parse(localStorage.getItem("uwu_templates")) || [];
+      templatesList.innerHTML = "";
 
-          templates.forEach((template, index) => {
-              if (template.pageType === pageType) {
-                  const templateItemHTML = document.createElement('div');
-                  templateItemHTML.innerHTML = templateItem;
-                  const templateItemElement = templateItemHTML.children[0];
+      templates.forEach((template, index) => {
+        if (template.pageType === pageType) {
+          const templateItemHTML = document.createElement("div");
+          templateItemHTML.innerHTML = templateItem;
+          const templateItemElement = templateItemHTML.children[0];
 
-                  const templateName = templateItemElement.querySelector('.template-name');
-                  templateName.textContent = template.name;
-                  templateName.addEventListener('click', () => {
-                      if (document.getElementById(contentElementId).tagName === 'DIV') {
-                          document.getElementById(contentElementId).innerText = template.content;
-                      } else {
-                          document.getElementById(contentElementId).value = template.content;
-                      }
-                      if (subjectElementId) {
-                          document.getElementById(subjectElementId).value = template.netbject || "";
-                      }
-                  });
-
-                  const renameButton = templateItemElement.querySelector('.rename-button');
-                  renameButton.addEventListener('click', () => renameTemplate(index));
-
-                  const updateButton = templateItemElement.querySelector('.update-button');
-                  updateButton.addEventListener('click', () => updateTemplate(index, contentElementId, subjectElementId));
-
-                  const removeButton = templateItemElement.querySelector('.remove-button');
-                  removeButton.addEventListener('click', () => removeTemplate(index));
-
-                  templatesList.appendChild(templateItemElement);
-              }
+          const templateName =
+            templateItemElement.querySelector(".template-name");
+          templateName.textContent = template.name;
+          templateName.addEventListener("click", () => {
+            if (document.getElementById(contentElementId).tagName === "DIV") {
+              document.getElementById(contentElementId).innerText =
+                template.content;
+            } else {
+              document.getElementById(contentElementId).value =
+                template.content;
+            }
+            if (subjectElementId) {
+              document.getElementById(subjectElementId).value =
+                template.netbject || "";
+            }
           });
-      }
 
-      function renameTemplate(index) {
-          const newName = prompt('Введите новое название шаблона:');
-          if (newName) {
-              const templates = JSON.parse(localStorage.getItem('uwu_templates'));
-              templates[index].name = newName;
-              localStorage.setItem('uwu_templates', JSON.stringify(templates));
-              renderTemplates(pageType);
-          }
-      }
+          const renameButton =
+            templateItemElement.querySelector(".rename-button");
+          renameButton.addEventListener("click", () => renameTemplate(index));
 
-      function updateTemplate(index, contentElementId, subjectElementId) {
-          const templates = JSON.parse(localStorage.getItem('uwu_templates'));
-          if (document.getElementById(contentElementId).tagName === 'DIV') {
-              templates[index].content = document.getElementById(contentElementId).innerText;
-          } else {
-              templates[index].content = document.getElementById(contentElementId).value;
-          }
-          if (subjectElementId) {
-              templates[index].netbject = document.getElementById(subjectElementId).value || "";
-          }
-          localStorage.setItem('uwu_templates', JSON.stringify(templates));
-          renderTemplates(pageType);
-      }
+          const updateButton =
+            templateItemElement.querySelector(".update-button");
+          updateButton.addEventListener("click", () =>
+            updateTemplate(index, contentElementId, subjectElementId)
+          );
 
-      function removeTemplate(index) {
-        const confirmation = confirm('Вы уверены, что хотите удалить этот шаблон?');
-        if (confirmation) {
-            const templates = JSON.parse(localStorage.getItem('uwu_templates'));
-            templates.splice(index, 1);
-            localStorage.setItem('uwu_templates', JSON.stringify(templates));
-            renderTemplates(pageType);
+          const removeButton =
+            templateItemElement.querySelector(".remove-button");
+          removeButton.addEventListener("click", () => removeTemplate(index));
+
+          templatesList.appendChild(templateItemElement);
         }
+      });
     }
 
+    function renameTemplate(index) {
+      const newName = prompt("Введите новое название шаблона:");
+      if (newName) {
+        const templates = JSON.parse(localStorage.getItem("uwu_templates"));
+        templates[index].name = newName;
+        localStorage.setItem("uwu_templates", JSON.stringify(templates));
+        renderTemplates(pageType);
+      }
+    }
+
+    function updateTemplate(index, contentElementId, subjectElementId) {
+      const templates = JSON.parse(localStorage.getItem("uwu_templates"));
+      if (document.getElementById(contentElementId).tagName === "DIV") {
+        templates[index].content =
+          document.getElementById(contentElementId).innerText;
+      } else {
+        templates[index].content =
+          document.getElementById(contentElementId).value;
+      }
+      if (subjectElementId) {
+        templates[index].netbject =
+          document.getElementById(subjectElementId).value || "";
+      }
+      localStorage.setItem("uwu_templates", JSON.stringify(templates));
       renderTemplates(pageType);
+    }
+
+    function removeTemplate(index) {
+      const confirmation = confirm(
+        "Вы уверены, что хотите удалить этот шаблон?"
+      );
+      if (confirmation) {
+        const templates = JSON.parse(localStorage.getItem("uwu_templates"));
+        templates.splice(index, 1);
+        localStorage.setItem("uwu_templates", JSON.stringify(templates));
+        renderTemplates(pageType);
+      }
+    }
+
+    renderTemplates(pageType);
   }
 
   function checkUrlAndSetup() {
     if (targetLsNew.test(window.location.href) && settings.templatesInLs) {
-        setupSingleCallback("#write_form", () => setupTemplates("write_div", "text", "subject", "ls"));
-    } else if ((targetBlogsCreation.test(window.location.href) || targetSniffCreation.test(window.location.href)) && settings.templatesInBlogsAndSniffs) {
-        setupSingleCallback(".creation_form", () => setupTemplates("creation_form", "creation-text", "creation-title", "blogsAndSniffs"));
-    } else if (targetChats.test(window.location.href) && settings.templatesInChats) {
-        setupSingleCallback("#mess_form", () => setupTemplates("mess_form", "mess", null, "chat"));
+      setupSingleCallback("#write_form", () =>
+        setupTemplates("write_div", "text", "subject", "ls")
+      );
+    } else if (
+      (targetBlogsCreation.test(window.location.href) ||
+        targetSniffCreation.test(window.location.href)) &&
+      settings.templatesInBlogsAndSniffs
+    ) {
+      setupSingleCallback(".creation_form", () =>
+        setupTemplates(
+          "creation_form",
+          "creation-text",
+          "creation-title",
+          "blogsAndSniffs"
+        )
+      );
+    } else if (
+      targetChats.test(window.location.href) &&
+      settings.templatesInChats
+    ) {
+      setupSingleCallback("#mess_form", () =>
+        setupTemplates("mess_form", "mess", null, "chat")
+      );
     }
-}
+  }
 
-setupMutationObserver("#main", checkUrlAndSetup, {
-  childList: true,
-  attributes: true,
-});
+  setupMutationObserver("#main", checkUrlAndSetup, {
+    childList: true,
+    attributes: true,
+  });
 
-setupMutationObserver("#branch", checkUrlAndSetup, {
-  childList: true,
-});
+  setupMutationObserver("#branch", checkUrlAndSetup, {
+    childList: true,
+  });
 }
 
 initializeTemplates();
