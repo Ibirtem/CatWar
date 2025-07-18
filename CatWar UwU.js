@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.38.0-04.25
+// @version      v1.39.0-07.25
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.net/cat1477928 )
 // @copyright    2025, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.38.0";
+const current_uwu_version = "1.39.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   settingsTheme: "dark",
@@ -160,6 +160,7 @@ const uwuDefaultSettings = {
   showSplashScreens: false,
   extendedHints: true,
   GMbetaTest: false,
+  personalCostumes: false,
 };
 
 // ====================================================================================================================
@@ -256,6 +257,13 @@ const uwusettings = // html
           <h2>
             Надстройки
             <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/construction.png" alt="Иконка" width="24"
+              height="24" />
+          </h2>
+        </button>
+        <button id="personal-costumes-button">
+          <h2>
+            Личные костюмы
+            <img src="https://raw.githubusercontent.com/Arisamiga/CatWar/refs/heads/Personal-Costumes/images/costumes.png" alt="Иконка" width="24"
               height="24" />
           </h2>
         </button>
@@ -1453,9 +1461,39 @@ const uwusettings = // html
         <p>Удаляет все настройки. В очень редких случаях может помочь при проблемных проблемах.</p>
         <button id="resetAllSaves" class="uwu-button remove-button">Сброс сохранений</button>
       </div>
-
     </div>
+    <div id="personal-costumes-panel">
+      <h2>Личные костюмы</h2>
+      <p>Здесь вы можете добавить, просматривать и управлять своими личными костюмами.</p>
+      <div>
+        <input type="checkbox" id="personal-costume-panel" data-setting="personalCostumes">
+        <label for="personal-costume-panel">⚙️Включить персональные костюмы</label>
+      </div>
+      <br>
+      <hr id="uwu-hr" class="uwu-hr">
+      <div class="costume-flex-box disabled">
+        <div class="costumeSettings">
+          <div>
+            <h3>Изменить Костюм: </h3>
+            <div>Примечание: Убедитесь, что ваше изображение имеет размер 100x150 для наилучших результатов</div>
+          </div>
 
+          <input type="file" id="costume-file" accept="image/png" class="uwu-button">
+          <br>
+          <br>
+          <button class="uwu-button install-button" id="changeCostume">Загрузить Костюм</button>
+          <br>
+          <span id="orText">или </span>
+          <br>
+          <a class="uwu-button remove-button" id="removeCostume" style="display:inline-block; padding:4px 10px; border-radius:20px; text-decoration:none; color:inherit;">Удалить ваш костюм</a>
+          <div id="uploadstatus">
+            <div class="content"></div>
+          </div>
+        </div>
+        <div id="cat-image">
+          Превью для вашего кота/вашей кошки отсутствует. <br><br> Перейдите в Игровую и вернитесь на эту страницу.
+        </div>
+    </div>
   </div>
   <hr id="uwu-hr" class="uwu-hr-head">
 </div>
@@ -1467,24 +1505,19 @@ const newsPanel = // html
 `
 <div id="news-panel">
     <button id="news-button">
-        v${current_uwu_version} - 🌿 Продолжаем разгребать проблемы и недоделки.
+        v${current_uwu_version} - 🌿 
     </button>
     <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>— Кнопка "Сбросить" Редизайна игровой, у кого всё там с ним плохо. Возможность применить Цветовую тему в Конструктор окрасов! Звук при нажатии/отжатии кнопки блокирования!</p>
+        <p>— </p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Внешний вид</h3>
-        <p>— Аватарки в блогах и лентах снова работают.</p>
-        <p>— Немного поменял блок Действий. Он будет кататься, но хотя бы не так странно выглядеть.</p>
-        <p>— Чуть переработал стили Редизайна Игровой. Теперь расстояние Игровой от верха окна динамичней. Не должно быть странных пробелов или наоборот прилипаний.</p>
+        <p>— </p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Изменения кода</h3>
-        <p>— Переписан и улучшен Таймер Нюха. Он снова работает (Вроде).</p>
-        <p>— Немного стало получше коду редактора Редизайна игровой.</p>
-        <p>— Перешли на user.js ссылку (В прошлой версии мода), в теории может помочь с автообновами и автоустановками.</p>
-        <p>— Ещё чуть более красивое и правильное писание таргетных ссылок.</p>
+        <p>— </p>
         <hr id="uwu-hr" class="uwu-hr">
-        <p>Дата выпуска: 20.04.25</p>
+        <p>Дата выпуска: ??.07.25</p>
     </div> 
 </div>
 `;
@@ -2259,6 +2292,41 @@ const css_uwu_main =
   padding: 5px;
 }
 
+.costume-flex-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  gap: 3rem;
+}
+
+.costume-flex-box.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.costume-flex-box div{
+    flex: 0;
+}
+
+#cat-image {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  font-weight: bold;
+  gap: 0.5rem;
+}
+
+#cat-image-container {
+  box-shadow: 0px 0px 7px 0px white;
+}
+
 `;
 
 document.head.insertAdjacentHTML(
@@ -2752,6 +2820,143 @@ if (targetSettings.test(window.location.href)) {
   });
   
   loadFontSettings();
+  // ====================================================================================================================
+  //  . . . ПАРАМЕТРЫ КОСТЮМА . . .
+  // ====================================================================================================================
+  const costumeCheckbox = document.getElementById("personal-costume-panel");
+
+  function updateCostumeFlexBoxState() {
+    const costumeFlexBox = document.querySelector(".costume-flex-box");
+    if (!costumeFlexBox) return;
+    if (costumeCheckbox.checked) {
+      costumeFlexBox.classList.remove("disabled");
+    } else {
+      costumeFlexBox.classList.add("disabled");
+    }
+  }
+
+  costumeCheckbox.addEventListener("change", updateCostumeFlexBoxState);
+
+  updateCostumeFlexBoxState();
+
+  function loadCostume(){
+    let data = localStorage.getItem("uwu_personal") || "{}";
+    data = JSON.parse(data);
+    document.getElementById("cat-image-preview")?.remove();
+
+    if (!data || !data.catImg || !data.costumes || !data.costumes.base) {
+      // Нет данных для костюма или изображение не найдено
+      return;
+    }
+
+    const costumeImg = document.getElementById("cat-image-container");
+    const imgElement = document.createElement("img");
+    imgElement.id = "cat-image-preview";
+    imgElement.style.width = "100px";
+    imgElement.style.height = "150px";
+    imgElement.style.backgroundColor = "transparent";
+    imgElement.style.backgroundImage = "url(" + data.costumes.base + ")";
+    imgElement.style.backgroundSize = data.catImg.size;
+    imgElement.style.position = "absolute";
+    imgElement.style.backgroundPosition = "center";
+    imgElement.style.backgroundRepeat = "no-repeat";
+    costumeImg.appendChild(imgElement);
+  }
+
+  if (settings.personalCostumes) {
+    const costumeImg = document.getElementById("cat-image");
+    var data = localStorage.getItem("uwu_personal") || "{}";
+    data = JSON.parse(data);
+    if (data && data.id && data.catImg){
+      costumeImg.innerHTML = "Предпросмотр: "
+      const container = document.createElement("div")
+      container.id = "cat-image-container"
+      container.style.display = "flex"
+      const img = document.createElement("img");
+      img.style.backgroundImage = `url(${data.catImg.src})`;
+      img.style.backgroundColor = "transparent";
+      img.style.backgroundPosition = "center";
+      img.style.backgroundRepeat = "no-repeat";
+      img.style.backgroundSize = data.catImg.size
+      img.style.width = "100px";
+      img.style.height = "150px";
+
+      container.appendChild(img);
+      costumeImg.appendChild(container);
+    }
+
+    const changeButton = document.getElementById("changeCostume");
+    changeButton.addEventListener("click", () => {
+      const imgInput = document.getElementById("costume-file");
+      const file = imgInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onerror = function() {
+          alert("Ошибка при чтении файла. Попробуйте еще раз.");
+        };
+        reader.onload = function (e) {
+          if (!e.target.result.startsWith("data:image/")) {
+            alert("Пожалуйста, выберите изображение для костюма.");
+            return;
+          }
+          const img = new Image();
+          img.onerror = function() {
+            alert("Ошибка при загрузке изображения. Убедитесь, что файл является корректным PNG изображением.");
+          };
+          img.onload = function () {
+            try {
+              let data = localStorage.getItem("uwu_personal") || "{}";
+              data = JSON.parse(data);
+              const canvas = document.createElement("canvas");
+              canvas.width = 100;
+              canvas.height = 150;
+              const ctx = canvas.getContext("2d");
+              ctx.drawImage(img, 0, 0, 100, 150);
+
+              const resizedDataUrl = canvas.toDataURL("image/png");
+
+              data.costumes = {
+                base: resizedDataUrl,
+              };
+              localStorage.setItem("uwu_personal", JSON.stringify(data));
+              alert("Костюм успешно изменён! Вы можете увидеть его в игре.");
+              loadCostume()
+            } catch (error) {
+              console.error("Ошибка при сохранении костюма:", error);
+              alert("Ошибка при сохранении костюма.");
+            }
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+      else {
+        alert("Пожалуйста, выберите изображение для костюма.");
+      }
+    });
+
+    const removeButton = document.getElementById("removeCostume");
+    removeButton.addEventListener("click", () => {
+      let data = localStorage.getItem("uwu_personal") || "{}";
+      data = JSON.parse(data);
+      if (!data.costumes || !data.costumes.base) {
+        alert("Нет костюма для удаления.");
+        return;
+      }
+      if (!confirm("Вы уверены, что хотите удалить костюм?")) {
+        return;
+      }
+      data.costumes = {
+        base: "",
+      };
+      localStorage.setItem("uwu_personal", JSON.stringify(data));
+      loadCostume();
+    });
+
+    loadCostume()
+  }
+
+
   // ====================================================================================================================
   //  . . . ТЕМЫ И ЦВЕТА ИГРОВОЙ . . .
   // ====================================================================================================================
@@ -4529,6 +4734,92 @@ if (targetCW3.test(window.location.href)) {
     });
   }
   // ====================================================================================================================
+  //  . . . ПЕРСОНАЛЬНЫЕ КОСТЮМЫ . . .
+  // ====================================================================================================================
+  async function personalCostumes() {
+    if (settings.personalCostumes) {
+      const match = window.location.hostname.match(/catwar\.(net|su)/);
+      let items = JSON.parse(localStorage.getItem("uwu_personal") ?? "{}");
+      if (match && !items.catImg) {
+        const fullDomain = `catwar.${match[1]}`;
+        // console.log("uwu_personal", items);
+        if (!items.id) {
+          await fetch(`https://${fullDomain}/`)
+          .then(response => response.text())
+          .then(text => {
+              const parser = new DOMParser();
+              const htmlDocument = parser.parseFromString(text, "text/html");
+              items.id = htmlDocument.getElementById("id_val").innerText;;
+          });
+          localStorage.setItem("uwu_personal", JSON.stringify(items));
+        }
+
+        
+        if (!items.catImg && items.id) {
+          const img = document.getElementById("cages").querySelectorAll("a[href='/cat" + items.id + "']")[0].closest(".cat").querySelector(".first");
+          items.catImg = { src: img.style.backgroundImage.slice(5, -2), size: img.style.backgroundSize }
+          localStorage.setItem("uwu_personal", JSON.stringify(items));
+        }
+        
+      }
+
+      // Сделай кошку стильной
+      function costumeCreate(catSize, costumeURL, catPos) {
+
+        var costume = document.createElement("div");
+        costume.setAttribute("data-v-59afe5e8", "");
+        costume.style.backgroundSize = catSize;
+        if (costumeURL && (costumeURL.startsWith('data:image/'))) {
+          costume.style.backgroundImage = `url('${costumeURL}')`;
+        } else {
+          console.error("Неверный URL-адрес костюма");
+          return null;
+        }
+        costume.className = ""
+        costume.style.position = "absolute";
+
+        var selector = `div[data-v-59afe5e8]`;
+        var existingElements = catPos.querySelectorAll(selector);
+
+        Array.from(existingElements).forEach(element => {
+            if (element.style.backgroundImage.includes(costumeURL)) {
+                element.remove();
+            }
+        });
+
+        return costume
+      }
+
+      function setupOwnCat() {
+        const items = JSON.parse(localStorage.getItem("uwu_personal") ?? "{}")
+        if (!document.getElementById("cages") || !document.getElementById("cages").querySelectorAll("a[href='/cat" + items.id + "']")[0]) {
+          return setTimeout(setupOwnCat, 10);
+        }
+        const catInit = document.getElementById("cages").querySelectorAll("a[href='/cat" + items.id + "']")[0].closest(".cat").querySelector(".first");
+        const catPos = catInit.parentElement;
+        if (!catPos.querySelector("div[data-v-59afe5e8]:not(.first)")){
+          var costume = costumeCreate(items.catImg.size, items.costumes.base, catPos)
+          catPos.appendChild(costume);
+        }
+      }
+
+      if (items.costumes && items.costumes.base){
+        setupOwnCat();
+
+        setupMutationObserver("#cages", setupOwnCat, {
+          childList: true,
+          subtree: true,
+        });
+
+        setupMutationObserver("#cages_div", setupOwnCat, { 
+          attributes: true, 
+          attributeFilter: ["style"] 
+        });
+      }
+    }
+  }
+
+  // ====================================================================================================================
   //  . . . УВЕДОМЛЕНИЕ ОБ ОБНОВЛЕНИИ . . .
   // ====================================================================================================================
   function showUpdateNotification(oldVersion) {
@@ -4557,6 +4848,7 @@ if (targetCW3.test(window.location.href)) {
     ) {
       showUpdateNotification(savedVersion);
     }
+    personalCostumes();
   });
 
   // ====================================================================================================================
