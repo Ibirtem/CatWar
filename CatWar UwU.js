@@ -10670,7 +10670,7 @@ if (targetCW3Hunt.test(window.location.href)) {
     });
 
     const describeHuntingSmell = document.createElement("style");
-    describeHuntingSmell.innerHTML = `
+    describeHuntingSmell.innerHTML = /* CSS */ `
   #smellText {
     font-size: 20px;
     background: white;
@@ -10713,7 +10713,7 @@ if (targetCW3Hunt.test(window.location.href)) {
       uwuContainer.insertAdjacentHTML("beforeend", joystickHTML);
 
       const css =
-        // css
+        /* CSS */
         `
         #nav_buttons_wrapper {
           display: none;
@@ -11917,34 +11917,51 @@ function initializeTemplates() {
   if (!settings.showTemplates) return;
 
   const templateContainer =
-    // html
+    /* HTML */
     `
       <div id="uwu-templates">
-          <h2>ШАБЛОНЫ</h2>
-          <div id="uwu-templates-list"></div>
-          <div class="button-container">
-              <button id="create-template-button" class="uwu-button install-button">Создать шаблон ✎</button>
-          </div>
+        <h2>ШАБЛОНЫ</h2>
+        <div id="uwu-templates-list"></div>
+        <div class="button-container">
+          <button id="create-template-button" class="uwu-button install-button">
+            Создать шаблон ✎
+          </button>
+        </div>
       </div>
-  `;
+    `;
 
   const templateItem =
-    // html
+    /* HTML */
     `
       <div class="uwu-template-item">
-          <div class="template-name-container">
-              <span class="template-name"></span>
-              <button class="rename-button uwu-button install-button" title="Переименовать шаблон">✎</button>
-          </div>
-          <div class="template-actions-container">
-              <button class="update-button uwu-button install-button" title="Обновить шаблон">↻</button>
-              <button class="remove-button uwu-button install-button" title="Удалить шаблон">X</button>
-          </div>
+        <div class="template-name-container">
+          <span class="template-name"></span>
+          <button
+            class="rename-button uwu-button install-button"
+            title="Переименовать шаблон"
+          >
+            ✎
+          </button>
+        </div>
+        <div class="template-actions-container">
+          <button
+            class="update-button uwu-button install-button"
+            title="Обновить шаблон"
+          >
+            ↻
+          </button>
+          <button
+            class="remove-button uwu-button install-button"
+            title="Удалить шаблон"
+          >
+            X
+          </button>
+        </div>
       </div>
-  `;
+    `;
 
   const cssStyles =
-    // css
+    /* CSS */
     `
       #uwu-templates {
         font-family: Montserrat;
