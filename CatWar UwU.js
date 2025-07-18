@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.38.0-04.25
+// @version      v1.39.0-07.25
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.net/cat1477928 )
 // @copyright    2025, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.38.0";
+const current_uwu_version = "1.39.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   settingsTheme: "dark",
@@ -1505,24 +1505,19 @@ const newsPanel = // html
 `
 <div id="news-panel">
     <button id="news-button">
-        v${current_uwu_version} - 🌿 Продолжаем разгребать проблемы и недоделки.
+        v${current_uwu_version} - 🌿 
     </button>
     <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>— Кнопка "Сбросить" Редизайна игровой, у кого всё там с ним плохо. Возможность применить Цветовую тему в Конструктор окрасов! Звук при нажатии/отжатии кнопки блокирования!</p>
+        <p>— </p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Внешний вид</h3>
-        <p>— Аватарки в блогах и лентах снова работают.</p>
-        <p>— Немного поменял блок Действий. Он будет кататься, но хотя бы не так странно выглядеть.</p>
-        <p>— Чуть переработал стили Редизайна Игровой. Теперь расстояние Игровой от верха окна динамичней. Не должно быть странных пробелов или наоборот прилипаний.</p>
+        <p>— </p>
         <hr id="uwu-hr" class="uwu-hr">
         <h3>Изменения кода</h3>
-        <p>— Переписан и улучшен Таймер Нюха. Он снова работает (Вроде).</p>
-        <p>— Немного стало получше коду редактора Редизайна игровой.</p>
-        <p>— Перешли на user.js ссылку (В прошлой версии мода), в теории может помочь с автообновами и автоустановками.</p>
-        <p>— Ещё чуть более красивое и правильное писание таргетных ссылок.</p>
+        <p>— </p>
         <hr id="uwu-hr" class="uwu-hr">
-        <p>Дата выпуска: 20.04.25</p>
+        <p>Дата выпуска: ??.07.25</p>
     </div> 
 </div>
 `;
@@ -4783,11 +4778,9 @@ if (targetCW3.test(window.location.href)) {
         costume.className = ""
         costume.style.position = "absolute";
 
-        // Check if the same costume created already exists
         var selector = `div[data-v-59afe5e8]`;
         var existingElements = catPos.querySelectorAll(selector);
 
-        // Convert NodeList to Array for using array methods like .forEach more efficiently
         Array.from(existingElements).forEach(element => {
             if (element.style.backgroundImage.includes(costumeURL)) {
                 element.remove();
@@ -4810,21 +4803,10 @@ if (targetCW3.test(window.location.href)) {
         }
       }
 
-      const observer = new MutationObserver((mutationsList) => {
-        for (const mutation of mutationsList) {
-          if (
-            mutation.target.querySelector("a[href='/cat" + items.id + "']")
-          ) {
-            setupOwnCat();
-            break;
-          }
-        }
-      });
-
       if (items.costumes && items.costumes.base){
         setupOwnCat();
-        const targetElement = document.getElementById("cages");
-        observer.observe(targetElement, {
+
+        setupMutationObserver("#cages", setupOwnCat, {
           childList: true,
           subtree: true,
         });
