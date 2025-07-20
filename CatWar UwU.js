@@ -1499,8 +1499,13 @@ const uwusettings =
         <div id="cat-image">
           Превью для вашего кота/вашей кошки отсутствует. <br><br> Перейдите в Игровую и вернитесь на эту страницу.
         </div>
-    </div>
-  </div>
+      </div>
+      <hr id="uwu-hr" class="uwu-hr">
+      <h3>Библиотека костюмов:</h3>
+      <br>
+      <div class="costume-flex-box" id="costume-gallery">
+
+      </div>
   <hr id="uwu-hr" class="uwu-hr-head">
 </div>
 `;
@@ -2335,6 +2340,17 @@ const css_uwu_main = `
   box-shadow: 0px 0px 7px 0px white;
 }
 
+#costume-gallery {
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.costume-gallery-box {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+}
+
 `;
 
 document.head.insertAdjacentHTML(
@@ -2876,6 +2892,34 @@ if (targetSettings.test(window.location.href)) {
     imgElement.style.backgroundPosition = "center";
     imgElement.style.backgroundRepeat = "no-repeat";
     costumeImg.appendChild(imgElement);
+
+
+    const galleryArray = document.getElementById("costume-gallery");
+
+    for (var i = 1; i <= 5; i++) {
+      const boxContainer = document.createElement("div");
+      boxContainer.className = "costume-gallery-box";
+
+      const imageBox = document.createElement("div");
+      imageBox.style.backgroundImage = `url(${data.catImg.src})`;
+      imageBox.style.backgroundSize = data.catImg.size;
+      imageBox.style.width = "100px";
+      imageBox.style.height = "150px";
+      imageBox.style.backgroundPosition = "center";
+      imageBox.style.backgroundRepeat = "no-repeat";
+      imageBox.style.margin = "0 auto";
+
+      const button = document.createElement("button")
+      button.classList = "uwu-button install-button";
+      button.style.marginLeft = "0.5rem";
+      button.style.margin = "0.5rem";
+      button.innerText = "Применить костюм " + i;
+
+      boxContainer.appendChild(imageBox);
+      boxContainer.appendChild(button);
+      galleryArray.appendChild(boxContainer);
+
+    }
   }
 
   if (settings.personalCostumes) {
