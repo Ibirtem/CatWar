@@ -1489,12 +1489,22 @@ const uwusettings =
           <br>
           <button class="uwu-button install-button" id="changeCostume">Загрузить Костюм</button>
           <br>
-          <span id="orText">или </span>
+          <span>или </span>
           <br>
           <a class="uwu-button remove-button" id="removeCostume" style="display:inline-block; padding:4px 10px; border-radius:20px; text-decoration:none; color:inherit;">Удалить ваш костюм</a>
-          <div id="uploadstatus">
-            <div class="content"></div>
-          </div>
+          <br>
+          <span>или </span>
+          <br>
+          <button class="uwu-button install-button" id="saveCostumeToSlot">
+            Сохранить в
+          </button>
+          <select class="uwu-slot-select" id="costumeSlotSelect">
+            <option value="1">Слот 1</option>
+            <option value="2">Слот 2</option>
+            <option value="3">Слот 3</option>
+            <option value="4">Слот 4</option>
+            <option value="5">Слот 5</option>
+          </select>
         </div>
         <div id="cat-image">
           Превью для вашего кота/вашей кошки отсутствует. <br><br> Перейдите в Игровую и вернитесь на эту страницу.
@@ -1502,9 +1512,8 @@ const uwusettings =
       </div>
       <hr id="uwu-hr" class="uwu-hr">
       <h3>Библиотека костюмов:</h3>
-      <br>
       <div class="costume-flex-box" id="costume-gallery">
-
+        <h4>Нет в наличии</h4>
       </div>
   <hr id="uwu-hr" class="uwu-hr-head">
 </div>
@@ -2381,12 +2390,32 @@ const css_uwu_main = `
   border-radius: 8px;
   margin-bottom: 0.5rem;
 }
+
+.costume-slot {
+  width: 100px;
+  height: 150px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 .costume-actions {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   width: 100%;
   align-items: stretch;
+}
+
+.uwu-slot-select {
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.03);
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  color: black;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 `;
@@ -2908,56 +2937,116 @@ if (targetSettings.test(window.location.href)) {
 
   updateCostumeFlexBoxState();
 
+  function applyCostumeFromSlot(costumeEvent) {
+    console.log(costumeEvent.target.parentElement)
+    const costumeBox = costumeEvent.target.parentElement.querySelector("#costume");
+    if (!costumeBox) {
+      alert("В этом слоте нет костюма.");
+      return;
+    }
+
+    const costumeImage = costumeBox.style.backgroundImage;
+    if (!costumeImage) {
+      alert("В этом слоте нет изображения костюма.");
+      return;
+    }
+
+    let data = localStorage.getItem("uwu_personal") || "{}";
+    data = JSON.parse(data);
+
+    data.costumes.base = costumeImage.slice(5, -2),
+
+    localStorage.setItem("uwu_personal", JSON.stringify(data));
+
+    alert("Костюм успешно применен!");
+    loadCostume();
+  }
+
   function loadCostume() {
     let data = localStorage.getItem("uwu_personal") || "{}";
     data = JSON.parse(data);
     document.getElementById("cat-image-preview")?.remove();
 
-    if (!data || !data.catImg || !data.costumes || !data.costumes.base) {
+    if (!data || !data.catImg ) {
       // Нет данных для костюма или изображение не найдено
       return;
     }
 
-    const costumeImg = document.getElementById("cat-image-container");
-    const imgElement = document.createElement("img");
-    imgElement.id = "cat-image-preview";
-    imgElement.style.width = "100px";
-    imgElement.style.height = "150px";
-    imgElement.style.backgroundColor = "transparent";
-    imgElement.style.backgroundImage = "url(" + data.costumes.base + ")";
-    imgElement.style.backgroundSize = data.catImg.size;
-    imgElement.style.position = "absolute";
-    imgElement.style.backgroundPosition = "center";
-    imgElement.style.backgroundRepeat = "no-repeat";
-    costumeImg.appendChild(imgElement);
+    if (data.costumes && data.costumes.base){
+      const costumeImg = document.getElementById("cat-image-container");
+      const imgElement = document.createElement("img");
+      imgElement.id = "cat-image-preview";
+      imgElement.style.backgroundColor = "transparent";
+      imgElement.style.backgroundImage = "url(" + data.costumes.base + ")";
+      imgElement.style.backgroundSize = data.catImg.size;
+      imgElement.style.position = "absolute";
+      imgElement.classList.add("costume-style");
+      costumeImg.appendChild(imgElement);
+    }
 
 
     const galleryArray = document.getElementById("costume-gallery");
+    galleryArray.innerHTML = ""
 
     for (var i = 1; i <= 5; i++) {
       const boxContainer = document.createElement("div");
       boxContainer.className = "costume-gallery-box";
 
+      const imageContainer = document.createElement("div");
+      imageContainer.style.display = "flex";
+      imageContainer.style.justifyContent = "center";
+
       const imageBox = document.createElement("div");
       imageBox.style.backgroundImage = `url(${data.catImg.src})`;
       imageBox.style.backgroundSize = data.catImg.size;
-      imageBox.style.width = "100px";
-      imageBox.style.height = "150px";
-      imageBox.style.backgroundPosition = "center";
-      imageBox.style.backgroundRepeat = "no-repeat";
-      imageBox.style.margin = "0 auto";
+      imageBox.classList.add("costume-slot");
+      imageBox.style.flex = "1";
+      imageBox.style.maxWidth = "100px"
+      imageContainer.appendChild(imageBox);
+
+      if (data.costumes && data.costumes.slots && data.costumes.slots[i - 1]) {
+        const costumeBox = document.createElement("div")
+        costumeBox.style.backgroundImage = `url(${data.costumes.slots[i - 1].base})`;
+        costumeBox.style.backgroundSize = data.catImg.size;
+        costumeBox.classList.add("costume-slot");
+        costumeBox.style.position = "absolute"
+        costumeBox.id = "costume"
+        imageContainer.appendChild(costumeBox);
+      }
+      
 
       const button = document.createElement("button")
       button.classList = "uwu-button install-button";
       button.style.marginLeft = "0.5rem";
       button.style.margin = "0.5rem";
       button.innerText = "Применить костюм " + i;
+      button.addEventListener("click", (event) => applyCostumeFromSlot(event));
 
-      boxContainer.appendChild(imageBox);
+      boxContainer.appendChild(imageContainer);
       boxContainer.appendChild(button);
       galleryArray.appendChild(boxContainer);
-
     }
+  }
+
+  function readImageFileAsDataURL(inputId, onSuccess, onError) {
+    const imgInput = document.getElementById(inputId);
+    const file = imgInput.files[0];
+    if (!file) {
+      alert("Пожалуйста, выберите изображение для костюма.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onerror = function () {
+      if (onError) onError("Ошибка при чтении файла. Попробуйте еще раз.");
+    };
+    reader.onload = function (e) {
+      if (!e.target.result.startsWith("data:image/")) {
+        if (onError) onError("Пожалуйста, выберите изображение для костюма.");
+        return;
+      }
+      if (onSuccess) onSuccess(e.target.result);
+    };
+    reader.readAsDataURL(file);
   }
 
   if (settings.personalCostumes) {
@@ -2984,53 +3073,38 @@ if (targetSettings.test(window.location.href)) {
 
     const changeButton = document.getElementById("changeCostume");
     changeButton.addEventListener("click", () => {
-      const imgInput = document.getElementById("costume-file");
-      const file = imgInput.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onerror = function () {
-          alert("Ошибка при чтении файла. Попробуйте еще раз.");
+      readImageFileAsDataURL("costume-file", (dataUrl) => {
+        const img = new Image();
+        img.onerror = function () {
+          alert(
+            "Ошибка при загрузке изображения. Убедитесь, что файл является корректным PNG изображением."
+          );
         };
-        reader.onload = function (e) {
-          if (!e.target.result.startsWith("data:image/")) {
-            alert("Пожалуйста, выберите изображение для костюма.");
-            return;
+        img.onload = function () {
+          try {
+            let data = localStorage.getItem("uwu_personal") || "{}";
+            data = JSON.parse(data);
+            const canvas = document.createElement("canvas");
+            canvas.width = 100;
+            canvas.height = 150;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, 100, 150);
+
+            const resizedDataUrl = canvas.toDataURL("image/png");
+
+            data.costumes = {
+              base: resizedDataUrl,
+            };
+            localStorage.setItem("uwu_personal", JSON.stringify(data));
+            alert("Костюм успешно изменён! Вы можете увидеть его в игре.");
+            loadCostume();
+          } catch (error) {
+            console.error("Ошибка при сохранении костюма:", error);
+            alert("Ошибка при сохранении костюма.");
           }
-          const img = new Image();
-          img.onerror = function () {
-            alert(
-              "Ошибка при загрузке изображения. Убедитесь, что файл является корректным PNG изображением."
-            );
-          };
-          img.onload = function () {
-            try {
-              let data = localStorage.getItem("uwu_personal") || "{}";
-              data = JSON.parse(data);
-              const canvas = document.createElement("canvas");
-              canvas.width = 100;
-              canvas.height = 150;
-              const ctx = canvas.getContext("2d");
-              ctx.drawImage(img, 0, 0, 100, 150);
-
-              const resizedDataUrl = canvas.toDataURL("image/png");
-
-              data.costumes = {
-                base: resizedDataUrl,
-              };
-              localStorage.setItem("uwu_personal", JSON.stringify(data));
-              alert("Костюм успешно изменён! Вы можете увидеть его в игре.");
-              loadCostume();
-            } catch (error) {
-              console.error("Ошибка при сохранении костюма:", error);
-              alert("Ошибка при сохранении костюма.");
-            }
-          };
-          img.src = e.target.result;
         };
-        reader.readAsDataURL(file);
-      } else {
-        alert("Пожалуйста, выберите изображение для костюма.");
-      }
+        img.src = dataUrl;
+      }, alert);
     });
 
     const removeButton = document.getElementById("removeCostume");
@@ -3051,6 +3125,54 @@ if (targetSettings.test(window.location.href)) {
       loadCostume();
     });
 
+    const saveToSlotButton = document.getElementById("saveCostumeToSlot")
+    saveToSlotButton.addEventListener("click", (event) => {
+      if (!(event.target instanceof HTMLButtonElement)) return;
+      const choice = document.getElementById("costumeSlotSelect").value;
+      readImageFileAsDataURL("costume-file", (dataUrl) => {
+        const img = new Image();
+        img.onerror = function () {
+          alert(
+            "Ошибка при загрузке изображения. Убедитесь, что файл является корректным PNG изображением."
+          );
+        };
+        img.onload = function () {
+          try {
+            let data = localStorage.getItem("uwu_personal") || "{}";
+            data = JSON.parse(data);
+            const canvas = document.createElement("canvas");
+            canvas.width = 100;
+            canvas.height = 150;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, 100, 150);
+
+            const resizedDataUrl = canvas.toDataURL("image/png");
+
+            if (!data.costumes) {
+              data.costumes = { base: "", slots: [] };
+            }
+            if (!Array.isArray(data.costumes.slots)) {
+              data.costumes.slots = [];
+            }
+
+            data.costumes.slots[choice - 1] = {
+              base: resizedDataUrl,
+            };
+            localStorage.setItem("uwu_personal", JSON.stringify(data));
+            alert(
+              "Костюм успешно модифицирован! Вы можете увидеть его в слоте " +
+                choice +
+                "."
+            );
+            loadCostume();
+          } catch (error) {
+            console.error("Ошибка при сохранении костюма:", error);
+            alert("Ошибка при сохранении костюма.");
+          }
+        };
+        img.src = dataUrl;
+      }, alert);
+    });
     loadCostume();
   }
 
