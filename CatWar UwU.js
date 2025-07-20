@@ -2351,6 +2351,44 @@ const css_uwu_main = `
   border-radius: 1rem;
 }
 
+.save-costume-button {
+  margin-top: 10px;
+}
+
+.costume-flex-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: flex-start;
+  margin-top: 1rem;
+}
+.costume-flex-item {
+  flex: 0 1 calc(33.333% - 1rem);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+  max-width: 180px;
+}
+.costume-style {
+  width: 100px;
+  height: 150px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+.costume-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  align-items: stretch;
+}
+
 `;
 
 document.head.insertAdjacentHTML(
@@ -4937,6 +4975,46 @@ if (targetCW3.test(window.location.href)) {
     }
   }
 
+  function createCostumeSavePopup(costumes) {
+    let { catInfoElement, contentContainer } = createCatInfoContainer();
+    const slotCount = 5; // Количество слотов для костюмов
+
+    catInfoElement.style.width = "600px"
+
+    contentContainer.innerHTML = `
+      <div class="cat-details">
+        <p>Выберите костюм для сохранения:</p>
+        <div class="costume-flex-grid">
+          ${costumes.map((costumeUrl, idx) => `
+            <div class="costume-flex-item">
+              <div class="costume-style" style="background-image: url('${costumeUrl}');"></div>
+              <div class="costume-actions">
+                <select class="uwu-slot-select" data-costume-idx="${idx}">
+                  ${Array.from({length: slotCount}, (_, i) => `<option value="${i+1}">Слот ${i+1}</option>`).join("")}
+                </select>
+                <button class="uwu-button install-button" data-costume-idx="${idx}">Сохранить</button>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    `;
+
+    // Add event listeners for each button
+    contentContainer.querySelectorAll("button[data-costume-idx]").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const idx = parseInt(btn.getAttribute("data-costume-idx"), 10);
+        const select = contentContainer.querySelector(`select[data-costume-idx="${idx}"]`);
+        const slot = parseInt(select.value, 10);
+        // Call your save logic here, e.g.:
+        // saveCostumeToSlot(costumes[idx], slot);
+        alert(`Костюм сохранён в слот ${slot}`);
+      });
+    });
+
+    globalContainer.appendChild(catInfoElement);
+  }
+
   // ====================================================================================================================
   //  . . . УВЕДОМЛЕНИЕ ОБ ОБНОВЛЕНИИ . . .
   // ====================================================================================================================
@@ -5353,6 +5431,32 @@ if (targetCW3.test(window.location.href)) {
 
       if (settings.compactMouth) {
         compactInventory(catElement);
+      }
+
+      if (
+        settings.personalCostumes &&
+        !catTooltip.querySelector(".save-costume-button")
+      ) {
+
+        const costumeDivs = catElement.querySelectorAll("div[data-v-59afe5e8]:not(.first)");
+
+        const matchingCostumes = Array.from(costumeDivs).filter(div =>
+          div.style.backgroundImage.slice(5,-2).startsWith("/cw3/cats/0/costume/")
+        );
+
+        if (matchingCostumes.length > 0) {
+          const saveCostume = document.createElement("button");
+          saveCostume.textContent = "Сохранить костюм";
+          saveCostume.classList.add("save-costume-button");
+          saveCostume.addEventListener("click", () => {
+            
+            const costumeImages = matchingCostumes
+              .map(costume => costume.style.backgroundImage.slice(5, -2));
+            createCostumeSavePopup(costumeImages);
+          });
+
+          catTooltip.appendChild(saveCostume);
+        }
       }
     }
   });
