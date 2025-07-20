@@ -4879,7 +4879,6 @@ if (targetCW3.test(window.location.href)) {
               height: 100%;
               background-image: url('${items.costumes.base}');
               background-size: ${items.catImg.size};
-              background-position: center;
               background-repeat: no-repeat;
               pointer-events: none;
           }
