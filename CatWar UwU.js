@@ -2960,6 +2960,43 @@ if (targetSettings.test(window.location.href)) {
 
     alert("Костюм успешно применен!");
     loadCostume();
+    return;
+  }
+
+  function removeCostumeFromSlot(costumeEvent) {
+    const costumeBox = costumeEvent.target.parentElement.querySelector("#costume");
+    if (!costumeBox) {
+      alert("В этом слоте нет костюма.");
+      return;
+    }
+    const costumeImage = costumeBox.style.backgroundImage;
+    if (!costumeImage) {
+      alert("В этом слоте нет изображения костюма.");
+      return;
+    }
+
+    let data = localStorage.getItem("uwu_personal") || "{}";
+    data = JSON.parse(data);
+
+    if (!data.costumes || !data.costumes.slots) {
+      alert("Нет сохраненных костюмов в этом слоте.");
+      return;
+    }
+
+    const slotIndex = Array.from(document.getElementById("costume-gallery").children).indexOf(costumeEvent.target.parentElement);
+    if (slotIndex >= 0 && slotIndex <= 5) {
+      if (!data.costumes.slots[slotIndex]) {
+        alert("Нет сохраненных костюмов в этом слоте.");
+        return;
+      }
+
+      data.costumes.slots[slotIndex] = null;
+      localStorage.setItem("uwu_personal", JSON.stringify(data));
+      alert("Костюм успешно удален из слота " + (slotIndex + 1));
+      loadCostume();
+      return;
+    }
+
   }
 
   function loadCostume() {
@@ -3022,8 +3059,17 @@ if (targetSettings.test(window.location.href)) {
       button.innerText = "Применить костюм " + i;
       button.addEventListener("click", (event) => applyCostumeFromSlot(event));
 
+      const removeCostumeButton = document.createElement("button")
+      removeCostumeButton.classList = "uwu-button remove-button";
+      removeCostumeButton.style.marginLeft = "0.5rem";
+      removeCostumeButton.style.margin = "0.5rem";
+      removeCostumeButton.innerText = "Удалить костюм " + i;
+      removeCostumeButton.addEventListener("click", (event) => removeCostumeFromSlot(event));
+
+
       boxContainer.appendChild(imageContainer);
       boxContainer.appendChild(button);
+      boxContainer.appendChild(removeCostumeButton);
       galleryArray.appendChild(boxContainer);
     }
   }
