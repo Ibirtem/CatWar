@@ -3232,6 +3232,12 @@ if (targetSettings.test(window.location.href)) {
                 data.costumes.slots = [];
               }
 
+              if (data.costumes.slots[choice-1]) {
+                if (!confirm("Этот слот уже занят. Вы хотите перезаписать его?")) {
+                  return;
+                }
+              }
+
               data.costumes.slots[choice - 1] = {
                 base: resizedDataUrl,
               };
@@ -5200,6 +5206,12 @@ if (targetCW3.test(window.location.href)) {
           }
           if (!Array.isArray(data.costumes.slots)) {
             data.costumes.slots = [];
+          }
+
+          if (data.costumes.slots[choice-1]) {
+            if (!confirm("Этот слот уже занят. Вы хотите перезаписать его?")) {
+              return resolve();
+            }
           }
 
           data.costumes.slots[choice - 1] = {
