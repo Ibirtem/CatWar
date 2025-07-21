@@ -1479,7 +1479,7 @@ const uwusettings =
       <p>Это добавляет кнопку «Сохранить костюм» при наведении курсора на игрока, позволяя сохранить его костюм в одном из слотов костюмов.</p>
       <div>
         <input type="checkbox" id="show-costumes" data-setting="showCostumesButtons">
-        <label for="personal-costume-panel">Сохраняйте костюмы других игроков</label>
+        <label for="show-costumes">Сохраняйте костюмы других игроков</label>
       </div>
       <br>
       <hr id="uwu-hr" class="uwu-hr">
@@ -2960,7 +2960,6 @@ if (targetSettings.test(window.location.href)) {
   updateCostumeFlexBoxState();
 
   function applyCostumeFromSlot(costumeEvent) {
-    console.log(costumeEvent.target.parentElement);
     const costumeBox =
       costumeEvent.target.parentElement.querySelector("#costume");
     if (!costumeBox) {
@@ -2977,8 +2976,8 @@ if (targetSettings.test(window.location.href)) {
     let data = localStorage.getItem("uwu_personal") || "{}";
     data = JSON.parse(data);
 
-    (data.costumes.base = costumeImage.slice(5, -2)),
-      localStorage.setItem("uwu_personal", JSON.stringify(data));
+    data.costumes.base = costumeImage.slice(5, -2);
+    localStorage.setItem("uwu_personal", JSON.stringify(data));
 
     alert("Костюм успешно применен!");
     loadCostume();
@@ -3009,7 +3008,7 @@ if (targetSettings.test(window.location.href)) {
     const slotIndex = Array.from(
       document.getElementById("costume-gallery").children
     ).indexOf(costumeEvent.target.parentElement);
-    if (slotIndex >= 0 && slotIndex <= 5) {
+    if (slotIndex >= 0 && slotIndex < 5) {
       if (!data.costumes.slots[slotIndex]) {
         alert("Нет сохраненных костюмов в этом слоте.");
         return;
