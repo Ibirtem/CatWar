@@ -2360,6 +2360,11 @@ const css_uwu_main = `
   flex-wrap: wrap;
 }
 
+#costume-gallery > div {
+    flex: 1;
+}
+
+
 .costume-gallery-box {
   background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -5678,7 +5683,8 @@ if (targetCW3.test(window.location.href)) {
       }
 
       if (
-        settings.personalCostumes && settings.showCostumesButtons &&
+        settings.personalCostumes &&
+        settings.showCostumesButtons &&
         !catTooltip.querySelector(".save-costume-button")
       ) {
         const costumeDivs = catElement.querySelectorAll(
