@@ -160,6 +160,7 @@ const uwuDefaultSettings = {
   extendedHints: true,
   GMbetaTest: false,
   personalCostumes: false,
+  showCostumesButtons: false,
 };
 
 // ====================================================================================================================
@@ -1474,6 +1475,11 @@ const uwusettings =
       <div>
         <input type="checkbox" id="personal-costume-panel" data-setting="personalCostumes">
         <label for="personal-costume-panel">⚙️Включить персональные костюмы</label>
+      </div>
+      <p>Это добавляет кнопку «Сохранить костюм» при наведении курсора на игрока, позволяя сохранить его костюм в одном из слотов костюмов.</p>
+      <div>
+        <input type="checkbox" id="show-costumes" data-setting="showCostumesButtons">
+        <label for="personal-costume-panel">Сохраняйте костюмы других игроков</label>
       </div>
       <br>
       <hr id="uwu-hr" class="uwu-hr">
@@ -5672,7 +5678,7 @@ if (targetCW3.test(window.location.href)) {
       }
 
       if (
-        settings.personalCostumes &&
+        settings.personalCostumes && settings.showCostumesButtons &&
         !catTooltip.querySelector(".save-costume-button")
       ) {
         const costumeDivs = catElement.querySelectorAll(
