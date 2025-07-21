@@ -5143,6 +5143,52 @@ if (targetCW3.test(window.location.href)) {
     }
   }
 
+  function saveCostumeToSlot(dataUrl, choice) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onerror = function () {
+        alert("Костюм сейчас недоступен. Попробуйте позже.");
+        reject(new Error("Image load error"));
+      };
+      img.onload = function () {
+        try {
+          let data = localStorage.getItem("uwu_personal") || "{}";
+          data = JSON.parse(data);
+          const canvas = document.createElement("canvas");
+          canvas.width = 100;
+          canvas.height = 150;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, 100, 150);
+
+          const resizedDataUrl = canvas.toDataURL("image/png");
+
+          if (!data.costumes) {
+            data.costumes = { base: "", slots: [] };
+          }
+          if (!Array.isArray(data.costumes.slots)) {
+            data.costumes.slots = [];
+          }
+
+          data.costumes.slots[choice - 1] = {
+            base: resizedDataUrl,
+          };
+          localStorage.setItem("uwu_personal", JSON.stringify(data));
+          alert(
+            "Костюм успешно модифицирован! Вы можете увидеть его в слоте " +
+              choice +
+              "."
+          );
+          resolve();
+        } catch (error) {
+          console.error("Ошибка при сохранении костюма:", error);
+          alert("Ошибка при сохранении костюма.");
+          reject(error);
+        }
+      };
+      img.src = dataUrl;
+    });
+  }
+
   function createCostumeSavePopup(costumes) {
     let { catInfoElement, contentContainer } = createCatInfoContainer();
     const slotCount = 5; // Количество слотов для костюмов
@@ -5170,13 +5216,15 @@ if (targetCW3.test(window.location.href)) {
 
     // Add event listeners for each button
     contentContainer.querySelectorAll("button[data-costume-idx]").forEach(btn => {
-      btn.addEventListener("click", (e) => {
+      btn.addEventListener("click", async (e) => {
         const idx = parseInt(btn.getAttribute("data-costume-idx"), 10);
         const select = contentContainer.querySelector(`select[data-costume-idx="${idx}"]`);
         const slot = parseInt(select.value, 10);
-        // Call your save logic here, e.g.:
-        // saveCostumeToSlot(costumes[idx], slot);
-        alert(`Костюм сохранён в слот ${slot}`);
+        contentContainer.style.pointerEvents = "none";
+        contentContainer.style.opacity = "0.5";
+        await saveCostumeToSlot(costumes[idx], slot);
+        contentContainer.style.pointerEvents = "auto";
+        contentContainer.style.opacity = "1";
       });
     });
 
