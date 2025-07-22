@@ -2950,15 +2950,19 @@ if (targetSettings.test(window.location.href)) {
   // ====================================================================================================================
   const costumeCheckbox = document.getElementById("personal-costume-panel");
   function updateCostumeFlexBoxState() {
-    const costumeFlexBox = document.querySelector(".costume-flex-box");
+    const costumeFlexBox = document.querySelectorAll(".costume-flex-box");
     const showCostumesCheckbox = document.getElementById("show-costumes")
     if (!costumeFlexBox || !showCostumesCheckbox) return;
 
     if (costumeCheckbox.checked) {
-      costumeFlexBox.classList.remove("disabled");
+      costumeFlexBox.forEach((box) => {
+        box.classList.remove("disabled");
+      });
       showCostumesCheckbox.disabled = false;
     } else {
-      costumeFlexBox.classList.add("disabled");
+      costumeFlexBox.forEach((box) => {
+        box.classList.add("disabled");
+      });
       settings.showCostumesButtons = false;
       showCostumesCheckbox.checked = false;
       showCostumesCheckbox.disabled = true;
