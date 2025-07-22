@@ -2951,7 +2951,7 @@ if (targetSettings.test(window.location.href)) {
   const costumeCheckbox = document.getElementById("personal-costume-panel");
   function updateCostumeFlexBoxState() {
     const costumeFlexBox = document.querySelectorAll(".costume-flex-box");
-    const showCostumesCheckbox = document.getElementById("show-costumes")
+    const showCostumesCheckbox = document.getElementById("show-costumes");
     if (!costumeFlexBox || !showCostumesCheckbox) return;
 
     if (costumeCheckbox.checked) {
@@ -2977,7 +2977,11 @@ if (targetSettings.test(window.location.href)) {
     let data = localStorage.getItem("uwu_personal") || "{}";
     data = JSON.parse(data);
 
-    if (!data.costumes || !data.costumes.slots || !data.costumes.slots[slotIndex]) {
+    if (
+      !data.costumes ||
+      !data.costumes.slots ||
+      !data.costumes.slots[slotIndex]
+    ) {
       alert("В этом слоте нет костюма.");
       return;
     }
@@ -3003,9 +3007,13 @@ if (targetSettings.test(window.location.href)) {
     let data = localStorage.getItem("uwu_personal") || "{}";
     data = JSON.parse(data);
 
-    if (data.costumes && data.costumes.slots && data.costumes.slots[slotIndex]) {
+    if (
+      data.costumes &&
+      data.costumes.slots &&
+      data.costumes.slots[slotIndex]
+    ) {
       data.costumes.slots.splice(slotIndex, 1);
-      data.costumes.slots = data.costumes.slots.filter(slot => slot);
+      data.costumes.slots = data.costumes.slots.filter((slot) => slot);
       localStorage.setItem("uwu_personal", JSON.stringify(data));
       alert("Слот " + (slotIndex + 1) + " успешно удален.");
       loadCostume();
@@ -3048,7 +3056,11 @@ if (targetSettings.test(window.location.href)) {
 
         const deleteButton = document.createElement("button");
         deleteButton.innerText = "❌";
-        deleteButton.classList.add("uwu-button", "remove-button", "costume-slot-delete-button");
+        deleteButton.classList.add(
+          "uwu-button",
+          "remove-button",
+          "costume-slot-delete-button"
+        );
         deleteButton.title = "Удалить слот";
         deleteButton.addEventListener("click", () => removeCostumeFromSlot(i));
         boxContainer.appendChild(deleteButton);
@@ -3059,7 +3071,6 @@ if (targetSettings.test(window.location.href)) {
         slotNumber.style.top = "10px";
         slotNumber.style.left = "10px";
         boxContainer.appendChild(slotNumber);
-
 
         const imageContainer = document.createElement("div");
         imageContainer.style.display = "flex";
@@ -3247,12 +3258,10 @@ if (targetSettings.test(window.location.href)) {
                 base: resizedDataUrl,
               });
 
-              data.costumes.slots = data.costumes.slots.filter(slot => slot);
+              data.costumes.slots = data.costumes.slots.filter((slot) => slot);
 
               localStorage.setItem("uwu_personal", JSON.stringify(data));
-              alert(
-                "Костюм успешно сохранен в новый слот!"
-              );
+              alert("Костюм успешно сохранен в новый слот!");
               loadCostume();
             } catch (error) {
               console.error("Ошибка при сохранении костюма:", error);
@@ -3262,9 +3271,9 @@ if (targetSettings.test(window.location.href)) {
           img.src = dataUrl;
         },
         (error) => {
-            if (error.includes("Пожалуйста, выберите изображение")) {
-                alert(error);
-            }
+          if (error.includes("Пожалуйста, выберите изображение")) {
+            alert(error);
+          }
         }
       );
     });
@@ -5218,13 +5227,15 @@ if (targetCW3.test(window.location.href)) {
             data.costumes.slots = [];
           }
 
-          if (choice === 'new') {
+          if (choice === "new") {
             data.costumes.slots.push({ base: resizedDataUrl });
             alert("Костюм успешно сохранен в новый слот.");
           } else {
             const slotIndex = parseInt(choice, 10);
             if (data.costumes.slots[slotIndex]) {
-              if (!confirm("Этот слот уже занят. Вы хотите перезаписать его?")) {
+              if (
+                !confirm("Этот слот уже занят. Вы хотите перезаписать его?")
+              ) {
                 return resolve();
               }
             }
@@ -5248,15 +5259,18 @@ if (targetCW3.test(window.location.href)) {
     let { catInfoElement, contentContainer } = createCatInfoContainer();
     let data = localStorage.getItem("uwu_personal") || "{}";
     data = JSON.parse(data);
-    const savedSlots = (data.costumes && data.costumes.slots) ? data.costumes.slots : [];
+    const savedSlots =
+      data.costumes && data.costumes.slots ? data.costumes.slots : [];
 
     catInfoElement.style.width = "600px";
 
     let slotOptions = '<option value="new">В новый слот</option>';
     savedSlots.forEach((slot, i) => {
-        if (slot) {
-            slotOptions += `<option value="${i}">Перезаписать слот ${i + 1}</option>`;
-        }
+      if (slot) {
+        slotOptions += `<option value="${i}">Перезаписать слот ${
+          i + 1
+        }</option>`;
+      }
     });
 
     contentContainer.innerHTML = `
