@@ -2379,6 +2379,7 @@ const css_uwu_main = `
   z-index: 10;
   padding: 4px 8px !important;
   line-height: 1;
+  background-color: transparent !important;
 }
 
 .save-costume-button {
