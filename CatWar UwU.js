@@ -3006,7 +3006,7 @@ if (targetSettings.test(window.location.href)) {
     if (data.costumes && data.costumes.slots && data.costumes.slots[slotIndex]) {
       data.costumes.slots.splice(slotIndex, 1);
       localStorage.setItem("uwu_personal", JSON.stringify(data));
-      alert("Слот " + (slotIndex + 1) + " успешно удален.");
+      alert("Слот успешно удален.");
       loadCostume();
     } else {
       alert("Не удалось найти костюм для удаления.");
