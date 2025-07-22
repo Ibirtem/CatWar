@@ -3005,8 +3005,9 @@ if (targetSettings.test(window.location.href)) {
 
     if (data.costumes && data.costumes.slots && data.costumes.slots[slotIndex]) {
       data.costumes.slots.splice(slotIndex, 1);
+      data.costumes.slots = data.costumes.slots.filter(slot => slot);
       localStorage.setItem("uwu_personal", JSON.stringify(data));
-      alert("Слот успешно удален.");
+      alert("Слот " + (slotIndex + 1) + " успешно удален.");
       loadCostume();
     } else {
       alert("Не удалось найти костюм для удаления.");
@@ -3051,6 +3052,14 @@ if (targetSettings.test(window.location.href)) {
         deleteButton.title = "Удалить слот";
         deleteButton.addEventListener("click", () => removeCostumeFromSlot(i));
         boxContainer.appendChild(deleteButton);
+
+        const slotNumber = document.createElement("div");
+        slotNumber.innerText = `${i + 1}.`;
+        slotNumber.style.position = "absolute";
+        slotNumber.style.top = "10px";
+        slotNumber.style.left = "10px";
+        boxContainer.appendChild(slotNumber);
+
 
         const imageContainer = document.createElement("div");
         imageContainer.style.display = "flex";
@@ -3237,6 +3246,8 @@ if (targetSettings.test(window.location.href)) {
               data.costumes.slots.push({
                 base: resizedDataUrl,
               });
+
+              data.costumes.slots = data.costumes.slots.filter(slot => slot);
 
               localStorage.setItem("uwu_personal", JSON.stringify(data));
               alert(
