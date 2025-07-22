@@ -1501,16 +1501,9 @@ const uwusettings =
           <br>
           <span>или </span>
           <br>
-          <button class="uwu-button install-button" id="saveCostumeToSlot">
-            Сохранить в
+         <button class="uwu-button install-button" id="saveCostumeToNewSlot">
+            Сохранить в новый слот
           </button>
-          <select class="uwu-slot-select" id="costumeSlotSelect">
-            <option value="1">Слот 1</option>
-            <option value="2">Слот 2</option>
-            <option value="3">Слот 3</option>
-            <option value="4">Слот 4</option>
-            <option value="5">Слот 5</option>
-          </select>
         </div>
         <div id="cat-image">
           Превью для вашего кота/вашей кошки отсутствует. <br><br> Перейдите в Игровую и вернитесь на эту страницу.
@@ -1519,7 +1512,6 @@ const uwusettings =
       <hr id="uwu-hr" class="uwu-hr">
       <h3>Библиотека костюмов:</h3>
       <div class="costume-flex-box" id="costume-gallery">
-        <h4>Нет в наличии</h4>
       </div>
   <hr id="uwu-hr" class="uwu-hr-head">
 </div>
@@ -2358,6 +2350,7 @@ const css_uwu_main = `
 #costume-gallery {
   gap: 1rem;
   flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 #costume-gallery > div {
@@ -2369,6 +2362,23 @@ const css_uwu_main = `
   background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1rem;
+  flex: 0 1 250px;
+  max-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.costume-slot-delete-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  padding: 4px 8px !important;
+  line-height: 1;
 }
 
 .save-costume-button {
@@ -2959,66 +2969,43 @@ if (targetSettings.test(window.location.href)) {
 
   updateCostumeFlexBoxState();
 
-  function applyCostumeFromSlot(costumeEvent) {
-    const costumeBox =
-      costumeEvent.target.parentElement.querySelector("#costume");
-    if (!costumeBox) {
+  function applyCostumeFromSlot(slotIndex) {
+    let data = localStorage.getItem("uwu_personal") || "{}";
+    data = JSON.parse(data);
+
+    if (!data.costumes || !data.costumes.slots || !data.costumes.slots[slotIndex]) {
       alert("В этом слоте нет костюма.");
       return;
     }
 
-    const costumeImage = costumeBox.style.backgroundImage;
+    const costumeImage = data.costumes.slots[slotIndex].base;
     if (!costumeImage) {
       alert("В этом слоте нет изображения костюма.");
       return;
     }
 
-    let data = localStorage.getItem("uwu_personal") || "{}";
-    data = JSON.parse(data);
-
-    data.costumes.base = costumeImage.slice(5, -2);
+    data.costumes.base = costumeImage;
     localStorage.setItem("uwu_personal", JSON.stringify(data));
 
     alert("Костюм успешно применен!");
     loadCostume();
-    return;
   }
 
-  function removeCostumeFromSlot(costumeEvent) {
-    const costumeBox =
-      costumeEvent.target.parentElement.querySelector("#costume");
-    if (!costumeBox) {
-      alert("В этом слоте нет костюма.");
-      return;
-    }
-    const costumeImage = costumeBox.style.backgroundImage;
-    if (!costumeImage) {
-      alert("В этом слоте нет изображения костюма.");
+  function removeCostumeFromSlot(slotIndex) {
+    if (!confirm("Вы уверены, что хотите удалить этот слот с костюмом?")) {
       return;
     }
 
     let data = localStorage.getItem("uwu_personal") || "{}";
     data = JSON.parse(data);
 
-    if (!data.costumes || !data.costumes.slots) {
-      alert("Нет сохраненных костюмов в этом слоте.");
-      return;
-    }
-
-    const slotIndex = Array.from(
-      document.getElementById("costume-gallery").children
-    ).indexOf(costumeEvent.target.parentElement);
-    if (slotIndex >= 0 && slotIndex < 5) {
-      if (!data.costumes.slots[slotIndex]) {
-        alert("Нет сохраненных костюмов в этом слоте.");
-        return;
-      }
-
-      data.costumes.slots[slotIndex] = null;
+    if (data.costumes && data.costumes.slots && data.costumes.slots[slotIndex]) {
+      data.costumes.slots.splice(slotIndex, 1);
       localStorage.setItem("uwu_personal", JSON.stringify(data));
-      alert("Костюм успешно удален из слота " + (slotIndex + 1));
+      alert("Слот " + (slotIndex + 1) + " успешно удален.");
       loadCostume();
-      return;
+    } else {
+      alert("Не удалось найти костюм для удаления.");
     }
   }
 
@@ -3047,55 +3034,69 @@ if (targetSettings.test(window.location.href)) {
     const galleryArray = document.getElementById("costume-gallery");
     galleryArray.innerHTML = "";
 
-    for (var i = 1; i <= 5; i++) {
-      const boxContainer = document.createElement("div");
-      boxContainer.className = "costume-gallery-box";
+    if (data.costumes && Array.isArray(data.costumes.slots)) {
+      data.costumes.slots.forEach((slot, i) => {
+        if (!slot) return;
 
-      const imageContainer = document.createElement("div");
-      imageContainer.style.display = "flex";
-      imageContainer.style.justifyContent = "center";
+        const boxContainer = document.createElement("div");
+        boxContainer.className = "costume-gallery-box";
 
-      const imageBox = document.createElement("div");
-      imageBox.style.backgroundImage = `url(${data.catImg.src})`;
-      imageBox.style.backgroundSize = data.catImg.size;
-      imageBox.classList.add("costume-slot");
-      imageBox.style.flex = "1";
-      imageBox.style.maxWidth = "100px";
-      imageContainer.appendChild(imageBox);
+        const deleteButton = document.createElement("button");
+        deleteButton.innerText = "❌";
+        deleteButton.classList.add("uwu-button", "remove-button", "costume-slot-delete-button");
+        deleteButton.title = "Удалить слот";
+        deleteButton.addEventListener("click", () => removeCostumeFromSlot(i));
+        boxContainer.appendChild(deleteButton);
 
-      if (data.costumes && data.costumes.slots && data.costumes.slots[i - 1]) {
-        const costumeBox = document.createElement("div");
-        costumeBox.style.backgroundImage = `url(${
-          data.costumes.slots[i - 1].base
-        })`;
-        costumeBox.style.backgroundSize = data.catImg.size;
-        costumeBox.classList.add("costume-slot");
-        costumeBox.style.position = "absolute";
-        costumeBox.id = "costume";
-        imageContainer.appendChild(costumeBox);
-      }
+        const imageContainer = document.createElement("div");
+        imageContainer.style.display = "flex";
+        imageContainer.style.justifyContent = "center";
 
-      const button = document.createElement("button");
-      button.classList = "uwu-button install-button";
-      button.style.marginLeft = "0.5rem";
-      button.style.margin = "0.5rem";
-      button.innerText = "Применить костюм " + i;
-      button.addEventListener("click", (event) => applyCostumeFromSlot(event));
+        const imageBox = document.createElement("div");
+        imageBox.style.backgroundImage = `url(${data.catImg.src})`;
+        imageBox.style.backgroundSize = data.catImg.size;
+        imageBox.classList.add("costume-slot");
+        imageBox.style.flex = "1";
+        imageBox.style.maxWidth = "100px";
+        imageContainer.appendChild(imageBox);
 
-      const removeCostumeButton = document.createElement("button");
-      removeCostumeButton.classList = "uwu-button remove-button";
-      removeCostumeButton.style.marginLeft = "0.5rem";
-      removeCostumeButton.style.margin = "0.5rem";
-      removeCostumeButton.innerText = "Удалить костюм " + i;
-      removeCostumeButton.addEventListener("click", (event) =>
-        removeCostumeFromSlot(event)
-      );
+        if (slot.base) {
+          const costumeBox = document.createElement("div");
+          costumeBox.style.backgroundImage = `url(${slot.base})`;
+          costumeBox.style.backgroundSize = data.catImg.size;
+          costumeBox.classList.add("costume-slot");
+          costumeBox.style.position = "absolute";
+          costumeBox.id = "costume";
+          imageContainer.appendChild(costumeBox);
+        }
 
-      boxContainer.appendChild(imageContainer);
-      boxContainer.appendChild(button);
-      boxContainer.appendChild(removeCostumeButton);
-      galleryArray.appendChild(boxContainer);
+        const applyButton = document.createElement("button");
+        applyButton.classList = "uwu-button install-button";
+        applyButton.style.margin = "0.5rem";
+        applyButton.innerText = "Применить костюм";
+        applyButton.addEventListener("click", () => applyCostumeFromSlot(i));
+
+        boxContainer.appendChild(imageContainer);
+        boxContainer.appendChild(applyButton);
+        galleryArray.appendChild(boxContainer);
+      });
     }
+
+    const addSlotButton = document.createElement("div");
+    addSlotButton.className = "costume-gallery-box";
+    addSlotButton.style.display = "flex";
+    addSlotButton.style.alignItems = "center";
+    addSlotButton.style.justifyContent = "center";
+    addSlotButton.style.fontSize = "5rem";
+    addSlotButton.style.cursor = "pointer";
+    addSlotButton.style.minWidth = "150px";
+    addSlotButton.style.minHeight = "220px";
+    addSlotButton.innerText = "+";
+    addSlotButton.title = "Добавить новый костюм из файла";
+    addSlotButton.addEventListener("click", () => {
+      document.getElementById("costume-file").click();
+    });
+    galleryArray.appendChild(addSlotButton);
   }
 
   function readImageFileAsDataURL(inputId, onSuccess, onError) {
@@ -3199,10 +3200,8 @@ if (targetSettings.test(window.location.href)) {
       loadCostume();
     });
 
-    const saveToSlotButton = document.getElementById("saveCostumeToSlot");
-    saveToSlotButton.addEventListener("click", (event) => {
-      if (!(event.target instanceof HTMLButtonElement)) return;
-      const choice = document.getElementById("costumeSlotSelect").value;
+    const saveToNewSlotButton = document.getElementById("saveCostumeToNewSlot");
+    saveToNewSlotButton.addEventListener("click", (event) => {
       readImageFileAsDataURL(
         "costume-file",
         (dataUrl) => {
@@ -3231,20 +3230,13 @@ if (targetSettings.test(window.location.href)) {
                 data.costumes.slots = [];
               }
 
-              if (data.costumes.slots[choice-1]) {
-                if (!confirm("Этот слот уже занят. Вы хотите перезаписать его?")) {
-                  return;
-                }
-              }
-
-              data.costumes.slots[choice - 1] = {
+              data.costumes.slots.push({
                 base: resizedDataUrl,
-              };
+              });
+
               localStorage.setItem("uwu_personal", JSON.stringify(data));
               alert(
-                "Костюм успешно модифицирован! Вы можете увидеть его в слоте " +
-                  choice +
-                  "."
+                "Костюм успешно сохранен в новый слот!"
               );
               loadCostume();
             } catch (error) {
@@ -3254,7 +3246,11 @@ if (targetSettings.test(window.location.href)) {
           };
           img.src = dataUrl;
         },
-        alert
+        (error) => {
+            if (error.includes("Пожалуйста, выберите изображение")) {
+                alert(error);
+            }
+        }
       );
     });
     loadCostume();
@@ -5207,21 +5203,21 @@ if (targetCW3.test(window.location.href)) {
             data.costumes.slots = [];
           }
 
-          if (data.costumes.slots[choice-1]) {
-            if (!confirm("Этот слот уже занят. Вы хотите перезаписать его?")) {
-              return resolve();
+          if (choice === 'new') {
+            data.costumes.slots.push({ base: resizedDataUrl });
+            alert("Костюм успешно сохранен в новый слот.");
+          } else {
+            const slotIndex = parseInt(choice, 10);
+            if (data.costumes.slots[slotIndex]) {
+              if (!confirm("Этот слот уже занят. Вы хотите перезаписать его?")) {
+                return resolve();
+              }
             }
+            data.costumes.slots[slotIndex] = { base: resizedDataUrl };
+            alert(`Костюм успешно сохранен в слот ${slotIndex + 1}.`);
           }
 
-          data.costumes.slots[choice - 1] = {
-            base: resizedDataUrl,
-          };
           localStorage.setItem("uwu_personal", JSON.stringify(data));
-          alert(
-            "Костюм успешно модифицирован! Вы можете увидеть его в слоте " +
-              choice +
-              "."
-          );
           resolve();
         } catch (error) {
           console.error("Ошибка при сохранении костюма:", error);
@@ -5235,9 +5231,18 @@ if (targetCW3.test(window.location.href)) {
 
   function createCostumeSavePopup(costumes) {
     let { catInfoElement, contentContainer } = createCatInfoContainer();
-    const slotCount = 5; // Количество слотов для костюмов
+    let data = localStorage.getItem("uwu_personal") || "{}";
+    data = JSON.parse(data);
+    const savedSlots = (data.costumes && data.costumes.slots) ? data.costumes.slots : [];
 
     catInfoElement.style.width = "600px";
+
+    let slotOptions = '<option value="new">В новый слот</option>';
+    savedSlots.forEach((slot, i) => {
+        if (slot) {
+            slotOptions += `<option value="${i}">Перезаписать слот ${i + 1}</option>`;
+        }
+    });
 
     contentContainer.innerHTML = `
       <div class="cat-details">
@@ -5250,10 +5255,7 @@ if (targetCW3.test(window.location.href)) {
               <div class="costume-style" style="background-image: url('${costumeUrl}');"></div>
               <div class="costume-actions">
                 <select class="uwu-slot-select" data-costume-idx="${idx}">
-                  ${Array.from(
-                    { length: slotCount },
-                    (_, i) => `<option value="${i + 1}">Слот ${i + 1}</option>`
-                  ).join("")}
+                  ${slotOptions}
                 </select>
                 <button class="uwu-button install-button" data-costume-idx="${idx}">Сохранить</button>
               </div>
@@ -5265,7 +5267,6 @@ if (targetCW3.test(window.location.href)) {
       </div>
     `;
 
-    // Add event listeners for each button
     contentContainer
       .querySelectorAll("button[data-costume-idx]")
       .forEach((btn) => {
@@ -5274,10 +5275,10 @@ if (targetCW3.test(window.location.href)) {
           const select = contentContainer.querySelector(
             `select[data-costume-idx="${idx}"]`
           );
-          const slot = parseInt(select.value, 10);
+          const slotChoice = select.value;
           contentContainer.style.pointerEvents = "none";
           contentContainer.style.opacity = "0.5";
-          await saveCostumeToSlot(costumes[idx], slot);
+          await saveCostumeToSlot(costumes[idx], slotChoice);
           contentContainer.style.pointerEvents = "auto";
           contentContainer.style.opacity = "1";
         });
