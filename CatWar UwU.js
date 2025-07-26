@@ -1027,6 +1027,22 @@ const uwusettings =
 
           <div>
             <p>
+              Индивидуальный импорт/экспорт только сохранённых личных сообщений.
+            </p>
+            <input
+              type="text"
+              id="ls-export-field"
+              placeholder="Экспорт ЛС"
+              readonly
+            />
+            <input type="text" id="ls-import-field" placeholder="Импорт ЛС" />
+            <button id="ls-import-btn" class="uwu-button install-button">
+              Вставить
+            </button>
+          </div>
+
+          <div>
+            <p>
               Добавляет аватар с профиля отправителя на его комментарий в лентах
               и блогах.
             </p>
@@ -2854,8 +2870,9 @@ const newsPanel =
       <div id="news-list" style="display: none">
         <h3>Главное</h3>
         <p>
-          — Добавлены Сохранение сообщений, Библиотека личных костюмов, Счётчик символов в чате и
-          отдельный Импорт/Экспорт цветов параметров и навыков!
+          — Добавлены Сохранение сообщений, Библиотека личных костюмов, Счётчик
+          символов в чате и отдельный Импорт/Экспорт цветов параметров и
+          навыков!
         </p>
         <hr id="uwu-hr" class="uwu-hr" />
         <h3>Внешний вид</h3>
@@ -2878,6 +2895,7 @@ const newsPanel =
           стоит такая галочка.
         </p>
         <p>— Джойстик для Охоты стал потенциально чуть производительней.</p>
+        <p>— Клик по Экспорт полям автоматически выделяет всё внутри.</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <p>Дата выпуска: ??.07.25</p>
       </div>
@@ -4686,6 +4704,51 @@ if (targetSettings.test(window.location.href)) {
     importLsButton.addEventListener("click", importLsFromVarmod);
   }
 
+  /**
+   * Настраивает логику для индивидуального импорта/экспорта сохраненных ЛС.
+   */
+  function setupLsImportExport() {
+    const exportField = document.getElementById("ls-export-field");
+    const importField = document.getElementById("ls-import-field");
+    const importButton = document.getElementById("ls-import-btn");
+
+    if (!exportField || !importField || !importButton) return;
+
+    function updateLsExportField() {
+      const savedLs = localStorage.getItem("uwu_saved_ls") || "{}";
+      exportField.value = savedLs;
+    }
+
+    importButton.addEventListener("click", () => {
+      const jsonString = importField.value;
+      if (!jsonString.trim()) {
+        alert("Поле для импорта пустое.");
+        return;
+      }
+
+      try {
+        const importedLs = JSON.parse(jsonString);
+
+        if (typeof importedLs !== "object" || importedLs === null) {
+          throw new Error("Импортируемые данные не являются объектом.");
+        }
+
+        localStorage.setItem("uwu_saved_ls", JSON.stringify(importedLs));
+        alert("Сохранённые ЛС успешно импортированы!");
+        importField.value = "";
+        updateLsExportField();
+      } catch (error) {
+        alert(
+          "Ошибка! Не удалось импортировать ЛС. Проверьте корректность вставленных данных."
+        );
+        console.error("UwU | Ошибка импорта ЛС:", error);
+      }
+    });
+
+    updateLsExportField();
+  }
+
+  setupLsImportExport();
   // ====================================================================================================================
   //  . . . ТЕМЫ И ЦВЕТА ИГРОВОЙ . . .
   // ====================================================================================================================
@@ -5816,6 +5879,23 @@ if (targetSettings.test(window.location.href)) {
   }
 
   tabManager.render();
+
+  /**
+   * Добавляет функционал автоматического выделения текста при клике на поля для экспорта.
+   */
+  function setupExportFieldSelection() {
+    const exportFields = document.querySelectorAll(
+      "#exportSettings, #param-colors-export-field, #ls-export-field"
+    );
+
+    exportFields.forEach((field) => {
+      field.addEventListener("click", function () {
+        this.select();
+      });
+    });
+  }
+
+  setupExportFieldSelection();
 }
 // ====================================================================================================================
 //  . . . ВКЛАДКИ ГЛАВНЫХ НАСТРОЕК . . .
