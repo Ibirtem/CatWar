@@ -2854,6 +2854,7 @@ const newsPanel =
           — Теперь локальное время должно конвертироваться в Московское, когда
           стоит такая галочка.
         </p>
+        <p>— Джойстик для Охоты стал потенциально чуть производительней.</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <p>Дата выпуска: ??.07.25</p>
       </div>
@@ -12737,6 +12738,7 @@ if (targetCW3Hunt.test(window.location.href)) {
       const joystickHead = document.getElementById("joystick-head");
       const baseRadius = joystickContainer.offsetWidth / 2;
       let activeTouchId = null;
+      let currentActiveKey = null;
       let keys = {};
 
       function handleTouchStart(event) {
@@ -12761,7 +12763,10 @@ if (targetCW3Hunt.test(window.location.href)) {
       function handleTouchEnd(event) {
         activeTouchId = null;
         resetJoystick();
-        releaseAllKeys();
+        if (currentActiveKey) {
+          simulateKeyRelease(currentActiveKey);
+          currentActiveKey = null;
+        }
       }
 
       function updateJoystickPosition(x, y) {
@@ -12777,55 +12782,35 @@ if (targetCW3Hunt.test(window.location.href)) {
         joystickHead.style.top = `${baseRadius + distance * Math.sin(angle)}px`;
 
         const threshold = 0.3;
-        const newDirections = {
-          w: false,
-          a: false,
-          s: false,
-          d: false,
-          q: false,
-          e: false,
-          z: false,
-          x: false,
-        };
-
-        simulateKeyRelease("w");
-        simulateKeyRelease("a");
-        simulateKeyRelease("s");
-        simulateKeyRelease("d");
-        simulateKeyRelease("q");
-        simulateKeyRelease("e");
-        simulateKeyRelease("z");
-        simulateKeyRelease("x");
+        let newActiveKey = null;
 
         if (distance > baseRadius * threshold) {
-          if (angle >= -Math.PI * 0.125 && angle < Math.PI * 0.125) {
-            newDirections.d = true;
-          } else if (angle >= Math.PI * 0.125 && angle < Math.PI * 0.375) {
-            newDirections.x = true;
-          } else if (angle >= Math.PI * 0.375 && angle < Math.PI * 0.625) {
-            newDirections.s = true;
-          } else if (angle >= Math.PI * 0.625 && angle < Math.PI * 0.875) {
-            newDirections.z = true;
-          } else if (angle >= Math.PI * 0.875 || angle < -Math.PI * 0.875) {
-            newDirections.a = true;
-          } else if (angle >= -Math.PI * 0.875 && angle < -Math.PI * 0.625) {
-            newDirections.q = true;
-          } else if (angle >= -Math.PI * 0.625 && angle < -Math.PI * 0.375) {
-            newDirections.w = true;
-          } else if (angle >= -Math.PI * 0.375 && angle < -Math.PI * 0.125) {
-            newDirections.e = true;
-          }
+          if (angle >= -Math.PI * 0.125 && angle < Math.PI * 0.125)
+            newActiveKey = "d";
+          else if (angle >= Math.PI * 0.125 && angle < Math.PI * 0.375)
+            newActiveKey = "x";
+          else if (angle >= Math.PI * 0.375 && angle < Math.PI * 0.625)
+            newActiveKey = "s";
+          else if (angle >= Math.PI * 0.625 && angle < Math.PI * 0.875)
+            newActiveKey = "z";
+          else if (angle >= Math.PI * 0.875 || angle < -Math.PI * 0.875)
+            newActiveKey = "a";
+          else if (angle >= -Math.PI * 0.875 && angle < -Math.PI * 0.625)
+            newActiveKey = "q";
+          else if (angle >= -Math.PI * 0.625 && angle < -Math.PI * 0.375)
+            newActiveKey = "w";
+          else if (angle >= -Math.PI * 0.375 && angle < -Math.PI * 0.125)
+            newActiveKey = "e";
         }
 
-        for (const key in newDirections) {
-          if (newDirections[key] !== keys[key]) {
-            if (newDirections[key]) {
-              simulateKeyPress(key);
-            } else {
-              simulateKeyRelease(key);
-            }
-            keys[key] = newDirections[key];
+        if (newActiveKey !== currentActiveKey) {
+          if (currentActiveKey) {
+            simulateKeyRelease(currentActiveKey);
           }
+          if (newActiveKey) {
+            simulateKeyPress(newActiveKey);
+          }
+          currentActiveKey = newActiveKey;
         }
       }
 
@@ -12834,6 +12819,7 @@ if (targetCW3Hunt.test(window.location.href)) {
         joystickHead.style.top = "50%";
       }
 
+      // Оставим на будущее, вдруг пригодится.
       function releaseAllKeys() {
         for (const key in keys) {
           if (keys[key]) {
@@ -12881,7 +12867,10 @@ if (targetCW3Hunt.test(window.location.href)) {
       joystickContainer.addEventListener("touchcancel", handleTouchEnd);
 
       window.addEventListener("blur", function () {
-        releaseAllKeys();
+        if (currentActiveKey) {
+          simulateKeyRelease(currentActiveKey);
+          currentActiveKey = null;
+        }
         resetJoystick();
       });
     }
