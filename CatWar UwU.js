@@ -49,6 +49,7 @@ const uwuDefaultSettings = {
   addCommaAfterNick: false,
   reverseChat: false,
   newChatInput: false,
+  showChatCharCounter: false,
   namesForNotification: "",
 
   redesignCostumsSettings: false,
@@ -1102,6 +1103,17 @@ const uwusettings =
             />
             <label for="new-chat-input"
               >Альтернативная строка ввода сообщений</label
+            >
+          </div>
+          <div>
+            <p>Отображает счётчик символов в строке ввода Современного Чата.</p>
+            <input
+              type="checkbox"
+              id="show-chat-char-counter"
+              data-setting="showChatCharCounter"
+            />
+            <label for="show-chat-char-counter"
+              >Показывать счётчик символов в чате</label
             >
           </div>
 
@@ -2797,10 +2809,10 @@ const newsPanel =
       </button>
       <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>— Добавлена библиотека Личных Костюмов!</p>
+        <p>— Добавлены библиотека Личных Костюмов, счётчик Символов в чате!</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <h3>Внешний вид</h3>
-        <p>—</p>
+        <p>— 🌸</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <h3>Изменения кода</h3>
         <p>— Возможно починен баг с NaN переходами в профиле.</p>
@@ -10886,6 +10898,47 @@ if (targetCW3.test(window.location.href)) {
   }
 `;
     document.head.appendChild(NewChatDesign);
+  }
+
+  // ====================================================================================================================
+  //   . . . СЧЁТЧИК СИМВОЛОВ В ЧАТЕ . . .
+  // ====================================================================================================================
+
+  if (settings.newChatInput && settings.showChatCharCounter) {
+    function setupCharCounter() {
+      const chatForm = document.getElementById("chat_form");
+      const textarea = chatForm.querySelector("textarea#text");
+      const volumeLabel = chatForm.querySelector("b");
+
+      if (
+        !textarea ||
+        !volumeLabel ||
+        document.getElementById("uwu-char-counter")
+      ) {
+        return;
+      }
+
+      const counterElement = document.createElement("span");
+      counterElement.id = "uwu-char-counter";
+      counterElement.style.margin = "0 8px";
+
+      volumeLabel.parentNode.insertBefore(counterElement, volumeLabel);
+      volumeLabel.parentNode.insertBefore(
+        document.createTextNode(" | "),
+        volumeLabel
+      );
+
+      function updateCounter() {
+        const currentLength = textarea.value.length;
+        const maxLength = textarea.maxLength;
+        counterElement.textContent = `${currentLength}/${maxLength}`;
+      }
+
+      textarea.addEventListener("input", updateCounter);
+      updateCounter();
+    }
+
+    setupSingleCallback("#chat_form", setupCharCounter);
   }
   // ====================================================================================================================
   //   . . . РЕДИЗАЙНЫ + + ЗАКРУГЛЕНИЕ БЛОКОВ . . .
