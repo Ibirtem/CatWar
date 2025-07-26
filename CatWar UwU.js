@@ -2813,6 +2813,11 @@ const newsPanel =
           — Повышена отказоустойчивость сохранений, если вы вдруг каким-то
           образом всё же умудрились их сломать.
         </p>
+        <p>— Добавлен ещё один API для проверки Онлайн времени в часах.</p>
+        <p>
+          — Теперь локальное время должно конвертироваться в Московское, когда
+          стоит такая галочка.
+        </p>
         <hr id="uwu-hr" class="uwu-hr" />
         <p>Дата выпуска: ??.07.25</p>
       </div>
@@ -6818,6 +6823,8 @@ if (targetCW3.test(window.location.href)) {
     let offsetX, offsetY;
     let internetTime = null;
     let timerInterval = null;
+    let lastSyncTimestamp = 0;
+    const SYNC_COOLDOWN_MS = 1 * 60 * 1000;
 
     function updateClock(timeSource = new Date()) {
       const hours = String(timeSource.getHours()).padStart(2, "0");
@@ -6866,29 +6873,82 @@ if (targetCW3.test(window.location.href)) {
         iconElement.textContent = "⌨";
         iconElement.title =
           "Не удалось получить точное онлайн время! Используется локальное время устройства";
+        if (settings.clockMoscowTime) {
+          iconElement.textContent += " MSK";
+          iconElement.title =
+            "Не удалось получить точное онлайн время! Используется локальное время устройства, сконвертированное в Московское.";
+        }
       }
     }
 
     async function fetchInternetTime() {
+      let timeSourceFound = false;
+
+      // 1. Пробуем worldtimeapi.org
       try {
         const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         const url = settings.clockMoscowTime
-          ? "https://timeapi.io/api/Time/current/zone?timeZone=Europe/Moscow"
-          : `https://timeapi.io/api/Time/current/zone?timeZone=${userTimezone}`;
+          ? "https://worldtimeapi.org/api/timezone/Europe/Moscow"
+          : `https://worldtimeapi.org/api/timezone/${userTimezone}`;
         const response = await fetch(url);
         if (!response.ok)
           throw new Error(
-            `Онлайн ответ выдал ошибку: ${response.status} ${response.statusText}`
+            `Ответ от worldtimeapi.org не в порядке: ${response.status}`
           );
         const data = await response.json();
-        internetTime = new Date(data.dateTime);
+        internetTime = new Date(data.datetime);
         useInternetTime = true;
-        updateClockWithInternetTime();
+        timeSourceFound = true;
+        lastSyncTimestamp = Date.now();
+        // console.log("Время успешно получено от worldtimeapi.org.");
       } catch (error) {
-        console.error("Ошибка при получении онлайн времени:", error);
-        useInternetTime = false;
-        updateClock();
+        console.warn(
+          "Не удалось получить время от worldtimeapi.org, пробую запасной источник.",
+          error
+        );
       }
+
+      // 2. Пробуем timeapi.io
+      if (!timeSourceFound) {
+        try {
+          const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          const url = settings.clockMoscowTime
+            ? "https://timeapi.io/api/Time/current/zone?timeZone=Europe/Moscow"
+            : `https://timeapi.io/api/Time/current/zone?timeZone=${userTimezone}`;
+          const response = await fetch(url);
+          if (!response.ok)
+            throw new Error(
+              `Ответ от timeapi.io не в порядке: ${response.status}`
+            );
+          const data = await response.json();
+          internetTime = new Date(data.dateTime);
+          useInternetTime = true;
+          timeSourceFound = true;
+          lastSyncTimestamp = Date.now();
+          // console.log("Время успешно получено от timeapi.io.");
+        } catch (error) {
+          console.warn(
+            "Не удалось получить время от timeapi.io, используется локальное время.",
+            error
+          );
+        }
+      }
+
+      // 3. Финальная логика
+      if (timeSourceFound) {
+        updateClockWithInternetTime();
+      } else {
+        useInternetTime = false;
+        if (settings.clockMoscowTime) {
+          const now = new Date();
+          const utcTime = now.getTime() + now.getTimezoneOffset() * 60000;
+          const moscowTime = new Date(utcTime + 3600000 * 3); // UTC+3
+          updateClock(moscowTime);
+        } else {
+          updateClock();
+        }
+      }
+
       startTimer();
     }
 
@@ -6978,15 +7038,22 @@ if (targetCW3.test(window.location.href)) {
       }
     }
 
-    document.addEventListener("visibilitychange", () => {
-      if (!document.hidden) {
+    function handleFocusOrVisibilityChange() {
+      if (document.hidden) {
+        return;
+      }
+
+      const now = Date.now();
+      if (now - lastSyncTimestamp > SYNC_COOLDOWN_MS) {
         fetchInternetTime();
       }
-    });
+    }
 
-    window.addEventListener("focus", () => {
-      fetchInternetTime();
-    });
+    document.addEventListener(
+      "visibilitychange",
+      handleFocusOrVisibilityChange
+    );
+    window.addEventListener("focus", handleFocusOrVisibilityChange);
 
     fetchInternetTime();
     if (settings.clockPosition === "fly") {
