@@ -214,511 +214,901 @@ const defaultThemes = {
 //   . . . HTML ПАНЕЛЬ НАСТРОЕК . . .
 // ====================================================================================================================
 const uwusettings =
-  // html
+  /* HTML */
   `
-<div id="uwusettings">
+    <div id="uwusettings">
+      <div id="uwusettings-header">
+        <div id="uwusettings-header-glass">
+          <div class="main-settings-container">
+            <div id="settingsTheme" class="custom-select">
+              <label for="settingsTheme">Тема настроек:</label>
+              <div class="select-selected">Классическая</div>
+              <div class="select-items">
+                <!-- Опции будут добавлены сюда -->
+              </div>
+            </div>
 
-  <div id="uwusettings-header">
-    <div id="uwusettings-header-glass">
-      <div class="main-settings-container">
-        <div id="settingsTheme" class="custom-select">
-          <label for="settingsTheme">Тема настроек:</label>
-          <div class="select-selected">Классическая</div>
-          <div class="select-items">
-            <!-- Опции будут добавлены сюда -->
+            <h1>Настройки CatWar UwU</h1>
+            <div class="link-container" title="ВК Группа по Скрипту/Моду.">
+              <a
+                href="https://vk.com/catwar_uwu"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/VK_logo.png"
+                  alt="Иконка"
+                  width="36"
+                  height="36"
+                />
+              </a>
+            </div>
+          </div>
+
+          <hr id="uwu-hr" class="uwu-hr-head" />
+          <div id="button-container">
+            <button id="effects-button" class="active">
+              <h2>
+                Природные эффекты
+                <img
+                  src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png"
+                  alt="Иконка"
+                  width="24"
+                  height="24"
+                />
+              </h2>
+            </button>
+            <button id="theme-button">
+              <h2>
+                Оформление
+                <img
+                  src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/sparkles.png"
+                  alt="Иконка"
+                  width="24"
+                  height="24"
+                />
+              </h2>
+            </button>
+            <button id="utility-button">
+              <h2>
+                Инструментарий
+                <img
+                  src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/flashlight.png"
+                  alt="Иконка"
+                  width="24"
+                  height="24"
+                />
+              </h2>
+            </button>
+            <button id="modules-button">
+              <h2>
+                Надстройки
+                <img
+                  src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/construction.png"
+                  alt="Иконка"
+                  width="24"
+                  height="24"
+                />
+              </h2>
+            </button>
+            <button id="personal-costumes-button">
+              <h2>
+                Личные костюмы
+                <img
+                  src="https://raw.githubusercontent.com/Arisamiga/CatWar/refs/heads/Personal-Costumes/images/costumes.png"
+                  alt="Иконка"
+                  width="24"
+                  height="24"
+                />
+              </h2>
+            </button>
+          </div>
+          <hr id="uwu-hr" class="uwu-hr-head" />
+        </div>
+      </div>
+
+      <div id="uwusettings-main">
+        <div id="effects-panel">
+          <h2>Природа и окружение</h2>
+
+          <div>
+            <p>
+              Включает генерацию Динамичной погоды в Игровой, такие как дождь,
+              снегопады или Северные Сияния.
+            </p>
+            <input
+              type="checkbox"
+              id="weather-enabled"
+              data-setting="weatherEnabled"
+            />
+            <label for="weather-enabled">Показывать природные эффекты</label>
+          </div>
+
+          <div>
+            <p>
+              Сокращает количество частиц динамичной погоды, увеличивая тем
+              самым производительность на слабых устройствах.
+            </p>
+            <input
+              type="checkbox"
+              id="low-Performance-Mode"
+              data-setting="lowPerformanceMode"
+            />
+            <label for="low-Performance-Mode"
+              >Режим низкой производительности</label
+            >
+          </div>
+
+          <div>
+            <p>
+              Может немного повлиять на производительность из-за возрастания
+              количества частиц на экране.
+            </p>
+            <input
+              type="checkbox"
+              id="weather-drops"
+              data-setting="weatherDrops"
+            />
+            <label for="weather-drops">Эффекты приземления частиц</label>
+          </div>
+
+          <div>
+            <p>
+              Замена стандартных частиц на знакомые всеми пиксельные частицы.
+            </p>
+            <input
+              type="checkbox"
+              id="minecraft-style"
+              data-setting="minecraftStyle"
+            />
+            <label for="minecraft-style-enabled">Minecraft частицы</label>
+          </div>
+
+          <div>
+            <p>Убирает затемнение Игрового поля.</p>
+            <input type="checkbox" id="always-day" data-setting="alwaysDay" />
+            <label for="always-day">Всегда день/ярко</label>
+          </div>
+
+          <div>
+            <p>
+              Отображает панель Ручного управления погодой в ⚙️Панели
+              Расширенных Настройках Игровой. Выключает натуральную генерацию
+              погоды.
+            </p>
+            <input
+              type="checkbox"
+              id="manual-Weather-Panel"
+              data-setting="manualWeatherPanel"
+            />
+            <label for="manual-Weather-Panel">Ручное управление погоды</label>
+          </div>
+
+          <hr id="uwu-hr" class="uwu-hr" />
+          <p>Расположение Северного Сияния</p>
+          <div id="auroraPanel">
+            <input
+              type="range"
+              min="1"
+              max="2"
+              value="1"
+              class="uwu-range-slider"
+              id="aurora-pos"
+              list="auroraStep"
+              data-setting="auroraPos"
+            />
+            <datalist id="auroraStep">
+              <option value="1">Верх</option>
+              <option value="2">Низ</option>
+            </datalist>
+          </div>
+
+          <div>
+            <p>
+              Делает небо шапкой страницы, пряча под игровую, а так же по факту
+              чинит его потерю при Редизайне игровой. Будет выглядеть не очень
+              на широкоформатных мониторах из-за растягивания изображения.
+            </p>
+            <input
+              type="checkbox"
+              id="sky-in-the-sky"
+              data-setting="skyInHeader"
+            />
+            <label for="sky-in-the-sky">Небо в небе.</label>
           </div>
         </div>
 
-          <h1>Настройки CatWar UwU</h1>
-        <div class="link-container" title="ВК Группа по Скрипту/Моду.">
-          <a href="https://vk.com/catwar_uwu" target="_blank" rel="noopener noreferrer">
-            <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/VK_logo.png" alt="Иконка" width="36" height="36">
-          </a>
-        </div>
-      </div>
+        <div id="theme-panel">
+          <h2>Поле Игровой</h2>
 
-      <hr id="uwu-hr" class="uwu-hr-head">
-      <div id="button-container">
-        <button id="effects-button" class="active">
-          <h2>
-            Природные эффекты
-            <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png" alt="Иконка"
-              width="24" height="24" />
-          </h2>
-        </button>
-        <button id="theme-button">
-          <h2>
-            Оформление
-            <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/sparkles.png" alt="Иконка" width="24"
-              height="24" />
-          </h2>
-        </button>
-        <button id="utility-button">
-          <h2>
-            Инструментарий
-            <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/flashlight.png" alt="Иконка" width="24"
-              height="24" />
-          </h2>
-        </button>
-        <button id="modules-button">
-          <h2>
-            Надстройки
-            <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/construction.png" alt="Иконка" width="24"
-              height="24" />
-          </h2>
-        </button>
-        <button id="personal-costumes-button">
-          <h2>
-            Личные костюмы
-            <img src="https://raw.githubusercontent.com/Arisamiga/CatWar/refs/heads/Personal-Costumes/images/costumes.png" alt="Иконка" width="24"
-              height="24" />
-          </h2>
-        </button>
-      </div>
-      <hr id="uwu-hr" class="uwu-hr-head">
-    </div>
-  </div>
+          <div>
+            <p>
+              Заменяет все фоны игровых локаций на выбранный вами фон. Помните,
+              что для правильного отображения нужно изображение 1000х1000 px.
+            </p>
+            <input
+              type="checkbox"
+              id="game-Field-background-User"
+              data-setting="gameFieldBackgroundUser"
+            />
+            <label for="game-Field-background-User-enabled"
+              >Статичный фон локации:</label
+            >
+            <input
+              type="text"
+              id="gameFieldSettingImageURLField"
+              placeholder="Вставьте URL"
+              data-setting="gameFieldBackgroundUserImageURL"
+            />
+            <button id="SettingSaveButton1" class="uwu-button install-button">
+              Сохранить
+            </button>
+          </div>
 
-  <div id="uwusettings-main">
-    <div id="effects-panel">
+          <div>
+            <p>Отрисовывает границы клеток Игрового поля.</p>
+            <input
+              type="checkbox"
+              id="cells-Borders"
+              data-setting="cellsBorders"
+            />
+            <label for="cells-Borders">Границы клеток</label>
+          </div>
+          <p>Толщина/Яркость границ</p>
+          <div id="step-slider">
+            <input
+              type="range"
+              min="1"
+              max="9"
+              value="1"
+              id="cells-Borders-Thickness"
+              class="uwu-range-slider"
+              list="ThicknessStep"
+              data-setting="cellsBordersThickness"
+            />
+            <datalist id="ThicknessStep">
+              <option value="1">0.1</option>
+              <option value="5">0.5</option>
+              <option value="9">0.9</option>
+            </datalist>
+          </div>
+          <div>
+            <label for="cells-Borders-Color">Цвет границы клеток</label>
+            <input
+              type="color"
+              id="cells-Borders-Color"
+              data-setting="cellsBordersColor"
+              value="#ffffff"
+            />
+          </div>
 
-    <h2>Природа и окружение</h2>
+          <div>
+            <p>Обозначает клетки Игрового поля числами.</p>
+            <input
+              type="checkbox"
+              id="cells-Numbers"
+              data-setting="cellsNumbers"
+            />
+            <label for="cells-Numbers">Нумерация клеток</label>
+          </div>
 
-      <div>
-        <p>
-          Включает генерацию Динамичной погоды в Игровой, такие как дождь, снегопады или Северные Сияния.
-        </p>
-        <input type="checkbox" id="weather-enabled" data-setting="weatherEnabled" />
-        <label for="weather-enabled">Показывать природные эффекты</label>
-      </div>
+          <div>
+            <p>
+              Ставит на страницу фон, повторяющий фон Игровой локации, а так же
+              размывает и затемняет его.
+            </p>
+            <input
+              type="checkbox"
+              id="background-repeat"
+              data-setting="backgroundRepeat"
+            />
+            <label for="weather-enabled">Фон страницы из локации</label>
+          </div>
 
-      <div>
-        <p>
-        Сокращает количество частиц динамичной погоды, увеличивая тем самым производительность на слабых устройствах.
-        </p>
-      <input type="checkbox" id="low-Performance-Mode" data-setting="lowPerformanceMode" />
-      <label for="low-Performance-Mode">Режим низкой производительности</label>
-      </div>
+          <div>
+            <p>Ставит на страницу фон из предоставленной ссылки.</p>
+            <input
+              type="checkbox"
+              id="background-user"
+              data-setting="backgroundUser"
+            />
+            <label for="background-user-enabled">Свой фон страницы:</label>
+            <input
+              type="text"
+              id="SettingImageURLField"
+              placeholder="Вставьте URL"
+              data-setting="backgroundUserImageURL"
+            />
+            <button id="SettingSaveButton1" class="uwu-button install-button">
+              Сохранить
+            </button>
+          </div>
 
-      <div>
-        <p>Может немного повлиять на производительность из-за возрастания количества частиц на экране.</p>
-        <input type="checkbox" id="weather-drops" data-setting="weatherDrops" />
-        <label for="weather-drops">Эффекты приземления частиц</label>
-      </div>
-
-      <div>
-        <p>Замена стандартных частиц на знакомые всеми пиксельные частицы.</p>
-        <input type="checkbox" id="minecraft-style" data-setting="minecraftStyle" />
-        <label for="minecraft-style-enabled">Minecraft частицы</label>
-      </div>
-
-      <div>
-        <p>Убирает затемнение Игрового поля.</p>
-        <input type="checkbox" id="always-day" data-setting="alwaysDay" />
-        <label for="always-day">Всегда день/ярко</label>
-      </div>
-
-      <div>
-        <p>Отображает панель Ручного управления погодой в ⚙️Панели Расширенных Настройках Игровой. Выключает натуральную генерацию погоды.</p>
-        <input type="checkbox" id="manual-Weather-Panel" data-setting="manualWeatherPanel" />
-        <label for="manual-Weather-Panel">Ручное управление погоды</label>
-      </div>
-
-      <hr id="uwu-hr" class="uwu-hr">
-      <p>Расположение Северного Сияния</p>
-      <div id="auroraPanel">
-        <input type="range" min="1" max="2" value="1" class="uwu-range-slider" id="aurora-pos" list="auroraStep"
-          data-setting="auroraPos">
-        <datalist id="auroraStep">
-          <option value="1">Верх</option>
-          <option value="2">Низ</option>
-        </datalist>
-      </div>
-
-      <div>
-        <p>Делает небо шапкой страницы, пряча под игровую, а так же по факту чинит его потерю при Редизайне игровой. Будет
-          выглядеть не очень на широкоформатных мониторах из-за растягивания изображения.</p>
-        <input type="checkbox" id="sky-in-the-sky" data-setting="skyInHeader" />
-        <label for="sky-in-the-sky">Небо в небе.</label>
-      </div>
-
-    </div>
-
-    <div id="theme-panel">
-
-    <h2>Поле Игровой</h2>
-
-    <div>
-      <p> Заменяет все фоны игровых локаций на выбранный вами фон. Помните, что для правильного отображения нужно изображение 1000х1000 px.</p>
-      <input type="checkbox" id="game-Field-background-User" data-setting="gameFieldBackgroundUser" />
-      <label for="game-Field-background-User-enabled">Статичный фон локации:</label>
-      <input type="text" id="gameFieldSettingImageURLField" placeholder="Вставьте URL" data-setting="gameFieldBackgroundUserImageURL" />
-      <button id="SettingSaveButton1" class="uwu-button install-button">Сохранить</button>
-    </div>
-
-    <div>
-      <p>Отрисовывает границы клеток Игрового поля.</p>
-      <input type="checkbox" id="cells-Borders" data-setting="cellsBorders" />
-      <label for="cells-Borders">Границы клеток</label>
-    </div>
-    <p>Толщина/Яркость границ</p>
-    <div id="step-slider">
-      <input type="range" min="1" max="9" value="1" id="cells-Borders-Thickness" class="uwu-range-slider" list="ThicknessStep" data-setting="cellsBordersThickness">
-      <datalist id="ThicknessStep">
-      <option value="1">0.1</option>
-      <option value="5">0.5</option>
-      <option value="9">0.9</option>
-      </datalist>
-    </div>
-    <div>
-      <label for="cells-Borders-Color">Цвет границы клеток</label>
-      <input type="color" id="cells-Borders-Color" data-setting="cellsBordersColor" value="#ffffff">
-    </div>
-    
-    <div>
-    <p>Обозначает клетки Игрового поля числами.</p>
-      <input type="checkbox" id="cells-Numbers" data-setting="cellsNumbers" />
-      <label for="cells-Numbers">Нумерация клеток</label>
-    </div>
-
-      <div>
-        <p>
-          Ставит на страницу фон, повторяющий фон Игровой локации, а так же
-          размывает и затемняет его.
-        </p>
-        <input type="checkbox" id="background-repeat" data-setting="backgroundRepeat" />
-        <label for="weather-enabled">Фон страницы из локации</label>
-      </div>
-
-      <div>
-        <p>Ставит на страницу фон из предоставленной ссылки.</p>
-        <input type="checkbox" id="background-user" data-setting="backgroundUser" />
-        <label for="background-user-enabled">Свой фон страницы:</label>
-        <input type="text" id="SettingImageURLField" placeholder="Вставьте URL" data-setting="backgroundUserImageURL" />
-        <button id="SettingSaveButton1" class="uwu-button install-button">Сохранить</button>
-      </div>
-
-      <div>
-        <p>Позволяет быстро сменять полезные стили в ⚙️Панели Расширенных настроек в Игровой.</p>
-        <input type="checkbox" id="fast-Styles" data-setting="fastStyles" />
-        <label for="fast-Styles">Быстрые стили</label>
-        <label id="uwu-what-this" title="
+          <div>
+            <p>
+              Позволяет быстро сменять полезные стили в ⚙️Панели Расширенных
+              настроек в Игровой.
+            </p>
+            <input type="checkbox" id="fast-Styles" data-setting="fastStyles" />
+            <label for="fast-Styles">Быстрые стили</label>
+            <label
+              id="uwu-what-this"
+              title="
             — Не показывать всплывающее окно 'О коте'
             — Скрыть Игровое поле
             — Скрыть фон Игрового Поля
             — Скрыть Небо
             — Всегда день/ярко
             — Границы клеток
-            ">[?]</label>
-      </div>
+            "
+              >[?]</label
+            >
+          </div>
 
-      <hr id="uwu-hr" class="uwu-hr">
-      <h2>Темы и цвета Игровой</h2>
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>Темы и цвета Игровой</h2>
 
-      <p>
-        Здесь вы можете выставить собственные цвета для игровой. Принимаются "HEX"
-        значения (Пример: #000) с поддержкой прозрачности. Будьте аккуратны и
-        не забывайте выключать другие цвета/темы в других скриптах/модах. Очистите поле
-        чтобы вернуться к стандартным цветам.
-      </p>
-      <input type="checkbox" id="user-theme" data-setting="userTheme" />
-      <label for="user-theme-enabled">Использовать свои цвета</label>
-
-    <div id="theme-selector" class="uwu-select">
-      <label for="theme-select">Выберите тему:</label>
-      <select id="theme-select" class="uwu-select-selected"></select>
-      <button id="addThemeButton" class="uwu-button install-button">Добавить тему</button>
-      <button id="removeThemeButton" style="display: none;" class="uwu-button remove-button">Удалить тему</button>
-    </div>
-
-      <div id="color-picker">
-        <div id="color-picker-input">
-          <input type="text" id="backgroundColorField" placeholder="Вставьте HEX код"
-            data-color="backgroundColor" />
-          <label>Цвет фона</label>
-        </div>
-        <div id="color-picker-input">
-          <input type="text" id="blocksColorField" placeholder="Вставьте HEX код"
-            data-color="blocksColor" />
-          <label>Основной цвет блоков</label>
-        </div>
-        <div id="color-picker-input">
-          <input type="text" id="chatColorField" placeholder="Вставьте HEX код" data-color="chatColor" />
-          <label>Основной цвет чата</label>
-        </div>
-        <div id="color-picker-input">
-          <input type="text" id="SettingTextColorField" placeholder="Вставьте HEX код" data-color="textColor" />
-          <label>Цвет текста</label>
-        </div>
-        <div id="color-picker-input">
-          <input type="text" id="colorField" placeholder="Вставьте HEX код" data-color="linkColor" />
-          <label>Цвет ссылок</label>
-        </div>
-        <div id="color-picker-input">
-          <input type="text" id="catTooltipBackgroundField" placeholder="Вставьте HEX код"
-            data-color="catTooltipBackground" />
-          <label>Цвет фона подсказки "О Коте"</label>
-        </div>
-        <div id="color-picker-input">
-          <input type="text" id="settingFightPanelBackgroundField" placeholder="Вставьте HEX код"
-            data-color="fightPanelBackground" />
-          <label>Цвет панели Боевого режима</label>
-        </div>
-        <div id="color-picker-input">
-          <input type="text" id="settingsMoveNameColorField" placeholder="Вставьте HEX код"
-            data-color="moveNameColor" />
-          <label>Цвет текста перехода</label>
-        </div>
-        <div id="color-picker-input">
-          <input type="text" id="settingsMoveNameBackgroundField" placeholder="Вставьте HEX код"
-            data-color="moveNameBackground" />
-          <label>Цвет фона перехода</label>
-        </div>
-        <div id="color-picker-input">
-          <input type="text" id="settingsclimbingPanelBackgroundField" placeholder="Вставьте HEX код"
-            data-color="climbingPanelBackground" />
-          <label>Цвет фона Минного Поля</label>
-        </div>
-        <div id="color-picker-input">
-          <input type="text" id="accentColorField1" placeholder="Вставьте HEX код"
-            data-color="accentColor1" />
-          <label
-            title="В основном всякие кнопки, слайдеры и строки ввода + цвет букв упоминания вас в Чате. Старайтесь пока делать просто оттенки чёрного цвета.">[?]
-            Акценты 1</label>
-        </div>
-        <div id="color-picker-input">
-          <input type="text" id="accentColorField2" placeholder="Вставьте HEX код"
-            data-color="accentColor2" />
-          <label title="Линии в чате и некоторых других частях, кружочек слайдера громкости.">[?] Акценты 2</label>
-        </div>
-        <div id="color-picker-input">
-          <input type="text" id="accentColorField3" placeholder="Вставьте HEX код"
-            data-color="accentColor3" />
-          <label title="Цвет уведомлений. Например ЛС и вашего имени в Чате">[?] Акценты 3</label>
-        </div>
-
-        <div style="flex: 0 0 100%">
-          <button id="saveThemeButton" class="uwu-button install-button">Сохранить</button>
           <p>
-            Отличный сайт для выбора цветов с поддержкой прозрачности:
-            <a href="https://get-color.ru/transparent/" target="_blank">https://get-color.ru/transparent/</a>
+            Здесь вы можете выставить собственные цвета для игровой. Принимаются
+            "HEX" значения (Пример: #000) с поддержкой прозрачности. Будьте
+            аккуратны и не забывайте выключать другие цвета/темы в других
+            скриптах/модах. Очистите поле чтобы вернуться к стандартным цветам.
           </p>
-        </div>
-      </div>
+          <input type="checkbox" id="user-theme" data-setting="userTheme" />
+          <label for="user-theme-enabled">Использовать свои цвета</label>
 
-      <div>
-        <p>Применяет вашу тему и на конструктор окрасов.</p>
-        <input type="checkbox" id="user-theme" data-setting="userThemeKns" />
-        <label for="user-theme-enabled">Цвета в конструкторе окрасов</label>
-      </div>
-
-      <hr id="uwu-hr" class="uwu-hr">
-      <h2>Шрифты и текст</h2>
-      
-      <div>
-        <p>Кастомная настройка шрифтов в Игровой</p>
-        <input type="checkbox" id="use-User-Fonts" data-setting="useUserFonts" />
-        <label for="use-User-Fonts">Свой шрифт</label>
-      </div>
-
-      <div>
-        <input type="text" id="font-Size-Body" placeholder="14" data-font-size="fontSizeBody" />
-        <label for="font-Size-Body">px; Размер общего шрифт</label>
-      </div>
-
-      <div>
-        <input type="text" id="font-Size-Small" placeholder="12" data-font-size="fontSizeSmall" />
-        <label for="font-Size-Small">px; Размер шрифта быстрых ссылок</label>
-      </div>
-
-      <div>
-        <input type="text" id="font-Size-Location" placeholder="14" data-font-size="fontSizeLocation" />
-        <label for="font-Size-Location">px; Размер шрифта локации</label>
-      </div>
-
-      <div>
-        <p>Подгрузка шрифта идёт автоматически. Для поиска возможных шрифтов, воспользуйтесь сайтом: 
-        <a href="https://fonts.google.com/?lang=ru_Cyrl" target="_blank">https://fonts.google.com/?lang=ru_Cyrl</a></p>
-        <input type="text" id="font-Family-Body" placeholder="Verdana" data-font-size="fontFamilyBody" />
-        <label for="font-Family-Body">Название вида шрифта</label>
-      </div>
-
-      <details>
-        <summary style="cursor: pointer; font-size: 16px; font-weight: bold;">Настройка шрифта громкости сообщений в чате</summary>
-        <div>
-          <input type="text" id="vlm0" placeholder="10" data-font-size="vlm0" />
-          <label for="vlm0">px; Громкость 0 (Самый тихий)</label>
-        </div>
-        <div>
-          <input type="text" id="vlm1" placeholder="11" data-font-size="vlm1" />
-          <label for="vlm1">px; Громкость 1</label>
-        </div>
-        <div>
-          <input type="text" id="vlm2" placeholder="11.5" data-font-size="vlm2" />
-          <label for="vlm2">px; Громкость 2</label>
-        </div>
-        <div>
-          <input type="text" id="vlm3" placeholder="12" data-font-size="vlm3" />
-          <label for="vlm3">px; Громкость 3</label>
-        </div>
-        <div>
-          <input type="text" id="vlm4" placeholder="12.5" data-font-size="vlm4" />
-          <label for="vlm4">px; Громкость 4</label>
-        </div>
-        <div>
-          <input type="text" id="vlm5" placeholder="13" data-font-size="vlm5" />
-          <label for="vlm5">px; Громкость 5 (Стандартная громкость)</label>
-        </div>
-        <div>
-          <input type="text" id="vlm6" placeholder="15" data-font-size="vlm6" />
-          <label for="vlm6">px; Громкость 6</label>
-        </div>
-        <div>
-          <input type="text" id="vlm7" placeholder="17" data-font-size="vlm7" />
-          <label for="vlm7">px; Громкость 7</label>
-        </div>
-        <div>
-          <input type="text" id="vlm8" placeholder="19" data-font-size="vlm8" />
-          <label for="vlm8">px; Громкость 8</label>
-        </div>
-        <div>
-          <input type="text" id="vlm9" placeholder="21" data-font-size="vlm9" />
-          <label for="vlm9">px; Громкость 9</label>
-        </div>
-        <div>
-          <input type="text" id="vlm10" placeholder="23" data-font-size="vlm10" />
-          <label for="vlm10">px; Громкость 10 (Самая громкая)</label>
-        </div>
-      </details>
-
-      <hr id="uwu-hr" class="uwu-hr">
-      <h2>Редизайны Игровой</h2>
-
-      <p>Тот самый знаменитный редизайн, но с почти более расширенной кастомизацией.</p>
-      <input type="checkbox" id="custom-layout" data-setting="customLayout" />
-      <label for="custom-layout">Компактный редизайн</label>
-
-      <div id="layout-customizer">
-        <div id="layout-preview">
-          <div class="column left">
-            <!-- Левая колонка -->
+          <div id="theme-selector" class="uwu-select">
+            <label for="theme-select">Выберите тему:</label>
+            <select id="theme-select" class="uwu-select-selected"></select>
+            <button id="addThemeButton" class="uwu-button install-button">
+              Добавить тему
+            </button>
+            <button
+              id="removeThemeButton"
+              style="display: none;"
+              class="uwu-button remove-button"
+            >
+              Удалить тему
+            </button>
           </div>
-          <div class="column center">
-            <!-- Центральная колонка -->
-            <div class="block center-block">Поле Игровой</div>
+
+          <div id="color-picker">
+            <div id="color-picker-input">
+              <input
+                type="text"
+                id="backgroundColorField"
+                placeholder="Вставьте HEX код"
+                data-color="backgroundColor"
+              />
+              <label>Цвет фона</label>
+            </div>
+            <div id="color-picker-input">
+              <input
+                type="text"
+                id="blocksColorField"
+                placeholder="Вставьте HEX код"
+                data-color="blocksColor"
+              />
+              <label>Основной цвет блоков</label>
+            </div>
+            <div id="color-picker-input">
+              <input
+                type="text"
+                id="chatColorField"
+                placeholder="Вставьте HEX код"
+                data-color="chatColor"
+              />
+              <label>Основной цвет чата</label>
+            </div>
+            <div id="color-picker-input">
+              <input
+                type="text"
+                id="SettingTextColorField"
+                placeholder="Вставьте HEX код"
+                data-color="textColor"
+              />
+              <label>Цвет текста</label>
+            </div>
+            <div id="color-picker-input">
+              <input
+                type="text"
+                id="colorField"
+                placeholder="Вставьте HEX код"
+                data-color="linkColor"
+              />
+              <label>Цвет ссылок</label>
+            </div>
+            <div id="color-picker-input">
+              <input
+                type="text"
+                id="catTooltipBackgroundField"
+                placeholder="Вставьте HEX код"
+                data-color="catTooltipBackground"
+              />
+              <label>Цвет фона подсказки "О Коте"</label>
+            </div>
+            <div id="color-picker-input">
+              <input
+                type="text"
+                id="settingFightPanelBackgroundField"
+                placeholder="Вставьте HEX код"
+                data-color="fightPanelBackground"
+              />
+              <label>Цвет панели Боевого режима</label>
+            </div>
+            <div id="color-picker-input">
+              <input
+                type="text"
+                id="settingsMoveNameColorField"
+                placeholder="Вставьте HEX код"
+                data-color="moveNameColor"
+              />
+              <label>Цвет текста перехода</label>
+            </div>
+            <div id="color-picker-input">
+              <input
+                type="text"
+                id="settingsMoveNameBackgroundField"
+                placeholder="Вставьте HEX код"
+                data-color="moveNameBackground"
+              />
+              <label>Цвет фона перехода</label>
+            </div>
+            <div id="color-picker-input">
+              <input
+                type="text"
+                id="settingsclimbingPanelBackgroundField"
+                placeholder="Вставьте HEX код"
+                data-color="climbingPanelBackground"
+              />
+              <label>Цвет фона Минного Поля</label>
+            </div>
+            <div id="color-picker-input">
+              <input
+                type="text"
+                id="accentColorField1"
+                placeholder="Вставьте HEX код"
+                data-color="accentColor1"
+              />
+              <label
+                title="В основном всякие кнопки, слайдеры и строки ввода + цвет букв упоминания вас в Чате. Старайтесь пока делать просто оттенки чёрного цвета."
+                >[?] Акценты 1</label
+              >
+            </div>
+            <div id="color-picker-input">
+              <input
+                type="text"
+                id="accentColorField2"
+                placeholder="Вставьте HEX код"
+                data-color="accentColor2"
+              />
+              <label
+                title="Линии в чате и некоторых других частях, кружочек слайдера громкости."
+                >[?] Акценты 2</label
+              >
+            </div>
+            <div id="color-picker-input">
+              <input
+                type="text"
+                id="accentColorField3"
+                placeholder="Вставьте HEX код"
+                data-color="accentColor3"
+              />
+              <label title="Цвет уведомлений. Например ЛС и вашего имени в Чате"
+                >[?] Акценты 3</label
+              >
+            </div>
+
+            <div style="flex: 0 0 100%">
+              <button id="saveThemeButton" class="uwu-button install-button">
+                Сохранить
+              </button>
+              <p>
+                Отличный сайт для выбора цветов с поддержкой прозрачности:
+                <a href="https://get-color.ru/transparent/" target="_blank"
+                  >https://get-color.ru/transparent/</a
+                >
+              </p>
+            </div>
           </div>
-          <div class="column right">
-            <!-- Правая колонка -->
+
+          <div>
+            <p>Применяет вашу тему и на конструктор окрасов.</p>
+            <input
+              type="checkbox"
+              id="user-theme"
+              data-setting="userThemeKns"
+            />
+            <label for="user-theme-enabled">Цвета в конструкторе окрасов</label>
           </div>
-          <ul id="block-list">
-            <!-- Элементы списка блоков -->
-          </ul>
-        </div>
-        <button id="reset-layout-button" class="uwu-button remove-button">Сбросить</button>
-      </div>
 
-      <div>
-        <input type="text" id="chat-height" placeholder="Вставьте значение" data-setting="chatHeight" />
-        <label for="chat-height">px; Высота Чата</label>
-      </div>
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>Шрифты и текст</h2>
 
-      <div>
-        <input type="text" id="history-height" placeholder="Вставьте значение" data-setting="historyHeight" />
-        <label for="history-height">px; Высота Истории</label>
-      </div>
+          <div>
+            <p>Кастомная настройка шрифтов в Игровой</p>
+            <input
+              type="checkbox"
+              id="use-User-Fonts"
+              data-setting="useUserFonts"
+            />
+            <label for="use-User-Fonts">Свой шрифт</label>
+          </div>
 
-      <label>Отображать Душевых котов:</label>
-      <div class="custom-select" id="showOtherCatsList">
-        <div class="select-selected">Выберите стиль отображения Душевых котов</div>
-        <div class="select-items">
-          <!-- Опции будут добавлены сюда -->
-        </div>
-      </div>
+          <div>
+            <input
+              type="text"
+              id="font-Size-Body"
+              placeholder="14"
+              data-font-size="fontSizeBody"
+            />
+            <label for="font-Size-Body">px; Размер общего шрифт</label>
+          </div>
 
-      <div>
-        <p>Визуальное разделение блока "Информация" на меньшие блоки "Параметров, Истории и Родственные связи".</p>
-        <input type="checkbox" id="slice-info-block" data-setting="sliceInfoBlock" />
-        <label for="slice-info-block">Разделить блок Информации</label>
-      </div>
+          <div>
+            <input
+              type="text"
+              id="font-Size-Small"
+              placeholder="12"
+              data-font-size="fontSizeSmall"
+            />
+            <label for="font-Size-Small"
+              >px; Размер шрифта быстрых ссылок</label
+            >
+          </div>
 
-      <div>
-        <p>Скругляет края блоков в Игровой.</p>
-        <input type="checkbox" id="edge-trim-blocks" data-setting="edgeTrimBlocks" />
-        <label for="edge-trim-blocks">Скругление блоков</label>
-      </div>
+          <div>
+            <input
+              type="text"
+              id="font-Size-Location"
+              placeholder="14"
+              data-font-size="fontSizeLocation"
+            />
+            <label for="font-Size-Location">px; Размер шрифта локации</label>
+          </div>
 
-      <hr id="uwu-hr" class="uwu-hr">
-      <h2>Остальные редизайны</h2>
-      
-      <div>
-        <p>Добавляет изображение костюмов в строки для наглядного отображения и упрощённого поиска. 
-        Вы можете вытянуть высоту столбцов за их стрелочки в нижнем правом краю!</p>
-        <input type="checkbox" id="redesign-Costums-Settings" data-setting="redesignCostumsSettings" />
-        <label for="redesign-Costums-Settings">Редизайн Настройки костюмов</label>
-      </div>
+          <div>
+            <p>
+              Подгрузка шрифта идёт автоматически. Для поиска возможных шрифтов,
+              воспользуйтесь сайтом:
+              <a href="https://fonts.google.com/?lang=ru_Cyrl" target="_blank"
+                >https://fonts.google.com/?lang=ru_Cyrl</a
+              >
+            </p>
+            <input
+              type="text"
+              id="font-Family-Body"
+              placeholder="Verdana"
+              data-font-size="fontFamilyBody"
+            />
+            <label for="font-Family-Body">Название вида шрифта</label>
+          </div>
 
-      <hr id="uwu-hr" class="uwu-hr">
-      <h2>Общение</h2>
+          <details>
+            <summary
+              style="cursor: pointer; font-size: 16px; font-weight: bold;"
+            >
+              Настройка шрифта громкости сообщений в чате
+            </summary>
+            <div>
+              <input
+                type="text"
+                id="vlm0"
+                placeholder="10"
+                data-font-size="vlm0"
+              />
+              <label for="vlm0">px; Громкость 0 (Самый тихий)</label>
+            </div>
+            <div>
+              <input
+                type="text"
+                id="vlm1"
+                placeholder="11"
+                data-font-size="vlm1"
+              />
+              <label for="vlm1">px; Громкость 1</label>
+            </div>
+            <div>
+              <input
+                type="text"
+                id="vlm2"
+                placeholder="11.5"
+                data-font-size="vlm2"
+              />
+              <label for="vlm2">px; Громкость 2</label>
+            </div>
+            <div>
+              <input
+                type="text"
+                id="vlm3"
+                placeholder="12"
+                data-font-size="vlm3"
+              />
+              <label for="vlm3">px; Громкость 3</label>
+            </div>
+            <div>
+              <input
+                type="text"
+                id="vlm4"
+                placeholder="12.5"
+                data-font-size="vlm4"
+              />
+              <label for="vlm4">px; Громкость 4</label>
+            </div>
+            <div>
+              <input
+                type="text"
+                id="vlm5"
+                placeholder="13"
+                data-font-size="vlm5"
+              />
+              <label for="vlm5">px; Громкость 5 (Стандартная громкость)</label>
+            </div>
+            <div>
+              <input
+                type="text"
+                id="vlm6"
+                placeholder="15"
+                data-font-size="vlm6"
+              />
+              <label for="vlm6">px; Громкость 6</label>
+            </div>
+            <div>
+              <input
+                type="text"
+                id="vlm7"
+                placeholder="17"
+                data-font-size="vlm7"
+              />
+              <label for="vlm7">px; Громкость 7</label>
+            </div>
+            <div>
+              <input
+                type="text"
+                id="vlm8"
+                placeholder="19"
+                data-font-size="vlm8"
+              />
+              <label for="vlm8">px; Громкость 8</label>
+            </div>
+            <div>
+              <input
+                type="text"
+                id="vlm9"
+                placeholder="21"
+                data-font-size="vlm9"
+              />
+              <label for="vlm9">px; Громкость 9</label>
+            </div>
+            <div>
+              <input
+                type="text"
+                id="vlm10"
+                placeholder="23"
+                data-font-size="vlm10"
+              />
+              <label for="vlm10">px; Громкость 10 (Самая громкая)</label>
+            </div>
+          </details>
 
-      <div>
-        <p>Добавляет аватар с профиля отправителя на его комментарий в лентах и блогах.</p>
-        <input type="checkbox" id="comments-avatars" data-setting="commentsAvatars" />
-        <label for="comments-avatars">Аватарки в комментариях</label>
-      </div>
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>Редизайны Игровой</h2>
 
-      <div>
-        <p>Более функциональный Чат: допись ID отправителя и звуковое уведомление при вашем упоминании.
-        </p>
-        <input type="checkbox" id="new-chat" data-setting="newChat" />
-        <label for="new-chat">Современный Чат</label>
-      </div>
+          <p>
+            Тот самый знаменитный редизайн, но с почти более расширенной
+            кастомизацией.
+          </p>
+          <input
+            type="checkbox"
+            id="custom-layout"
+            data-setting="customLayout"
+          />
+          <label for="custom-layout">Компактный редизайн</label>
 
-      <div>
-        <p>При клике на имя кота в строку чата будет выставляться его имя с запятой.</p>
-        <input type="checkbox" id="add-comma-after-nick" data-setting="addCommaAfterNick" />
-        <label for="add-comma-after-nick">Обращение с запятой</label>
-      </div>
+          <div id="layout-customizer">
+            <div id="layout-preview">
+              <div class="column left">
+                <!-- Левая колонка -->
+              </div>
+              <div class="column center">
+                <!-- Центральная колонка -->
+                <div class="block center-block">Поле Игровой</div>
+              </div>
+              <div class="column right">
+                <!-- Правая колонка -->
+              </div>
+              <ul id="block-list">
+                <!-- Элементы списка блоков -->
+              </ul>
+            </div>
+            <button id="reset-layout-button" class="uwu-button remove-button">
+              Сбросить
+            </button>
+          </div>
 
-      <div>
-        <p>Работает только с "Современным чатом". Отображет чат снизу вверх, а так же смещает окно ввода сообщения под чат.</p>
-        <input type="checkbox" id="reverse-Chat" data-setting="reverseChat" />
-        <label for="reverse-Chat">Инверсия чата</label>
-      </div>
+          <div>
+            <input
+              type="text"
+              id="chat-height"
+              placeholder="Вставьте значение"
+              data-setting="chatHeight"
+            />
+            <label for="chat-height">px; Высота Чата</label>
+          </div>
 
-      <div id="myNameNotificationSoundContainer">
-        <div class="custom-select" id="myNameNotificationSound">
-          <div class="select-selected">Выберите звук</div>
-          <div class="select-items">
-            <!-- Опции будут добавлены сюда -->
-        </div>
-      </div>
-    
-      <div id="notification-volume">
-      <p>Громкость</p>
-        <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notification-MyName-Volume" list="volumeStep"
-          data-setting="notificationMyNameVolume">
-        <datalist id="volumeStep">
-          <option value="1">10%</option>
-          <option value="10">100%</option>
-        </datalist>
-      </div>
-    </div>
+          <div>
+            <input
+              type="text"
+              id="history-height"
+              placeholder="Вставьте значение"
+              data-setting="historyHeight"
+            />
+            <label for="history-height">px; Высота Истории</label>
+          </div>
 
-    <div>
-      <p>Ваши собственные имена и клички на упоминания в чате. Просто пропишите их через запятую. Пример: Мяу, Мяуич, МяуВкин</p>
-      <input type="text" id="names-For-Notification" placeholder=". . ." data-setting="namesForNotification" />
-    </div>
+          <label>Отображать Душевых котов:</label>
+          <div class="custom-select" id="showOtherCatsList">
+            <div class="select-selected">
+              Выберите стиль отображения Душевых котов
+            </div>
+            <div class="select-items">
+              <!-- Опции будут добавлены сюда -->
+            </div>
+          </div>
 
-      <div>
-        <p>Более удобная строка ввода сообщений над чатом с возможностью растягивания. Пока что насильно берёт цвета с "Использовать свои цвета".</p>
-        <input type="checkbox" id="new-chat-input" data-setting="newChatInput" />
-        <label for="new-chat-input">Альтернативная строка ввода сообщений</label>
-      </div>
+          <div>
+            <p>
+              Визуальное разделение блока "Информация" на меньшие блоки
+              "Параметров, Истории и Родственные связи".
+            </p>
+            <input
+              type="checkbox"
+              id="slice-info-block"
+              data-setting="sliceInfoBlock"
+            />
+            <label for="slice-info-block">Разделить блок Информации</label>
+          </div>
 
-      <hr id="uwu-hr" class="uwu-hr">
-      <h2>Параметры и навыки</h2>
-      
-      <!--
+          <div>
+            <p>Скругляет края блоков в Игровой.</p>
+            <input
+              type="checkbox"
+              id="edge-trim-blocks"
+              data-setting="edgeTrimBlocks"
+            />
+            <label for="edge-trim-blocks">Скругление блоков</label>
+          </div>
+
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>Остальные редизайны</h2>
+
+          <div>
+            <p>
+              Добавляет изображение костюмов в строки для наглядного отображения
+              и упрощённого поиска. Вы можете вытянуть высоту столбцов за их
+              стрелочки в нижнем правом краю!
+            </p>
+            <input
+              type="checkbox"
+              id="redesign-Costums-Settings"
+              data-setting="redesignCostumsSettings"
+            />
+            <label for="redesign-Costums-Settings"
+              >Редизайн Настройки костюмов</label
+            >
+          </div>
+
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>Общение</h2>
+
+          <div>
+            <p>
+              Добавляет аватар с профиля отправителя на его комментарий в лентах
+              и блогах.
+            </p>
+            <input
+              type="checkbox"
+              id="comments-avatars"
+              data-setting="commentsAvatars"
+            />
+            <label for="comments-avatars">Аватарки в комментариях</label>
+          </div>
+
+          <div>
+            <p>
+              Более функциональный Чат: допись ID отправителя и звуковое
+              уведомление при вашем упоминании.
+            </p>
+            <input type="checkbox" id="new-chat" data-setting="newChat" />
+            <label for="new-chat">Современный Чат</label>
+          </div>
+
+          <div>
+            <p>
+              При клике на имя кота в строку чата будет выставляться его имя с
+              запятой.
+            </p>
+            <input
+              type="checkbox"
+              id="add-comma-after-nick"
+              data-setting="addCommaAfterNick"
+            />
+            <label for="add-comma-after-nick">Обращение с запятой</label>
+          </div>
+
+          <div>
+            <p>
+              Работает только с "Современным чатом". Отображет чат снизу вверх,
+              а так же смещает окно ввода сообщения под чат.
+            </p>
+            <input
+              type="checkbox"
+              id="reverse-Chat"
+              data-setting="reverseChat"
+            />
+            <label for="reverse-Chat">Инверсия чата</label>
+          </div>
+
+          <div id="myNameNotificationSoundContainer">
+            <div class="custom-select" id="myNameNotificationSound">
+              <div class="select-selected">Выберите звук</div>
+              <div class="select-items">
+                <!-- Опции будут добавлены сюда -->
+              </div>
+            </div>
+
+            <div id="notification-volume">
+              <p>Громкость</p>
+              <input
+                type="range"
+                min="1"
+                max="10"
+                value="5"
+                class="uwu-range-slider"
+                id="notification-MyName-Volume"
+                list="volumeStep"
+                data-setting="notificationMyNameVolume"
+              />
+              <datalist id="volumeStep">
+                <option value="1">10%</option>
+                <option value="10">100%</option>
+              </datalist>
+            </div>
+          </div>
+
+          <div>
+            <p>
+              Ваши собственные имена и клички на упоминания в чате. Просто
+              пропишите их через запятую. Пример: Мяу, Мяуич, МяуВкин
+            </p>
+            <input
+              type="text"
+              id="names-For-Notification"
+              placeholder=". . ."
+              data-setting="namesForNotification"
+            />
+          </div>
+
+          <div>
+            <p>
+              Более удобная строка ввода сообщений над чатом с возможностью
+              растягивания. Пока что насильно берёт цвета с "Использовать свои
+              цвета".
+            </p>
+            <input
+              type="checkbox"
+              id="new-chat-input"
+              data-setting="newChatInput"
+            />
+            <label for="new-chat-input"
+              >Альтернативная строка ввода сообщений</label
+            >
+          </div>
+
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>Параметры и навыки</h2>
+
+          <!--
       <div>
         <p>Параметр наглядно отображает рядом с собой свой процент.</p>
         <input type="checkbox" id="display-Parameters-Percentages" data-setting="displayParametersPercentages" />
@@ -726,843 +1116,1729 @@ const uwusettings =
       </div>
       -->
 
-      <div>
-        <p>Заменяет стандартное оформление Параметров и Навыков на ваш.</p>
-        <input type="checkbox" id="user-Parameters-Theme" data-setting="userParametersTheme" />
-        <label for="user-Parameters-Theme">Использовать своё оформление</label>
-      </div>
+          <div>
+            <p>Заменяет стандартное оформление Параметров и Навыков на ваш.</p>
+            <input
+              type="checkbox"
+              id="user-Parameters-Theme"
+              data-setting="userParametersTheme"
+            />
+            <label for="user-Parameters-Theme"
+              >Использовать своё оформление</label
+            >
+          </div>
 
-  <div id="parameters-color-settings" class="parameters-color-settings">
-    <table class="parameters-color-table">
-      <thead>
-        <tr>
-          <th class="parameters-color-table--header">Градиент</th>
-          <th class="parameters-color-table--header">От</th>
-          <th class="parameters-color-table--header">До</th>
-          <th class="parameters-color-table--header">От</th>
-          <th class="parameters-color-table--header">До</th>
-        </tr>
-      </thead>
-      <tbody id="color-settings-body" class="parameters-color-table--body">
-        <tr>
-          <th class="parameters-color-table--cell" colspan="5">Параметры</th>
-        </tr>
-        <tr>
-          <td class="parameters-color-table--cell">Сон</td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="dream" data-color-type="bar-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="dream" data-color-type="bar-to"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="dream" data-color-type="bg-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="dream" data-color-type="bg-to"></td>
-        </tr>
-        <tr>
-          <td class="parameters-color-table--cell">Голод</td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="hunger" data-color-type="bar-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="hunger" data-color-type="bar-to"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="hunger" data-color-type="bg-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="hunger" data-color-type="bg-to"></td>
-        </tr>
-        <tr>
-          <td class="parameters-color-table--cell">Жажда</td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="thirst" data-color-type="bar-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="thirst" data-color-type="bar-to"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="thirst" data-color-type="bg-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="thirst" data-color-type="bg-to"></td>
-        </tr>
-        <tr>
-          <td class="parameters-color-table--cell">Нужда</td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="need" data-color-type="bar-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="need" data-color-type="bar-to"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="need" data-color-type="bg-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="need" data-color-type="bg-to"></td>
-        </tr>
-        <tr>
-          <td class="parameters-color-table--cell">Здоровье</td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="health" data-color-type="bar-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="health" data-color-type="bar-to"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="health" data-color-type="bg-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="health" data-color-type="bg-to"></td>
-        </tr>
-        <tr>
-          <td class="parameters-color-table--cell">Чистота</td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="clean" data-color-type="bar-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="clean" data-color-type="bar-to"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="clean" data-color-type="bg-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="clean" data-color-type="bg-to"></td>
-        </tr>
-        <tr>
-          <th class="parameters-color-table--cell" colspan="5">Навыки</th>
-        </tr>
-        <tr>
-          <td class="parameters-color-table--cell">Запах</td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="smell" data-color-type="bar-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="smell" data-color-type="bar-to"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="smell" data-color-type="bg-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="smell" data-color-type="bg-to"></td>
-        </tr>
-        <tr>
-          <td class="parameters-color-table--cell">Копание</td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="dig" data-color-type="bar-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="dig" data-color-type="bar-to"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="dig" data-color-type="bg-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="dig" data-color-type="bg-to"></td>
-        </tr>
-        <tr>
-          <td class="parameters-color-table--cell">Плавание</td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="swim" data-color-type="bar-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="swim" data-color-type="bar-to"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="swim" data-color-type="bg-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="swim" data-color-type="bg-to"></td>
-        </tr>
-        <tr>
-          <td class="parameters-color-table--cell">БУ</td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="might" data-color-type="bar-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="might" data-color-type="bar-to"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="might" data-color-type="bg-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="might" data-color-type="bg-to"></td>
-        </tr>
-        <tr>
-          <td class="parameters-color-table--cell">Лазание</td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="tree" data-color-type="bar-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="tree" data-color-type="bar-to"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="tree" data-color-type="bg-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="tree" data-color-type="bg-to"></td>
-        </tr>
-        <tr>
-          <td class="parameters-color-table--cell">Зоркость</td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="observ" data-color-type="bar-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="observ" data-color-type="bar-to"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="observ" data-color-type="bg-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="observ" data-color-type="bg-to"></td>
-        </tr>
-        <tr>
-          <th class="parameters-color-table--cell" colspan="5">Уникальные навыки</th>
-        </tr>
-        <tr>
-          <td class="parameters-color-table--cell"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="other" data-color-type="bar-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="other" data-color-type="bar-to"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="other" data-color-type="bg-from"></td>
-          <td class="parameters-color-table--cell"><input type="color" data-param="other" data-color-type="bg-to"></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+          <div id="parameters-color-settings" class="parameters-color-settings">
+            <table class="parameters-color-table">
+              <thead>
+                <tr>
+                  <th class="parameters-color-table--header">Градиент</th>
+                  <th class="parameters-color-table--header">От</th>
+                  <th class="parameters-color-table--header">До</th>
+                  <th class="parameters-color-table--header">От</th>
+                  <th class="parameters-color-table--header">До</th>
+                </tr>
+              </thead>
+              <tbody
+                id="color-settings-body"
+                class="parameters-color-table--body"
+              >
+                <tr>
+                  <th class="parameters-color-table--cell" colspan="5">
+                    Параметры
+                  </th>
+                </tr>
+                <tr>
+                  <td class="parameters-color-table--cell">Сон</td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="dream"
+                      data-color-type="bar-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="dream"
+                      data-color-type="bar-to"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="dream"
+                      data-color-type="bg-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="dream"
+                      data-color-type="bg-to"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="parameters-color-table--cell">Голод</td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="hunger"
+                      data-color-type="bar-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="hunger"
+                      data-color-type="bar-to"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="hunger"
+                      data-color-type="bg-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="hunger"
+                      data-color-type="bg-to"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="parameters-color-table--cell">Жажда</td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="thirst"
+                      data-color-type="bar-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="thirst"
+                      data-color-type="bar-to"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="thirst"
+                      data-color-type="bg-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="thirst"
+                      data-color-type="bg-to"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="parameters-color-table--cell">Нужда</td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="need"
+                      data-color-type="bar-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="need"
+                      data-color-type="bar-to"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="need"
+                      data-color-type="bg-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="need"
+                      data-color-type="bg-to"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="parameters-color-table--cell">Здоровье</td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="health"
+                      data-color-type="bar-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="health"
+                      data-color-type="bar-to"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="health"
+                      data-color-type="bg-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="health"
+                      data-color-type="bg-to"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="parameters-color-table--cell">Чистота</td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="clean"
+                      data-color-type="bar-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="clean"
+                      data-color-type="bar-to"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="clean"
+                      data-color-type="bg-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="clean"
+                      data-color-type="bg-to"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th class="parameters-color-table--cell" colspan="5">
+                    Навыки
+                  </th>
+                </tr>
+                <tr>
+                  <td class="parameters-color-table--cell">Запах</td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="smell"
+                      data-color-type="bar-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="smell"
+                      data-color-type="bar-to"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="smell"
+                      data-color-type="bg-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="smell"
+                      data-color-type="bg-to"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="parameters-color-table--cell">Копание</td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="dig"
+                      data-color-type="bar-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="dig"
+                      data-color-type="bar-to"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="dig"
+                      data-color-type="bg-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="dig"
+                      data-color-type="bg-to"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="parameters-color-table--cell">Плавание</td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="swim"
+                      data-color-type="bar-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="swim"
+                      data-color-type="bar-to"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="swim"
+                      data-color-type="bg-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="swim"
+                      data-color-type="bg-to"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="parameters-color-table--cell">БУ</td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="might"
+                      data-color-type="bar-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="might"
+                      data-color-type="bar-to"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="might"
+                      data-color-type="bg-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="might"
+                      data-color-type="bg-to"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="parameters-color-table--cell">Лазание</td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="tree"
+                      data-color-type="bar-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="tree"
+                      data-color-type="bar-to"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="tree"
+                      data-color-type="bg-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="tree"
+                      data-color-type="bg-to"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="parameters-color-table--cell">Зоркость</td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="observ"
+                      data-color-type="bar-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="observ"
+                      data-color-type="bar-to"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="observ"
+                      data-color-type="bg-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="observ"
+                      data-color-type="bg-to"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th class="parameters-color-table--cell" colspan="5">
+                    Уникальные навыки
+                  </th>
+                </tr>
+                <tr>
+                  <td class="parameters-color-table--cell"></td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="other"
+                      data-color-type="bar-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="other"
+                      data-color-type="bar-to"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="other"
+                      data-color-type="bg-from"
+                    />
+                  </td>
+                  <td class="parameters-color-table--cell">
+                    <input
+                      type="color"
+                      data-param="other"
+                      data-color-type="bg-to"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-      <div>
-        <p>Накладывает поверх цветов изображение с узорами.</p>
-        <input type="checkbox" id="parameters-Background-Image" data-setting="parametersBackgroundImage" />
-        <label for="parameters-Background-Image">Узоры</label>
-      </div>
+          <div>
+            <p>Накладывает поверх цветов изображение с узорами.</p>
+            <input
+              type="checkbox"
+              id="parameters-Background-Image"
+              data-setting="parametersBackgroundImage"
+            />
+            <label for="parameters-Background-Image">Узоры</label>
+          </div>
 
-      <div>
-        <p>Накладывает поверх уже ваше изображение.</p>
-        <input type="checkbox" id="parameters-User-Background-Image" data-setting="parametersUserBackgroundImage" />
-        <label for="parameters-User-Background-Image">Свои узоры:</label>
-        <input type="text" id="parametersUserBackgroundImageField" placeholder="Вставьте URL" data-setting="parametersUserBackgroundImageURL" />
-        <button id="SettingSaveButton1" class="uwu-button install-button">Сохранить</button>
-      </div>
-
-    </div>
-
-    <div id="utility-panel">
-
-      <h2>Подсветка</h2>
-
-      <div>
-        <p>Подсвечивает обводкой клетки полезные, и не очень, ресурсы</p>
-        <input type="checkbox" id="highlight-Resources" data-setting="highlightResources" />
-        <label for="highlight-Resources">Подсветка ресурсов</label>
-      </div>
-
-      <label>Стиль подсветки предметов:</label>
-      <div class="custom-select" id="highlightResourcesStyle">
-        <div class="select-selected">Выберите стиль подсветки предметов</div>
-        <div class="select-items">
-          <!-- Опции будут добавлены сюда -->
+          <div>
+            <p>Накладывает поверх уже ваше изображение.</p>
+            <input
+              type="checkbox"
+              id="parameters-User-Background-Image"
+              data-setting="parametersUserBackgroundImage"
+            />
+            <label for="parameters-User-Background-Image">Свои узоры:</label>
+            <input
+              type="text"
+              id="parametersUserBackgroundImageField"
+              placeholder="Вставьте URL"
+              data-setting="parametersUserBackgroundImageURL"
+            />
+            <button id="SettingSaveButton1" class="uwu-button install-button">
+              Сохранить
+            </button>
+          </div>
         </div>
-      </div>
-      <label id="uwu-what-this" title="Стиль 'Фон' подсвечивает всю клетку и не нагружает Игровую. Стиль 'Свечение' дублирует содержимое ячейки и стилизует его, что может нагружать Игровую.">[?]</label>
 
-      <table class="uwu-table-highlight-Resources">
-        <thead>
-            <tr>
+        <div id="utility-panel">
+          <h2>Подсветка</h2>
+
+          <div>
+            <p>Подсвечивает обводкой клетки полезные, и не очень, ресурсы</p>
+            <input
+              type="checkbox"
+              id="highlight-Resources"
+              data-setting="highlightResources"
+            />
+            <label for="highlight-Resources">Подсветка ресурсов</label>
+          </div>
+
+          <label>Стиль подсветки предметов:</label>
+          <div class="custom-select" id="highlightResourcesStyle">
+            <div class="select-selected">
+              Выберите стиль подсветки предметов
+            </div>
+            <div class="select-items">
+              <!-- Опции будут добавлены сюда -->
+            </div>
+          </div>
+          <label
+            id="uwu-what-this"
+            title="Стиль 'Фон' подсвечивает всю клетку и не нагружает Игровую. Стиль 'Свечение' дублирует содержимое ячейки и стилизует его, что может нагружать Игровую."
+            >[?]</label
+          >
+
+          <table class="uwu-table-highlight-Resources">
+            <thead>
+              <tr>
                 <th>Название</th>
                 <th>Цвет</th>
                 <th>Подсвечивать?</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
                 <td>Травы</td>
-                <td><input type="color" class="uwu-color-picker" data-resource="Травы" value="#90EE90"></td>
-                <td class="uwu-checkbox-cell"><input type="checkbox" class="uwu-highlight-checkbox" data-resource="Травы"></td>
-            </tr>
-            <tr>
+                <td>
+                  <input
+                    type="color"
+                    class="uwu-color-picker"
+                    data-resource="Травы"
+                    value="#90EE90"
+                  />
+                </td>
+                <td class="uwu-checkbox-cell">
+                  <input
+                    type="checkbox"
+                    class="uwu-highlight-checkbox"
+                    data-resource="Травы"
+                  />
+                </td>
+              </tr>
+              <tr>
                 <td>Мох</td>
-                <td><input type="color" class="uwu-color-picker" data-resource="Мох" value="#90EE90"></td>
-                <td class="uwu-checkbox-cell"><input type="checkbox" class="uwu-highlight-checkbox" data-resource="Мох"></td>
-            </tr>
-            <tr>
+                <td>
+                  <input
+                    type="color"
+                    class="uwu-color-picker"
+                    data-resource="Мох"
+                    value="#90EE90"
+                  />
+                </td>
+                <td class="uwu-checkbox-cell">
+                  <input
+                    type="checkbox"
+                    class="uwu-highlight-checkbox"
+                    data-resource="Мох"
+                  />
+                </td>
+              </tr>
+              <tr>
                 <td>Паутина</td>
-                <td><input type="color" class="uwu-color-picker" data-resource="Паутина" value="#90EE90"></td>
-                <td class="uwu-checkbox-cell"><input type="checkbox" class="uwu-highlight-checkbox" data-resource="Паутина"></td>
-            </tr>
-            <tr>
+                <td>
+                  <input
+                    type="color"
+                    class="uwu-color-picker"
+                    data-resource="Паутина"
+                    value="#90EE90"
+                  />
+                </td>
+                <td class="uwu-checkbox-cell">
+                  <input
+                    type="checkbox"
+                    class="uwu-highlight-checkbox"
+                    data-resource="Паутина"
+                  />
+                </td>
+              </tr>
+              <tr>
                 <td>Пыль</td>
-                <td><input type="color" class="uwu-color-picker" data-resource="Пыль" value="#DDA0DD"></td>
-                <td class="uwu-checkbox-cell"><input type="checkbox" class="uwu-highlight-checkbox" data-resource="Пыль"></td>
-            </tr>
-            <tr>
+                <td>
+                  <input
+                    type="color"
+                    class="uwu-color-picker"
+                    data-resource="Пыль"
+                    value="#DDA0DD"
+                  />
+                </td>
+                <td class="uwu-checkbox-cell">
+                  <input
+                    type="checkbox"
+                    class="uwu-highlight-checkbox"
+                    data-resource="Пыль"
+                  />
+                </td>
+              </tr>
+              <tr>
                 <td>Ветки, вьюнки, костоправы</td>
-                <td><input type="color" class="uwu-color-picker" data-resource="Ветки, вьюнки, костоправы" value="#90EE90"></td>
-                <td class="uwu-checkbox-cell"><input type="checkbox" class="uwu-highlight-checkbox" data-resource="Ветки, вьюнки, костоправы"></td>
-            </tr>
-            <tr>
+                <td>
+                  <input
+                    type="color"
+                    class="uwu-color-picker"
+                    data-resource="Ветки, вьюнки, костоправы"
+                    value="#90EE90"
+                  />
+                </td>
+                <td class="uwu-checkbox-cell">
+                  <input
+                    type="checkbox"
+                    class="uwu-highlight-checkbox"
+                    data-resource="Ветки, вьюнки, костоправы"
+                  />
+                </td>
+              </tr>
+              <tr>
                 <td>Травящие предметы</td>
-                <td><input type="color" class="uwu-color-picker" data-resource="Травящие предметы" value="#FF0000"></td>
-                <td class="uwu-checkbox-cell"><input type="checkbox" class="uwu-highlight-checkbox" data-resource="Травящие предметы"></td>
-            </tr>
-        </tbody>
-      </table>
+                <td>
+                  <input
+                    type="color"
+                    class="uwu-color-picker"
+                    data-resource="Травящие предметы"
+                    value="#FF0000"
+                  />
+                </td>
+                <td class="uwu-checkbox-cell">
+                  <input
+                    type="checkbox"
+                    class="uwu-highlight-checkbox"
+                    data-resource="Травящие предметы"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
-      <hr class="uwu-hr-head" />
+          <hr class="uwu-hr-head" />
 
-      <h2>Шаблоны</h2>
+          <h2>Шаблоны</h2>
 
-      <div>
-        <p>Позволяет создавать и быстро использовать собственные шаблоны сообщений.</p>
-        <input type="checkbox" id="show-Templates" data-setting="showTemplates" />
-        <label for="show-Templates">Отображать шаблоны</label>
-      </div>
+          <div>
+            <p>
+              Позволяет создавать и быстро использовать собственные шаблоны
+              сообщений.
+            </p>
+            <input
+              type="checkbox"
+              id="show-Templates"
+              data-setting="showTemplates"
+            />
+            <label for="show-Templates">Отображать шаблоны</label>
+          </div>
 
-      <table id="uwu-table-templates">
-      <thead>
-          <tr>
-              <th>Сообщения</th>
-              <th>Чаты</th>
-              <th>Блоги и Лента</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-              <td class="uwu-checkbox-cell"><input type="checkbox" data-setting="templatesInLs"></td>
-              <td class="uwu-checkbox-cell"><input type="checkbox" data-setting="templatesInChats"></td>
-              <td class="uwu-checkbox-cell"><input type="checkbox" data-setting="templatesInBlogsAndSniffs"></td>
-          </tr>
-        </tbody>
-        </table>
+          <table id="uwu-table-templates">
+            <thead>
+              <tr>
+                <th>Сообщения</th>
+                <th>Чаты</th>
+                <th>Блоги и Лента</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="uwu-checkbox-cell">
+                  <input type="checkbox" data-setting="templatesInLs" />
+                </td>
+                <td class="uwu-checkbox-cell">
+                  <input type="checkbox" data-setting="templatesInChats" />
+                </td>
+                <td class="uwu-checkbox-cell">
+                  <input
+                    type="checkbox"
+                    data-setting="templatesInBlogsAndSniffs"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
-      <hr class="uwu-hr-head" />
+          <hr class="uwu-hr-head" />
 
-      <h2>Боевой режим</h2>
+          <h2>Боевой режим</h2>
 
-      <div>
-        <p>Позволяет перетаскивать панель Боевого режима за штучку.</p>
-        <input type="checkbox" id="dragging-Fight-Panel" data-setting="draggingFightPanel" />
-        <label for="dragging-Fight-Panel">Перетаскивание панели Боевого режима</label>
-      </div>
+          <div>
+            <p>Позволяет перетаскивать панель Боевого режима за штучку.</p>
+            <input
+              type="checkbox"
+              id="dragging-Fight-Panel"
+              data-setting="draggingFightPanel"
+            />
+            <label for="dragging-Fight-Panel"
+              >Перетаскивание панели Боевого режима</label
+            >
+          </div>
 
-      <div>
-        <p>Сокращает и прописывает количество повторяющихся ударов.</p>
-        <input type="checkbox" id="compact-Fight-Log" data-setting="compactFightLog" />
-        <label for="compact-Fight-Log">Компактный боевой лог</label>
-      </div>
+          <div>
+            <p>Сокращает и прописывает количество повторяющихся ударов.</p>
+            <input
+              type="checkbox"
+              id="compact-Fight-Log"
+              data-setting="compactFightLog"
+            />
+            <label for="compact-Fight-Log">Компактный боевой лог</label>
+          </div>
 
-      <div>
-        <p>Возможность растягивать высоту панели и её начальная высота.</p>
-        <input type="checkbox" id="fight-Panel-Adjustable-Height" data-setting="fightPanelAdjustableHeight" />
-        <label for="fight-Panel-Adjustable-Height">Настраиваемая высота панели</label>
-        <input type="text" id="fightPanelHeightField" placeholder=". . ." data-setting="fightPanelHeight" />
-        <label>px; - Начальная высота панели</label>
-      </div>
+          <div>
+            <p>Возможность растягивать высоту панели и её начальная высота.</p>
+            <input
+              type="checkbox"
+              id="fight-Panel-Adjustable-Height"
+              data-setting="fightPanelAdjustableHeight"
+            />
+            <label for="fight-Panel-Adjustable-Height"
+              >Настраиваемая высота панели</label
+            >
+            <input
+              type="text"
+              id="fightPanelHeightField"
+              placeholder=". . ."
+              data-setting="fightPanelHeight"
+            />
+            <label>px; - Начальная высота панели</label>
+          </div>
 
-      <div>
-        <p>Возможность перекрашивать и создавать команды в Панели Боевого Режима.</p>
-        <input type="checkbox" id="Fight-Teams" data-setting="fightTeams" />
-        <label for="fight-Teams">Команды в Боевом Режиме</label>
-        <input type="text" id="fightTeamsPanelHightField" placeholder=". . ." data-setting="fightTeamsPanelHight" />
-        <label>px; - Начальная высота панели Командного Боя</label>
-      </div>
+          <div>
+            <p>
+              Возможность перекрашивать и создавать команды в Панели Боевого
+              Режима.
+            </p>
+            <input type="checkbox" id="Fight-Teams" data-setting="fightTeams" />
+            <label for="fight-Teams">Команды в Боевом Режиме</label>
+            <input
+              type="text"
+              id="fightTeamsPanelHightField"
+              placeholder=". . ."
+              data-setting="fightTeamsPanelHight"
+            />
+            <label>px; - Начальная высота панели Командного Боя</label>
+          </div>
 
-      <div>
-      <p>Звуковое уведомление при нажатии/отжатии кнопки блокировании удара.</p>
-      <input type="checkbox" id="notification-Block" data-setting="notificationBlock" />
-      <label for="notification-Block">Звук блокирования</label>
-      <div id="notificationBlockSoundContainer">
-        <div class="custom-select" id="notificationBlockSound">
-          <div class="select-selected">Выберите звук</div>
-          <div class="select-items"></div>
-        </div>
-        <div id="notification-volume">
-          <p>Громкость</p>
-          <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notificationBlockVolume" list="volumeStep" data-setting="notificationBlockVolume">
-          <datalist id="volumeStep">
-            <option value="1">10%</option>
-            <option value="10">100%</option>
-          </datalist>
-        </div>
-        <div id="notificationBlockContainer"></div>
-      </div>
-    </div>
-
-  <table id="colorSettingsTable">
-    <thead>
-      <tr>
-        <th></th>
-        <th>Энергия</th>
-        <th>Снесено</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Команда 1</td>
-        <td><input type="color" data-team="1" data-part="green" value="#41cd70"></td>
-        <td><input type="color" data-team="1" data-part="red" value="#cd4141"></td>
-      </tr>
-      <tr>
-        <td>Команда 2</td>
-        <td><input type="color" data-team="2" data-part="green" value="#c968ff"></td>
-        <td><input type="color" data-team="2" data-part="red" value="#cd4141"></td>
-      </tr>
-      <tr>
-        <td>Команда 3</td>
-        <td><input type="color" data-team="3" data-part="green" value="#44bcff"></td>
-        <td><input type="color" data-team="3" data-part="red" value="#cd4141"></td>
-      </tr>
-      <tr>
-        <td>Команда 4</td>
-        <td><input type="color" data-team="4" data-part="green" value="#FFFF00"></td>
-        <td><input type="color" data-team="4" data-part="red" value="#cd4141"></td>
-      </tr>
-    </tbody>
-  </table>
-    
-    <hr id="uwu-hr" class="uwu-hr">
-    <h2>Часы</h2>
-
-    <div>
-      <p>Показывать ли часы в Игровой?</p>
-      <input type="checkbox" id="describe-show-clock" data-setting="showClock" />
-      <label for="describe-show-clock">Часы в Игровой</label>
-    </div>
-
-    <label>Стиль часов:</label>
-    <div class="custom-select" id="clockStyle">
-      <div class="select-selected">Выберите стиль часов</div>
-      <div class="select-items">
-        <!-- Опции будут добавлены сюда -->
-      </div>
-    </div>
-
-    <div><!-- Деление --></div>
-
-    <label>Где вставлять часы:</label>
-    <div class="custom-select" id="clockPosition">
-      <div class="select-selected">Выберите положение часов</div>
-      <div class="select-items">
-        <!-- Опции будут добавлены сюда -->
-      </div>
-    </div>
-
-    <div>
-      <input type="checkbox" id="describe-clock-Moscow-Time" data-setting="clockMoscowTime" />
-      <label for="describe-clock-Moscow-Time">Московское время</label>
-    </div>
-
-    <div>
-      <p>Размер шрифта часов</p>
-      <input type="text" id="clock-Font-Size" placeholder=". . ." data-setting="clockFontSize" />
-    </div>
-
-    <div>
-      <button id="resetClockPosition" class="uwu-button remove-button">Сброс позиции часов</button>
-    </div>
-
-    <hr id="uwu-hr" class="uwu-hr">
-    <h2>Охота</h2>
-
-      <div>
-        <p>Дописывает на запахе, во время охоты, приближаетесь вы или отдаляетесь от цели, а так же включает таймер.</p>
-        <input type="checkbox" id="describe-Hunting-Smell" data-setting="describeHuntingSmell" />
-        <label for="describe-Hunting-Smell">Подсказки на запахе</label>
-      </div>
-
-    <hr id="uwu-hr" class="uwu-hr">
-    <h2>Джойстики</h2>
-
-      <div>
-        <p>Отображает Виртуальную сенсорную Джойстиковую кнопку для мобильных устройств во время охоты для более удобного управления.</p>
-        <input type="checkbox" id="hunting-Virtual-Joystick" data-setting="huntingVirtualJoystick" />
-        <label for="hunting-Virtual-Joystick">Виртуальный джойстик для охоты</label>
-        <input type="text" id="sizeHuntingVirtualJoystickField" placeholder=". . ." data-setting="sizeHuntingVirtualJoystick" />
-        <label>px; - Размер Джойстика. Стандартный размер - 150 px;</label>
-      </div>
-
-    <hr id="uwu-hr" class="uwu-hr">
-    <h2>"О котах"</h2>
-
-      <div>
-        <p>Добавляет во всплывающее окно "О коте" кнопку "Подробнее" для просмотра большей полезной информации.</p>
-        <input type="checkbox" id="show-More-Cat-Info" data-setting="showMoreCatInfo" />
-        <label for="show-More-Cat-Info">Больше информации о Коте</label>
-      </div>
-
-      <div>
-        <p>Сокращает и прописывает количество повторяющихся предметов в "О коте".</p>
-        <input type="checkbox" id="compact-Mouth" data-setting="compactMouth" />
-        <label for="compact-Mouth">Компактные инвентари</label>
-      </div>
-
-      <div>
-        <p>Добавляет над собственными параметрами кнопку "Подробнее" для просмотра большей полезной информации.</p>
-        <input type="checkbox" id="show-Parameter-Details" data-setting="showParametersDetails" />
-        <label for="show-Parameter-Details">Подробные параметры</label>
-      </div>
-
-      <div>
-        <p>Показывает дополнительную информацию в профиле кота, например БУ цифрой.</p>
-        <input type="checkbox" id="more-Profile-Info" data-setting="moreProfileInfo" />
-        <label for="more-Profile-Info">Больше информации в профиле</label>
-      </div>
-
-      <div>
-        <p>Добавляет полезные калькуляторы для вычислений в профиля.</p>
-        <input type="checkbox" id="calculators" data-setting="calculators" />
-        <label for="calculators">Калькуляторы активностей и лун.</label>
-      </div>
-
-      <hr id="uwu-hr" class="uwu-hr">
-      <h2>Минное поле</h2>
-
-      <div>
-        <p>Включает окно для расчерчивания минного поля в Игровой.</p>
-        <input type="checkbox" id="climbing-panel" data-setting="climbingPanel" />
-        <label for="climbing-panel">Минное поле</label>
-        <p>Здесь вы можете добавить/удалить Вкладки для хранения Таблиц и количество самих таблиц в выбранной вкладке.</p>
-          <h4>Вкладки</h4>
-          <div id="uwu-buttonRow1-settings"></div>
-          <h4>Локации / Таблицы</h4>
-          <div id="uwu-buttonRow2-settings"></div>
-      </div>
-
-      <label>Дизайн окна минного поля:</label>
-      <div class="custom-select" id="climbingPanelOrientation">
-        <div class="select-selected">Вертикальный</div>
-        <div class="select-items">
-          <!-- Опции будут добавлены сюда -->
-        </div>
-      </div>
-
-      <p>
-      Как вводить с клавиатуры:
-      ЛКМ - выбрать клетку. С клавиатуры мины ставятся от "0" до "7". Знак "минус" ( - ) равняется красной клетке, 
-      а "равно" ( = ) ставит более яркую клетку, например для переходов, которая не будет очищаться при 
-      "Очистить всё поле/таблицу". Два раза ЛКМ на ячейку, чтобы очистить её значение.</p>
-
-      <label>Вид ввода в минное поле:</label>
-      <div class="custom-select" id="climbingPanelInputsStyle">
-        <div class="select-selected">Клавиатура</div>
-        <div class="select-items">
-          <!-- Опции будут добавлены сюда -->
-        </div>
-      </div>
-
-      <div>
-        <p>Дописывает в чате громкость уведомлений числом. В случае с лазательными локациями - количество опасных клеток вокруг вас.</p>
-        <input type="checkbox" id="climbing-Notifications-Numbers" data-setting="climbingNotificationsNumbers" />
-        <label for="climbing-Notifications-Numbers">Подписывать громкость уведомления</label>
-      </div>
-
-      <div>
-        <p>Звуковое уведомление, когда карта локации обновляется.</p>
-        <input type="checkbox" id="climbing-Refresh-Notification" data-setting="climbingRefreshNotification" />
-        <label for="climbing-Refresh-Notification">Уведомлять об перестановке</label>
-      </div>
-
-      <div id="climbingRefreshNotificationSoundContainer">
-        <div class="custom-select" id="climbingRefreshNotificationSound">
-          <div class="select-selected">Выберите звук</div>
-        <div class="select-items">
-          <!-- Опции будут добавлены сюда -->
-        </div>
-      </div>
-    
-      <div id="notification-volume">
-      <p>Громкость</p>
-        <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="climbing-Refresh-Notification-Volume" list="volumeStep"
-          data-setting="climbingRefreshNotificationVolume">
-        <datalist id="volumeStep">
-          <option value="1">10%</option>
-          <option value="10">100%</option>
-        </datalist>
-      </div>
-    </div>
-
-      <hr id="uwu-hr" class="uwu-hr">
-      <h2>BETA 🚧 Лог чистильщика 🚧 BETA</h2>
-
-      <div>
-        <p>Упрощённое и удобное дублирование блока истории для любителей чистить локации, 
-        в котором отображаются только поднятия и опускания котов.</p>
-        <input type="checkbox" id="cleaning-Log" data-setting="cleaningLog" />
-        <label for="cleaning-Log">Включить лог чистильщика</label>
-      </div>
-
-      <label>Вид отображения Лога:</label>
-      <div class="custom-select" id="cleaningLogStyle">
-        <div class="select-selected">Выберите вид Лога</div>
-        <div class="select-items">
-          <!-- Опции будут добавлены сюда -->
-        </div>
-      </div>
-      <label id="uwu-what-this" title="
-      Умный - группирование множественных действий в более удобный, краткий и читаемый вид.
-      Ещё тут был 'стандартный', более привычный старый вид, но его съели росомахи.
-      ">[?]</label>
-
-      <details>
-        <summary style="cursor: pointer; font-size: 16px; font-weight: bold;">
-        Как работает?</summary>
-        <hr id="uwu-hr" class="uwu-hr">
-        <p>1. Проверьте кота такими действиями, как:</p>
-        <p>— Потереться нос о нос</p>
-        <p>— Потереться щекой о щёку</p>
-        <p>— Помурлыкать вместе</p>
-        <p>— Обнюхать</p>
-        <p>Вам выведится, можно ли поднять кота. Если он "Проверен", можете смело...</p>
-        <p>2. Поднять кота!</p>
-        <p>Если же кот "Не спит", или перед поднятием вы его не проверили, то Лог просто не запишет его.</p>
-        <p>— Больше настроек, например подсветка надписей или игнорирование статуса кота, будет в будущем!</p>
-        <p>Если вы видите или вам кажется, что логика проверок и объединений, странны и нелогичны, или даже 
-        что-то теряется, то можете сообщить о проблеме в группу ВК!</p>
-        <hr id="uwu-hr" class="uwu-hr">
-      </details>
-
-      <div>
-        <p>При последующих проверках так же будет писаться ID кота. 
-        Не добавляет ID к уже существущему тексту в логе.</p>
-        <input type="checkbox" id="cleaning-Log" data-setting="cleaningLogShowID" />
-        <label for="cleaning-Log">Записывать ID</label>
-      </div>
-
-      <div>
-        <input type="text" id="cleaning-Log-Height" placeholder=". . ." data-setting="cleaningLogHeight" />
-        <label>px; - Начальная высота Лога</label>
-      </div>
-
-      <hr id="uwu-hr" class="uwu-hr">
-      <h2>Быстрые ссылки</h2>
-
-      <p>Быстрые ссылки в Игровой.</p>
-      <div>
-        <input type="checkbox" id="quick-Link1" data-setting="quickLink1" />
-        <label for="quick-Link1">Настройки</label>
-      </div>
-
-      <div>
-        <input type="checkbox" id="quick-Link2" data-setting="quickLink2" />
-        <label for="quick-Link2">Памятка</label>
-      </div>
-
-      <div>
-        <input type="checkbox" id="quick-Link3" data-setting="quickLink3" />
-        <label for="quick-Link3">Блоги</label>
-      </div>
-
-      <div>
-        <input type="checkbox" id="quick-Link4" data-setting="quickLink4" />
-        <label for="quick-Link4">Лента</label>
-      </div>
-
-      <div>
-        <p>Ваши ссылки. Вставляете ссылку, пробел и пишите название. Для множества просто пишите через запятую. Пример:
-          https://мяу Котики, https://мяу2 Больше-котиков</p>
-        <input type="text" id="users-quick-Links" placeholder=". . ." data-setting="userQuickLinks" />
-      </div>
-
-      <hr id="uwu-hr" class="uwu-hr">
-      
-      <h2>Уведомления</h2>
-      <p>Уведомлять звуком, когда:</p>
-      
-      <table class="notification-table">
-        <tbody>
-          <tr>
-            <td><input type="checkbox" id="notification-PM" data-setting="notificationPM" /></td>
-            <td>
-              <div class="custom-select" id="notificationPMSound">
+          <div>
+            <p>
+              Звуковое уведомление при нажатии/отжатии кнопки блокировании
+              удара.
+            </p>
+            <input
+              type="checkbox"
+              id="notification-Block"
+              data-setting="notificationBlock"
+            />
+            <label for="notification-Block">Звук блокирования</label>
+            <div id="notificationBlockSoundContainer">
+              <div class="custom-select" id="notificationBlockSound">
                 <div class="select-selected">Выберите звук</div>
                 <div class="select-items"></div>
               </div>
-            </td>
-            <td>
-              <div class="volume-control">
-                <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notificationPMVolume" list="volumeStep" data-setting="notificationPMVolume">
+              <div id="notification-volume">
+                <p>Громкость</p>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  value="5"
+                  class="uwu-range-slider"
+                  id="notificationBlockVolume"
+                  list="volumeStep"
+                  data-setting="notificationBlockVolume"
+                />
                 <datalist id="volumeStep">
                   <option value="1">10%</option>
                   <option value="10">100%</option>
                 </datalist>
               </div>
-            </td>
-            <td id="notificationPMContainer"></td>
-            <td><label for="notification-PM">Новое ЛС</label></td>
-          </tr>
-          <tr>
-              <td><input type="checkbox" id="notification-Action-End" data-setting="notificationActionEnd" /></td>
-              <td>
-                <div class="custom-select" id="notificationActionEndSound">
-                  <div class="select-selected">Выберите звук</div>
-                  <div class="select-items"></div>
-                </div>
-              </td>
-              <td>
-                <div class="volume-control">
-                  <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notificationActionEndVolume" list="volumeStep" data-setting="notificationActionEndVolume">
-                  <datalist id="volumeStep">
-                    <option value="1">10%</option>
-                    <option value="10">100%</option>
-                  </datalist>
-                </div>
-              </td>
-              <td id="notificationActionEndContainer"></td>
-              <td><label for="notification-Action-End">Действие закончилось</label></td>
-            </tr>
-            <tr>
-              <td><input type="checkbox" id="notification-In-Mouth" data-setting="notificationInMouth" /></td>
-              <td>
-                <div class="custom-select" id="notificationInMouthSound">
-                  <div class="select-selected">Выберите звук</div>
-                  <div class="select-items"></div>
-                </div>
-              </td>
-              <td>
-                <div class="volume-control">
-                <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notificationInMouthVolume" list="volumeStep" data-setting="notificationInMouthVolume">
-                  <datalist id="volumeStep">
-                      <option value="1">10%</option>
-                      <option value="10">100%</option>
-                  </datalist>
-              </div>
-              </td>
-              <td id="notificationInMouthContainer"></td>
-              <td><label for="notification-In-Mouth">Кто-то меня поднял</label></td>
-            </tr>
-      
-            <tr>
-              <td><input type="checkbox" id="notification-In-Fight-Mode" data-setting="notificationInFightMode" /></td>
-              <td>
-              <div class="custom-select" id="notificationInFightModeSound">
-                  <div class="select-selected">Выберите звук</div>
-                  <div class="select-items"></div>
-              </div>
-              </td>
-              <td>
-              <div class="volume-control">
-                  <input type="range" min="1" max="10" value="5" class="uwu-range-slider" id="notificationInFightModeVolume" list="volumeStep" data-setting="notificationInFightModeVolume">
-                  <datalist id="volumeStep">
-                      <option value="1">10%</option>
-                      <option value="10">100%</option>
-                  </datalist>
-              </div>
-              </td>
-              <td id="notificationInFightModeContainer"></td>
-              <td><label for="notification-In-Fight-Mode">Ввели в стойку (Т+2/Т+3)</label></td>
-            </tr>
-        </tbody>
-      </table>
-
-      <div>
-        <p>Дублирует время действий на название браузерной вкладки.</p>
-        <input type="checkbox" id="duplicate-Time-In-Browser-Tab" data-setting="duplicateTimeInBrowserTab" />
-        <label for="duplicate-Time-In-Browser-Tab">Показывать время действия на вкладке</label>
-      </div>
-
-      <div>
-        <p>Подсказывает оставшееся время до возможности понюхать.</p>
-        <input type="checkbox" id="show-Hint-When-To-Sniff" data-setting="showHintWhenToSniff" />
-        <label for="show-Hint-When-To-Sniff">Когда нюхать?</label>
-      </div>
-
-      <hr id="uwu-hr" class="uwu-hr">
-      <h2>Общение</h2>
-
-      <div>
-        <p>Автоматически сохраняет и восстанавливает редактируемый текст блога. Теперь вы не потеряете его случайно.</p>
-        <input type="checkbox" id="restore-Blog-Creation" data-setting="restoreBlogCreation" />
-        <label for="restore-Blog-Creation">Восстановление содержимого Блога</label>
-      </div>
-
-      <div>
-        <p>Говорит само за себя.</p>
-        <input type="checkbox" id="more-BB-Codes" data-setting="moreBBCodes" />
-        <label for="more-BB-Codes">Дополнительные BB-Коды</label>
-      </div>
-
-      <div>
-        <p>Позволяет предпросматривать отправляемые сообщения в лентах и блогах.</p>
-        <input type="checkbox" id="comment-Preview" data-setting="commentPreview" />
-        <label for="comment-Preview">Предпросмотр сообщений</label>
-      </div>
-
-      <div>
-        <p>Позволяет "отвечать" и "цитировать" сообщения в лентах и блогах. При цитировании вы можете выделить кусочек 
-        текста на который хотите ответить.</p>
-        <input type="checkbox" id="more-Comment-Buttons" data-setting="moreCommentButtons" />
-        <label for="more-Comment-Buttons">Кнопки "Отправить" и "Цитировать"</label>
-      </div>
-
-      <div>
-        <p>Оборачивает предпросмотр письма в оболочку, похожую на ту которая во "Входящие".</p>
-        <input type="checkbox" id="ls-Wrap-Preview" data-setting="lsWrapPreview" />
-        <label for="ls-Wrap-Preview">Наглядный предпросмотр письма</label>
-      </div>
-
-    </div>
-
-    <div id="modules-panel">
-
-      <h2>Главное</h2>
-      <div>
-        <p>Постоянное отображание Панели Расширенных Настроек в Игровой. Сама по себе пустая.</p>
-        <input type="checkbox" id="extended-settings-Panel" data-setting="extendedSettingsPanel" />
-        <label for="extended-settings-Panel">⚙️Панель Расширенных Настроек</label>
-      </div>
-
-      <div>
-        <p>Отображает уведомление в ⚙️Панели Расширенных настроек в Игровой.</p>
-        <input type="checkbox" id="show-Update-Notification" data-setting="showUpdateNotification" />
-        <label for="show-Update-Notification">Уведомлять об обновлении Скрипта/Мода UwU</label>
-      </div>
-
-      <div>
-        <p>⚙️Панели Расширенных Настроек не будет так скучно с рандомными фразами.</p>
-        <input type="checkbox" id="show-Splash-Screens" data-setting="showSplashScreens" />
-        <label for="show-Splash-Screens">Показывать Splash надписи.</label>
-      </div>
-
-      <div>
-        <p>Скрывать или отображать расширенные подсказки к настройкам. Привет, я та самая расширенная подсказка. Делает Настройки CatWar UwU очень компактным на вид.</p>
-        <input type="checkbox" id="extended-Hints" data-setting="extendedHints" />
-        <label for="extended-Hints">Расширенные подсказки</label>
-      </div>
-
-    <hr id="uwu-hr" class="uwu-hr">
-      <h2>Сборник стилей</h2>
-      <p>Онлайн сборник стилей от Разработчика.</p>
-    <hr id="uwu-hr" class="uwu-hr">
-      <div id="module-info">
-        <!-- Сюда модули -->
-      </div>
-
-    <hr id="uwu-hr" class="uwu-hr">
-      <h2>Импорт/Экспорт</h2>
-
-      <div>
-        <p>Импорт/Экспорт всех настроек.</p>
-        <input type="text" id="exportSettings" placeholder="Экспорт"/>
-        <input type="text" id="importSettings" placeholder="Импорт"/>
-        <button id="importSettingsButton" class="uwu-button install-button">Вставить</button>
-      </div>
-      
-      <div>
-        <p>Удаляет все настройки. В очень редких случаях может помочь при проблемных проблемах.</p>
-        <button id="resetAllSaves" class="uwu-button remove-button">Сброс сохранений</button>
-      </div>
-    </div>
-    <div id="personal-costumes-panel">
-      <h2>Личные костюмы</h2>
-      <p>Здесь вы можете добавить, просматривать и управлять своими личными костюмами.</p>
-      <div>
-        <input type="checkbox" id="personal-costume-panel" data-setting="personalCostumes">
-        <label for="personal-costume-panel">⚙️Включить персональные костюмы</label>
-      </div>
-      <p>Это добавляет кнопку «Сохранить костюм» при наведении курсора на игрока, позволяя сохранить его костюм в одном из слотов костюмов.</p>
-      <div>
-        <input type="checkbox" id="show-costumes" data-setting="showCostumesButtons">
-        <label for="show-costumes">Сохраняйте костюмы других игроков</label>
-      </div>
-      <br>
-      <hr id="uwu-hr" class="uwu-hr">
-      <div class="costume-flex-box disabled">
-        <div class="costumeSettings">
-          <div>
-            <h3>Изменить Костюм: </h3>
-            <div>Примечание: Убедитесь, что ваше изображение имеет размер 100x150 для наилучших результатов</div>
+              <div id="notificationBlockContainer"></div>
+            </div>
           </div>
 
-          <input type="file" id="costume-file" accept="image/png" class="uwu-button">
-          <br>
-          <br>
-          <button class="uwu-button install-button" id="changeCostume">Загрузить Костюм</button>
-          <br>
-          <span>или </span>
-          <br>
-          <a class="uwu-button remove-button" id="removeCostume" style="display:inline-block; padding:4px 10px; border-radius:20px; text-decoration:none; color:inherit;">Удалить ваш костюм</a>
-          <br>
-          <span>или </span>
-          <br>
-         <button class="uwu-button install-button" id="saveCostumeToNewSlot">
-            Сохранить в новый слот
-          </button>
+          <table id="colorSettingsTable">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Энергия</th>
+                <th>Снесено</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Команда 1</td>
+                <td>
+                  <input
+                    type="color"
+                    data-team="1"
+                    data-part="green"
+                    value="#41cd70"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="color"
+                    data-team="1"
+                    data-part="red"
+                    value="#cd4141"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Команда 2</td>
+                <td>
+                  <input
+                    type="color"
+                    data-team="2"
+                    data-part="green"
+                    value="#c968ff"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="color"
+                    data-team="2"
+                    data-part="red"
+                    value="#cd4141"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Команда 3</td>
+                <td>
+                  <input
+                    type="color"
+                    data-team="3"
+                    data-part="green"
+                    value="#44bcff"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="color"
+                    data-team="3"
+                    data-part="red"
+                    value="#cd4141"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Команда 4</td>
+                <td>
+                  <input
+                    type="color"
+                    data-team="4"
+                    data-part="green"
+                    value="#FFFF00"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="color"
+                    data-team="4"
+                    data-part="red"
+                    value="#cd4141"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>Часы</h2>
+
+          <div>
+            <p>Показывать ли часы в Игровой?</p>
+            <input
+              type="checkbox"
+              id="describe-show-clock"
+              data-setting="showClock"
+            />
+            <label for="describe-show-clock">Часы в Игровой</label>
+          </div>
+
+          <label>Стиль часов:</label>
+          <div class="custom-select" id="clockStyle">
+            <div class="select-selected">Выберите стиль часов</div>
+            <div class="select-items">
+              <!-- Опции будут добавлены сюда -->
+            </div>
+          </div>
+
+          <div><!-- Деление --></div>
+
+          <label>Где вставлять часы:</label>
+          <div class="custom-select" id="clockPosition">
+            <div class="select-selected">Выберите положение часов</div>
+            <div class="select-items">
+              <!-- Опции будут добавлены сюда -->
+            </div>
+          </div>
+
+          <div>
+            <input
+              type="checkbox"
+              id="describe-clock-Moscow-Time"
+              data-setting="clockMoscowTime"
+            />
+            <label for="describe-clock-Moscow-Time">Московское время</label>
+          </div>
+
+          <div>
+            <p>Размер шрифта часов</p>
+            <input
+              type="text"
+              id="clock-Font-Size"
+              placeholder=". . ."
+              data-setting="clockFontSize"
+            />
+          </div>
+
+          <div>
+            <button id="resetClockPosition" class="uwu-button remove-button">
+              Сброс позиции часов
+            </button>
+          </div>
+
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>Охота</h2>
+
+          <div>
+            <p>
+              Дописывает на запахе, во время охоты, приближаетесь вы или
+              отдаляетесь от цели, а так же включает таймер.
+            </p>
+            <input
+              type="checkbox"
+              id="describe-Hunting-Smell"
+              data-setting="describeHuntingSmell"
+            />
+            <label for="describe-Hunting-Smell">Подсказки на запахе</label>
+          </div>
+
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>Джойстики</h2>
+
+          <div>
+            <p>
+              Отображает Виртуальную сенсорную Джойстиковую кнопку для мобильных
+              устройств во время охоты для более удобного управления.
+            </p>
+            <input
+              type="checkbox"
+              id="hunting-Virtual-Joystick"
+              data-setting="huntingVirtualJoystick"
+            />
+            <label for="hunting-Virtual-Joystick"
+              >Виртуальный джойстик для охоты</label
+            >
+            <input
+              type="text"
+              id="sizeHuntingVirtualJoystickField"
+              placeholder=". . ."
+              data-setting="sizeHuntingVirtualJoystick"
+            />
+            <label>px; - Размер Джойстика. Стандартный размер - 150 px;</label>
+          </div>
+
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>"О котах"</h2>
+
+          <div>
+            <p>
+              Добавляет во всплывающее окно "О коте" кнопку "Подробнее" для
+              просмотра большей полезной информации.
+            </p>
+            <input
+              type="checkbox"
+              id="show-More-Cat-Info"
+              data-setting="showMoreCatInfo"
+            />
+            <label for="show-More-Cat-Info">Больше информации о Коте</label>
+          </div>
+
+          <div>
+            <p>
+              Сокращает и прописывает количество повторяющихся предметов в "О
+              коте".
+            </p>
+            <input
+              type="checkbox"
+              id="compact-Mouth"
+              data-setting="compactMouth"
+            />
+            <label for="compact-Mouth">Компактные инвентари</label>
+          </div>
+
+          <div>
+            <p>
+              Добавляет над собственными параметрами кнопку "Подробнее" для
+              просмотра большей полезной информации.
+            </p>
+            <input
+              type="checkbox"
+              id="show-Parameter-Details"
+              data-setting="showParametersDetails"
+            />
+            <label for="show-Parameter-Details">Подробные параметры</label>
+          </div>
+
+          <div>
+            <p>
+              Показывает дополнительную информацию в профиле кота, например БУ
+              цифрой.
+            </p>
+            <input
+              type="checkbox"
+              id="more-Profile-Info"
+              data-setting="moreProfileInfo"
+            />
+            <label for="more-Profile-Info">Больше информации в профиле</label>
+          </div>
+
+          <div>
+            <p>Добавляет полезные калькуляторы для вычислений в профиля.</p>
+            <input
+              type="checkbox"
+              id="calculators"
+              data-setting="calculators"
+            />
+            <label for="calculators">Калькуляторы активностей и лун.</label>
+          </div>
+
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>Минное поле</h2>
+
+          <div>
+            <p>Включает окно для расчерчивания минного поля в Игровой.</p>
+            <input
+              type="checkbox"
+              id="climbing-panel"
+              data-setting="climbingPanel"
+            />
+            <label for="climbing-panel">Минное поле</label>
+            <p>
+              Здесь вы можете добавить/удалить Вкладки для хранения Таблиц и
+              количество самих таблиц в выбранной вкладке.
+            </p>
+            <h4>Вкладки</h4>
+            <div id="uwu-buttonRow1-settings"></div>
+            <h4>Локации / Таблицы</h4>
+            <div id="uwu-buttonRow2-settings"></div>
+          </div>
+
+          <label>Дизайн окна минного поля:</label>
+          <div class="custom-select" id="climbingPanelOrientation">
+            <div class="select-selected">Вертикальный</div>
+            <div class="select-items">
+              <!-- Опции будут добавлены сюда -->
+            </div>
+          </div>
+
+          <p>
+            Как вводить с клавиатуры: ЛКМ - выбрать клетку. С клавиатуры мины
+            ставятся от "0" до "7". Знак "минус" ( - ) равняется красной клетке,
+            а "равно" ( = ) ставит более яркую клетку, например для переходов,
+            которая не будет очищаться при "Очистить всё поле/таблицу". Два раза
+            ЛКМ на ячейку, чтобы очистить её значение.
+          </p>
+
+          <label>Вид ввода в минное поле:</label>
+          <div class="custom-select" id="climbingPanelInputsStyle">
+            <div class="select-selected">Клавиатура</div>
+            <div class="select-items">
+              <!-- Опции будут добавлены сюда -->
+            </div>
+          </div>
+
+          <div>
+            <p>
+              Дописывает в чате громкость уведомлений числом. В случае с
+              лазательными локациями - количество опасных клеток вокруг вас.
+            </p>
+            <input
+              type="checkbox"
+              id="climbing-Notifications-Numbers"
+              data-setting="climbingNotificationsNumbers"
+            />
+            <label for="climbing-Notifications-Numbers"
+              >Подписывать громкость уведомления</label
+            >
+          </div>
+
+          <div>
+            <p>Звуковое уведомление, когда карта локации обновляется.</p>
+            <input
+              type="checkbox"
+              id="climbing-Refresh-Notification"
+              data-setting="climbingRefreshNotification"
+            />
+            <label for="climbing-Refresh-Notification"
+              >Уведомлять об перестановке</label
+            >
+          </div>
+
+          <div id="climbingRefreshNotificationSoundContainer">
+            <div class="custom-select" id="climbingRefreshNotificationSound">
+              <div class="select-selected">Выберите звук</div>
+              <div class="select-items">
+                <!-- Опции будут добавлены сюда -->
+              </div>
+            </div>
+
+            <div id="notification-volume">
+              <p>Громкость</p>
+              <input
+                type="range"
+                min="1"
+                max="10"
+                value="5"
+                class="uwu-range-slider"
+                id="climbing-Refresh-Notification-Volume"
+                list="volumeStep"
+                data-setting="climbingRefreshNotificationVolume"
+              />
+              <datalist id="volumeStep">
+                <option value="1">10%</option>
+                <option value="10">100%</option>
+              </datalist>
+            </div>
+          </div>
+
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>BETA 🚧 Лог чистильщика 🚧 BETA</h2>
+
+          <div>
+            <p>
+              Упрощённое и удобное дублирование блока истории для любителей
+              чистить локации, в котором отображаются только поднятия и
+              опускания котов.
+            </p>
+            <input
+              type="checkbox"
+              id="cleaning-Log"
+              data-setting="cleaningLog"
+            />
+            <label for="cleaning-Log">Включить лог чистильщика</label>
+          </div>
+
+          <label>Вид отображения Лога:</label>
+          <div class="custom-select" id="cleaningLogStyle">
+            <div class="select-selected">Выберите вид Лога</div>
+            <div class="select-items">
+              <!-- Опции будут добавлены сюда -->
+            </div>
+          </div>
+          <label
+            id="uwu-what-this"
+            title="
+      Умный - группирование множественных действий в более удобный, краткий и читаемый вид.
+      Ещё тут был 'стандартный', более привычный старый вид, но его съели росомахи.
+      "
+            >[?]</label
+          >
+
+          <details>
+            <summary
+              style="cursor: pointer; font-size: 16px; font-weight: bold;"
+            >
+              Как работает?
+            </summary>
+            <hr id="uwu-hr" class="uwu-hr" />
+            <p>1. Проверьте кота такими действиями, как:</p>
+            <p>— Потереться нос о нос</p>
+            <p>— Потереться щекой о щёку</p>
+            <p>— Помурлыкать вместе</p>
+            <p>— Обнюхать</p>
+            <p>
+              Вам выведится, можно ли поднять кота. Если он "Проверен", можете
+              смело...
+            </p>
+            <p>2. Поднять кота!</p>
+            <p>
+              Если же кот "Не спит", или перед поднятием вы его не проверили, то
+              Лог просто не запишет его.
+            </p>
+            <p>
+              — Больше настроек, например подсветка надписей или игнорирование
+              статуса кота, будет в будущем!
+            </p>
+            <p>
+              Если вы видите или вам кажется, что логика проверок и объединений,
+              странны и нелогичны, или даже что-то теряется, то можете сообщить
+              о проблеме в группу ВК!
+            </p>
+            <hr id="uwu-hr" class="uwu-hr" />
+          </details>
+
+          <div>
+            <p>
+              При последующих проверках так же будет писаться ID кота. Не
+              добавляет ID к уже существущему тексту в логе.
+            </p>
+            <input
+              type="checkbox"
+              id="cleaning-Log"
+              data-setting="cleaningLogShowID"
+            />
+            <label for="cleaning-Log">Записывать ID</label>
+          </div>
+
+          <div>
+            <input
+              type="text"
+              id="cleaning-Log-Height"
+              placeholder=". . ."
+              data-setting="cleaningLogHeight"
+            />
+            <label>px; - Начальная высота Лога</label>
+          </div>
+
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>Быстрые ссылки</h2>
+
+          <p>Быстрые ссылки в Игровой.</p>
+          <div>
+            <input type="checkbox" id="quick-Link1" data-setting="quickLink1" />
+            <label for="quick-Link1">Настройки</label>
+          </div>
+
+          <div>
+            <input type="checkbox" id="quick-Link2" data-setting="quickLink2" />
+            <label for="quick-Link2">Памятка</label>
+          </div>
+
+          <div>
+            <input type="checkbox" id="quick-Link3" data-setting="quickLink3" />
+            <label for="quick-Link3">Блоги</label>
+          </div>
+
+          <div>
+            <input type="checkbox" id="quick-Link4" data-setting="quickLink4" />
+            <label for="quick-Link4">Лента</label>
+          </div>
+
+          <div>
+            <p>
+              Ваши ссылки. Вставляете ссылку, пробел и пишите название. Для
+              множества просто пишите через запятую. Пример: https://мяу Котики,
+              https://мяу2 Больше-котиков
+            </p>
+            <input
+              type="text"
+              id="users-quick-Links"
+              placeholder=". . ."
+              data-setting="userQuickLinks"
+            />
+          </div>
+
+          <hr id="uwu-hr" class="uwu-hr" />
+
+          <h2>Уведомления</h2>
+          <p>Уведомлять звуком, когда:</p>
+
+          <table class="notification-table">
+            <tbody>
+              <tr>
+                <td>
+                  <input
+                    type="checkbox"
+                    id="notification-PM"
+                    data-setting="notificationPM"
+                  />
+                </td>
+                <td>
+                  <div class="custom-select" id="notificationPMSound">
+                    <div class="select-selected">Выберите звук</div>
+                    <div class="select-items"></div>
+                  </div>
+                </td>
+                <td>
+                  <div class="volume-control">
+                    <input
+                      type="range"
+                      min="1"
+                      max="10"
+                      value="5"
+                      class="uwu-range-slider"
+                      id="notificationPMVolume"
+                      list="volumeStep"
+                      data-setting="notificationPMVolume"
+                    />
+                    <datalist id="volumeStep">
+                      <option value="1">10%</option>
+                      <option value="10">100%</option>
+                    </datalist>
+                  </div>
+                </td>
+                <td id="notificationPMContainer"></td>
+                <td><label for="notification-PM">Новое ЛС</label></td>
+              </tr>
+              <tr>
+                <td>
+                  <input
+                    type="checkbox"
+                    id="notification-Action-End"
+                    data-setting="notificationActionEnd"
+                  />
+                </td>
+                <td>
+                  <div class="custom-select" id="notificationActionEndSound">
+                    <div class="select-selected">Выберите звук</div>
+                    <div class="select-items"></div>
+                  </div>
+                </td>
+                <td>
+                  <div class="volume-control">
+                    <input
+                      type="range"
+                      min="1"
+                      max="10"
+                      value="5"
+                      class="uwu-range-slider"
+                      id="notificationActionEndVolume"
+                      list="volumeStep"
+                      data-setting="notificationActionEndVolume"
+                    />
+                    <datalist id="volumeStep">
+                      <option value="1">10%</option>
+                      <option value="10">100%</option>
+                    </datalist>
+                  </div>
+                </td>
+                <td id="notificationActionEndContainer"></td>
+                <td>
+                  <label for="notification-Action-End"
+                    >Действие закончилось</label
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <input
+                    type="checkbox"
+                    id="notification-In-Mouth"
+                    data-setting="notificationInMouth"
+                  />
+                </td>
+                <td>
+                  <div class="custom-select" id="notificationInMouthSound">
+                    <div class="select-selected">Выберите звук</div>
+                    <div class="select-items"></div>
+                  </div>
+                </td>
+                <td>
+                  <div class="volume-control">
+                    <input
+                      type="range"
+                      min="1"
+                      max="10"
+                      value="5"
+                      class="uwu-range-slider"
+                      id="notificationInMouthVolume"
+                      list="volumeStep"
+                      data-setting="notificationInMouthVolume"
+                    />
+                    <datalist id="volumeStep">
+                      <option value="1">10%</option>
+                      <option value="10">100%</option>
+                    </datalist>
+                  </div>
+                </td>
+                <td id="notificationInMouthContainer"></td>
+                <td>
+                  <label for="notification-In-Mouth">Кто-то меня поднял</label>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <input
+                    type="checkbox"
+                    id="notification-In-Fight-Mode"
+                    data-setting="notificationInFightMode"
+                  />
+                </td>
+                <td>
+                  <div class="custom-select" id="notificationInFightModeSound">
+                    <div class="select-selected">Выберите звук</div>
+                    <div class="select-items"></div>
+                  </div>
+                </td>
+                <td>
+                  <div class="volume-control">
+                    <input
+                      type="range"
+                      min="1"
+                      max="10"
+                      value="5"
+                      class="uwu-range-slider"
+                      id="notificationInFightModeVolume"
+                      list="volumeStep"
+                      data-setting="notificationInFightModeVolume"
+                    />
+                    <datalist id="volumeStep">
+                      <option value="1">10%</option>
+                      <option value="10">100%</option>
+                    </datalist>
+                  </div>
+                </td>
+                <td id="notificationInFightModeContainer"></td>
+                <td>
+                  <label for="notification-In-Fight-Mode"
+                    >Ввели в стойку (Т+2/Т+3)</label
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div>
+            <p>Дублирует время действий на название браузерной вкладки.</p>
+            <input
+              type="checkbox"
+              id="duplicate-Time-In-Browser-Tab"
+              data-setting="duplicateTimeInBrowserTab"
+            />
+            <label for="duplicate-Time-In-Browser-Tab"
+              >Показывать время действия на вкладке</label
+            >
+          </div>
+
+          <div>
+            <p>Подсказывает оставшееся время до возможности понюхать.</p>
+            <input
+              type="checkbox"
+              id="show-Hint-When-To-Sniff"
+              data-setting="showHintWhenToSniff"
+            />
+            <label for="show-Hint-When-To-Sniff">Когда нюхать?</label>
+          </div>
+
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>Общение</h2>
+
+          <div>
+            <p>
+              Автоматически сохраняет и восстанавливает редактируемый текст
+              блога. Теперь вы не потеряете его случайно.
+            </p>
+            <input
+              type="checkbox"
+              id="restore-Blog-Creation"
+              data-setting="restoreBlogCreation"
+            />
+            <label for="restore-Blog-Creation"
+              >Восстановление содержимого Блога</label
+            >
+          </div>
+
+          <div>
+            <p>Говорит само за себя.</p>
+            <input
+              type="checkbox"
+              id="more-BB-Codes"
+              data-setting="moreBBCodes"
+            />
+            <label for="more-BB-Codes">Дополнительные BB-Коды</label>
+          </div>
+
+          <div>
+            <p>
+              Позволяет предпросматривать отправляемые сообщения в лентах и
+              блогах.
+            </p>
+            <input
+              type="checkbox"
+              id="comment-Preview"
+              data-setting="commentPreview"
+            />
+            <label for="comment-Preview">Предпросмотр сообщений</label>
+          </div>
+
+          <div>
+            <p>
+              Позволяет "отвечать" и "цитировать" сообщения в лентах и блогах.
+              При цитировании вы можете выделить кусочек текста на который
+              хотите ответить.
+            </p>
+            <input
+              type="checkbox"
+              id="more-Comment-Buttons"
+              data-setting="moreCommentButtons"
+            />
+            <label for="more-Comment-Buttons"
+              >Кнопки "Отправить" и "Цитировать"</label
+            >
+          </div>
+
+          <div>
+            <p>
+              Оборачивает предпросмотр письма в оболочку, похожую на ту которая
+              во "Входящие".
+            </p>
+            <input
+              type="checkbox"
+              id="ls-Wrap-Preview"
+              data-setting="lsWrapPreview"
+            />
+            <label for="ls-Wrap-Preview">Наглядный предпросмотр письма</label>
+          </div>
         </div>
-        <div id="cat-image">
-          Превью для вашего кота/вашей кошки отсутствует. <br><br> Перейдите в Игровую и вернитесь на эту страницу.
+
+        <div id="modules-panel">
+          <h2>Главное</h2>
+          <div>
+            <p>
+              Постоянное отображание Панели Расширенных Настроек в Игровой. Сама
+              по себе пустая.
+            </p>
+            <input
+              type="checkbox"
+              id="extended-settings-Panel"
+              data-setting="extendedSettingsPanel"
+            />
+            <label for="extended-settings-Panel"
+              >⚙️Панель Расширенных Настроек</label
+            >
+          </div>
+
+          <div>
+            <p>
+              Отображает уведомление в ⚙️Панели Расширенных настроек в Игровой.
+            </p>
+            <input
+              type="checkbox"
+              id="show-Update-Notification"
+              data-setting="showUpdateNotification"
+            />
+            <label for="show-Update-Notification"
+              >Уведомлять об обновлении Скрипта/Мода UwU</label
+            >
+          </div>
+
+          <div>
+            <p>
+              ⚙️Панели Расширенных Настроек не будет так скучно с рандомными
+              фразами.
+            </p>
+            <input
+              type="checkbox"
+              id="show-Splash-Screens"
+              data-setting="showSplashScreens"
+            />
+            <label for="show-Splash-Screens">Показывать Splash надписи.</label>
+          </div>
+
+          <div>
+            <p>
+              Скрывать или отображать расширенные подсказки к настройкам.
+              Привет, я та самая расширенная подсказка. Делает Настройки CatWar
+              UwU очень компактным на вид.
+            </p>
+            <input
+              type="checkbox"
+              id="extended-Hints"
+              data-setting="extendedHints"
+            />
+            <label for="extended-Hints">Расширенные подсказки</label>
+          </div>
+
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>Сборник стилей</h2>
+          <p>Онлайн сборник стилей от Разработчика.</p>
+          <hr id="uwu-hr" class="uwu-hr" />
+          <div id="module-info">
+            <!-- Сюда модули -->
+          </div>
+
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>Импорт/Экспорт</h2>
+
+          <div>
+            <p>Импорт/Экспорт всех настроек.</p>
+            <input type="text" id="exportSettings" placeholder="Экспорт" />
+            <input type="text" id="importSettings" placeholder="Импорт" />
+            <button id="importSettingsButton" class="uwu-button install-button">
+              Вставить
+            </button>
+          </div>
+
+          <div>
+            <p>
+              Удаляет все настройки. В очень редких случаях может помочь при
+              проблемных проблемах.
+            </p>
+            <button id="resetAllSaves" class="uwu-button remove-button">
+              Сброс сохранений
+            </button>
+          </div>
+        </div>
+        <div id="personal-costumes-panel">
+          <h2>Личные костюмы</h2>
+          <p>
+            Здесь вы можете добавить, просматривать и управлять своими личными
+            костюмами.
+          </p>
+          <div>
+            <input
+              type="checkbox"
+              id="personal-costume-panel"
+              data-setting="personalCostumes"
+            />
+            <label for="personal-costume-panel"
+              >⚙️Включить персональные костюмы</label
+            >
+          </div>
+          <p>
+            Это добавляет кнопку «Сохранить костюм» при наведении курсора на
+            игрока, позволяя сохранить его костюм в одном из слотов костюмов.
+          </p>
+          <div>
+            <input
+              type="checkbox"
+              id="show-costumes"
+              data-setting="showCostumesButtons"
+            />
+            <label for="show-costumes">Сохраняйте костюмы других игроков</label>
+          </div>
+          <br />
+          <hr id="uwu-hr" class="uwu-hr" />
+          <div class="costume-flex-box disabled">
+            <div class="costumeSettings">
+              <div>
+                <h3>Изменить Костюм:</h3>
+                <div>
+                  Примечание: Убедитесь, что ваше изображение имеет размер
+                  100x150 для наилучших результатов
+                </div>
+              </div>
+
+              <input
+                type="file"
+                id="costume-file"
+                accept="image/png"
+                class="uwu-button"
+              />
+              <br />
+              <br />
+              <button class="uwu-button install-button" id="changeCostume">
+                Загрузить Костюм
+              </button>
+              <br />
+              <span>или </span>
+              <br />
+              <a
+                class="uwu-button remove-button"
+                id="removeCostume"
+                style="display:inline-block; padding:4px 10px; border-radius:20px; text-decoration:none; color:inherit;"
+                >Удалить ваш костюм</a
+              >
+              <br />
+              <span>или </span>
+              <br />
+              <button
+                class="uwu-button install-button"
+                id="saveCostumeToNewSlot"
+              >
+                Сохранить в новый слот
+              </button>
+            </div>
+            <div id="cat-image">
+              Превью для вашего кота/вашей кошки отсутствует. <br /><br />
+              Перейдите в Игровую и вернитесь на эту страницу.
+            </div>
+          </div>
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h3>Библиотека костюмов:</h3>
+          <div class="costume-flex-box" id="costume-gallery"></div>
+          <hr id="uwu-hr" class="uwu-hr-head" />
         </div>
       </div>
-      <hr id="uwu-hr" class="uwu-hr">
-      <h3>Библиотека костюмов:</h3>
-      <div class="costume-flex-box" id="costume-gallery">
-      </div>
-  <hr id="uwu-hr" class="uwu-hr-head">
-</div>
-`;
+    </div>
+  `;
 // ====================================================================================================================
 //   . . . HTML БЛОК НОВОСТЕЙ . . .
 // ====================================================================================================================
 const newsPanel =
-  // html
+  /* HTML */
   `
-<div id="news-panel">
-    <button id="news-button">
-        v${current_uwu_version} - 🌿 
-    </button>
-    <div id="news-list" style="display: none">
+    <div id="news-panel">
+      <button id="news-button">
+        v${current_uwu_version} - Делаем вид, что живые.🌿
+      </button>
+      <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>— </p>
-        <hr id="uwu-hr" class="uwu-hr">
+        <p>— Добавлена библиотека Личных Костюмов!</p>
+        <hr id="uwu-hr" class="uwu-hr" />
         <h3>Внешний вид</h3>
-        <p>— </p>
-        <hr id="uwu-hr" class="uwu-hr">
+        <p>—</p>
+        <hr id="uwu-hr" class="uwu-hr" />
         <h3>Изменения кода</h3>
-        <p>— </p>
-        <hr id="uwu-hr" class="uwu-hr">
+        <p>— Возможно починен баг с NaN переходами в профиле.</p>
+        <p>
+          — Немного улучшена информативность поздравления об достижении цели.
+        </p>
+        <p>— Крутые форматирования кода для удобства себя любимого.</p>
+        <hr id="uwu-hr" class="uwu-hr" />
         <p>Дата выпуска: ??.07.25</p>
-    </div> 
-</div>
-`;
+      </div>
+    </div>
+  `;
 // ====================================================================================================================
 //   . . . HTML ПАНЕЛЬ РАСШИРЕННЫХ НАСТРОЕК . . .
 // ====================================================================================================================
 const extendedSettingsButton =
-  // html
+  /* HTML */
   `
-<div id="uwu-extended-settings">
-  <button type="button" id="extended-settings-button">
-    <img src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png" alt="Иконка"
-      width="36" height="36">
-  </button>
+    <div id="uwu-extended-settings">
+      <button type="button" id="extended-settings-button">
+        <img
+          src="https://raw.githubusercontent.com/Ibirtem/CatWar/main/images/partly_sunny_rain.png"
+          alt="Иконка"
+          width="36"
+          height="36"
+        />
+      </button>
 
-  <div id="extended-settings-container">
-    <div id="splash-screen-panel"></div>
-
-  </div>
-</div>
-`;
+      <div id="extended-settings-container">
+        <div id="splash-screen-panel"></div>
+      </div>
+    </div>
+  `;
 // ====================================================================================================================
 //   . . . HTML БЛОК РУЧНОГО УПРАВЛЕНИЯ ПОГОДЫ . . .
 // ====================================================================================================================
 const manualWeatherPanel =
-  // html
+  /* HTML */
   `
 <div id="manual-weather-panel">
 <p>Изменения, сделанные в этой панели, носят временный характер и не сохраняются.</p>
@@ -2562,7 +3838,7 @@ const css_uwu_glass =
 //   . . . ТЁМНАЯ ТЕМА . . .
 // ====================================================================================================================
 const css_uwu_dark =
-  // css
+  /* CSS */
   `
 #uwusettings {
   background-color: #242424;
@@ -11823,6 +13099,10 @@ function setupActivityCalc() {
   }
 
   function calculateRemainingTime(currentActivity, goal, hoursPerDay) {
+    if (currentActivity >= goal) {
+      return { actions: 0, time: "0 с", date: "уже достигнута" };
+    }
+
     const secondsPerDay = convertTime("h s", hoursPerDay);
     if (calculateActivityLength(currentActivity) * 4 + 1 > secondsPerDay) {
       return { actions: "∞", time: "∞", date: "никогда" };
@@ -11830,7 +13110,7 @@ function setupActivityCalc() {
 
     const actionsWithoutDecrease = goal - currentActivity;
     let days = 0;
-    let secondsToday;
+    let secondsToday = 0;
 
     while (currentActivity < goal) {
       secondsToday = 0;
@@ -11949,16 +13229,22 @@ function setupActivityCalc() {
   }
 
   function showCongratulations() {
+    const activityList = document.getElementById("activity-list");
+    const nextGoalName = activityList.options[activityList.selectedIndex].text;
+
     document.getElementById("congratulations").innerHTML =
-      // html
+      /* HTML */
       `
-      Цель <b>«${
-        activityStages[activitySettings[catId].goal].name
-      }»</b> достигнута!
-      <center><img src="/img/stickers/systempaw3/6.png"></center>
-      <input id="congratulations-button" type="button" value="Скрыть">
-      <br><input id="never-show-congratulations" type="checkbox"> Больше не поздравлять на этом персонаже
-    `;
+        Цель
+        <b>«${activityStages[activitySettings[catId].goal].name}»</b>
+        достигнута!
+        <br />
+        Ваша новая цель: <b>«${nextGoalName}»</b>
+        <center><img src="/img/stickers/systempaw3/6.png" /></center>
+        <input id="congratulations-button" type="button" value="Скрыть" />
+        <br /><input id="never-show-congratulations" type="checkbox" /> Больше
+        не поздравлять на этом персонаже
+      `;
 
     document.getElementById("congratulations").style.display = "block";
     document
