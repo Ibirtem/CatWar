@@ -7126,62 +7126,77 @@ if (targetCW3.test(window.location.href)) {
     }
 
     async function fetchInternetTime() {
-      let timeSourceFound = false;
+      const timeProviders = [
+        // Увы, вариант со Сбером ультра рабочий, но требует работы @grant GM_xmlhttpRequest из-за CORS политики,
+        // но тогда пользователь испугается всяких предупреждений. На будущее оставил, 
+        // если всё сломается вообще, но потребует потом дработки в духе новой fetchWithGM функции.
 
-      // 1. Пробуем worldtimeapi.org
-      try {
-        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const url = settings.clockMoscowTime
-          ? "https://worldtimeapi.org/api/timezone/Europe/Moscow"
-          : `https://worldtimeapi.org/api/timezone/${userTimezone}`;
-        const response = await fetch(url);
-        if (!response.ok)
-          throw new Error(
-            `Ответ от worldtimeapi.org не в порядке: ${response.status}`
-          );
-        const data = await response.json();
-        internetTime = new Date(data.datetime);
-        useInternetTime = true;
-        timeSourceFound = true;
-        lastSyncTimestamp = Date.now();
-        // console.log("Время успешно получено от worldtimeapi.org.");
-      } catch (error) {
-        console.warn(
-          "Не удалось получить время от worldtimeapi.org, пробую запасной источник.",
-          error
-        );
-      }
+        // {
+        //   name: "Sber",
+        //   buildUrl: (isMoscow) => {
+        //     const tz = isMoscow ? "Europe/Moscow" : "Etc/UTC";
+        //     return `https://smartapp-code.sberdevices.ru/tools/api/now?tz=${tz}`;
+        //   },
+        //   parseResponse: async (response) => {
+        //     const data = await response.json();
+        //     return new Date(data.timestamp);
+        //   },
+        // },
+        {
+          name: "timeapi.io",
+          buildUrl: (isMoscow) => {
+            const userTimezone =
+              Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const tz = isMoscow ? "Europe/Moscow" : userTimezone;
+            return `https://timeapi.io/api/Time/current/zone?timeZone=${tz}`;
+          },
+          parseResponse: async (response) => {
+            const data = await response.json();
+            return new Date(data.dateTime);
+          },
+        },
+        {
+          name: "worldtimeapi.org",
+          buildUrl: (isMoscow) => {
+            const userTimezone =
+              Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const tz = isMoscow ? "Europe/Moscow" : userTimezone;
+            return `https://worldtimeapi.org/api/timezone/${tz}`;
+          },
+          parseResponse: async (response) => {
+            const data = await response.json();
+            return new Date(data.datetime);
+          },
+        },
+      ];
 
-      // 2. Пробуем timeapi.io
-      if (!timeSourceFound) {
+      for (const provider of timeProviders) {
         try {
-          const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-          const url = settings.clockMoscowTime
-            ? "https://timeapi.io/api/Time/current/zone?timeZone=Europe/Moscow"
-            : `https://timeapi.io/api/Time/current/zone?timeZone=${userTimezone}`;
+          const url = provider.buildUrl(settings.clockMoscowTime);
           const response = await fetch(url);
-          if (!response.ok)
-            throw new Error(
-              `Ответ от timeapi.io не в порядке: ${response.status}`
-            );
-          const data = await response.json();
-          internetTime = new Date(data.dateTime);
+          if (!response.ok) {
+            throw new Error(`Response not OK: ${response.status}`);
+          }
+          internetTime = await provider.parseResponse(response);
           useInternetTime = true;
-          timeSourceFound = true;
           lastSyncTimestamp = Date.now();
-          // console.log("Время успешно получено от timeapi.io.");
+          console.log(`Время успешно получено от ${provider.name}.`);
+          break;
         } catch (error) {
           console.warn(
-            "Не удалось получить время от timeapi.io, используется локальное время.",
+            `Не удалось получить время от ${provider.name}, пробую следующий источник.`,
             error
           );
+          useInternetTime = false;
         }
       }
 
-      // 3. Финальная логика
-      if (timeSourceFound) {
+      if (useInternetTime) {
         updateClockWithInternetTime();
       } else {
+        console.warn(
+          "Не удалось получить время от всех онлайн-источников, используется локальное время."
+        );
         useInternetTime = false;
         if (settings.clockMoscowTime) {
           const now = new Date();
