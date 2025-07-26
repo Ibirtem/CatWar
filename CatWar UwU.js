@@ -7378,7 +7378,7 @@ if (targetCW3.test(window.location.href)) {
   if (settings.cellsNumbers) {
     function createCellNumbers(style) {
       let css =
-        // css
+        /* CSS */
         `
         #cages_div { position: relative; }
         #cages > tbody > tr > td { position: relative; }
@@ -7793,28 +7793,47 @@ if (targetCW3.test(window.location.href)) {
 
     function transferColors() {
       const transferCheckbox = document.getElementById("uwu-transferCheckbox");
-      if (!transferCheckbox.checked) return;
+      let styleTag = document.getElementById(
+        "uwu-climbing-panel-dynamic-styles"
+      );
+
+      if (!styleTag) {
+        styleTag = document.createElement("style");
+        styleTag.id = "uwu-climbing-panel-dynamic-styles";
+        document.head.appendChild(styleTag);
+      }
+
+      if (!transferCheckbox.checked) {
+        styleTag.innerHTML = "";
+        return;
+      }
 
       const climbingPanelCells = Array.from(
         document.querySelectorAll("#uwu-climbingPanel td")
       );
-      const cagesCells = Array.from(
-        document.querySelectorAll("#cages tbody td.cage")
-      );
+
+      let newCssRules = "";
+      const numCols = 10;
 
       climbingPanelCells.forEach((cell, i) => {
-        if (cagesCells[i]) {
-          cagesCells[i].style.backgroundColor =
-            getComputedStyle(cell).backgroundColor;
+        const color = getComputedStyle(cell).backgroundColor;
+        if (color && color !== "rgba(0, 0, 0, 0)" && color !== "transparent") {
+          const rowIndex = Math.floor(i / numCols) + 1;
+          const colIndex = (i % numCols) + 1;
+          newCssRules += `#cages > tbody > tr:nth-of-type(${rowIndex}) > td:nth-of-type(${colIndex})::before { background-color: ${color}; }\n`;
         }
       });
+
+      styleTag.innerHTML = newCssRules;
     }
 
     function clearColors() {
-      const cagesCells = document.querySelectorAll("#cages tbody td.cage");
-      cagesCells.forEach((cell) => {
-        cell.style.backgroundColor = "";
-      });
+      const styleTag = document.getElementById(
+        "uwu-climbing-panel-dynamic-styles"
+      );
+      if (styleTag) {
+        styleTag.innerHTML = "";
+      }
     }
 
     let lastClickedCell = null;
@@ -7882,48 +7901,50 @@ if (targetCW3.test(window.location.href)) {
     let activeInputValue = "0";
 
     const uwuClimbingPanelContainer =
-      // html
+      /* HTML */
       `
-      <div id="uwu-climbingMainPanel">
-        <div id="uwu-climbingPanelButton">
+        <div id="uwu-climbingMainPanel">
+          <div id="uwu-climbingPanelButton">
             <div class="left-content">
-                <h2>Минное поле</h2>
+              <h2>Минное поле</h2>
             </div>
             <div class="right-content">
-                <span id="uwu-arrow">▼</span>
+              <span id="uwu-arrow">▼</span>
             </div>
-        </div>
-      <div id="uwu-climbingPanelContainer">
-          <div id="uwu-climbingPanelContent">
+          </div>
+          <div id="uwu-climbingPanelContainer">
+            <div id="uwu-climbingPanelContent">
               <div id="uwu-buttonContainer">
                 <div id="uwu-inputButtons" style="display: none;">
-                <button value="0">0</button>
-                <button value="1">1</button>
-                <button value="2">2</button>
-                <button value="3">3</button>
-                <button value="4">4</button>
-                <button value="5">5</button>
-                <button value="6">6</button>
-                <button value="7">7</button>
-                <button value="transit">Переход</button>
-                <button value="mine">Мина</button>
-                <button value="">Очистить</button>
-              </div>    
-              <h3>Вкладка</h3>
-                  <div id="uwu-buttonRow1"></div>
-                  <hr id="uwu-hr">
-                  <h3>Локация</h3>
-                  <div id="uwu-buttonRow2"></div>
+                  <button value="0">0</button>
+                  <button value="1">1</button>
+                  <button value="2">2</button>
+                  <button value="3">3</button>
+                  <button value="4">4</button>
+                  <button value="5">5</button>
+                  <button value="6">6</button>
+                  <button value="7">7</button>
+                  <button value="transit">Переход</button>
+                  <button value="mine">Мина</button>
+                  <button value="">Очистить</button>
+                </div>
+                <h3>Вкладка</h3>
+                <div id="uwu-buttonRow1"></div>
+                <hr id="uwu-hr" />
+                <h3>Локация</h3>
+                <div id="uwu-buttonRow2"></div>
               </div>
               <div id="uwu-functionButtonsContainer">
-                  <input type="checkbox" id="uwu-transferCheckbox">
-                  <label for="uwu-transferCheckbox">Перенос на Игровое поле</label>
+                <input type="checkbox" id="uwu-transferCheckbox" />
+                <label for="uwu-transferCheckbox"
+                  >Перенос на Игровое поле</label
+                >
               </div>
               <div id="uwu-tableContainer"></div>
+            </div>
           </div>
-      </div>
-      </div>
-    `;
+        </div>
+      `;
 
     function createClimbingPanel() {
       const globalContainer = document.getElementById("uwu-global-container");
@@ -8397,156 +8418,171 @@ if (targetCW3.test(window.location.href)) {
 
     const uwuClimbingPanel = document.createElement("style");
     uwuClimbingPanel.innerHTML =
-      // css
+      /* CSS */
       `
-    #uwu-climbingPanelContainer {
-      background-color: "";
-      display: none;
-      padding: 5px;
-    }
-    
-    #uwu-climbingPanelContainer.open {
-      display: block;
-    }
-
-    #uwu-climbingMainPanel {
-      z-index: 2;
-      pointer-events: auto;
-      width: 260px;
-      position: absolute;
-      background-color: ${theme?.climbingPanelBackground || "#ffffff08"};
-      border: 1px solid #ffffff1a;
-      backdrop-filter: blur(20px);
-      border-radius: 10px;
-    }
-
-    #uwu-climbingPanelButton .left-content {
-      pointer-events: none;
-      width: 90%;
-    }
-
-    #uwu-climbingPanelButton .right-content {
-      pointer-events: none;
-      width: 10%;
-      text-align: right;
-    }
-
-    #uwu-arrow {
-      font-size: 18px;
-      margin-right: 8px;
-    }
-
-    #uwu-inputButtons button.active {
-      background-color: #abf6ffb0;
-    }
-
-    #uwu-climbingPanelButton {
-      cursor: grab;
-      background-color: #00000026;
-      border-radius: 10px;
-      border: 1px solid #ffffff1a;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-    }
-
-    #uwu-climbingPanelButton h2 {
-      display: flex;
-      margin-top: 2px;
-      margin-bottom: 2px;
-      justify-content: center;
-      pointer-events: none;
-    }
-
-    #uwu-climbingPanel {
-      font-size: 24px;
-      border-collapse: collapse;
-      width: 250px;
-      height: 190px;;
-      background-color: #ffffff1a;
-      border: 2px solid black;
-      table-layout: fixed;
-    }
-  
-    #uwu-climbingPanel > tr > td {
-      height: calc(100% / 6);
-      width: calc(100% / 10);
-      aspect-ratio: 1;
-      padding: 0;
-      border: 1px solid black;
-      text-align: center;
-      cursor: pointer;
-      pointer-events: auto;
-      position: relative;
-    }
-
-    @media (max-width: 500px) {
-      #uwu-climbingPanel {
-        font-size: 20px;
+      #cages > tbody > tr > td.cage {
+        position: relative;
       }
-    }
-    
-    @media (max-width: 400px) {
-      #uwu-climbingPanel {
-        font-size: 16px;
+
+      #cages > tbody > tr > td.cage::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
       }
-    }
 
-    #uwu-climbingPanelContainer h3 {
-      margin-top: 5px;
-      margin-bottom: 5px;
-    }
+      #uwu-climbingPanelContainer {
+        background-color: "";
+        display: none;
+        padding: 5px;
+      }
+      
+      #uwu-climbingPanelContainer.open {
+        display: block;
+      }
 
-    #uwu-functionButtonsContainer {
-      height: 25px;
-    }
+      #uwu-climbingMainPanel {
+        z-index: 2;
+        pointer-events: auto;
+        width: 260px;
+        position: absolute;
+        background-color: ${theme?.climbingPanelBackground || "#ffffff08"};
+        border: 1px solid #ffffff1a;
+        backdrop-filter: blur(20px);
+        border-radius: 10px;
+      }
 
-    #uwu-climbingPanel > tr > td:focus {
-      outline: 2px solid white;
-    }
+      #uwu-climbingPanelButton .left-content {
+        pointer-events: none;
+        width: 90%;
+      }
 
-    #uwu-climbingPanel > tr > td:not(:empty) {
-      background-color: #cccccc4d;
-    }
+      #uwu-climbingPanelButton .right-content {
+        pointer-events: none;
+        width: 10%;
+        text-align: right;
+      }
 
-    #uwu-transferCheckbox, #uwu-transferValuesCheckbox {
-    pointer-events: auto;
-    cursor: pointer;
-    }
+      #uwu-arrow {
+        font-size: 18px;
+        margin-right: 8px;
+      }
 
-    #uwu-buttonRow1,
-    #uwu-buttonRow2 {
-      display: flex;
-      flex-wrap: wrap;
-    }
+      #uwu-inputButtons button.active {
+        background-color: #abf6ffb0;
+      }
 
-    #uwu-climbingPanel > tab-container, #uwu-climbingPanel > table-container {
-      display: inline-block;
-      margin-right: 10px;
-    }
-  
-    #uwu-climbingPanelContainer button {
-      background-color: #ffffff4d;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 2px 10px;
-      border-radius: 10px;
+      #uwu-climbingPanelButton {
+        cursor: grab;
+        background-color: #00000026;
+        border-radius: 10px;
+        border: 1px solid #ffffff1a;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+      }
+
+      #uwu-climbingPanelButton h2 {
+        display: flex;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        justify-content: center;
+        pointer-events: none;
+      }
+
+      #uwu-climbingPanel {
+        font-size: 24px;
+        border-collapse: collapse;
+        width: 250px;
+        height: 190px;;
+        background-color: #ffffff1a;
+        border: 2px solid black;
+        table-layout: fixed;
+      }
+    
+      #uwu-climbingPanel > tr > td {
+        height: calc(100% / 6);
+        width: calc(100% / 10);
+        aspect-ratio: 1;
+        padding: 0;
+        border: 1px solid black;
+        text-align: center;
+        cursor: pointer;
+        pointer-events: auto;
+        position: relative;
+      }
+
+      @media (max-width: 500px) {
+        #uwu-climbingPanel {
+          font-size: 20px;
+        }
+      }
+      
+      @media (max-width: 400px) {
+        #uwu-climbingPanel {
+          font-size: 16px;
+        }
+      }
+
+      #uwu-climbingPanelContainer h3 {
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+
+      #uwu-functionButtonsContainer {
+        height: 25px;
+      }
+
+      #uwu-climbingPanel > tr > td:focus {
+        outline: 2px solid white;
+      }
+
+      #uwu-climbingPanel > tr > td:not(:empty) {
+        background-color: #cccccc4d;
+      }
+
+      #uwu-transferCheckbox, #uwu-transferValuesCheckbox {
+      pointer-events: auto;
       cursor: pointer;
-      transition: background-color 0.3s ease;
-      margin: 3px;
-      margin-left: 0px;
-    }
+      }
 
-    #uwu-buttonRow1 > div > button.tab-button.active,
-    #uwu-buttonRow2 > div > button.table-button.active {
-      background-color: #abf6ffb0;
-    }
+      #uwu-buttonRow1,
+      #uwu-buttonRow2 {
+        display: flex;
+        flex-wrap: wrap;
+      }
 
-    #button-clear-table {
-      margin-top: 5px !important;
-      width: 100%;
-      border-radius: 5px !important;
-    }
-  `;
+      #uwu-climbingPanel > tab-container, #uwu-climbingPanel > table-container {
+        display: inline-block;
+        margin-right: 10px;
+      }
+    
+      #uwu-climbingPanelContainer button {
+        background-color: #ffffff4d;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 2px 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin: 3px;
+        margin-left: 0px;
+      }
+
+      #uwu-buttonRow1 > div > button.tab-button.active,
+      #uwu-buttonRow2 > div > button.table-button.active {
+        background-color: #abf6ffb0;
+      }
+
+      #button-clear-table {
+        margin-top: 5px !important;
+        width: 100%;
+        border-radius: 5px !important;
+      }
+    `;
     document.head.appendChild(uwuClimbingPanel);
 
     const uwuClimbingPanelHorizontal = document.createElement("style");
