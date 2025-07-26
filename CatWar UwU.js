@@ -154,6 +154,7 @@ const uwuDefaultSettings = {
   moreCommentButtons: false,
   lsWrapPreview: false,
   calculators: false,
+  savingLS: false,
 
   extendedSettingsPanel: false,
   showUpdateNotification: false,
@@ -1001,6 +1002,28 @@ const uwusettings =
 
           <hr id="uwu-hr" class="uwu-hr" />
           <h2>Общение</h2>
+
+          <div>
+            <p>
+              Позволяет сохранять личные сообщения локально в браузере для
+              офлайн-доступа.
+            </p>
+            <input type="checkbox" id="saving-LS" data-setting="savingLS" />
+            <label for="saving-LS">Сохранение Личных сообщений</label>
+          </div>
+
+          <div>
+            <p>
+              Автоматически находит и переносит ваши сохранённые ЛС из Варомода
+              в хранилище UwU.
+            </p>
+            <button
+              id="import-ls-from-varmod"
+              class="uwu-button install-button"
+            >
+              Импортировать ЛС из Варомода
+            </button>
+          </div>
 
           <div>
             <p>
@@ -2826,13 +2849,13 @@ const newsPanel =
   `
     <div id="news-panel">
       <button id="news-button">
-        v${current_uwu_version} - Делаем вид, что живые.🌿
+        v${current_uwu_version} - Делаем вид, что живые. Чёта даже добавил.🌿
       </button>
       <div id="news-list" style="display: none">
         <h3>Главное</h3>
         <p>
-          — Добавлены библиотека Личных Костюмов, счётчик Символов в чате и
-          отдельный Импорт/Экспорт цветов Параметров и Навыков!
+          — Добавлены Сохранение сообщений, Библиотека личных костюмов, Счётчик символов в чате и
+          отдельный Импорт/Экспорт цветов параметров и навыков!
         </p>
         <hr id="uwu-hr" class="uwu-hr" />
         <h3>Внешний вид</h3>
@@ -4613,6 +4636,54 @@ if (targetSettings.test(window.location.href)) {
       );
     });
     loadCostume();
+  }
+
+  // ====================================================================================================================
+  //  . . . ИМПОРТ ЛС ИЗ ВАРОМОДА . . .
+  // ====================================================================================================================
+  function importLsFromVarmod() {
+    try {
+      const varmodLsRaw = localStorage.getItem("cwmod_ls");
+      if (!varmodLsRaw) {
+        alert("Сохранённые ЛС из Варомода не найдены в вашем браузере.");
+        return;
+      }
+
+      const varmodLs = JSON.parse(varmodLsRaw);
+      const uwuLs = JSON.parse(localStorage.getItem("uwu_saved_ls")) || {};
+
+      let importedCount = 0;
+      let updatedCount = 0;
+
+      for (const lsId in varmodLs) {
+        if (uwuLs.hasOwnProperty(lsId)) {
+          const varmodDate = new Date(varmodLs[lsId].savedate);
+          const uwuDate = new Date(uwuLs[lsId].savedate);
+          if (varmodDate > uwuDate) {
+            uwuLs[lsId] = varmodLs[lsId];
+            updatedCount++;
+          }
+        } else {
+          uwuLs[lsId] = varmodLs[lsId];
+          importedCount++;
+        }
+      }
+
+      localStorage.setItem("uwu_saved_ls", JSON.stringify(uwuLs));
+      alert(
+        `Импорт успешно завершён!\nНовых переписок импортировано: ${importedCount}\nСуществующих переписок обновлено: ${updatedCount}`
+      );
+    } catch (error) {
+      console.error("UwU | Ошибка при импорте ЛС из Варомода:", error);
+      alert(
+        "Произошла ошибка во время импорта. Возможно, данные Варомода повреждены."
+      );
+    }
+  }
+
+  const importLsButton = document.getElementById("import-ls-from-varmod");
+  if (importLsButton) {
+    importLsButton.addEventListener("click", importLsFromVarmod);
   }
 
   // ====================================================================================================================
@@ -14185,3 +14256,374 @@ function initializeTemplates() {
 }
 
 initializeTemplates();
+
+// ====================================================================================================================
+//   . . . СОХРАНЕНИЕ ЛИЧНЫХ СООБЩЕНИЙ . . .
+// ====================================================================================================================
+if (targetLs.test(window.location.href) && settings.savingLS) {
+  // console.log("UwU | Модуль сохранения ЛС активен.");
+
+  /**
+   * Удаляет сохраненное ЛС из localStorage по его ID.
+   * @param {number} lsId - ID личного сообщения для удаления.
+   * @param {boolean} silent - Если true, не показывать alert.
+   */
+  function deleteSavedLS(lsId, silent = false) {
+    try {
+      const savedLs = JSON.parse(localStorage.getItem("uwu_saved_ls")) || {};
+      if (savedLs.hasOwnProperty(lsId)) {
+        delete savedLs[lsId];
+        localStorage.setItem("uwu_saved_ls", JSON.stringify(savedLs));
+        if (!silent) {
+          alert("Сохранённая переписка удалена.");
+        }
+        if (window.location.search.includes(`?id=${lsId}`)) {
+          addSaveButtonsToMessagePage();
+        }
+        updateSavedLsCount();
+      }
+    } catch (error) {
+      console.error("UwU | Ошибка при удалении ЛС:", error);
+      if (!silent) {
+        alert("Произошла ошибка при удалении переписки.");
+      }
+    }
+  }
+
+  /**
+   * Сохраняет текущее открытое ЛС в localStorage.
+   */
+  function saveCurrentLS() {
+    try {
+      const mainDiv = document.getElementById("main");
+      const lsId = parseInt(window.location.href.split("=")[1], 10);
+      if (isNaN(lsId)) return;
+
+      const savedLs = JSON.parse(localStorage.getItem("uwu_saved_ls")) || {};
+
+      const ls = {};
+      ls.subject = document.getElementById("msg_subject").textContent;
+      ls.text = document.querySelector(".parsed").innerHTML;
+
+      const msgInfo = document.getElementById("msg_info");
+      const dateMatch = msgInfo.innerHTML.match(
+        /\d{1,2} [а-я]+ \d{4} в \d{2}:\d{2}/
+      );
+      ls.date = dateMatch ? dateMatch[0] : new Date().toLocaleString();
+
+      ls.catId = parseInt(
+        document
+          .getElementById("msg_login")
+          .getAttribute("href")
+          .match(/\d+/)[0],
+        10
+      );
+      ls.catName = document.getElementById("msg_login").textContent;
+      ls.myId = mainDiv.dataset.id;
+      ls.myName = mainDiv.dataset.login;
+      ls.type = /Отправитель:/.test(msgInfo.innerHTML) ? 0 : 1;
+
+      const now = new Date();
+      ls.savedate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}-${String(now.getDate()).padStart(2, "0")} ${String(
+        now.getHours()
+      ).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(
+        now.getSeconds()
+      ).padStart(2, "0")}`;
+
+      savedLs[lsId] = ls;
+      localStorage.setItem("uwu_saved_ls", JSON.stringify(savedLs));
+
+      alert("Переписка успешно сохранена!");
+      addSaveButtonsToMessagePage();
+      updateSavedLsCount();
+    } catch (error) {
+      console.error("UwU | Ошибка при сохранении ЛС:", error);
+      alert("Произошла ошибка при сохранении переписки.");
+    }
+  }
+
+  /**
+   * Добавляет кнопки управления сохранением на страницу просмотра ЛС.
+   */
+  function addSaveButtonsToMessagePage() {
+    const subjectTd = document.querySelector("#msg_table td[colspan='2']");
+    if (!subjectTd) return;
+
+    const oldButtons = subjectTd.querySelector("#uwu-ls-buttons");
+    if (oldButtons) oldButtons.remove();
+
+    const lsId = parseInt(window.location.href.split("=")[1], 10);
+    const savedLs = JSON.parse(localStorage.getItem("uwu_saved_ls")) || {};
+    const isSaved = savedLs.hasOwnProperty(lsId);
+
+    const buttonsContainer = document.createElement("span");
+    buttonsContainer.id = "uwu-ls-buttons";
+    buttonsContainer.style.float = "right";
+
+    const saveButton = document.createElement("input");
+    saveButton.type = "button";
+    saveButton.value = isSaved ? "Обновить" : "Сохранить";
+    saveButton.className = "uwu-button install-button";
+    saveButton.style.marginLeft = "5px";
+    saveButton.onclick = saveCurrentLS;
+
+    buttonsContainer.appendChild(saveButton);
+
+    if (isSaved) {
+      const deleteButton = document.createElement("input");
+      deleteButton.type = "button";
+      deleteButton.value = "Удалить";
+      deleteButton.className = "uwu-button remove-button";
+      deleteButton.style.marginLeft = "5px";
+      deleteButton.onclick = () => deleteSavedLS(lsId);
+      buttonsContainer.appendChild(deleteButton);
+
+      const savedDate = document.createElement("i");
+      savedDate.textContent = `Сохранено: ${savedLs[lsId].savedate}`;
+      savedDate.style.marginRight = "10px";
+      buttonsContainer.prepend(savedDate);
+    }
+
+    subjectTd.appendChild(buttonsContainer);
+  }
+
+  /**
+   * Обновляет счетчик сохраненных сообщений во вкладке.
+   */
+  function updateSavedLsCount() {
+    const counter = document.getElementById("uwu-saved-ls-count");
+    if (!counter) return;
+    const savedLs = JSON.parse(localStorage.getItem("uwu_saved_ls")) || {};
+    counter.textContent = Object.keys(savedLs).length;
+  }
+
+  /**
+   * Отображает интерфейс с сохраненными сообщениями.
+   */
+  function showSavedMessagesInterface(event) {
+    if (event) event.preventDefault();
+    console.log("UwU | Открываю вкладку сохранённых ЛС.");
+
+    document.getElementById("main").style.display = "none";
+    document
+      .querySelectorAll("#links a")
+      .forEach((a) => a.classList.remove("active"));
+    document.getElementById("uwu-saved-ls-tab").classList.add("active");
+
+    let container = document.getElementById("uwu-saved-ls-container");
+    if (!container) {
+      container = document.createElement("div");
+      container.id = "uwu-saved-ls-container";
+      document.getElementById("main").after(container);
+    }
+    container.style.display = "block";
+    renderSavedMessagesList(container);
+  }
+
+  /**
+   * Скрывает интерфейс сохраненных сообщений и показывает стандартный.
+   */
+  function hideSavedMessagesInterface() {
+    const container = document.getElementById("uwu-saved-ls-container");
+    if (container) container.style.display = "none";
+    document.getElementById("main").style.display = "block";
+    document.getElementById("uwu-saved-ls-tab")?.classList.remove("active");
+  }
+
+  /**
+   * Внедряет CSS-стили для интерфейса сохранения ЛС.
+   */
+  function injectLSSyles() {
+    if (document.getElementById("uwu-ls-styles")) return;
+
+    const css =
+      /* CSS */
+      `
+       #uwu-saved-ls-tab {
+        padding: 2px 8px;
+        border-radius: 10px;
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: background-color 0.3s ease;
+        text-decoration: none !important;
+      }
+      #uwu-saved-ls-tab:hover, #uwu-saved-ls-tab.active {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      #uwu-saved-ls-container .messList {
+        table-layout: fixed;
+        width: 100%;
+      }
+      
+      #uwu-saved-ls-container .messList a {
+        color: #0000cd;
+      }
+      
+      #uwu-saved-ls-container .messList th:nth-child(1) { width: 50%; }
+      #uwu-saved-ls-container .messList th:nth-child(2) { width: 25%; }
+      #uwu-saved-ls-container .messList th:nth-child(3) { width: 20%; }
+      #uwu-saved-ls-container .messList th:nth-child(4) { width: 5%; }
+
+      #uwu-saved-ls-container .delete-saved-ls {
+        padding: 1px 7px;
+      }
+    `;
+    const styleElement = document.createElement("style");
+    styleElement.id = "uwu-ls-styles";
+    styleElement.textContent = css;
+    document.head.appendChild(styleElement);
+  }
+
+  /**
+   * Отрисовывает список сохраненных сообщений в указанном контейнере.
+   * @param {HTMLElement} container - Элемент для отрисовки.
+   */
+  function renderSavedMessagesList(container) {
+    const savedLsRaw = localStorage.getItem("uwu_saved_ls");
+    const savedLs = JSON.parse(savedLsRaw) || {};
+    const keys = Object.keys(savedLs);
+
+    const storageSize = savedLsRaw
+      ? (new TextEncoder().encode(savedLsRaw).length / 1024 / 1024).toFixed(2)
+      : 0;
+
+    if (keys.length === 0) {
+      container.innerHTML = "<h3>У вас нет сохранённых сообщений.</h3>";
+      return;
+    }
+
+    let inboxHTML = "";
+    let outboxHTML = "";
+
+    keys.forEach((key) => {
+      const ls = savedLs[key];
+      const rowHTML =
+        /* HTML */
+        `
+          <tr class="msg_read">
+            <td>
+              <a href="/ls?id=${key}" class="msg_open" data-id="${key}"
+                >${ls.subject}</a
+              >
+            </td>
+            <td><a href="/cat${ls.catId}">${ls.catName}</a></td>
+            <td>${ls.savedate}</td>
+            <td>
+              <input
+                type="button"
+                value="X"
+                class="uwu-button remove-button delete-saved-ls"
+                data-id="${key}"
+                title="Удалить"
+              />
+            </td>
+          </tr>
+        `;
+      if (ls.type === 0) {
+        inboxHTML += rowHTML;
+      } else {
+        outboxHTML += rowHTML;
+      }
+    });
+
+    container.innerHTML =
+      /* HTML */
+      `
+        <p style="text-align: center; color: #888;">
+          Использовано примерно ${storageSize} из 5.00 МБ дискового
+          пространства.
+        </p>
+        <h2>Входящие</h2>
+        <table class="messList">
+          <tbody>
+            <tr>
+              <th>Тема</th>
+              <th>Отправитель</th>
+              <th>Дата сохранения</th>
+              <th></th>
+            </tr>
+            ${inboxHTML}
+          </tbody>
+        </table>
+        <br />
+        <h2>Отправленные</h2>
+        <table class="messList">
+          <tbody>
+            <tr>
+              <th>Тема</th>
+              <th>Получатель</th>
+              <th>Дата сохранения</th>
+              <th></th>
+            </tr>
+            ${outboxHTML}
+          </tbody>
+        </table>
+      `;
+
+    container.querySelectorAll(".delete-saved-ls").forEach((button) => {
+      button.addEventListener("click", (e) => {
+        const lsId = e.target.dataset.id;
+        if (
+          confirm(
+            "Вы уверены, что хотите удалить эту переписку из сохранённых?"
+          )
+        ) {
+          deleteSavedLS(lsId, true);
+          e.target.closest("tr").remove();
+          renderSavedMessagesList(container);
+        }
+      });
+    });
+  }
+
+  /**
+   * Добавляет вкладку "Сохранённые" в меню ЛС.
+   */
+  function addSavedMessagesTab() {
+    const linksContainer = document.getElementById("links");
+    if (!linksContainer || document.getElementById("uwu-saved-ls-tab")) return;
+
+    linksContainer.insertAdjacentHTML(
+      "beforeend",
+      ` | <a href="#" id="uwu-saved-ls-tab">Сохранённые (<span id="uwu-saved-ls-count">0</span>)</a>`
+    );
+
+    const savedTab = document.getElementById("uwu-saved-ls-tab");
+    savedTab.addEventListener("click", showSavedMessagesInterface);
+
+    linksContainer.querySelectorAll("a:not(#uwu-saved-ls-tab)").forEach((a) => {
+      a.addEventListener("click", () => {
+        if (!a.href.includes("ls?id=")) {
+          hideSavedMessagesInterface();
+        }
+      });
+    });
+
+    updateSavedLsCount();
+  }
+
+  /**
+   * Функция-обработчик, которая определяет, что делать на странице ЛС.
+   */
+  function initializeLSPageLogic() {
+    injectLSSyles();
+
+    if (
+      window.location.search.includes("?id=") &&
+      document.getElementById("msg_table")
+    ) {
+      console.log("UwU | Обнаружена страница сообщения. Встраиваю кнопки...");
+      addSaveButtonsToMessagePage();
+      hideSavedMessagesInterface();
+    } else {
+      console.log("UwU | Обнаружена главная страница ЛС. Встраиваю вкладку...");
+      addSavedMessagesTab();
+    }
+  }
+
+  setupMutationObserver("#main", initializeLSPageLogic, { childList: true });
+}
