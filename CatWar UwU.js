@@ -5005,6 +5005,7 @@ if (targetSettings.test(window.location.href)) {
     "uwu_clock",
     "uwu_templates",
     "uwu_highlightResources",
+    "uwu_saved_ls",
   ];
 
   function resetAllSaves() {
