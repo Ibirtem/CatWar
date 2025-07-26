@@ -1578,6 +1578,27 @@ const uwusettings =
           </div>
 
           <div>
+            <p>Импорт/Экспорт настроек цветов параметров и навыков.</p>
+            <input
+              type="text"
+              id="param-colors-export-field"
+              placeholder="Экспорт"
+              readonly
+            />
+            <input
+              type="text"
+              id="param-colors-import-field"
+              placeholder="Импорт"
+            />
+            <button
+              id="param-colors-import-btn"
+              class="uwu-button install-button"
+            >
+              Вставить
+            </button>
+          </div>
+
+          <div>
             <p>Накладывает поверх цветов изображение с узорами.</p>
             <input
               type="checkbox"
@@ -2809,7 +2830,10 @@ const newsPanel =
       </button>
       <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>— Добавлены библиотека Личных Костюмов, счётчик Символов в чате!</p>
+        <p>
+          — Добавлены библиотека Личных Костюмов, счётчик Символов в чате и
+          отдельный Импорт/Экспорт цветов Параметров и Навыков!
+        </p>
         <hr id="uwu-hr" class="uwu-hr" />
         <h3>Внешний вид</h3>
         <p>— 🌸</p>
@@ -4747,7 +4771,62 @@ if (targetSettings.test(window.location.href)) {
       if (bgToInput) bgToInput.value = colors[3];
     }
   }
+
   restoreColorPickers();
+
+  function setupParameterColorImportExport() {
+    const exportField = document.getElementById("param-colors-export-field");
+    const importField = document.getElementById("param-colors-import-field");
+    const importButton = document.getElementById("param-colors-import-btn");
+
+    if (!exportField || !importField || !importButton) return;
+
+    function updateParamColorsExportField() {
+      try {
+        exportField.value = JSON.stringify(settings.parametersColors);
+      } catch (error) {
+        console.error("Ошибка при обновлении поля экспорта цветов:", error);
+        exportField.value = "Ошибка экспорта.";
+      }
+    }
+
+    importButton.addEventListener("click", () => {
+      const jsonString = importField.value;
+      if (!jsonString.trim()) {
+        alert("Поле для импорта пустое.");
+        return;
+      }
+
+      try {
+        const importedColors = JSON.parse(jsonString);
+
+        if (
+          typeof importedColors !== "object" ||
+          importedColors === null ||
+          !importedColors.dream
+        ) {
+          throw new Error("Неверный формат данных.");
+        }
+
+        settings.parametersColors = importedColors;
+        saveSettings();
+        restoreColorPickers();
+        updateParamColorsExportField();
+
+        alert("Настройки цветов успешно импортированы!");
+        importField.value = "";
+      } catch (error) {
+        alert(
+          "Ошибка! Не удалось импортировать настройки. Проверьте корректность вставленных данных."
+        );
+        console.error("Ошибка импорта цветов параметров:", error);
+      }
+    });
+
+    updateParamColorsExportField();
+  }
+
+  setupParameterColorImportExport();
   // ====================================================================================================================
   //  . . . ПОДСВЕТКА РЕСУРСОВ . . .
   // ====================================================================================================================
