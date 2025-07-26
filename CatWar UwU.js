@@ -2808,6 +2808,11 @@ const newsPanel =
           — Немного улучшена информативность поздравления об достижении цели.
         </p>
         <p>— Крутые форматирования кода для удобства себя любимого.</p>
+        <p>— Лужи теперь не влияют на цветные клетки Минного поля.</p>
+        <p>
+          — Повышена отказоустойчивость сохранений, если вы вдруг каким-то
+          образом всё же умудрились их сломать.
+        </p>
         <hr id="uwu-hr" class="uwu-hr" />
         <p>Дата выпуска: ??.07.25</p>
       </div>
@@ -3977,12 +3982,23 @@ function saveSettings() {
 
 function loadSettings() {
   const storedSettings = localStorage.getItem("uwu_settings");
-  if (storedSettings && typeof storedSettings === "string") {
-    const loadedSettings = JSON.parse(storedSettings);
-    settings = { ...uwuDefaultSettings, ...loadedSettings };
+  if (storedSettings) {
+    try {
+      const loadedSettings = JSON.parse(storedSettings);
+      if (typeof loadedSettings === "object" && loadedSettings !== null) {
+        settings = { ...uwuDefaultSettings, ...loadedSettings };
+      } else {
+        throw new Error("Сохраненные настройки не являются объектом.");
+      }
+    } catch (error) {
+      console.error(
+        "Ошибка парсинга uwu_settings, будут применены настройки по умолчанию.",
+        error
+      );
+      settings = { ...uwuDefaultSettings };
+    }
   } else {
     settings = { ...uwuDefaultSettings };
-    console.log("Нет сохраненных настроек");
   }
 }
 // ====================================================================================================================
