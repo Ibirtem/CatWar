@@ -1014,11 +1014,11 @@ const uwusettings =
 
           <div>
             <p>
-              Автоматически находит и переносит ваши сохранённые ЛС из Варомода
+              Автоматически находит и переносит ваши сохранённые ЛС из подходящих модов и скриптов
               в хранилище UwU.
             </p>
             <button
-              id="import-ls-from-varmod"
+              id="import-ls-from-other-mods"
               class="uwu-button install-button"
             >
               Импортировать ЛС из Варомода
@@ -4699,7 +4699,7 @@ if (targetSettings.test(window.location.href)) {
     }
   }
 
-  const importLsButton = document.getElementById("import-ls-from-varmod");
+  const importLsButton = document.getElementById("import-ls-from-other-mods");
   if (importLsButton) {
     importLsButton.addEventListener("click", importLsFromVarmod);
   }
