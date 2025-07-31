@@ -1005,44 +1005,6 @@ const uwusettings =
 
           <div>
             <p>
-              Позволяет сохранять личные сообщения локально в браузере для
-              офлайн-доступа.
-            </p>
-            <input type="checkbox" id="saving-LS" data-setting="savingLS" />
-            <label for="saving-LS">Сохранение Личных сообщений</label>
-          </div>
-
-          <div>
-            <p>
-              Автоматически находит и переносит ваши сохранённые ЛС из подходящих модов и скриптов
-              в хранилище UwU.
-            </p>
-            <button
-              id="import-ls-from-other-mods"
-              class="uwu-button install-button"
-            >
-              Импортировать ЛС из Варомода
-            </button>
-          </div>
-
-          <div>
-            <p>
-              Индивидуальный импорт/экспорт только сохранённых личных сообщений.
-            </p>
-            <input
-              type="text"
-              id="ls-export-field"
-              placeholder="Экспорт ЛС"
-              readonly
-            />
-            <input type="text" id="ls-import-field" placeholder="Импорт ЛС" />
-            <button id="ls-import-btn" class="uwu-button install-button">
-              Вставить
-            </button>
-          </div>
-
-          <div>
-            <p>
               Добавляет аватар с профиля отправителя на его комментарий в лентах
               и блогах.
             </p>
@@ -2620,6 +2582,44 @@ const uwusettings =
 
           <div>
             <p>
+              Позволяет сохранять личные сообщения локально в браузере для
+              офлайн-доступа.
+            </p>
+            <input type="checkbox" id="saving-LS" data-setting="savingLS" />
+            <label for="saving-LS">Сохранение Личных сообщений</label>
+          </div>
+
+          <div>
+            <p>
+              Автоматически находит и переносит ваши сохранённые ЛС из
+              подходящих модов и скриптов в хранилище UwU.
+            </p>
+            <button
+              id="import-ls-from-other-mods"
+              class="uwu-button install-button"
+            >
+              Импортировать ЛС из других модов и скриптов
+            </button>
+          </div>
+
+          <div>
+            <p>
+              Индивидуальный импорт/экспорт только сохранённых личных сообщений.
+            </p>
+            <input
+              type="text"
+              id="ls-export-field"
+              placeholder="Экспорт ЛС"
+              readonly
+            />
+            <input type="text" id="ls-import-field" placeholder="Импорт ЛС" />
+            <button id="ls-import-btn" class="uwu-button install-button">
+              Вставить
+            </button>
+          </div>
+
+          <div>
+            <p>
               Автоматически сохраняет и восстанавливает редактируемый текст
               блога. Теперь вы не потеряете его случайно.
             </p>
@@ -2897,7 +2897,7 @@ const newsPanel =
         <p>— Джойстик для Охоты стал потенциально чуть производительней.</p>
         <p>— Клик по Экспорт полям автоматически выделяет всё внутри.</p>
         <hr id="uwu-hr" class="uwu-hr" />
-        <p>Дата выпуска: ??.07.25</p>
+        <p>Дата выпуска: 31.07.25</p>
       </div>
     </div>
   `;
@@ -4657,13 +4657,13 @@ if (targetSettings.test(window.location.href)) {
   }
 
   // ====================================================================================================================
-  //  . . . ИМПОРТ ЛС ИЗ ВАРОМОДА . . .
+  //  . . . ИМПОРТ ЛС ИЗ ДРУГИХ МОДОВ (ВАРОМОДА) . . .
   // ====================================================================================================================
   function importLsFromVarmod() {
     try {
       const varmodLsRaw = localStorage.getItem("cwmod_ls");
       if (!varmodLsRaw) {
-        alert("Сохранённые ЛС из Варомода не найдены в вашем браузере.");
+        alert("Сохранённые ЛС из других модов или скриптов не найдены в вашем браузере.");
         return;
       }
 
@@ -4692,9 +4692,9 @@ if (targetSettings.test(window.location.href)) {
         `Импорт успешно завершён!\nНовых переписок импортировано: ${importedCount}\nСуществующих переписок обновлено: ${updatedCount}`
       );
     } catch (error) {
-      console.error("UwU | Ошибка при импорте ЛС из Варомода:", error);
+      console.error("UwU | Ошибка при импорте ЛС из других модов:", error);
       alert(
-        "Произошла ошибка во время импорта. Возможно, данные Варомода повреждены."
+        "Произошла ошибка во время импорта. Возможно, данные других модов повреждены."
       );
     }
   }
@@ -7128,7 +7128,7 @@ if (targetCW3.test(window.location.href)) {
     async function fetchInternetTime() {
       const timeProviders = [
         // Увы, вариант со Сбером ультра рабочий, но требует работы @grant GM_xmlhttpRequest из-за CORS политики,
-        // но тогда пользователь испугается всяких предупреждений. На будущее оставил, 
+        // но тогда пользователь испугается всяких предупреждений. На будущее оставил,
         // если всё сломается вообще, но потребует потом дработки в духе новой fetchWithGM функции.
 
         // {
