@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.39.0-07.25
+// @version      v1.39.1-08.25
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.net/cat1477928 )
 // @copyright    2025, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.39.0";
+const current_uwu_version = "1.39.1";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   settingsTheme: "dark",
@@ -2896,8 +2896,12 @@ const newsPanel =
         </p>
         <p>— Джойстик для Охоты стал потенциально чуть производительней.</p>
         <p>— Клик по Экспорт полям автоматически выделяет всё внутри.</p>
+        <p>—— Fix 1.30.1</p>
+        <p>—— Подправлен сброс временных зон при обновлении часов.</p>
+        <p>—— Нумерация ячеек и Минное поле теперь не конфликтуют по стилям.</p>
+        <p>—— Расширенные настройки в Игровой теперь не перекрываются Полем.</p>
         <hr id="uwu-hr" class="uwu-hr" />
-        <p>Дата выпуска: 31.07.25</p>
+        <p>Дата выпуска: 02.08.25</p>
       </div>
     </div>
   `;
@@ -3346,6 +3350,7 @@ const css_uwu_main = `
 }
 
 #extended-settings-container {
+  z-index: 10;
   font-family: "Montserrat", sans-serif;
   color: white;
   font-size: 15px;
@@ -4663,7 +4668,9 @@ if (targetSettings.test(window.location.href)) {
     try {
       const varmodLsRaw = localStorage.getItem("cwmod_ls");
       if (!varmodLsRaw) {
-        alert("Сохранённые ЛС из других модов или скриптов не найдены в вашем браузере.");
+        alert(
+          "Сохранённые ЛС из других модов или скриптов не найдены в вашем браузере."
+        );
         return;
       }
 
@@ -7198,14 +7205,7 @@ if (targetCW3.test(window.location.href)) {
           "Не удалось получить время от всех онлайн-источников, используется локальное время."
         );
         useInternetTime = false;
-        if (settings.clockMoscowTime) {
-          const now = new Date();
-          const utcTime = now.getTime() + now.getTimezoneOffset() * 60000;
-          const moscowTime = new Date(utcTime + 3600000 * 3); // UTC+3
-          updateClock(moscowTime);
-        } else {
-          updateClock();
-        }
+        updateClockWithLocalTime();
       }
 
       startTimer();
@@ -7221,6 +7221,17 @@ if (targetCW3.test(window.location.href)) {
       }
     }
 
+    function updateClockWithLocalTime() {
+      if (settings.clockMoscowTime) {
+        const now = new Date();
+        const utcTime = now.getTime() + now.getTimezoneOffset() * 60000;
+        const moscowTime = new Date(utcTime + 3600000 * 3); // UTC+3
+        updateClock(moscowTime);
+      } else {
+        updateClock();
+      }
+    }
+
     function startTimer() {
       if (timerInterval) {
         clearInterval(timerInterval);
@@ -7229,7 +7240,7 @@ if (targetCW3.test(window.location.href)) {
         if (useInternetTime) {
           updateClockWithInternetTime();
         } else {
-          updateClock();
+          updateClockWithLocalTime();
         }
       }, 1000);
     }
@@ -7727,7 +7738,7 @@ if (targetCW3.test(window.location.href)) {
         #cages > tbody > tr > td::before { 
           content: attr(data-cell-num);
           position: absolute; 
-          z-index: 0; 
+          z-index: 2;
           top: 5px; 
           right: 5px;
           color: ${style.color || "#000"}; 
@@ -8162,7 +8173,7 @@ if (targetCW3.test(window.location.href)) {
         if (color && color !== "rgba(0, 0, 0, 0)" && color !== "transparent") {
           const rowIndex = Math.floor(i / numCols) + 1;
           const colIndex = (i % numCols) + 1;
-          newCssRules += `#cages > tbody > tr:nth-of-type(${rowIndex}) > td:nth-of-type(${colIndex})::before { background-color: ${color}; }\n`;
+          newCssRules += `#cages > tbody > tr:nth-of-type(${rowIndex}) > td:nth-of-type(${colIndex})::after { background-color: ${color}; }\n`;
         }
       });
 
@@ -8766,7 +8777,7 @@ if (targetCW3.test(window.location.href)) {
         position: relative;
       }
 
-      #cages > tbody > tr > td.cage::before {
+      #cages > tbody > tr > td.cage::after {
         content: '';
         position: absolute;
         top: 0;
