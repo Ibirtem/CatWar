@@ -2899,6 +2899,7 @@ const newsPanel =
         <p>—— Fix 1.30.1</p>
         <p>—— Подправлен сброс временных зон при обновлении часов.</p>
         <p>—— Нумерация ячеек и Минное поле теперь не конфликтуют по стилям.</p>
+        <p>—— Расширенные настройки в Игровой теперь не перекрываются Полем.</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <p>Дата выпуска: 02.08.25</p>
       </div>
@@ -3349,6 +3350,7 @@ const css_uwu_main = `
 }
 
 #extended-settings-container {
+  z-index: 10;
   font-family: "Montserrat", sans-serif;
   color: white;
   font-size: 15px;
@@ -4666,7 +4668,9 @@ if (targetSettings.test(window.location.href)) {
     try {
       const varmodLsRaw = localStorage.getItem("cwmod_ls");
       if (!varmodLsRaw) {
-        alert("Сохранённые ЛС из других модов или скриптов не найдены в вашем браузере.");
+        alert(
+          "Сохранённые ЛС из других модов или скриптов не найдены в вашем браузере."
+        );
         return;
       }
 
