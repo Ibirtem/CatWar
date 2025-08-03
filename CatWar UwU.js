@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.39.1-08.25
+// @version      v1.39.2-08.25
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.net/cat1477928 )
 // @copyright    2025, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.39.1";
+const current_uwu_version = "1.39.2";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   settingsTheme: "dark",
@@ -2900,8 +2900,12 @@ const newsPanel =
         <p>—— Подправлен сброс временных зон при обновлении часов.</p>
         <p>—— Нумерация ячеек и Минное поле теперь не конфликтуют по стилям.</p>
         <p>—— Расширенные настройки в Игровой теперь не перекрываются Полем.</p>
+        <p>——— Fix 1.39.2</p>
+        <p>
+          ——— Улучшена отказоустойчивость применения стилей Редизайна игровой.
+        </p>
         <hr id="uwu-hr" class="uwu-hr" />
-        <p>Дата выпуска: 02.08.25</p>
+        <p>Дата выпуска: 03.08.25</p>
       </div>
     </div>
   `;
@@ -9807,7 +9811,7 @@ if (targetCW3.test(window.location.href)) {
     // Больше фикс стилей.
     const fixStyle = document.createElement("style");
     fixStyle.innerHTML =
-      // css
+      /* CSS */
       `
       #main_table {
         width: 100%;
@@ -9966,8 +9970,19 @@ if (targetCW3.test(window.location.href)) {
 
     function applyLayoutSettingsForInfoMain() {
       const infoMainTable = document.getElementById("info_main");
+      if (!infoMainTable) {
+        return;
+      }
+
       const tableRow = infoMainTable.querySelector("tr");
+      if (!tableRow) {
+        return;
+      }
+
       const tds = tableRow.getElementsByTagName("td");
+      if (tds.length < 3) {
+        return;
+      }
 
       for (const td of tds) {
         td.style.gridArea = "";
@@ -9983,6 +9998,7 @@ if (targetCW3.test(window.location.href)) {
       tds[1].style.gridArea = "history";
       tds[2].style.gridArea = "parameter";
     }
+
     applyLayoutSettingsForInfoMain();
   }
 
