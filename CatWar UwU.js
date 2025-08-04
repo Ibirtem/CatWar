@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.39.2-08.25
+// @version      v1.39.3-08.25
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.net/cat1477928 )
 // @copyright    2025, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.39.2";
+const current_uwu_version = "1.39.3";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   settingsTheme: "dark",
@@ -2904,6 +2904,8 @@ const newsPanel =
         <p>
           ——— Улучшена отказоустойчивость применения стилей Редизайна игровой.
         </p>
+        <p>———— Fix 1.39.3</p>
+        <p>———— Минное поле теперь не перекрашивает весь контент клетки (Например котов).</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <p>Дата выпуска: 03.08.25</p>
       </div>
@@ -7739,7 +7741,7 @@ if (targetCW3.test(window.location.href)) {
         `
         #cages_div { position: relative; }
         #cages > tbody > tr > td { position: relative; }
-        #cages > tbody > tr > td::before { 
+        #cages > tbody > tr > td::after { 
           content: attr(data-cell-num);
           position: absolute; 
           z-index: 2;
@@ -8177,7 +8179,7 @@ if (targetCW3.test(window.location.href)) {
         if (color && color !== "rgba(0, 0, 0, 0)" && color !== "transparent") {
           const rowIndex = Math.floor(i / numCols) + 1;
           const colIndex = (i % numCols) + 1;
-          newCssRules += `#cages > tbody > tr:nth-of-type(${rowIndex}) > td:nth-of-type(${colIndex})::after { background-color: ${color}; }\n`;
+          newCssRules += `#cages > tbody > tr:nth-of-type(${rowIndex}) > td:nth-of-type(${colIndex})::before { background-color: ${color}; }\n`;
         }
       });
 
@@ -8781,7 +8783,7 @@ if (targetCW3.test(window.location.href)) {
         position: relative;
       }
 
-      #cages > tbody > tr > td.cage::after {
+      #cages > tbody > tr > td.cage::before {
         content: '';
         position: absolute;
         top: 0;
