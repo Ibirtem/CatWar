@@ -6889,26 +6889,28 @@ if (targetCW3.test(window.location.href)) {
   //  . . . ИНВЕНТАРЬ . . .
   // ====================================================================================================================
   if (settings.blockItemDrop) {
+    function getLockedItems() {
+      const data = JSON.parse(localStorage.getItem("uwu_personal") || "{}");
+      return Array.isArray(data.lockedItems) ? data.lockedItems : [];
+    }
+
+    function setLockedItems(lockedItems) {
+      const data = JSON.parse(localStorage.getItem("uwu_personal") || "{}");
+      data.lockedItems = lockedItems;
+      localStorage.setItem("uwu_personal", JSON.stringify(data));
+    }
+
     function checkIfIdIsLocked(itemId) {
-      let data = JSON.parse(localStorage.getItem("uwu_personal") || "{}");
-      data.lockedItems = Array.isArray(data.lockedItems)
-        ? data.lockedItems
-        : [];
-      return data.lockedItems.includes(itemId);
+      return getLockedItems().includes(itemId);
     }
 
     function changePutButtonState() {
       const putButton = document.getElementById("put");
       if (!putButton) return;
-
       const item = document.getElementsByClassName("active_thing")[0];
+      const lockedItems = getLockedItems();
 
-      let data = JSON.parse(localStorage.getItem("uwu_personal") || "{}");
-      data.lockedItems = Array.isArray(data.lockedItems)
-        ? data.lockedItems
-        : [];
-
-      if (item && data.lockedItems.indexOf(item.id) !== -1) {
+      if (item && lockedItems.includes(item.id)) {
         putButton.style.pointerEvents = "none";
         putButton.style.opacity = "0.5";
         putButton.style.userSelect = "none";
@@ -6920,67 +6922,44 @@ if (targetCW3.test(window.location.href)) {
     }
 
     function createLockCheckbox() {
-      const item = document.getElementById("thdey");
-      if (!item || item.style.display === "none") {
-        return;
+      const item = document.getElementsByClassName("active_thing")[0];
+      if (!item || !item.id) return;
+
+      let input = document.getElementById("lock-put-button");
+      let label = document.getElementById("lock-put-label");
+
+      if (!input) {
+        input = document.createElement("input");
+        input.type = "checkbox";
+        input.id = "lock-put-button";
+        input.style.marginRight = "5px";
+        input.style.marginBottom = "10px";
+        input.style.cursor = "pointer";
+        document.getElementById("thdey").appendChild(input);
+
+        label = document.createElement("label");
+        label.id = "lock-put-label";
+        label.style.marginLeft = "10px";
+        label.style.fontSize = "14px";
+        document.getElementById("thdey").appendChild(label);
+
+        input.addEventListener("change", () => {
+          const itemId = document.getElementsByClassName("active_thing")[0].id;
+          let lockedItems = getLockedItems();
+          const idx = lockedItems.indexOf(itemId);
+
+          if (input.checked && idx === -1) {
+            lockedItems.push(itemId);
+          } else if (!input.checked && idx !== -1) {
+            lockedItems.splice(idx, 1);
+          }
+          setLockedItems(lockedItems);
+          changePutButtonState();
+        });
       }
-      const idMatch = item.textContent.match(/ID:\s*(\d+)/);
-      if (!idMatch) {
-        return;
-      }
 
-      if (document.getElementById("lock-put-button")) {
-        if (idMatch) {
-          const itemId = idMatch[1];
-          const input = document.getElementById("lock-put-button");
-          input.dataset.itemId = itemId;
-          input.checked = checkIfIdIsLocked(itemId);
-
-          document.getElementById(
-            "lock-put-label"
-          ).innerText = `Блокировка опускания предмета с ID ${itemId}`;
-        }
-        return;
-      }
-
-      const input = document.createElement("input");
-      input.type = "checkbox";
-      input.checked = checkIfIdIsLocked(idMatch[1]);
-
-      const label = document.createElement("label");
-      label.textContent = `Блокировка опускания предмета с ID ${idMatch[1]}`;
-      label.style.marginLeft = "10px";
-      label.style.fontSize = "14px";
-      label.style.marginBottom = "10px";
-      label.id = "lock-put-label";
-
-      input.id = "lock-put-button";
-      input.style.marginRight = "5px";
-      input.style.cursor = "pointer";
-      input.dataset.itemId = idMatch[1];
-
-      document.getElementById("thdey").appendChild(input);
-      document.getElementById("thdey").appendChild(label);
-
-      input.addEventListener("change", () => {
-        const itemId = input.dataset.itemId;
-
-        let data = JSON.parse(localStorage.getItem("uwu_personal") || "{}");
-        data.lockedItems = Array.isArray(data.lockedItems)
-          ? data.lockedItems
-          : [];
-
-        const idx = data.lockedItems.indexOf(itemId);
-
-        if (input.checked && idx === -1) {
-          data.lockedItems.push(itemId);
-          localStorage.setItem("uwu_personal", JSON.stringify(data));
-        } else if (!input.checked && idx !== -1) {
-          data.lockedItems.splice(idx, 1);
-          localStorage.setItem("uwu_personal", JSON.stringify(data));
-        }
-        changePutButtonState();
-      });
+      input.checked = checkIfIdIsLocked(item.id);
+      label.innerText = `Блокировка опускания предмета с ID ${item.id}`;
     }
 
     setupMutationObserver(
@@ -6989,7 +6968,7 @@ if (targetCW3.test(window.location.href)) {
         createLockCheckbox();
         changePutButtonState();
       },
-      { childList: true, subtree: true, characterData: true, attributes: true }
+      { attributes: true, attributeFilter: ["style"] }
     );
 
     createLockCheckbox();
