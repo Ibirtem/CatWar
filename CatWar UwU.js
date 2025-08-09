@@ -163,6 +163,7 @@ const uwuDefaultSettings = {
   GMbetaTest: false,
   personalCostumes: false,
   showCostumesButtons: false,
+  blockItemDrop: false,
 };
 
 // ====================================================================================================================
@@ -2061,7 +2062,17 @@ const uwusettings =
               Сброс позиции часов
             </button>
           </div>
-
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>Рот (инвентарь)</h2>
+          <div>
+            <p>Добавляет чекбокс для блокировки опускания предметов</p>
+            <input
+              type="checkbox"
+              id="block-item-drop"
+              data-setting="blockItemDrop"
+            />
+            <label for="block-item-drop">Блокировка опускания предмета</label>
+          </div>
           <hr id="uwu-hr" class="uwu-hr" />
           <h2>Охота</h2>
 
@@ -2905,7 +2916,10 @@ const newsPanel =
           ——— Улучшена отказоустойчивость применения стилей Редизайна игровой.
         </p>
         <p>———— Fix 1.39.3</p>
-        <p>———— Минное поле теперь не перекрашивает весь контент клетки (Например котов).</p>
+        <p>
+          ———— Минное поле теперь не перекрашивает весь контент клетки (Например
+          котов).
+        </p>
         <hr id="uwu-hr" class="uwu-hr" />
         <p>Дата выпуска: 03.08.25</p>
       </div>
@@ -6871,6 +6885,94 @@ if (targetCW3.test(window.location.href)) {
     globalContainer.appendChild(catInfoElement);
   }
 
+  // ====================================================================================================================
+  //  . . . ИНВЕНТАРЬ . . .
+  // ====================================================================================================================
+  if (settings.blockItemDrop) {
+    function getLockedItems() {
+      const data = JSON.parse(localStorage.getItem("uwu_personal") || "{}");
+      return Array.isArray(data.lockedItems) ? data.lockedItems : [];
+    }
+
+    function setLockedItems(lockedItems) {
+      const data = JSON.parse(localStorage.getItem("uwu_personal") || "{}");
+      data.lockedItems = lockedItems;
+      localStorage.setItem("uwu_personal", JSON.stringify(data));
+    }
+
+    function checkIfIdIsLocked(itemId) {
+      return getLockedItems().includes(itemId);
+    }
+
+    function changePutButtonState() {
+      const putButton = document.getElementById("put");
+      if (!putButton) return;
+      const item = document.getElementsByClassName("active_thing")[0];
+      const lockedItems = getLockedItems();
+
+      if (item && lockedItems.includes(item.id)) {
+        putButton.style.pointerEvents = "none";
+        putButton.style.opacity = "0.5";
+        putButton.style.userSelect = "none";
+      } else {
+        putButton.style.pointerEvents = "auto";
+        putButton.style.opacity = "1";
+        putButton.style.userSelect = "auto";
+      }
+    }
+
+    function createLockCheckbox() {
+      const item = document.getElementsByClassName("active_thing")[0];
+      if (!item || !item.id) return;
+
+      let input = document.getElementById("lock-put-button");
+      let label = document.getElementById("lock-put-label");
+
+      if (!input) {
+        input = document.createElement("input");
+        input.type = "checkbox";
+        input.id = "lock-put-button";
+        input.style.marginRight = "5px";
+        input.style.marginBottom = "10px";
+        input.style.cursor = "pointer";
+        document.getElementById("thdey").appendChild(input);
+
+        label = document.createElement("label");
+        label.id = "lock-put-label";
+        label.style.marginLeft = "10px";
+        label.style.fontSize = "14px";
+        document.getElementById("thdey").appendChild(label);
+
+        input.addEventListener("change", () => {
+          const itemId = document.getElementsByClassName("active_thing")[0].id;
+          let lockedItems = getLockedItems();
+          const idx = lockedItems.indexOf(itemId);
+
+          if (input.checked && idx === -1) {
+            lockedItems.push(itemId);
+          } else if (!input.checked && idx !== -1) {
+            lockedItems.splice(idx, 1);
+          }
+          setLockedItems(lockedItems);
+          changePutButtonState();
+        });
+      }
+
+      input.checked = checkIfIdIsLocked(item.id);
+      label.innerText = `Блокировка опускания предмета с ID ${item.id}`;
+    }
+
+    setupMutationObserver(
+      "#thdey",
+      () => {
+        createLockCheckbox();
+        changePutButtonState();
+      },
+      { attributes: true, attributeFilter: ["style"] }
+    );
+
+    createLockCheckbox();
+  }
   // ====================================================================================================================
   //  . . . УВЕДОМЛЕНИЕ ОБ ОБНОВЛЕНИИ . . .
   // ====================================================================================================================
