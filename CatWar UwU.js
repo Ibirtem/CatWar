@@ -2065,7 +2065,10 @@ const uwusettings =
           <hr id="uwu-hr" class="uwu-hr" />
           <h2>Рот (инвентарь)</h2>
           <div>
-            <p>Добавляет чекбокс для блокировки опускания предметов, сохраняя возможность его использовать.</p>
+            <p>
+              Добавляет чекбокс для блокировки опускания предметов, сохраняя
+              возможность его использовать.
+            </p>
             <input
               type="checkbox"
               id="block-item-drop"
@@ -2875,18 +2878,16 @@ const newsPanel =
   /* HTML */
   `
     <div id="news-panel">
-      <button id="news-button">
-        v${current_uwu_version} - 
-      </button>
+      <button id="news-button">v${current_uwu_version} -</button>
       <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>— </p>
+        <p>—</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <h3>Внешний вид</h3>
         <p>— 🌸</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <h3>Изменения кода</h3>
-        <p>— </p>
+        <p>—</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <p>Дата выпуска: ??.08.25</p>
       </div>
@@ -6857,14 +6858,11 @@ if (targetCW3.test(window.location.href)) {
   // ====================================================================================================================
   if (settings.blockItemDrop) {
     function getLockedItems() {
-      const data = JSON.parse(localStorage.getItem("uwu_personal") || "{}");
-      return Array.isArray(data.lockedItems) ? data.lockedItems : [];
+      return JSON.parse(localStorage.getItem("uwu_lockedItems") || "[]");
     }
 
     function setLockedItems(lockedItems) {
-      const data = JSON.parse(localStorage.getItem("uwu_personal") || "{}");
-      data.lockedItems = lockedItems;
-      localStorage.setItem("uwu_personal", JSON.stringify(data));
+      localStorage.setItem("uwu_lockedItems", JSON.stringify(lockedItems));
     }
 
     function checkIfIdIsLocked(itemId) {
