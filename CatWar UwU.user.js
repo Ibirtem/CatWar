@@ -2956,6 +2956,7 @@ const newsPanel =
         <p>— Часы теперь инициализируются хоть с какими-то числами.</p>
         <p>— Цвет команды теперь применяется и работает во всех трёх боевых режимах.</p>
         <p>— Фикс null значения селектора активности.</p>
+        <p>— Слово "часы" больше не пропадают в калькуляторе при дробных.</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <p>Дата выпуска: ??.08.25</p>
       </div>
@@ -14052,13 +14053,13 @@ function setupActivityCalc() {
     window.localStorage.setItem("uwu_activity", JSON.stringify(data));
   }
 
-  function declensionOfNumber(number, titles) {
+function declensionOfNumber(number, titles) {
     const cases = [2, 0, 1, 1, 1, 2];
-    const absNumber = Math.abs(number);
+    const intNumber = Math.floor(Math.abs(number));
     return titles[
-      absNumber % 100 > 4 && absNumber % 100 < 20
+      intNumber % 100 > 4 && intNumber % 100 < 20
         ? 2
-        : cases[absNumber % 10 < 5 ? absNumber % 10 : 5]
+        : cases[intNumber % 10 < 5 ? intNumber % 10 : 5]
     ];
   }
 
