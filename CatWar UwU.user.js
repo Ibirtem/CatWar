@@ -2950,13 +2950,14 @@ const newsPanel =
         <p>— Пу-пу-пу... Добавлена настройка отображения погоды за или перед элементами игровой.</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <h3>Внешний вид</h3>
-        <p>— 🌸</p>
+        <p>— Погодные эффекты теперь не привязаны к FPS и работают стабильно всегда и везде. 
+        Давно надо было это сделать... Надеюсь никто не испугается слишком быстрых частиц.</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <h3>Изменения кода</h3>
         <p>— Часы теперь инициализируются хоть с какими-то числами.</p>
         <p>— Цвет команды теперь применяется и работает во всех трёх боевых режимах.</p>
         <p>— Фикс null значения селектора активности.</p>
-        <p>— Слово "часы" больше не пропадают в калькуляторе при дробных.</p>
+        <p>— Слово "часы" больше не пропадают в калькуляторе при дробных значениях времени.</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <p>Дата выпуска: ??.08.25</p>
       </div>
@@ -12593,29 +12594,37 @@ if (targetCW3.test(window.location.href)) {
   // ====================================================================================================================
   //   . . . АНИМАЦИЯ ПОГОДЫ / ЧАСТИЦ . . .
   // ====================================================================================================================
+  let lastTime = 0;
+  
   function animateWeather() {
+    const currentTime = performance.now();
+    const deltaTime = (currentTime - lastTime) / 1000;
+    lastTime = currentTime;
+
+    const baseSpeedMultiplier = 140;
+
     weatherCtx.clearRect(0, 0, weatherCanvas.width, weatherCanvas.height);
 
     if (raindrops.length > 0) {
       for (const raindrop of raindrops) {
-        raindrop.y += raindrop.ySpeed;
-        raindrop.x += raindrop.xSpeed;
+        raindrop.y += raindrop.ySpeed * baseSpeedMultiplier * deltaTime;
+        raindrop.x += raindrop.xSpeed * baseSpeedMultiplier * deltaTime;
         drawRaindrop(raindrop);
       }
     }
 
     if (snowflakes.length > 0) {
       for (const snowflake of snowflakes) {
-        snowflake.y += snowflake.ySpeed;
-        snowflake.x += snowflake.xSpeed;
+        snowflake.y += snowflake.ySpeed * baseSpeedMultiplier * deltaTime;
+        snowflake.x += snowflake.xSpeed * baseSpeedMultiplier * deltaTime;
         drawSnowflake(snowflake.x, snowflake.y, snowflake.size);
       }
     }
 
     if (pixelSnowflakes.length > 0) {
       for (const pixelSnowflake of pixelSnowflakes) {
-        pixelSnowflake.y += pixelSnowflake.ySpeed;
-        pixelSnowflake.x += pixelSnowflake.xSpeed;
+        pixelSnowflake.y += pixelSnowflake.ySpeed * baseSpeedMultiplier * deltaTime;
+        pixelSnowflake.x += pixelSnowflake.xSpeed * baseSpeedMultiplier * deltaTime;
         drawPixelSnowflake(
           pixelSnowflake.x,
           pixelSnowflake.y,
@@ -12627,14 +12636,15 @@ if (targetCW3.test(window.location.href)) {
 
     if (pixelRaindrops.length > 0) {
       for (const pixelRaindrop of pixelRaindrops) {
-        pixelRaindrop.y += pixelRaindrop.ySpeed;
-        pixelRaindrop.x += pixelRaindrop.xSpeed;
+        pixelRaindrop.y += pixelRaindrop.ySpeed * baseSpeedMultiplier * deltaTime;
+        pixelRaindrop.x += pixelRaindrop.xSpeed * baseSpeedMultiplier * deltaTime;
         drawPixelRaindrop(pixelRaindrop);
       }
     }
 
     requestAnimationFrame(animateWeather);
   }
+
   if (settings.weatherEnabled || settings.manualWeatherPanel) {
     animateWeather();
   }
@@ -14053,7 +14063,7 @@ function setupActivityCalc() {
     window.localStorage.setItem("uwu_activity", JSON.stringify(data));
   }
 
-function declensionOfNumber(number, titles) {
+  function declensionOfNumber(number, titles) {
     const cases = [2, 0, 1, 1, 1, 2];
     const intNumber = Math.floor(Math.abs(number));
     return titles[
