@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CatWar UwU
 // @namespace    http://tampermonkey.net/
-// @version      v1.39.3-08.25
+// @version      v1.40.0-08.25
 // @description  Визуальное обновление CatWar'а, и не только...
 // @author       Ibirtem / Затменная ( https://catwar.net/cat1477928 )
 // @copyright    2025, Ibirtem (https://openuserjs.org/users/Ibirtem)
@@ -20,7 +20,7 @@
 // ====================================================================================================================
 //   . . . DEFAULT НАСТРОЙКИ . . .
 // ====================================================================================================================
-const current_uwu_version = "1.39.3";
+const current_uwu_version = "1.40.0";
 // ✨🦐✨🦐✨
 const uwuDefaultSettings = {
   settingsTheme: "dark",
@@ -53,6 +53,10 @@ const uwuDefaultSettings = {
   namesForNotification: "",
 
   redesignCostumsSettings: false,
+
+  showDefectsEnabled: false,
+  defectsStyle: "default",
+  defectsQuality: "low",
 
   notificationPM: false,
   notificationPMSound: "notificationSound1",
@@ -163,6 +167,7 @@ const uwuDefaultSettings = {
   GMbetaTest: false,
   personalCostumes: false,
   showCostumesButtons: false,
+  blockItemDrop: false,
 };
 
 // ====================================================================================================================
@@ -545,6 +550,46 @@ const uwusettings =
             "
               >[?]</label
             >
+          </div>
+
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>Дефекты</h2>
+
+          <div>
+            <p>
+              Включает добавление иконок дефектов (раны, грязь и
+              т.д.).
+            </p>
+            <input
+              type="checkbox"
+              id="show-defects-enabled"
+              data-setting="showDefectsEnabled"
+            />
+            <label for="show-defects-enabled">Показывать дефекты</label>
+          </div>
+
+          <div>
+            <p>Выберите стиль отображения иконок дефектов.</p>
+            <label>Стиль дефектов:</label>
+            <div class="custom-select" id="defectsStyle">
+              <div class="select-selected">Стандартный</div>
+              <div class="select-items">
+                <!-- Опции будут добавлены сюда -->
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p>
+              Выберите качество иконок дефектов.
+            </p>
+            <label>Качество дефектов:</label>
+            <div class="custom-select" id="defectsQuality">
+              <div class="select-selected">Низкое/Старое</div>
+              <div class="select-items">
+                <!-- Опции будут добавлены сюда -->
+              </div>
+            </div>
           </div>
 
           <hr id="uwu-hr" class="uwu-hr" />
@@ -2061,7 +2106,20 @@ const uwusettings =
               Сброс позиции часов
             </button>
           </div>
-
+          <hr id="uwu-hr" class="uwu-hr" />
+          <h2>Рот (инвентарь)</h2>
+          <div>
+            <p>
+              Добавляет чекбокс для блокировки опускания предметов, сохраняя
+              возможность его использовать.
+            </p>
+            <input
+              type="checkbox"
+              id="block-item-drop"
+              data-setting="blockItemDrop"
+            />
+            <label for="block-item-drop">Блокировка опускания предмета</label>
+          </div>
           <hr id="uwu-hr" class="uwu-hr" />
           <h2>Охота</h2>
 
@@ -2864,50 +2922,19 @@ const newsPanel =
   /* HTML */
   `
     <div id="news-panel">
-      <button id="news-button">
-        v${current_uwu_version} - Делаем вид, что живые. Чёта даже добавил.🌿
-      </button>
+      <button id="news-button">v${current_uwu_version} - Добавлены иконки дефектов и 
+      чуть более крутое блокирование предметов во рту!</button>
       <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>
-          — Добавлены Сохранение сообщений, Библиотека личных костюмов, Счётчик
-          символов в чате и отдельный Импорт/Экспорт цветов параметров и
-          навыков!
-        </p>
+        <p>—</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <h3>Внешний вид</h3>
         <p>— 🌸</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <h3>Изменения кода</h3>
-        <p>— Возможно починен баг с NaN переходами в профиле.</p>
-        <p>
-          — Немного улучшена информативность поздравления об достижении цели.
-        </p>
-        <p>— Крутые форматирования кода для удобства себя любимого.</p>
-        <p>— Лужи теперь не влияют на цветные клетки Минного поля.</p>
-        <p>
-          — Повышена отказоустойчивость сохранений, если вы вдруг каким-то
-          образом всё же умудрились их сломать.
-        </p>
-        <p>— Добавлен ещё один API для проверки Онлайн времени в часах.</p>
-        <p>
-          — Теперь локальное время должно конвертироваться в Московское, когда
-          стоит такая галочка.
-        </p>
-        <p>— Джойстик для Охоты стал потенциально чуть производительней.</p>
-        <p>— Клик по Экспорт полям автоматически выделяет всё внутри.</p>
-        <p>—— Fix 1.39.1</p>
-        <p>—— Подправлен сброс временных зон при обновлении часов.</p>
-        <p>—— Нумерация ячеек и Минное поле теперь не конфликтуют по стилям.</p>
-        <p>—— Расширенные настройки в Игровой теперь не перекрываются Полем.</p>
-        <p>——— Fix 1.39.2</p>
-        <p>
-          ——— Улучшена отказоустойчивость применения стилей Редизайна игровой.
-        </p>
-        <p>———— Fix 1.39.3</p>
-        <p>———— Минное поле теперь не перекрашивает весь контент клетки (Например котов).</p>
+        <p>—</p>
         <hr id="uwu-hr" class="uwu-hr" />
-        <p>Дата выпуска: 03.08.25</p>
+        <p>Дата выпуска: ??.08.25</p>
       </div>
     </div>
   `;
@@ -5208,6 +5235,17 @@ if (targetSettings.test(window.location.href)) {
 
   createCustomSelect("cleaningLogStyle", cleaningLogStyles);
   // ==============================================================================
+  const defectsStyles = [{ id: "default", name: "Стандартный" }];
+
+  createCustomSelect("defectsStyle", defectsStyles);
+  // ==============================================================================
+  const defectsQualities = [
+    { id: "low", name: "Низкое/Старое (100x150)" },
+    { id: "high", name: "Высокое/Новое (200x300)" },
+  ];
+
+  createCustomSelect("defectsQuality", defectsQualities);
+  // ==============================================================================
   const climbingPanelInputsStyles = [
     { id: "keyboard", name: "Клавиатура" },
     { id: "standart", name: "Галочки + Клавиатура" },
@@ -6585,6 +6623,118 @@ if (targetCW3.test(window.location.href)) {
   }
 
   // ====================================================================================================================
+  //  . . . ДЕФЕКТИКИ И СТИЛИ . . .
+  // ====================================================================================================================
+
+    function applyDefectsStyle() {
+    if (!settings.showDefectsEnabled) return;
+
+    const qualityFolder =
+      settings.defectsQuality === "high"
+        ? "assets_200_300"
+        : "assets_100_150";
+    const baseUrl = `https://raw.githubusercontent.com/Ibirtem/CatWar//refs/heads/Update-to-1.40.0/images/${qualityFolder}`;
+
+    const defectsCss = /* CSS */ `
+        /*грязь_1*/
+        #tr_field [style*='dirt/base/1/1'], #tr_field [style*='dirt/base/2/1']
+        {content: url(${baseUrl}/dirt_1.png)
+        !important;}
+        /*грязь_2*/
+        #tr_field [style*='dirt/base/1/2'], #tr_field [style*='dirt/base/2/2']
+        {content: url(${baseUrl}/dirt_2.png)
+        !important;}
+        /*грязь_3*/
+        #tr_field [style*='dirt/base/1/3'], #tr_field [style*='dirt/base/2/3']
+        {content: url(${baseUrl}/dirt_3.png)
+        !important;}
+        /*грязь_4*/
+        #tr_field [style*='dirt/base/1/4'], #tr_field [style*='dirt/base/2/4']
+        {content: url(${baseUrl}/dirt_4.png)
+        !important;}
+
+        /*ушибы_1*/
+        #tr_field [style*='trauma/1']
+        {content: url(${baseUrl}/trauma_1.png)
+        !important;}
+        /*ушибы_2*/
+        #tr_field [style*='trauma/2']
+        {content: url(${baseUrl}/trauma_2.png)
+        !important;}
+        /*ушибы_3*/
+        #tr_field [style*='trauma/3']
+        {content: url(${baseUrl}/trauma_3.png)
+        !important;}
+        /*ушибы_4*/
+        #tr_field [style*='trauma/4']
+        {content: url(${baseUrl}/trauma_4.png)
+        !important;}
+
+        /*отравление_1*/
+        #tr_field [style*='poisoning/1']
+        {content: url(${baseUrl}/poisoning_1.png)
+        !important;}
+        /*отравление_2*/
+        #tr_field [style*='poisoning/2']
+        {content: url(${baseUrl}/poisoning_2.png)
+        !important;}
+        /*отравление_3*/
+        #tr_field [style*='poisoning/3']
+        {content: url(${baseUrl}/poisoning_3.png)
+        !important;}
+        /*отравление_4*/
+        #tr_field [style*='poisoning/4']
+        {content: url(${baseUrl}/poisoning_4.png)
+        !important;}
+
+        /*переломы_1*/
+        #tr_field [style*='drown/1']
+        {content: url(${baseUrl}/drown_1.png)
+        !important;}
+        /*переломы_2*/
+        #tr_field [style*='drown/2']
+        {content: url(${baseUrl}/drown_2.png)
+        !important;}
+        /*переломы_3*/
+        #tr_field [style*='drown/3']
+        {content: url(${baseUrl}/drown_3.png)
+        !important;}
+        /*переломы_4*/
+        #tr_field [style*='drown/4']
+        {content: url(${baseUrl}/drown_4.png)
+        !important;}
+
+        /*раны_1*/
+        #tr_field [style*='wound/1']
+        {content: url(${baseUrl}/wound_1.png)
+        !important;}
+        /*раны_2*/
+        #tr_field [style*='wound/2']
+        {content: url(${baseUrl}/wound_2.png)
+        !important;}
+        /*раны_3*/
+        #tr_field [style*='wound/3']
+        {content: url(${baseUrl}/wound_3.png)
+        !important;}
+        /*раны_4*/
+        #tr_field [style*='wound/4']
+        {content: url(${baseUrl}/wound_4.png)
+        !important;}
+
+        /*кашель*/
+        #tr_field [style*='disease/1']
+        {content: url(${baseUrl}/disease.png)
+        !important;}
+    `;
+
+    const styleElement = document.createElement("style");
+    styleElement.id = "uwu-defects-style";
+    styleElement.textContent = defectsCss;
+    document.head.appendChild(styleElement);
+  }
+
+  applyDefectsStyle();
+  // ====================================================================================================================
   //  . . . РАСШИРЕННЫЕ НАСТРОЙКИ . . .
   // ====================================================================================================================
   const extendedSettingsButtonElement = document.createElement("div");
@@ -6871,6 +7021,91 @@ if (targetCW3.test(window.location.href)) {
     globalContainer.appendChild(catInfoElement);
   }
 
+  // ====================================================================================================================
+  //  . . . ИНВЕНТАРЬ . . .
+  // ====================================================================================================================
+  if (settings.blockItemDrop) {
+    function getLockedItems() {
+      return JSON.parse(localStorage.getItem("uwu_lockedItems") || "[]");
+    }
+
+    function setLockedItems(lockedItems) {
+      localStorage.setItem("uwu_lockedItems", JSON.stringify(lockedItems));
+    }
+
+    function checkIfIdIsLocked(itemId) {
+      return getLockedItems().includes(itemId);
+    }
+
+    function changePutButtonState() {
+      const putButton = document.getElementById("put");
+      if (!putButton) return;
+      const item = document.getElementsByClassName("active_thing")[0];
+      const lockedItems = getLockedItems();
+
+      if (item && lockedItems.includes(item.id)) {
+        putButton.style.pointerEvents = "none";
+        putButton.style.opacity = "0.5";
+        putButton.style.userSelect = "none";
+      } else {
+        putButton.style.pointerEvents = "auto";
+        putButton.style.opacity = "1";
+        putButton.style.userSelect = "auto";
+      }
+    }
+
+    function createLockCheckbox() {
+      const item = document.getElementsByClassName("active_thing")[0];
+      if (!item || !item.id) return;
+
+      let input = document.getElementById("lock-put-button");
+      let label = document.getElementById("lock-put-label");
+
+      if (!input) {
+        input = document.createElement("input");
+        input.type = "checkbox";
+        input.id = "lock-put-button";
+        input.style.marginRight = "5px";
+        input.style.marginBottom = "10px";
+        input.style.cursor = "pointer";
+        document.getElementById("thdey").appendChild(input);
+
+        label = document.createElement("label");
+        label.id = "lock-put-label";
+        label.style.marginLeft = "10px";
+        label.style.fontSize = "14px";
+        document.getElementById("thdey").appendChild(label);
+
+        input.addEventListener("change", () => {
+          const itemId = document.getElementsByClassName("active_thing")[0].id;
+          let lockedItems = getLockedItems();
+          const idx = lockedItems.indexOf(itemId);
+
+          if (input.checked && idx === -1) {
+            lockedItems.push(itemId);
+          } else if (!input.checked && idx !== -1) {
+            lockedItems.splice(idx, 1);
+          }
+          setLockedItems(lockedItems);
+          changePutButtonState();
+        });
+      }
+
+      input.checked = checkIfIdIsLocked(item.id);
+      label.innerText = `Блокировка опускания предмета с ID ${item.id}`;
+    }
+
+    setupMutationObserver(
+      "#thdey",
+      () => {
+        createLockCheckbox();
+        changePutButtonState();
+      },
+      { attributes: true, attributeFilter: ["style"] }
+    );
+
+    createLockCheckbox();
+  }
   // ====================================================================================================================
   //  . . . УВЕДОМЛЕНИЕ ОБ ОБНОВЛЕНИИ . . .
   // ====================================================================================================================
