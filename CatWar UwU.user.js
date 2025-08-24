@@ -57,7 +57,7 @@ const uwuDefaultSettings = {
 
   showDefectsEnabled: false,
   defectsStyle: "default",
-  defectsQuality: "low",
+  defectsQuality: "high",
 
   notificationPM: false,
   notificationPMSound: "notificationSound1",
@@ -5136,11 +5136,12 @@ if (targetSettings.test(window.location.href)) {
     "uwu_templates",
     "uwu_highlightResources",
     "uwu_saved_ls",
+    "uwu_activity",
   ];
 
   function resetAllSaves() {
     const confirmReset = confirm(
-      "Точно сбросить все UwU Настройки? Это удалить даже ваши карты Минных полей, темы и многое другое!"
+      "Точно сбросить ВСЕ UwU Настройки? Это удалить абсолютно всё по UwU скрипту/моду, даже ваши карты Минных полей, темы и многое другое!"
     );
     if (confirmReset) {
       settingsKeys.forEach((key) => {
@@ -13967,9 +13968,12 @@ function setupActivityCalc() {
     activitySettings[catId].goal > progress.stage ||
     activitySettings[catId].noGrats
   ) {
-    document.querySelector(
+    const goalOption = document.querySelector(
       `#activity-list > [value="${activitySettings[catId].goal}"]`
-    ).selected = true;
+    );
+    if (goalOption) {
+      goalOption.selected = true;
+    }
   } else if (activitySettings[catId].goal) {
     showCongratulations();
   }
