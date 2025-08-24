@@ -2954,6 +2954,7 @@ const newsPanel =
         <hr id="uwu-hr" class="uwu-hr" />
         <h3>Изменения кода</h3>
         <p>— Часы теперь инициализируются хоть с какими-то числами.</p>
+        <p>— Цвет команды теперь применяется и работает во всех трёх боевых режимах.</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <p>Дата выпуска: ??.08.25</p>
       </div>
@@ -11628,7 +11629,7 @@ if (targetCW3.test(window.location.href)) {
 
       cages.forEach((cage) => {
         const catName = cage.querySelector(".cat_tooltip a")?.textContent;
-        const arrow = cage.querySelector(".arrow.arrow-paws");
+        const arrow = cage.querySelector(".arrow.arrow-paws, .arrow.arrow-claws, .arrow arrow-teeth");
 
         if (catName && arrow) {
           const arrowId = arrow.id;
