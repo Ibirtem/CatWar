@@ -33,6 +33,7 @@ const uwuDefaultSettings = {
   manualWeatherPanel: false,
   skyInHeader: false,
   auroraPos: "1",
+  weatherZIndex: "0",
 
   backgroundRepeat: false,
   backgroundUser: false,
@@ -423,6 +424,29 @@ const uwusettings =
             />
             <label for="sky-in-the-sky">Небо в небе.</label>
           </div>
+
+          <hr id="uwu-hr" class="uwu-hr" />
+          <p>
+            Z-index Погоды. Позволяет настроить, будут ли эффекты отображаться
+            поверх или позади игровых элементов.
+          </p>
+          <div id="weatherZIndexPanel">
+            <input
+              type="range"
+              min="-1"
+              max="1"
+              value="0"
+              class="uwu-range-slider"
+              id="weather-z-index"
+              list="weatherZIndexStep"
+              data-setting="weatherZIndex"
+            />
+            <datalist id="weatherZIndexStep">
+              <option value="-1">За блоками</option>
+              <option value="0">Стандарт</option>
+              <option value="1">Перед блоками</option>
+            </datalist>
+          </div>
         </div>
 
         <div id="theme-panel">
@@ -556,10 +580,7 @@ const uwusettings =
           <h2>Дефекты</h2>
 
           <div>
-            <p>
-              Включает добавление иконок дефектов (раны, грязь и
-              т.д.).
-            </p>
+            <p>Включает добавление иконок дефектов (раны, грязь и т.д.).</p>
             <input
               type="checkbox"
               id="show-defects-enabled"
@@ -580,9 +601,7 @@ const uwusettings =
           </div>
 
           <div>
-            <p>
-              Выберите качество иконок дефектов.
-            </p>
+            <p>Выберите качество иконок дефектов.</p>
             <label>Качество дефектов:</label>
             <div class="custom-select" id="defectsQuality">
               <div class="select-selected">Низкое/Старое</div>
@@ -2922,11 +2941,13 @@ const newsPanel =
   /* HTML */
   `
     <div id="news-panel">
-      <button id="news-button">v${current_uwu_version} - Добавлены иконки для дефектов и 
-      чуть более крутое блокирование предметов во рту!</button>
+      <button id="news-button">
+        v${current_uwu_version} - Добавлены иконки для дефектов и чуть более
+        крутое блокирование предметов во рту!
+      </button>
       <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>— Пу-пу-пу...</p>
+        <p>— Пу-пу-пу... Добавлена настройка отображения погоды за или перед элементами игровой.</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <h3>Внешний вид</h3>
         <p>— 🌸</p>
@@ -3254,6 +3275,10 @@ const css_uwu_main = `
   width: 120px;
 }
 
+#weatherZIndexPanel {
+  width: 320px;
+}
+
 .notification-table {
     border-collapse: collapse;
 }
@@ -3479,7 +3504,8 @@ const css_uwu_main = `
 #auroraStep,
 #volumeStep,
 #ThicknessStep,
-.uwu-range-step {
+.uwu-range-step,
+#weatherZIndexStep {
   margin-top: 10px;
   display: flex;
   justify-content: space-between;
@@ -6626,13 +6652,11 @@ if (targetCW3.test(window.location.href)) {
   //  . . . ДЕФЕКТИКИ И СТИЛИ . . .
   // ====================================================================================================================
 
-    function applyDefectsStyle() {
+  function applyDefectsStyle() {
     if (!settings.showDefectsEnabled) return;
 
     const qualityFolder =
-      settings.defectsQuality === "high"
-        ? "assets_200_300"
-        : "assets_100_150";
+      settings.defectsQuality === "high" ? "assets_200_300" : "assets_100_150";
     const baseUrl = `https://raw.githubusercontent.com/Ibirtem/CatWar//refs/heads/Update-to-1.40.0/images/${qualityFolder}`;
 
     const defectsCss = /* CSS */ `
@@ -12284,6 +12308,7 @@ if (targetCW3.test(window.location.href)) {
   const weatherContainer = document.getElementById("uwu-main-container");
   const weatherCanvas = document.createElement("canvas");
   weatherCanvas.classList.add("weatherCanvas");
+  weatherCanvas.style.zIndex = settings.weatherZIndex;
   weatherContainer.appendChild(weatherCanvas);
   const weatherCtx = weatherCanvas.getContext("2d");
 
