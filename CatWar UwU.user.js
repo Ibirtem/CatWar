@@ -2922,17 +2922,17 @@ const newsPanel =
   /* HTML */
   `
     <div id="news-panel">
-      <button id="news-button">v${current_uwu_version} - Добавлены иконки дефектов и 
+      <button id="news-button">v${current_uwu_version} - Добавлены иконки для дефектов и 
       чуть более крутое блокирование предметов во рту!</button>
       <div id="news-list" style="display: none">
         <h3>Главное</h3>
-        <p>—</p>
+        <p>— Пу-пу-пу...</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <h3>Внешний вид</h3>
         <p>— 🌸</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <h3>Изменения кода</h3>
-        <p>—</p>
+        <p>— Часы теперь инициализируются хоть с какими-то числами.</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <p>Дата выпуска: ??.08.25</p>
       </div>
@@ -7177,7 +7177,7 @@ if (targetCW3.test(window.location.href)) {
   if (settings.showClock) {
     const style = document.createElement("style");
     style.textContent =
-      // css
+      /* CSS */
       `
         #uwu-clock {
           border-radius: 10px;
@@ -7298,6 +7298,11 @@ if (targetCW3.test(window.location.href)) {
     const dateElement = document.createElement("span");
     dateElement.className = "date";
     clockElement.appendChild(dateElement);
+
+    timeElement.textContent = "00:00:00";
+    dateElement.textContent = "00.00.00";
+    iconElement.textContent = "?";
+    iconElement.title = "Загрузка...";
 
     if (settings.clockPosition === "fly") {
       container.appendChild(clockElement);
