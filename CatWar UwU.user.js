@@ -580,18 +580,18 @@ const uwusettings =
           <h2>Дефекты</h2>
 
           <div>
-            <p>Включает добавление иконок дефектов (раны, грязь и т.д.).</p>
+            <p>Добавляет котам иконки их дефектов (раны, грязь и т.д.).</p>
             <input
               type="checkbox"
               id="show-defects-enabled"
               data-setting="showDefectsEnabled"
             />
-            <label for="show-defects-enabled">Показывать дефекты</label>
+            <label for="show-defects-enabled">Показывать иконки дефектов</label>
           </div>
 
           <div>
             <p>Выберите стиль отображения иконок дефектов.</p>
-            <label>Стиль дефектов:</label>
+            <label>Стиль иконок:</label>
             <div class="custom-select" id="defectsStyle">
               <div class="select-selected">Стандартный</div>
               <div class="select-items">
@@ -602,9 +602,9 @@ const uwusettings =
 
           <div>
             <p>Выберите качество иконок дефектов.</p>
-            <label>Качество дефектов:</label>
+            <label>Качество иконок:</label>
             <div class="custom-select" id="defectsQuality">
-              <div class="select-selected">Низкое/Старое</div>
+              <div class="select-selected">Высокое/Новое</div>
               <div class="select-items">
                 <!-- Опции будут добавлены сюда -->
               </div>
