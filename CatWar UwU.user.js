@@ -2958,6 +2958,7 @@ const newsPanel =
         <p>— Цвет команды теперь применяется и работает во всех трёх боевых режимах.</p>
         <p>— Фикс null значения селектора активности.</p>
         <p>— Слово "часы" больше не пропадают в калькуляторе при дробных значениях времени.</p>
+        <p>— Оказывается я недореализовал сохранение ЛС как надо, и мне никто не сказал об этом, жесть.</p>
         <hr id="uwu-hr" class="uwu-hr" />
         <p>Дата выпуска: ??.08.25</p>
       </div>
@@ -14671,6 +14672,54 @@ if (targetLs.test(window.location.href) && settings.savingLS) {
   // console.log("UwU | Модуль сохранения ЛС активен.");
 
   /**
+   * Отображает сохраненное сообщение в контейнере.
+   * @param {string} lsId - ID сообщения для отображения.
+   */
+  function displaySavedMessage(lsId) {
+    const container = document.getElementById("uwu-saved-ls-container");
+    if (!container) return;
+
+    const savedLs = JSON.parse(localStorage.getItem("uwu_saved_ls")) || {};
+    const ls = savedLs[lsId];
+
+    if (!ls) {
+      container.innerHTML =
+        "<h3>Ошибка: Сохранённое сообщение не найдено.</h3><p><a href='#' id='uwu-back-to-saved-list'>Назад к списку</a></p>";
+      document
+        .getElementById("uwu-back-to-saved-list")
+        .addEventListener("click", showSavedMessagesInterface);
+      return;
+    }
+
+    const typeLabel = ls.type === 0 ? "Отправитель" : "Получатель";
+    const catLink = `<a href="/cat${ls.catId}" id="msg_login">${ls.catName}</a>`;
+
+    const messageHTML = `
+      <p><a href="#" id="uwu-back-to-saved-list">← Назад к сохранённым</a></p>
+      <table id="msg_table" border="1">
+        <tbody>
+          <tr>
+            <td colspan="2"><span id="msg_subject">${ls.subject}</span></td>
+          </tr>
+          <tr>
+            <td valign="top" id="msg_info">
+              ${typeLabel}: ${catLink}<br>
+              ${ls.date}<br>
+              <i>(сохранённая оффлайн-копия)</i>
+            </td>
+            <td><div class="parsed">${ls.text}</div></td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+
+    container.innerHTML = messageHTML;
+    document
+      .getElementById("uwu-back-to-saved-list")
+      .addEventListener("click", showSavedMessagesInterface);
+  }
+
+  /**
    * Удаляет сохраненное ЛС из localStorage по его ID.
    * @param {number} lsId - ID личного сообщения для удаления.
    * @param {boolean} silent - Если true, не показывать alert.
@@ -14906,6 +14955,10 @@ if (targetLs.test(window.location.href) && settings.savingLS) {
     let inboxHTML = "";
     let outboxHTML = "";
 
+    keys.sort(
+      (a, b) => new Date(savedLs[b].savedate) - new Date(savedLs[a].savedate)
+    );
+
     keys.forEach((key) => {
       const ls = savedLs[key];
       const rowHTML =
@@ -14913,7 +14966,7 @@ if (targetLs.test(window.location.href) && settings.savingLS) {
         `
           <tr class="msg_read">
             <td>
-              <a href="/ls?id=${key}" class="msg_open" data-id="${key}"
+              <a href="#" class="uwu-saved-msg-open" data-id="${key}"
                 >${ls.subject}</a
               >
             </td>
@@ -14980,9 +15033,16 @@ if (targetLs.test(window.location.href) && settings.savingLS) {
           )
         ) {
           deleteSavedLS(lsId, true);
-          e.target.closest("tr").remove();
           renderSavedMessagesList(container);
         }
+      });
+    });
+
+    container.querySelectorAll(".uwu-saved-msg-open").forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const lsId = e.target.dataset.id;
+        displaySavedMessage(lsId);
       });
     });
   }
